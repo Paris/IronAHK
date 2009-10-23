@@ -1,0 +1,9 @@
+var = Hello World!
+msgbox %var%
+
+Loop, 5
+    var := 2 * (5 - 4)
+
+hello(abc, def = "ghi") {
+	return abc
+}

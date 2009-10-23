@@ -1,0 +1,96 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace IronAHK.Rusty.Extras.SimpleJSON
+{
+    /// <summary>
+    /// Serialize JSON strings.
+    /// </summary>
+    class Encode
+    {
+        /// <summary>
+        /// Format a dictionary of string key and object value pairs as a JSON string.
+        /// </summary>
+        /// <param name="Elements">The table of key and values. Objects other than a string, boolean or numeric type have their <code>ToString()</code> method called for a compatible value.</param>
+        /// <returns>A JSON representation.</returns>
+        public static string Parse(Dictionary<string, object> Elements)
+        {
+            return ParseObject(Elements);
+        }
+
+        static string ParseObject(object node)
+        {
+            #region Tokens
+            const char ObjectOpen = '{';
+            const char ObjectClose = '}';
+            const char MemberSeperator = ',';
+            const char MemberAssign = ':';
+            const char ArrayOpen = '[';
+            const char ArrayClose = ']';
+            const char StringBoundary = '"';
+            //const char Escape = '\\';
+            const string True = "true";
+            const string False = "false";
+            const string Null = "null";
+            const char Space = ' ';
+            #endregion
+
+            if (node == null)
+                return Null;
+
+            StringBuilder json = new StringBuilder();
+            Type type = node.GetType();
+
+            if (type == typeof(Dictionary<string, object>))
+            {
+                var pairs = (Dictionary<string, object>)node;
+                json.Append(ObjectOpen);
+                int n = pairs.Keys.Count;
+                foreach (string key in pairs.Keys)
+                {
+                    json.Append(Space);
+                    json.Append(StringBoundary);
+                    json.Append(key);
+                    json.Append(StringBoundary);
+                    json.Append(Space);
+                    json.Append(MemberAssign);
+                    json.Append(Space);
+                    json.Append(ParseObject(pairs[key]));
+                    n--;
+                    json.Append(n == 0 ? Space : MemberSeperator);
+                }
+                json.Append(ObjectClose);
+            }
+            else if (type == typeof(object[]))
+            {
+                object[] list = (object[])node;
+                json.Append(ArrayOpen);
+                int n = list.Length;
+                foreach (object sub in list)
+                {
+                    json.Append(Space);
+                    json.Append(ParseObject(sub));
+                    n--;
+                    json.Append(n == 0 ? Space : MemberSeperator);
+                }
+                json.Append(ArrayClose);
+            }
+            else if (type == typeof(bool))
+                json.Append((bool)node ? True : False);
+            else if (type == typeof(byte) || type == typeof(sbyte) || type == typeof(short) || type == typeof(ushort) || type == typeof(int) || type == typeof(uint) || type == typeof(long) || type == typeof(ulong) || type == typeof(float) || type == typeof(double) || type == typeof(decimal))
+                json.Append(node.ToString());
+            else
+            {
+                json.Append(StringBoundary);
+                if (type == typeof(string))
+                    json.Append((string)node);
+                else
+                    json.Append(node.ToString());
+                json.Append(StringBoundary);
+            }
+
+            return json.ToString();
+        }
+    }
+}

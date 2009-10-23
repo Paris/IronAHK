@@ -1,0 +1,81 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rusty", "Rusty\Rusty.csproj", "{818030A8-5FFE-4CA1-8248-0940C72EA47A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IronAHK", "IronAHK\IronAHK.csproj", "{66E074FB-EBF4-4A58-8BE6-D4A2D688F5E3}"
+	ProjectSection(ProjectDependencies) = postProject
+		{D7C6B1FD-2247-40A4-8DAB-199F3B8084E0} = {D7C6B1FD-2247-40A4-8DAB-199F3B8084E0}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Scripting", "Scripting\Scripting.csproj", "{D7C6B1FD-2247-40A4-8DAB-199F3B8084E0}"
+	ProjectSection(ProjectDependencies) = postProject
+		{818030A8-5FFE-4CA1-8248-0940C72EA47A} = {818030A8-5FFE-4CA1-8248-0940C72EA47A}
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{51290663-19A1-4ADA-8D9E-351EF396A8FB}"
+	ProjectSection(SolutionItems) = preProject
+		clean.bat = clean.bat
+		license.txt = license.txt
+		make.bat = make.bat
+		Makefile = Makefile
+		version.txt = version.txt
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{818030A8-5FFE-4CA1-8248-0940C72EA47A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{818030A8-5FFE-4CA1-8248-0940C72EA47A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{818030A8-5FFE-4CA1-8248-0940C72EA47A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{818030A8-5FFE-4CA1-8248-0940C72EA47A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{66E074FB-EBF4-4A58-8BE6-D4A2D688F5E3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{66E074FB-EBF4-4A58-8BE6-D4A2D688F5E3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{66E074FB-EBF4-4A58-8BE6-D4A2D688F5E3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{66E074FB-EBF4-4A58-8BE6-D4A2D688F5E3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D7C6B1FD-2247-40A4-8DAB-199F3B8084E0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D7C6B1FD-2247-40A4-8DAB-199F3B8084E0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D7C6B1FD-2247-40A4-8DAB-199F3B8084E0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D7C6B1FD-2247-40A4-8DAB-199F3B8084E0}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(MonoDevelopProperties) = preSolution
+		version = 0.1
+		StartupItem = IronAHK\IronAHK.csproj
+		Policies = $0
+		$0.ChangeLogPolicy = $1
+		$1.UpdateMode = Nearest
+		$1.MessageStyle = $2
+		$2.LineAlign = 0
+		$1.inheritsSet = Mono
+		$0.TextStylePolicy = $3
+		$3.FileWidth = 120
+		$3.inheritsSet = VisualStudio
+		$3.inheritsScope = text/plain
+		$0.DotNetNamingPolicy = $4
+		$4.DirectoryNamespaceAssociation = None
+		$4.ResourceNamePolicy = FileFormatDefault
+		$0.TextStylePolicy = $5
+		$5.FileWidth = 120
+		$5.RemoveTrailingWhitespace = True
+		$5.inheritsSet = VisualStudio
+		$5.inheritsScope = text/plain
+		$5.scope = text/plain
+		$0.TextStylePolicy = $6
+		$6.inheritsSet = null
+		$6.scope = application/x-shellscript
+		$0.TextStylePolicy = $7
+		$7.inheritsSet = null
+		$7.scope = text/x-csharp
+		$0.CSharpFormattingPolicy = $8
+		$8.inheritsSet = Mono
+		$8.inheritsScope = text/x-csharp
+		$8.scope = text/x-csharp
+		name = IronAHK
+	EndGlobalSection
+EndGlobal
