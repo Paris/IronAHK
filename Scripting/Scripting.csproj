@@ -1,0 +1,97 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{D7C6B1FD-2247-40A4-8DAB-199F3B8084E0}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>IronAHK.Scripting</RootNamespace>
+    <AssemblyName>IronAHK.Scripting</AssemblyName>
+    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkSubset>
+    </TargetFrameworkSubset>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;LEGACY</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DebugSymbols>true</DebugSymbols>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>none</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE;LEGACY</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <ItemGroup>
+    <Compile Include="Compiler\CompilerSetup.cs" />
+    <None Include="Tests\Main.ia" />
+    <Compile Include="Compiler\Compiler.cs" />
+    <Compile Include="Generator\Generator.cs" />
+    <Compile Include="Generator\Supports.cs" />
+    <Compile Include="Generator\Type.cs" />
+    <Compile Include="Generator\Identifier.cs" />
+    <Compile Include="Generator\Code.cs" />
+    <Compile Include="IACodeProvider.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Parser\CodeDom\CodeAssignExpression.cs" />
+    <Compile Include="Parser\CodeDom\CodeBlock.cs" />
+    <Compile Include="Parser\CodeDom\CodeComplexVariableReferenceExpression.cs" />
+    <Compile Include="Parser\CodeDom\CodeGosubStatement.cs" />
+    <Compile Include="Parser\Compile.cs" />
+    <Compile Include="Parser\Function.cs" />
+    <Compile Include="Parser\CodeDom\CodeLine.cs" />
+    <Compile Include="Parser\MulitlineString.cs" />
+    <Compile Include="Parser\Construct\ParseAssign.cs" />
+    <Compile Include="Parser\Construct\ParseCommand.cs" />
+    <Compile Include="Parser\Construct\ParseDirective.cs" />
+    <Compile Include="Parser\Construct\ParseException.cs" />
+    <Compile Include="Parser\Construct\ParseExpression.cs" />
+    <Compile Include="Parser\Construct\ParseFlow.cs" />
+    <Compile Include="Parser\Construct\ParseFunction.cs" />
+    <Compile Include="Parser\Construct\ParseLabel.cs" />
+    <Compile Include="Parser\Parser.cs" />
+    <Compile Include="Parser\Read.cs" />
+    <Compile Include="Parser\StripComment.cs" />
+    <Compile Include="Parser\Symbols.cs" />
+    <Compile Include="Parser\Token.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Compiler\TypeEmitter.cs" />
+    <Compile Include="Compiler\NamespaceEmitter.cs" />
+    <Compile Include="Compiler\MethodCollection.cs" />
+    <Compile Include="Compiler\MethodWriter\MethodWriter.cs" />
+    <Compile Include="Compiler\MethodWriter\MethodWriterSetup.cs" />
+    <Compile Include="Compiler\CompileException.cs" />
+    <Compile Include="Compiler\LoopMetadata.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Rusty\Rusty.csproj">
+      <Project>{818030A8-5FFE-4CA1-8248-0940C72EA47A}</Project>
+      <Name>Rusty</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+  </ItemGroup>
+  <ProjectExtensions>
+    <VisualStudio />
+  </ProjectExtensions>
+</Project>
