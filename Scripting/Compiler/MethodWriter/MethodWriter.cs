@@ -373,12 +373,34 @@ namespace IronAHK.Scripting
         void EmitCannedMethod(CodeTypeReferenceExpression Type, CodeMethodInvokeExpression Invoke)
         {
             Depth++;
-            Debug("Emitting canned method "+Invoke.Method.MethodName);
-            if(Type.Type.BaseType == "System.String" && Invoke.Method.MethodName == "Concat")
+            Type target, rusty = typeof(Rusty.Core);
+            if (Type.Type.BaseType.Equals(rusty.FullName, StringComparison.OrdinalIgnoreCase))
+                target = rusty;
+            else
             {
-                Generator.Emit(OpCodes.Call, typeof(string).GetMethod("Concat", new Type[] { typeof(string[]) }));
+                try
+                {
+                    target = System.Type.GetType(Type.Type.BaseType, true, false);
+                }
+                catch (Exception)
+                {
+                    throw new CompileException(Type, "Could not access type " + Type.Type.BaseType);
+                }
             }
-            else throw new CompileException(Invoke, "No canned method named "+Invoke.Method.MethodName+" for type "+Type.Type.BaseType);
+            try
+            {
+                Type[] types = null;
+                if (target.FullName == typeof(string).FullName && Invoke.Method.MethodName == "Concat")
+                    types = new Type[] { typeof(string[]) };
+                MethodInfo method = types == null ? target.GetMethod(Invoke.Method.MethodName) : target.GetMethod(Invoke.Method.MethodName, types);
+                if (method == null)
+                    throw new ArgumentNullException();
+                Generator.Emit(OpCodes.Call, method);
+            }
+            catch (Exception)
+            {
+                throw new CompileException(Invoke, string.Format("Could not find method {0} in type {1}", Invoke.Method.MethodName, Type.Type.BaseType));
+            }
             Depth--;
         }
         #endregion
