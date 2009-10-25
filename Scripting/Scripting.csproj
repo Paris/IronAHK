@@ -92,6 +92,7 @@
     <None Include="Tests\ToString.ia" />
     <None Include="Tests\ToFloat.ia" />
     <None Include="Tests\SimpleExpr.ia" />
+    <None Include="Tests\SimpleFlow.ia" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Rusty\Rusty.csproj">
