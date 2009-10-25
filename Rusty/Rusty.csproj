@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -56,7 +56,6 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <RegisterForComInterop>false</RegisterForComInterop>
     <DocumentationFile>bin\Release\IronAHK.Rusty.xml</DocumentationFile>
-    <DebugSymbols>false</DebugSymbols>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
@@ -111,6 +110,7 @@
     <Compile Include="Windows\MouseKeyboard.cs" />
     <Compile Include="Windows\Sound.cs" />
     <Compile Include="Windows\Windows.cs" />
+    <Compile Include="Core\Conversion.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />

@@ -25,10 +25,12 @@ namespace IronAHK.Scripting
 
             if(Left is CodeComplexVariableReferenceExpression)
             {
-                EmitComplexVariable(Left as CodeComplexVariableReferenceExpression, 3);
-                EmitExpression(Right);
-                if (Right is CodePrimitiveExpression && ((CodePrimitiveExpression)Right).Value is decimal)
-                    Generator.Emit(OpCodes.Box, typeof(float));
+                EmitComplexVariable(Left as CodeComplexVariableReferenceExpression, true);
+                Type Generated = EmitExpression(Right);
+
+                if(Generated != typeof(string))
+                    Generator.Emit(OpCodes.Box, Generated);
+
                 Generator.Emit(OpCodes.Call, SetEnv);
             }
             else if(Left is CodeVariableReferenceExpression)
@@ -49,41 +51,45 @@ namespace IronAHK.Scripting
             }
             else throw new CompileException(Left, "Left hand is unassignable");
 
-
             Depth--;
+        }
+
+        void EmitComplexVariable(CodeComplexVariableReferenceExpression Complex, bool Setting)
+        {
+            EmitComplexVariable(Complex, Setting ? 3 : 0);
         }
 
         void EmitComplexVariable(CodeComplexVariableReferenceExpression Complex, int Get)
         {
             Depth++;
 
-            Debug("Emitting complex variable reference");
+            Debug("Emitting complex variable reference, "+(Get > 0 ? "setting" : "getting"));
 
             Generator.Emit(OpCodes.Ldc_I4, Complex.Parts.Length);
             Generator.Emit(OpCodes.Newarr, typeof(string));
 
-            if(Get > 0)
-                Get--;
+            if(Get > 0) Get--;
 
+            Depth++;
             for(int i = 0; i < Complex.Parts.Length; i++)
             {
                 Generator.Emit(OpCodes.Dup);
                 Generator.Emit(OpCodes.Ldc_I4, i);
-                EmitExpression(Complex.Parts[i], Get);
+
+                Type Generated = typeof(object);
+                if(Complex.Parts[i] is CodeComplexVariableReferenceExpression)
+                    EmitComplexVariable(Complex.Parts[i] as CodeComplexVariableReferenceExpression, Get);
+                else Generated = EmitExpression(Complex.Parts[i]);
+
+                ForceTopStack(Generated, typeof(string));
                 Generator.Emit(OpCodes.Stelem_Ref);
             }
+            Depth--;
 
             Generator.Emit(OpCodes.Call, typeof(string).GetMethod("Concat", new Type[] { typeof(string[]) }));
 
-            Depth++;
-            if(Get == 0)
-            {
-                Debug("Getting as instructed");
-                Generator.Emit(OpCodes.Call, GetEnv);
-            }
-            else Debug("I'm a good boy and not getting");
+            if(Get == 0) Generator.Emit(OpCodes.Call, GetEnv);
 
-            Depth--;
             Depth--;
         }
 
@@ -102,7 +108,9 @@ namespace IronAHK.Scripting
             {
                 Generator.Emit(OpCodes.Dup);
                 Generator.Emit(OpCodes.Ldc_I4, i);
-                EmitExpression(Dynamic.Initializers[i]);
+                Type Generated = EmitExpression(Dynamic.Initializers[i]);
+                ForceTopStack(Generated, typeof(string));
+
                 Generator.Emit(OpCodes.Stelem_Ref);
             }
             Depth--;
@@ -115,6 +123,30 @@ namespace IronAHK.Scripting
                 return string.Concat(sep, Var.VariableName);
             else
                 return string.Concat(Member.Name, sep, Var.VariableName);
+        }
+
+        void ForceTopStack(Type Top, Type Wanted)
+        {
+            Depth++;
+            if(Top != Wanted)
+            {
+                Debug("Forcing top stack "+Top+" to "+Wanted);
+                if(Wanted == typeof(string))
+                {
+                    if(Top != typeof(object)) Generator.Emit(OpCodes.Box, Top);
+                    Generator.Emit(OpCodes.Call, ForceString);
+                }
+                else if(Wanted == typeof(float))
+                {
+                    if(Top != typeof(object)) Generator.Emit(OpCodes.Box, Top);
+                    Generator.Emit(OpCodes.Call, ForceFloat);
+                }
+                else
+                {
+                    Debug("WARNING: Can not force "+Wanted);
+                }
+            }
+            Depth--;
         }
     }
 }

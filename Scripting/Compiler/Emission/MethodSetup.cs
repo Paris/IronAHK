@@ -17,6 +17,9 @@ namespace IronAHK.Scripting
         MethodInfo SetEnv;
         MethodInfo GetEnv;
 
+        MethodInfo ForceFloat;
+        MethodInfo ForceString;
+
         MethodCollection Lookup;
 
         public bool IsEntryPoint = false;
@@ -51,6 +54,8 @@ namespace IronAHK.Scripting
             Type rusty = typeof(Rusty.Core);
             SetEnv = rusty.GetMethod("SetEnv");
             GetEnv = rusty.GetMethod("GetEnv");
+            ForceFloat = rusty.GetMethod("ForceFloat");
+            ForceString = rusty.GetMethod("ForceString");
             Locals = new Dictionary<string, LocalBuilder>();
         }
 

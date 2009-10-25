@@ -8,42 +8,52 @@ namespace IronAHK.Scripting
 {
     internal partial class MethodWriter
     {
-        void EmitMethodInvoke(CodeMethodInvokeExpression Invoke)
+        Type EmitMethodInvoke(CodeMethodInvokeExpression Invoke)
         {
             if(Invoke.Method.MethodName == string.Empty)
                 throw new CompileException(Invoke, "Empty method name");
 
             Depth++;
             Debug("Emitting method invoke expression for "+Invoke.Method.MethodName);
+
+            var Type = Invoke.Method.TargetObject as CodeTypeReferenceExpression;
+            MethodInfo Info;
+
             ArgType[] Args = new ArgType[Invoke.Parameters.Count];
+
+                for(int i = 0; i < Args.Length; i++)
+                    Args[i] = ArgType.Expression;
+
+            if(Type == null)
+            {
+                Info = Lookup.BestMatch(Invoke.Method.MethodName, Args);
+
+                if(Info == null)
+                    throw new CompileException(Invoke, "Could not look up method "+Invoke.Method.MethodName);
+            }
+            else Info = ResolveCannedMethod(Type, Invoke);
+
+            ParameterInfo[] Parameters = Info.GetParameters();
 
             Depth++;
             for(int i = 0; i < Args.Length; i++)
             {
                 Debug("Emitting parameter "+i);
-                EmitExpression(Invoke.Parameters[i]);
+                Type Generated = EmitExpression(Invoke.Parameters[i]);
                 Args[i] = ArgType.Expression;
+
+                ForceTopStack(Generated, Parameters[i].ParameterType);
             }
             Depth--;
-
-            var Type = Invoke.Method.TargetObject as CodeTypeReferenceExpression;
-            if(Type != null)
-            {
-                EmitCannedMethod(Type, Invoke);
-                return;
-            }
-
-            MethodInfo Info = Lookup.BestMatch(Invoke.Method.MethodName, Args);
-
-            if(Info == null)
-                throw new CompileException(Invoke, "Could not look up method "+Invoke.Method.MethodName);
 
             Generator.Emit(OpCodes.Call, Info);
             Depth--;
+
+            return Info.ReturnType;
         }
 
         // Method to quickly resolve methods emitted frequently by parser
-        void EmitCannedMethod(CodeTypeReferenceExpression Type, CodeMethodInvokeExpression Invoke)
+        MethodInfo ResolveCannedMethod(CodeTypeReferenceExpression Type, CodeMethodInvokeExpression Invoke)
         {
             Depth++;
             Type target, rusty = typeof(Rusty.Core);
@@ -60,6 +70,7 @@ namespace IronAHK.Scripting
                     throw new CompileException(Type, "Could not access type " + Type.Type.BaseType);
                 }
             }
+
             try
             {
                 Type[] types = null;
@@ -68,13 +79,14 @@ namespace IronAHK.Scripting
                 MethodInfo method = types == null ? target.GetMethod(Invoke.Method.MethodName) : target.GetMethod(Invoke.Method.MethodName, types);
                 if (method == null)
                     throw new ArgumentNullException();
-                Generator.Emit(OpCodes.Call, method);
+
+                Depth--;
+                return method;
             }
             catch (Exception)
             {
                 throw new CompileException(Invoke, string.Format("Could not find method {0} in type {1}", Invoke.Method.MethodName, Type.Type.BaseType));
             }
-            Depth--;
         }
     }
 }

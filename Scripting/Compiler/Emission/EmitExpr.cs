@@ -8,47 +8,48 @@ namespace IronAHK.Scripting
 {
     internal partial class MethodWriter
     {
-        void EmitExpressionStatement(CodeExpressionStatement Expression)
+        Type EmitExpressionStatement(CodeExpressionStatement Expression)
         {
             Depth++;
             Debug("Emitting expression statement");
-            EmitExpression(Expression.Expression);
+            Type Generated = EmitExpression(Expression.Expression);
             Depth--;
+
+            return Generated;
         }
 
-        void EmitExpression(CodeExpression Expression)
-        {
-            EmitExpression(Expression, 0);
-        }
-
-        void EmitExpression(CodeExpression Expression, int Get)
+        Type EmitExpression(CodeExpression Expression)
         {
             Depth++;
             Debug("Emitting expression");
+            Type Generated;
 
             if(Expression is CodeMethodInvokeExpression)
             {
-                EmitMethodInvoke(Expression as CodeMethodInvokeExpression);
+                Generated = EmitMethodInvoke(Expression as CodeMethodInvokeExpression);
             }
             else if(Expression is CodeArrayCreateExpression)
             {
                 EmitDynamicName(Expression as CodeArrayCreateExpression);
+                Generated = typeof(string[]);
             }
             else if(Expression is CodePrimitiveExpression)
             {
-                EmitPrimitive(Expression as CodePrimitiveExpression);
+                Generated = EmitPrimitive(Expression as CodePrimitiveExpression);
             }
             else if(Expression is CodeComplexVariableReferenceExpression)
             {
-                EmitComplexVariable(Expression as CodeComplexVariableReferenceExpression, Get);
+                EmitComplexVariable(Expression as CodeComplexVariableReferenceExpression, false);
+                Generated = typeof(object);
             }
             else if(Expression is CodeBinaryOperatorExpression)
             {
-                EmitBinaryOperator(Expression as CodeBinaryOperatorExpression);
+                Generated = EmitBinaryOperator(Expression as CodeBinaryOperatorExpression);
             }
             else if (Expression is CodeAssignExpression)
             {
                 EmitAssignExpression(Expression as CodeAssignExpression);
+                Generated = null;
             }
             else if(Expression is CodeVariableReferenceExpression)
             {
@@ -58,61 +59,78 @@ namespace IronAHK.Scripting
 
                 LocalBuilder Builder = Locals[Expr.VariableName];
                 Generator.Emit(OpCodes.Ldloc, Builder);
+
+                Generated = Builder.LocalType;
             }
             else
             {
                 Depth++;
                 Debug("Unhandled expression: "+Expression.GetType());
+                Generated = null;
                 Depth--;
             }
 
             Depth--;
+
+            return Generated;
         }
 
-        void EmitBinaryOperator(CodeBinaryOperatorExpression Binary)
+        Type EmitBinaryOperator(CodeBinaryOperatorExpression Binary)
         {
             Depth++;
             Debug("Emitting binary operator, left hand side");
-            EmitExpression(Binary.Left);
+            ForceTopStack(EmitExpression(Binary.Left), typeof(float));
             Debug("Emitting binary operator, right hand side");
-            EmitExpression(Binary.Right);
+            ForceTopStack(EmitExpression(Binary.Right), typeof(float));
+
+            Type Generated;
 
             switch(Binary.Operator)
             {
                 case CodeBinaryOperatorType.Add:
                     Generator.Emit(OpCodes.Add);
+                    Generated = typeof(float);
                     break;
 
                 case CodeBinaryOperatorType.Subtract:
                     Generator.Emit(OpCodes.Sub);
+                    Generated = typeof(float);
                     break;
 
                 case CodeBinaryOperatorType.Multiply:
                     Generator.Emit(OpCodes.Mul);
+                    Generated = typeof(float);
                     break;
 
                 case CodeBinaryOperatorType.Divide:
                     Generator.Emit(OpCodes.Div);
+                    Generated = typeof(float);
                     break;
 
                 case CodeBinaryOperatorType.LessThan:
                     Generator.Emit(OpCodes.Clt);
+                    Generated = typeof(bool);
                     break;
 
                 case CodeBinaryOperatorType.GreaterThan:
                     Generator.Emit(OpCodes.Cgt);
+                    Generated = typeof(bool);
                     break;
 
                 case CodeBinaryOperatorType.ValueEquality:
                     Generator.Emit(OpCodes.Ceq);
+                    Generated = typeof(bool);
                     break;
 
                 default:
                     Debug("Unhandled operator: "+Binary.Operator);
+                    Generated = null;
                     break;
             }
 
             Depth--;
+
+            return Generated;
         }
     }
 }
