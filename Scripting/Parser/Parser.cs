@@ -10,7 +10,7 @@ namespace IronAHK.Scripting
     {
         Dictionary<string, CodeMemberMethod> methods;
         Type core;
-        const string mainScope = "\0";
+        const string mainScope = "";
         CodeMemberMethod main;
 
         /// <summary>
