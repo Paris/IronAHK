@@ -8,6 +8,16 @@ namespace IronAHK.Scripting
 {
     internal partial class MethodWriter
     {
+        void EmitAssignExpression(CodeAssignExpression Expr)
+        {
+            EmitAssignment(Expr.Left, Expr.Right);
+        }
+
+        void EmitAssignStatement(CodeAssignStatement Assign)
+        {
+            EmitAssignment(Assign.Left, Assign.Right);
+        }
+
         void EmitAssignment(CodeExpression Left, CodeExpression Right)
         {
             Depth++;
