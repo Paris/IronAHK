@@ -1,0 +1,2 @@
+Loop, 5
+    MsgBox, Loop
