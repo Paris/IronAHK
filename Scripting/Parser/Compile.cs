@@ -75,7 +75,7 @@ namespace IronAHK.Scripting
                     switch (token)
                     {
                         case Token.Assign:
-                            parent.Add(ParseAssign(code));
+                            parent.Add((CodeMethodInvokeExpression)ParseAssign(code));
                             break;
 
                         case Token.Command:

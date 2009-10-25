@@ -23,20 +23,35 @@ namespace IronAHK.Scripting
             get { return parts; }
         }
 
+        public CodeMethodInvokeExpression QualifiedName
+        {
+            get
+            {
+                var concat = new CodeMethodInvokeExpression();
+                concat.Method = new CodeMethodReferenceExpression(new CodeTypeReferenceExpression(typeof(string)), "Concat", new CodeTypeReference(typeof(string[])));
+
+                CodeExpression[] sub = new CodeExpression[parts.Length];
+
+                for (int i = 0; i < parts.Length; i++)
+                {
+                    var part = parts[i];
+                    if (part is CodePrimitiveExpression)
+                        sub[i] = (CodePrimitiveExpression)part;
+                    else if (part is CodeComplexVariableReferenceExpression)
+                        sub[i] = (CodeMethodInvokeExpression)(CodeComplexVariableReferenceExpression)part;
+                }
+
+                concat.Parameters.Add(new CodeArrayCreateExpression(new CodeTypeReference(typeof(string[])), sub));
+                return concat;
+            }
+        }
+
         public static explicit operator CodeMethodInvokeExpression(CodeComplexVariableReferenceExpression variable)
         {
-            var concat = new CodeMethodInvokeExpression();
-            concat.Method = new CodeMethodReferenceExpression(new CodeTypeReferenceExpression(typeof(string)), "Concat", new CodeTypeReference(typeof(object[])));
-
-            foreach (CodeExpression part in variable.Parts)
-            {
-                if (part is CodePrimitiveExpression)
-                    concat.Parameters.Add(part);
-                else if (part is CodeComplexVariableReferenceExpression)
-                    concat.Parameters.Add((CodeMethodInvokeExpression)(CodeComplexVariableReferenceExpression)part);
-            }
-
-            return new CodeMethodInvokeExpression(new CodeMethodReferenceExpression(new CodeTypeReferenceExpression(typeof(Rusty.Core)), "GetEnv"), concat);
+            var get = new CodeMethodInvokeExpression();
+            get.Method = new CodeMethodReferenceExpression(new CodeTypeReferenceExpression(typeof(Rusty.Core)), "GetEnv");
+            get.Parameters.Add(variable.QualifiedName);
+            return get;
         }
     }
 }
