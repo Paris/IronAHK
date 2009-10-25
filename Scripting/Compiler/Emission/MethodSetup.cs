@@ -54,8 +54,8 @@ namespace IronAHK.Scripting
             Type rusty = typeof(Rusty.Core);
             SetEnv = rusty.GetMethod("SetEnv");
             GetEnv = rusty.GetMethod("GetEnv");
-            ForceFloat = rusty.GetMethod("ForceFloat");
-            ForceString = rusty.GetMethod("ForceString");
+            ForceFloat = typeof(Rusty.Script).GetMethod("ForceFloat");
+            ForceString = typeof(Rusty.Script).GetMethod("ForceString");
             Locals = new Dictionary<string, LocalBuilder>();
         }
 
@@ -76,8 +76,6 @@ namespace IronAHK.Scripting
             MethodInfo Enable = Application.GetMethod("EnableVisualStyles");
             Generator.Emit(OpCodes.Call, Enable);
         }
-
-
 
         [Conditional("DEBUG")]
         void Debug(string Message)

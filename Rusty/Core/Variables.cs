@@ -18,7 +18,6 @@ namespace IronAHK.Rusty
         /// <param name="Value">The string or number to store.</param>
         public static void SetEnv(string Name, object Value)
         {
-            Console.WriteLine("SETTING = "+Name);
             int z = Name.LastIndexOf('.') + 1;
             if (z > 0 && z + A_.Length < Name.Length && Name.Substring(z, A_.Length).Equals(A_, StringComparison.OrdinalIgnoreCase))
             {
@@ -50,17 +49,13 @@ namespace IronAHK.Rusty
         /// <returns>Corresponding value.</returns>
         public static object GetEnv(string Name)
         {
-            Console.WriteLine("GETTING = "+Name);
             if (variables.ContainsKey(Name))
                 return variables[Name];
             else
             {
                 int z = Name.LastIndexOf('.') + 1;
                 if (z == 0 || z + A_.Length > Name.Length)
-                {
-                    Console.WriteLine("No property, nulling");
                     return null;
-                }
 
                 string name = Name.Substring(z);
                 if (!name.Substring(0, A_.Length).Equals(A_, StringComparison.OrdinalIgnoreCase))
@@ -77,12 +72,6 @@ namespace IronAHK.Rusty
                     return null;
                 }
             }
-        }
-
-        public static void Parameters(string[] names, object[] values, object[] defaults)
-        {
-            for (int i = 0; i < names.Length; i++)
-                SetEnv(names[i], i < values.Length ? values[i] : i < defaults.Length ? defaults[i] : null);
         }
     }
 }

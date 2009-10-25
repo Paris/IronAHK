@@ -2,7 +2,7 @@
 
 namespace IronAHK.Rusty
 {
-    public partial class Core
+    public partial class Script : Core
     {
         static int Called = 0;
 
