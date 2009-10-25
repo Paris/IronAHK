@@ -54,8 +54,8 @@ namespace IronAHK.Scripting
             Type rusty = typeof(Rusty.Core);
             SetEnv = rusty.GetMethod("SetEnv");
             GetEnv = rusty.GetMethod("GetEnv");
-            ForceFloat = typeof(Rusty.Script).GetMethod("ForceFloat");
-            ForceString = typeof(Rusty.Script).GetMethod("ForceString");
+            ForceFloat = typeof(Script).GetMethod("ForceFloat");
+            ForceString = typeof(Script).GetMethod("ForceString");
             Locals = new Dictionary<string, LocalBuilder>();
         }
 

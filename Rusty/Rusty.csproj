@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -110,8 +110,6 @@
     <Compile Include="Windows\MouseKeyboard.cs" />
     <Compile Include="Windows\Sound.cs" />
     <Compile Include="Windows\Windows.cs" />
-    <Compile Include="Core\Scripting\Conversion.cs" />
-    <Compile Include="Core\Scripting\Parameters.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -132,7 +130,4 @@
   <ProjectExtensions>
     <VisualStudio />
   </ProjectExtensions>
-  <ItemGroup>
-    <Folder Include="Core\Scripting\" />
-  </ItemGroup>
 </Project>
