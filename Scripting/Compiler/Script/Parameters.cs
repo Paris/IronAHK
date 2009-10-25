@@ -1,9 +1,7 @@
 
-using System;
-
-namespace IronAHK.Rusty
+namespace IronAHK.Scripting
 {
-    public partial class Script : Core
+    partial class Script
     {
         public static void Parameters(string[] names, object[] values, object[] defaults)
         {
