@@ -108,6 +108,8 @@ namespace IronAHK.Scripting
 
         public override CompilerResults CompileAssemblyFromDom(CompilerParameters options, params CodeCompileUnit[] compilationUnits)
         {
+            PrintCSharpCode(compilationUnits, Console.Out);
+
             Compiler compiler = new Compiler();
             CompilerResults results = compiler.CompileAssemblyFromDomBatch(options, compilationUnits);
             return results;
