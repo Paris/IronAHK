@@ -10,15 +10,15 @@ namespace IronAHK.Scripting
     {
         void EmitAssignExpression(CodeAssignExpression Expr)
         {
-            EmitAssignment(Expr.Left, Expr.Right);
+            EmitAssignment(Expr.Left, Expr.Right, true);
         }
 
-        void EmitAssignStatement(CodeAssignStatement Assign)
+        void EmitAssignStatement(CodeAssignStatement Assign, bool ForceTypes)
         {
-            EmitAssignment(Assign.Left, Assign.Right);
+            EmitAssignment(Assign.Left, Assign.Right, ForceTypes);
         }
 
-        void EmitAssignment(CodeExpression Left, CodeExpression Right)
+        void EmitAssignment(CodeExpression Left, CodeExpression Right, bool ForceTypes)
         {
             Depth++;
             Debug("Emitting assignment statement");
@@ -46,7 +46,7 @@ namespace IronAHK.Scripting
                     Locals.Add(Reference.VariableName, Var);
                 }
 
-                EmitExpression(Right);
+                EmitExpression(Right, ForceTypes);
                 Generator.Emit(OpCodes.Stloc, Var);
             }
             else throw new CompileException(Left, "Left hand is unassignable");

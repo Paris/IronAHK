@@ -5,7 +5,7 @@ using System.Text.RegularExpressions;
 
 namespace IronAHK.Rusty
 {
-    static partial class Core
+    partial class Core
     {
         /// <summary>
         /// Returns the absolute value of a number.

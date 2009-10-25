@@ -10,7 +10,7 @@ namespace IronAHK.Scripting
     {
         void EmitType(ModuleBuilder Parent, CodeTypeDeclaration Decl)
         {
-            TypeBuilder Type = Parent.DefineType(Decl.Name, TypeAttributes.Public);
+            TypeBuilder Type = Parent.DefineType(Decl.Name, TypeAttributes.Public, typeof(Rusty.Script));
             
             foreach(CodeMemberMethod Method in Decl.Members)
             {
@@ -18,7 +18,7 @@ namespace IronAHK.Scripting
                 Writer.Emit();
                 if(Writer.IsEntryPoint) EntryPoint = Writer.Method;
             }
-            
+
             Type.CreateType();
         }
     }

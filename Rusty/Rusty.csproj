@@ -110,7 +110,8 @@
     <Compile Include="Windows\MouseKeyboard.cs" />
     <Compile Include="Windows\Sound.cs" />
     <Compile Include="Windows\Windows.cs" />
-    <Compile Include="Core\Conversion.cs" />
+    <Compile Include="Core\Scripting\Conversion.cs" />
+    <Compile Include="Core\Scripting\Parameters.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -131,4 +132,7 @@
   <ProjectExtensions>
     <VisualStudio />
   </ProjectExtensions>
+  <ItemGroup>
+    <Folder Include="Core\Scripting\" />
+  </ItemGroup>
 </Project>

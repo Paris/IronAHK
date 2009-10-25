@@ -4,7 +4,7 @@ using System.Windows.Forms;
 
 namespace IronAHK.Rusty
 {
-    static partial class Core
+    partial class Core
     {
         /// <summary>
         /// Displays a small icon to the left of the text in the specified part (if PartNumber is omitted, it defaults to 1). Filename is the name of an icon (.ICO), cursor (.CUR), or animated cursor (.ANI) file (animated cursors will not actually be animated in the bar). Other sources of icons include the following types of files: EXE, DLL, CPL, SCR, and other types that contain icon resources. To use an icon group other than the first one in the file, specify its number for IconNumber. For example, SB_SetIcon("Shell32.dll", 2) would use the default icon from the second icon group. SB_SetIcon() returns the icon's HICON upon success and 0 upon failure. The HICON is a system resource that can be safely ignored by most scripts because it is destroyed automatically when the status bar's window is destroyed. Similarly, any old icon is destroyed when SB_SetIcon() replaces it with a new one.

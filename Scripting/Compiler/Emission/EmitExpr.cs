@@ -8,17 +8,17 @@ namespace IronAHK.Scripting
 {
     internal partial class MethodWriter
     {
-        Type EmitExpressionStatement(CodeExpressionStatement Expression)
+        Type EmitExpressionStatement(CodeExpressionStatement Expression, bool ForceTypes)
         {
             Depth++;
             Debug("Emitting expression statement");
-            Type Generated = EmitExpression(Expression.Expression);
+            Type Generated = EmitExpression(Expression.Expression, ForceTypes);
             Depth--;
 
             return Generated;
         }
 
-        Type EmitExpression(CodeExpression Expression)
+        Type EmitExpression(CodeExpression Expression, bool ForceTypes)
         {
             Depth++;
             Debug("Emitting expression");
@@ -44,7 +44,7 @@ namespace IronAHK.Scripting
             }
             else if(Expression is CodeBinaryOperatorExpression)
             {
-                Generated = EmitBinaryOperator(Expression as CodeBinaryOperatorExpression);
+                Generated = EmitBinaryOperator(Expression as CodeBinaryOperatorExpression, ForceTypes);
             }
             else if (Expression is CodeAssignExpression)
             {
@@ -75,15 +75,21 @@ namespace IronAHK.Scripting
             return Generated;
         }
 
-        Type EmitBinaryOperator(CodeBinaryOperatorExpression Binary)
+        Type EmitExpression(CodeExpression Expression)
         {
+            return EmitExpression(Expression, true);
+        }
+
+        Type EmitBinaryOperator(CodeBinaryOperatorExpression Binary, bool ForceTypes)
+        {
+            Type Generated;
             Depth++;
             Debug("Emitting binary operator, left hand side");
-            ForceTopStack(EmitExpression(Binary.Left), typeof(float));
+            Generated = EmitExpression(Binary.Left);
+            if(ForceTypes) ForceTopStack(Generated, typeof(float));
             Debug("Emitting binary operator, right hand side");
-            ForceTopStack(EmitExpression(Binary.Right), typeof(float));
-
-            Type Generated;
+            Generated = EmitExpression(Binary.Right);
+            if(ForceTypes) ForceTopStack(Generated, typeof(float));
 
             switch(Binary.Operator)
             {
