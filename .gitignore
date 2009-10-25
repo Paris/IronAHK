@@ -3,3 +3,5 @@
 /*.suo
 bin
 obj
+*.pidb
+*.usertasks
