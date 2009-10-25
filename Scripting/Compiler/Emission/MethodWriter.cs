@@ -51,29 +51,37 @@ namespace IronAHK.Scripting
             Depth--;
         }
 
-        void EmitPrimitive(CodePrimitiveExpression Primitive)
+        Type EmitPrimitive(CodePrimitiveExpression Primitive)
         {
             Depth++;
+            Type Generated;
+
             if(Primitive.Value is string)
             {
                 Debug("Pushing primitive string : \""+(Primitive.Value as string)+"\"");
                 Generator.Emit(OpCodes.Ldstr, Primitive.Value as string);
+                Generated = typeof(string);
             }
             else if(Primitive.Value is int)
             {
                 Debug("Pushing primitive integer : "+((int)Primitive.Value));
                 Generator.Emit(OpCodes.Ldc_I4, (int)Primitive.Value);
+                Generated = typeof(int);
             }
             else if(Primitive.Value is decimal)
             {
                 Debug("Pushing decimal : "+((decimal) Primitive.Value));
                 Generator.Emit(OpCodes.Ldc_R4, ((float) ((decimal) Primitive.Value)));
+                Generated = typeof(float);
             }
             else
             {
                 Debug("Unhandled primitive: "+Primitive.Value.GetType());
+                Generated = null;
             }
             Depth--;
+
+            return Generated;
         }
     }
 }

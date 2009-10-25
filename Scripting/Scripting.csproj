@@ -86,9 +86,11 @@
     <Compile Include="Compiler\Emission\EmitLoop.cs" />
     <Compile Include="Compiler\Emission\EmitVars.cs" />
     <None Include="Tests\Loop.ia" />
-    <None Include="Tests\SimpleVar.txt" />
+    <None Include="Tests\SimpleVar.ia" />
     <None Include="Tests\ComplexVar.ia" />
     <Compile Include="Compiler\Emission\EmitCall.cs" />
+    <None Include="Tests\ToString.ia" />
+    <None Include="Tests\ToFloat.ia" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Rusty\Rusty.csproj">
