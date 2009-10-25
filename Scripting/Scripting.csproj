@@ -91,6 +91,7 @@
     <Compile Include="Compiler\Emission\EmitCall.cs" />
     <None Include="Tests\ToString.ia" />
     <None Include="Tests\ToFloat.ia" />
+    <None Include="Tests\SimpleExpr.ia" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Rusty\Rusty.csproj">
