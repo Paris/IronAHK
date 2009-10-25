@@ -72,14 +72,7 @@ namespace IronAHK.Scripting
             Generator.Emit(OpCodes.Call, Enable);
         }
 
-        string ResolveName(CodeVariableReferenceExpression Var)
-        {
-            const string sep = ".";
-            if (IsEntryPoint)
-                return string.Concat(sep, Var.VariableName);
-            else
-                return string.Concat(Member.Name, sep, Var.VariableName);
-        }
+
 
         [Conditional("DEBUG")]
         void Debug(string Message)
