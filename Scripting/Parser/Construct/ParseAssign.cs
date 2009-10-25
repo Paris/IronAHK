@@ -8,7 +8,7 @@ namespace IronAHK.Scripting
 {
     partial class Parser
     {
-        CodeAssignStatement ParseAssign(string code)
+        CodeComplexAssignStatement ParseAssign(string code)
         {
             string name, value;
             var buf = new StringBuilder(code.Length);
@@ -68,7 +68,7 @@ namespace IronAHK.Scripting
             #endregion
 
             CodeExpression result = VarNameOrBasicString(value, true);
-            return new CodeAssignStatement(VarId(name), result);
+            return new CodeComplexAssignStatement(VarId(name), result);
         }
 
         public static bool IsIdentifier(char symbol)
