@@ -3,7 +3,7 @@ using System.IO;
 
 namespace IronAHK.Rusty
 {
-    static partial class Core
+    partial class Core
     {
         /// <summary>
         /// <para>For non-compiled scripts: The full path and name of the EXE file that is actually running the current script. For example: C:\Program Files\AutoHotkey\AutoHotkey.exe</para>
