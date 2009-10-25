@@ -15,8 +15,8 @@ namespace IronAHK
             const int ExitError = 1;
 
 #if DEBUG
-            const string Test = "ComplexVar";
-            args = string.Format("/out test.exe ..{0}..{0}..{0}Scripting{0}Tests{0}"+Test+".ia", Path.DirectorySeparatorChar.ToString()).Split(' ');
+            const string test = "ComplexExpression";
+            args = string.Format("/out test.exe ..{0}..{0}..{0}Scripting{0}Tests{0}" + test + ".ia", Path.DirectorySeparatorChar.ToString()).Split(' ');
 #endif
 
             #region Command line options
