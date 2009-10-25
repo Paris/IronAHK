@@ -42,6 +42,7 @@
   -->
   <ItemGroup>
     <Compile Include="Compiler\CompilerSetup.cs" />
+    <None Include="Tests\ComplexExpression.ia" />
     <None Include="Tests\Main.ia" />
     <Compile Include="Compiler\Compiler.cs" />
     <Compile Include="CSharpGenerator.cs">

@@ -50,6 +50,7 @@ namespace IronAHK.Scripting
                 {
                     string part = (string)parts[i];
                     object result;
+                    bool next = false;
 
                     #region Parentheses
                     if (part[0] == ParenOpen)
@@ -57,35 +58,41 @@ namespace IronAHK.Scripting
                         int levels = 1;
                         for (int x = i + 1; x < parts.Count; x++)
                         {
-                            if (parts[x] is string)
+                            string current = parts[x] as string;
+                            if (string.IsNullOrEmpty(current))
+                                continue;
+                            switch (current[0])
                             {
-                                switch (((string)parts[x])[0])
-                                {
-                                    case ParenOpen:
-                                        levels++;
-                                        break;
+                                case ParenOpen:
+                                    levels++;
+                                    break;
 
-                                    case ParenClose:
-                                        if (--levels == 0)
-                                        {
-                                            int count = x - i;
+                                case ParenClose:
+                                    if (--levels == 0)
+                                    {
+                                        int count = x - i;
 
-                                            var sub = new List<object>(count);
+                                        var sub = new List<object>(count);
 
-                                            for (int n = i + 1; n < x; n++)
-                                                sub.Add(parts[n]);
+                                        for (int n = i + 1; n < x; n++)
+                                            sub.Add(parts[n]);
 
-                                            parts.RemoveRange(i, count + 1);
+                                        parts.RemoveRange(i, count + 1);
 
-                                            if (sub.Count > 0)
-                                                parts.Insert(i, ParseExpression(sub));
-                                        }
-                                        break;
-                                }
+                                        if (sub.Count > 0)
+                                            parts.Insert(i, ParseExpression(sub));
+
+                                        next = true;
+                                    }
+                                    break;
                             }
+                            if (next)
+                                break;
                         }
                         if (levels != 0)
                             throw new ParseException(ExUnbalancedParens);
+                        else if (next)
+                            continue;
                     }
                     #endregion
                     else if (IsPrimativeObject(part, out result)) // numeric
@@ -122,14 +129,20 @@ namespace IronAHK.Scripting
             }
 
             #region Binary operators
-            for (int i = 0; i < parts.Count; i++)
+            bool op = true;
+            while (op)
             {
-                if (parts[i] is CodeBinaryOperatorType)
+                op = false;
+                for (int i = 0; i < parts.Count; i++)
                 {
-                    parts[i - 1] = new CodeBinaryOperatorExpression(
-                        (CodeExpression)parts[i - 1], (CodeBinaryOperatorType)parts[i], (CodeExpression)parts[i + 1]);
-                    parts.RemoveAt(i + 1);
-                    parts.RemoveAt(i);
+                    if (parts[i] is CodeBinaryOperatorType)
+                    {
+                        op = true;
+                        parts[i - 1] = new CodeBinaryOperatorExpression(
+                            (CodeExpression)parts[i - 1], (CodeBinaryOperatorType)parts[i], (CodeExpression)parts[i + 1]);
+                        parts.RemoveAt(i + 1);
+                        parts.RemoveAt(i);
+                    }
                 }
             }
             #endregion
@@ -526,6 +539,8 @@ namespace IronAHK.Scripting
                         #endregion
                     }
 
+                    if (op.Length == 0)
+                        op.Append(sym);
                     list.Add(op.ToString());
                 }
                 #endregion
