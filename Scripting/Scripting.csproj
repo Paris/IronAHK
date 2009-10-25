@@ -81,6 +81,10 @@
     <Compile Include="Compiler\LoopMetadata.cs" />
     <Compile Include="Compiler\Peripheral\NamespaceEmitter.cs" />
     <Compile Include="Compiler\Peripheral\TypeEmitter.cs" />
+    <Compile Include="Compiler\Emission\EmitExpr.cs" />
+    <Compile Include="Compiler\Emission\EmitFlow.cs" />
+    <Compile Include="Compiler\Emission\EmitLoop.cs" />
+    <Compile Include="Compiler\Emission\EmitVars.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Rusty\Rusty.csproj">
