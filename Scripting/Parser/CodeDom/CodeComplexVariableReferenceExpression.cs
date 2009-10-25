@@ -33,7 +33,7 @@ namespace IronAHK.Scripting
                 if (part is CodePrimitiveExpression)
                     concat.Parameters.Add(part);
                 else if (part is CodeComplexVariableReferenceExpression)
-                    concat.Parameters.Add((CodeMethodInvokeExpression)part);
+                    concat.Parameters.Add((CodeMethodInvokeExpression)(CodeComplexVariableReferenceExpression)part);
             }
 
             return new CodeMethodInvokeExpression(new CodeMethodReferenceExpression(new CodeTypeReferenceExpression(typeof(Rusty.Core)), "GetEnv"), concat);
