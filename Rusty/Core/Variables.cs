@@ -18,7 +18,6 @@ namespace IronAHK.Rusty
         /// <param name="Value">The string or number to store.</param>
         public static void SetEnv(string Name, object Value)
         {
-            Console.WriteLine("SETTING = "+Name);
             int z = Name.LastIndexOf('.') + 1;
             if (z > 0 && z + A_.Length < Name.Length && Name.Substring(z, A_.Length).Equals(A_, StringComparison.OrdinalIgnoreCase))
             {
@@ -50,7 +49,6 @@ namespace IronAHK.Rusty
         /// <returns>Corresponding value.</returns>
         public static object GetEnv(string Name)
         {
-            Console.WriteLine("GETTING = "+Name);
             if (variables.ContainsKey(Name))
                 return variables[Name];
             else
