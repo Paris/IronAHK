@@ -1,0 +1,3 @@
+test =var
+complex%test% = hoi
+MsgBox, %complexvar%
