@@ -63,7 +63,6 @@
     <Compile Include="Parser\CodeDom\CodeBlock.cs" />
     <Compile Include="Parser\CodeDom\CodeComplexAssignStatement.cs" />
     <Compile Include="Parser\CodeDom\CodeComplexVariableReferenceExpression.cs" />
-    <Compile Include="Parser\CodeDom\CodeGosubStatement.cs" />
     <Compile Include="Parser\Compile.cs" />
     <Compile Include="Parser\Function.cs" />
     <Compile Include="Parser\CodeDom\CodeLine.cs" />

@@ -89,7 +89,7 @@ namespace IronAHK.Scripting
                         else if (!IsIdentifier(sym))
                             throw new ParseException("Illegal character in label name");
                     }
-                    return gosub ? new CodeGosubStatement(parts[1]) : new CodeGotoStatement(parts[1]);
+                    return new CodeGotoStatement(parts[1]); // TODO: gosub
 
                 #endregion
 
