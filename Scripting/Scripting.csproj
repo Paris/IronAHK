@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -74,13 +74,13 @@
     <Compile Include="Parser\Symbols.cs" />
     <Compile Include="Parser\Token.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Compiler\TypeEmitter.cs" />
-    <Compile Include="Compiler\NamespaceEmitter.cs" />
     <Compile Include="Compiler\MethodCollection.cs" />
-    <Compile Include="Compiler\MethodWriter\MethodWriter.cs" />
-    <Compile Include="Compiler\MethodWriter\MethodWriterSetup.cs" />
+    <Compile Include="Compiler\Emission\MethodWriter.cs" />
+    <Compile Include="Compiler\Emission\MethodSetup.cs" />
     <Compile Include="Compiler\CompileException.cs" />
     <Compile Include="Compiler\LoopMetadata.cs" />
+    <Compile Include="Compiler\Peripheral\NamespaceEmitter.cs" />
+    <Compile Include="Compiler\Peripheral\TypeEmitter.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Rusty\Rusty.csproj">
@@ -94,4 +94,7 @@
   <ProjectExtensions>
     <VisualStudio />
   </ProjectExtensions>
+  <ItemGroup>
+    <Folder Include="Compiler\Peripheral\" />
+  </ItemGroup>
 </Project>
