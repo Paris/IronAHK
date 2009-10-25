@@ -17,19 +17,19 @@ namespace IronAHK.Scripting
             };
             Loops.Push(Meta);
 
-            EmitStatement(Iterate.InitStatement);
+            EmitStatement(Iterate.InitStatement, false);
 
             // The beginning of our loop: check the limit
             Generator.MarkLabel(Meta.Begin);
 
-            EmitExpression(Iterate.TestExpression);
+            EmitExpression(Iterate.TestExpression, false);
             Generator.Emit(OpCodes.Brfalse, Meta.End);
 
             // Emit the actual statements within
             EmitStatementCollection(Iterate.Statements);
 
             // Increase the counter by one
-            EmitStatement(Iterate.IncrementStatement);
+            EmitStatement(Iterate.IncrementStatement, false);
 
             // Start all over again
             Generator.Emit(OpCodes.Br, Meta.Begin);
