@@ -24,15 +24,20 @@ namespace IronAHK.Scripting
 
         void EmitStatement(CodeStatement Statement)
         {
+            EmitStatement(Statement, true);
+        }
+
+        void EmitStatement(CodeStatement Statement, bool ForceTypes)
+        {
             Depth++;
             Debug("Emitting statement");
             if(Statement is CodeAssignStatement)
             {
-                EmitAssignStatement(Statement as CodeAssignStatement);
+                EmitAssignStatement(Statement as CodeAssignStatement, ForceTypes);
             }
             else if(Statement is CodeExpressionStatement)
             {
-                EmitExpressionStatement(Statement as CodeExpressionStatement);
+                EmitExpressionStatement(Statement as CodeExpressionStatement, ForceTypes);
             }
             else if(Statement is CodeIterationStatement)
             {

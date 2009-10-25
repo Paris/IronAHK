@@ -55,10 +55,7 @@ namespace IronAHK.Rusty
             {
                 int z = Name.LastIndexOf('.') + 1;
                 if (z == 0 || z + A_.Length > Name.Length)
-                {
-                    Console.WriteLine("No property, nulling");
                     return null;
-                }
 
                 string name = Name.Substring(z);
                 if (!name.Substring(0, A_.Length).Equals(A_, StringComparison.OrdinalIgnoreCase))
