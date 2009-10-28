@@ -62,10 +62,15 @@ namespace IronAHK.Scripting
 
                 Generated = Builder.LocalType;
             }
+            else if (Expression is CodeFieldReferenceExpression)
+            {
+                EmitCodeFieldReference(Expression as CodeFieldReferenceExpression);
+                Generated = null;
+            }
             else
             {
                 Depth++;
-                Debug("Unhandled expression: "+Expression.GetType());
+                Debug("Unhandled expression: " + Expression.GetType());
                 Generated = null;
                 Depth--;
             }
@@ -137,6 +142,26 @@ namespace IronAHK.Scripting
             Depth--;
 
             return Generated;
+        }
+
+        void EmitCodeFieldReference(CodeFieldReferenceExpression field)
+        {
+            Depth++;
+            Debug("Emitting field reference: " + field.FieldName);
+
+            Type target = Type.GetType((field.TargetObject as CodeTypeReferenceExpression).Type.BaseType);
+            FieldInfo fi = target.GetField(field.FieldName);
+
+            try
+            {
+                Generator.Emit(OpCodes.Ldc_I4, (int)fi.GetValue(null));
+            }
+            catch (InvalidCastException)
+            {
+                throw new CompileException(field, "Enumerator " + target.Name + " does not have base type of int32");
+            }
+
+            Depth--;
         }
     }
 }
