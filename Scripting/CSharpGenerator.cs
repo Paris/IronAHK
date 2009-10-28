@@ -13,7 +13,7 @@ namespace IronAHK.Scripting
         void PrintCSharpCode(CodeCompileUnit[] units, TextWriter write)
         {
             var provider = new CSharpCodeProvider();
-            var options = new CodeGeneratorOptions { BracingStyle = "C", ElseOnClosing = false, IndentString = "\t" };
+            var options = new CodeGeneratorOptions { BracingStyle = "C", ElseOnClosing = false, IndentString = "  " };
             foreach (CodeCompileUnit code in units)
             {
                 try { provider.GenerateCodeFromCompileUnit(code, write, options); }
