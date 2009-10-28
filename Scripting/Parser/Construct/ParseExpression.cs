@@ -8,6 +8,8 @@ namespace IronAHK.Scripting
 {
     partial class Parser
     {
+        #region Wrappers
+
         CodeExpressionStatement[] ParseMultiExpression(string code)
         {
             var tokens = SplitTokens(code);
@@ -41,6 +43,8 @@ namespace IronAHK.Scripting
         {
             return ParseExpression(SplitTokens(code));
         }
+
+        #endregion
 
         CodeExpression ParseExpression(List<object> parts)
         {
@@ -95,13 +99,20 @@ namespace IronAHK.Scripting
                             continue;
                     }
                     #endregion
-                    else if (IsPrimativeObject(part, out result)) // numeric
+                    #region Numerics
+                    else if (IsPrimativeObject(part, out result))
                         parts[i] = new CodePrimitiveExpression(result);
-                    else if (IsIdentifier(part[0])) // variables
+                    #endregion
+                    #region Variables
+                    else if (IsIdentifier(part[0]))
                         parts[i] = VarId(part);
-                    else if (part.Length > 2 && part[0] == StringBound && part[part.Length - 1] == StringBound) // string
+                    #endregion
+                    #region Strings
+                    else if (part.Length > 2 && part[0] == StringBound && part[part.Length - 1] == StringBound)
                         parts[i] = part.Substring(1, part.Length - 2);
-                    else if (IsAssignOp(part)) // assignments
+                    #endregion
+                    #region Assignments
+                    else if (IsAssignOp(part))
                     {
                         int n = i - 1;
                         if (n < 0 || !(parts[n] is CodeComplexVariableReferenceExpression))
@@ -117,37 +128,56 @@ namespace IronAHK.Scripting
                             parts.Insert(i, BinaryOperator(part.Substring(0, part.Length - 1)));
                         }
                     }
+                    #endregion
+                    #region Multiple statements
                     else if (part.Length == 1 && part[0] == Multicast)
                     {
                         throw new ParseException("Multiple expression statements not allowed here");
                     }
-                    else // binary operators
+                    #endregion
+                    #region Binary operators
+                    else
                     {
                         parts[i] = BinaryOperator(part); // TODO: uniary operators
                     }
+                    #endregion
                 }
             }
 
             #region Binary operators
-            bool op = true;
-            while (op)
+
+            var op = new CodeMethodReferenceExpression();
+            op.TargetObject = new CodeThisReferenceExpression();
+            op.MethodName = "Operate";
+            bool scan = true;
+
+            // HACK: operator precedence
+
+            while (scan)
             {
-                op = false;
+                scan = false;
                 for (int i = 0; i < parts.Count; i++)
                 {
-                    if (parts[i] is CodeBinaryOperatorType)
+                    if (parts[i] is Script.Operator)
                     {
-                        op = true;
-                        parts[i - 1] = new CodeBinaryOperatorExpression(
-                            (CodeExpression)parts[i - 1], (CodeBinaryOperatorType)parts[i], (CodeExpression)parts[i + 1]);
-                        parts.RemoveAt(i + 1);
+                        scan = true;
+                        int x = i - 1, y = i + 1;
+                        var invoke = new CodeMethodInvokeExpression();
+                        invoke.Method = op;
+                        invoke.Parameters.Add(new CodePrimitiveExpression((Script.Operator)parts[i]));
+                        invoke.Parameters.Add((CodeExpression)parts[x]);
+                        invoke.Parameters.Add((CodeExpression)parts[y]);
+                        parts[x] = invoke;
+                        parts.RemoveAt(y);
                         parts.RemoveAt(i);
                     }
                 }
             }
+
             #endregion
 
             #region Assignments
+            // HACK: assignments go from right to left
             for (int i = 0; i < parts.Count; i++)
             {
                 if (parts[i] is CodeAssignExpression)
@@ -161,13 +191,15 @@ namespace IronAHK.Scripting
             }
             #endregion
 
-            if (parts.Count == 1)
-                return (CodeExpression)parts[0];
-            else
+            if (parts.Count != 1)
                 throw new ArgumentOutOfRangeException();
+
+            return (CodeExpression)parts[0];
         }
 
-        CodeBinaryOperatorType BinaryOperator(string code)
+        #region Operators
+
+        Script.Operator BinaryOperator(string code)
         {
             char[] op = code.ToCharArray();
 
@@ -177,10 +209,10 @@ namespace IronAHK.Scripting
                     switch (op.Length)
                     {
                         case 1:
-                            return CodeBinaryOperatorType.Add;
+                            return Script.Operator.Add;
 
                         case 2:
-                            return 0; // TODO: increment operator
+                            return Script.Operator.Increment;
 
                         default:
                             throw new ParseException(ExUnexpected);
@@ -190,10 +222,10 @@ namespace IronAHK.Scripting
                     switch (op.Length)
                     {
                         case 1:
-                            return CodeBinaryOperatorType.Subtract;
+                            return Script.Operator.Subtract;
 
                         case 2:
-                            return 0; // TODO: decrement operator
+                            return Script.Operator.Decrement;
 
                         default:
                             throw new ParseException(ExUnexpected);
@@ -203,10 +235,10 @@ namespace IronAHK.Scripting
                     switch (op.Length)
                     {
                         case 1:
-                            return CodeBinaryOperatorType.Multiply;
+                            return Script.Operator.Multiply;
 
                         case 2:
-                            return 0; // TODO: power operator
+                            return Script.Operator.Power;
 
                         default:
                             throw new ParseException(ExUnexpected);
@@ -216,10 +248,10 @@ namespace IronAHK.Scripting
                     switch (op.Length)
                     {
                         case 1:
-                            return CodeBinaryOperatorType.Divide;
+                            return Script.Operator.Divide;
 
                         case 2:
-                            return 0; // TODO: floor divide operator
+                            return Script.Operator.FloorDivide;
 
                         default:
                             throw new ParseException(ExUnexpected);
@@ -229,13 +261,13 @@ namespace IronAHK.Scripting
                     switch (op.Length)
                     {
                         case 1:
-                            return CodeBinaryOperatorType.GreaterThan;
+                            return Script.Operator.GreaterThan;
 
                         case 2:
                             if (op[1] == op[0])
-                                return 0; // TODO: bit shift right operator
+                                return Script.Operator.BitShiftRight;
                             else if (op[1] == Equal)
-                                return CodeBinaryOperatorType.GreaterThanOrEqual;
+                                return Script.Operator.GreaterThanOrEqual;
                             else
                                 throw new ParseException(ExUnexpected);
 
@@ -247,13 +279,13 @@ namespace IronAHK.Scripting
                     switch (op.Length)
                     {
                         case 1:
-                            return CodeBinaryOperatorType.LessThan;
+                            return Script.Operator.LessThan;
 
                         case 2:
                             if (op[1] == op[0])
-                                return 0; // TODO: bit shift left operator
-                             else if (op[1] == Equal)
-                                return CodeBinaryOperatorType.LessThanOrEqual;
+                                return Script.Operator.BitShiftLeft;
+                            else if (op[1] == Equal)
+                                return Script.Operator.LessThanOrEqual;
                             else
                                 throw new ParseException(ExUnexpected);
 
@@ -265,11 +297,11 @@ namespace IronAHK.Scripting
                     switch (op.Length)
                     {
                         case 1:
-                            return CodeBinaryOperatorType.BitwiseAnd;
+                            return Script.Operator.BitwiseAnd;
 
                         case 2:
                             if (op[0] == op[1])
-                                return CodeBinaryOperatorType.BooleanAnd;
+                                return Script.Operator.BooleanAnd;
                             else
                                 throw new ParseException(ExUnexpected);
 
@@ -281,11 +313,11 @@ namespace IronAHK.Scripting
                     switch (op.Length)
                     {
                         case 1:
-                            return CodeBinaryOperatorType.BitwiseOr;
+                            return Script.Operator.BitwiseOr;
 
                         case 2:
                             if (op[0] == op[1])
-                                return CodeBinaryOperatorType.BooleanOr;
+                                return Script.Operator.BooleanOr;
                             else
                                 throw new ParseException(ExUnexpected);
 
@@ -297,11 +329,11 @@ namespace IronAHK.Scripting
                     switch (op.Length)
                     {
                         case 1:
-                            return CodeBinaryOperatorType.ValueEquality;
+                            return Script.Operator.ValueEquality;
 
                         case 2:
                             if (op[1] == op[0])
-                                return CodeBinaryOperatorType.IdentityEquality;
+                                return Script.Operator.IdentityEquality;
                             else
                                 throw new ParseException(ExUnexpected);
 
@@ -314,13 +346,13 @@ namespace IronAHK.Scripting
                     {
                         case 2:
                             if (op[1] == Equal)
-                                return 0; // TODO: value inequality operator
+                                return Script.Operator.ValueInequality;
                             else
                                 throw new ParseException(ExUnexpected);
 
                         case 3:
                             if (op[1] == Equal && op[2] == Equal)
-                                return CodeBinaryOperatorType.IdentityInequality;
+                                return Script.Operator.IdentityInequality;
                             else
                                 throw new ParseException(ExUnexpected);
 
@@ -330,19 +362,17 @@ namespace IronAHK.Scripting
                     
                 case AssignPre:
                     if (op.Length > 1 && op[1] == Equal)
-                        return CodeBinaryOperatorType.Assign;
+                        return Script.Operator.Assign;
                     else
                         throw new ParseException(ExUnexpected);
 
                 default:
                     if (code.Length == AndTxt.Length && code.Equals(AndTxt, StringComparison.OrdinalIgnoreCase))
-                        return CodeBinaryOperatorType.BooleanAnd;
+                        return Script.Operator.BooleanAnd;
                     else if (code.Length == OrTxt.Length && code.Equals(OrTxt, StringComparison.OrdinalIgnoreCase))
-                        return CodeBinaryOperatorType.BooleanOr;
+                        return Script.Operator.BooleanOr;
                     break;
             }
-
-            // CodeBinaryOperatorType.Modulus is unimplemented
 
             throw new ArgumentOutOfRangeException();
         }
@@ -375,6 +405,10 @@ namespace IronAHK.Scripting
             else
                 return true;
         }
+
+        #endregion
+
+        #region Texts
 
         List<object> SplitTokens(string code)
         {
@@ -548,5 +582,7 @@ namespace IronAHK.Scripting
 
             return list;
         }
+
+        #endregion
     }
 }
