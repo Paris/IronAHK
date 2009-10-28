@@ -8,11 +8,6 @@ namespace IronAHK.Scripting
 {
     internal partial class MethodWriter
     {
-        void EmitAssignExpression(CodeAssignExpression Expr)
-        {
-            EmitAssignment(Expr.Left, Expr.Right, true);
-        }
-
         void EmitAssignStatement(CodeAssignStatement Assign, bool ForceTypes)
         {
             EmitAssignment(Assign.Left, Assign.Right, ForceTypes);
@@ -23,17 +18,7 @@ namespace IronAHK.Scripting
             Depth++;
             Debug("Emitting assignment statement");
 
-            if(Left is CodeComplexVariableReferenceExpression)
-            {
-                EmitComplexVariable(Left as CodeComplexVariableReferenceExpression, true);
-                Type Generated = EmitExpression(Right);
-
-                if(Generated != typeof(string))
-                    Generator.Emit(OpCodes.Box, Generated);
-
-                Generator.Emit(OpCodes.Call, SetEnv);
-            }
-            else if(Left is CodeVariableReferenceExpression)
+            if(Left is CodeVariableReferenceExpression)
             {
                 var Reference = Left as CodeVariableReferenceExpression;
 
@@ -50,45 +35,6 @@ namespace IronAHK.Scripting
                 Generator.Emit(OpCodes.Stloc, Var);
             }
             else throw new CompileException(Left, "Left hand is unassignable");
-
-            Depth--;
-        }
-
-        void EmitComplexVariable(CodeComplexVariableReferenceExpression Complex, bool Setting)
-        {
-            EmitComplexVariable(Complex, Setting ? 3 : 0);
-        }
-
-        void EmitComplexVariable(CodeComplexVariableReferenceExpression Complex, int Get)
-        {
-            Depth++;
-
-            Debug("Emitting complex variable reference, "+(Get > 0 ? "setting" : "getting"));
-
-            Generator.Emit(OpCodes.Ldc_I4, Complex.Parts.Length);
-            Generator.Emit(OpCodes.Newarr, typeof(string));
-
-            if(Get > 0) Get--;
-
-            Depth++;
-            for(int i = 0; i < Complex.Parts.Length; i++)
-            {
-                Generator.Emit(OpCodes.Dup);
-                Generator.Emit(OpCodes.Ldc_I4, i);
-
-                Type Generated = typeof(object);
-                if(Complex.Parts[i] is CodeComplexVariableReferenceExpression)
-                    EmitComplexVariable(Complex.Parts[i] as CodeComplexVariableReferenceExpression, Get);
-                else Generated = EmitExpression(Complex.Parts[i]);
-
-                ForceTopStack(Generated, typeof(string));
-                Generator.Emit(OpCodes.Stelem_Ref);
-            }
-            Depth--;
-
-            Generator.Emit(OpCodes.Call, typeof(string).GetMethod("Concat", new Type[] { typeof(string[]) }));
-
-            if(Get == 0) Generator.Emit(OpCodes.Call, GetEnv);
 
             Depth--;
         }

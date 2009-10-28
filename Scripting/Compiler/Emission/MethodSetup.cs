@@ -14,9 +14,6 @@ namespace IronAHK.Scripting
         CodeMemberMethod Member;
         ILGenerator Generator;
 
-        MethodInfo SetEnv;
-        MethodInfo GetEnv;
-
         MethodInfo ForceFloat;
         MethodInfo ForceDecimal;
         MethodInfo ForceLong;
@@ -55,9 +52,6 @@ namespace IronAHK.Scripting
             if(IsEntryPoint)
                 GenerateEntryPointHeader();
 
-            Type rusty = typeof(Rusty.Core);
-            SetEnv = rusty.GetMethod("SetEnv");
-            GetEnv = rusty.GetMethod("GetEnv");
             ForceFloat = typeof(Script).GetMethod("ForceFloat");
             ForceString = typeof(Script).GetMethod("ForceString");
             ForceDecimal = typeof(Script).GetMethod("ForceDecimal");

@@ -119,7 +119,7 @@ namespace IronAHK.Scripting
                             throw new ParseException("Can only assign to a variable");
 
                         // (x += y) => (x = x + y)
-                        parts[i] = new CodeAssignExpression();
+                        parts[i] = new CodeComplexAssignStatement();
                         if (part[0] != AssignPre)
                         {
                             i++;
@@ -138,7 +138,7 @@ namespace IronAHK.Scripting
                     #region Binary operators
                     else
                     {
-                        parts[i] = BinaryOperator(part); // TODO: uniary operators
+                        parts[i] = BinaryOperator(part); // TODO: unary operators
                     }
                     #endregion
                 }
@@ -179,12 +179,13 @@ namespace IronAHK.Scripting
             #region Assignments
             for (int i = parts.Count - 1; i > 0; i--)
             {
-                if (parts[i] is CodeAssignExpression)
+                if (parts[i] is CodeComplexAssignStatement)
                 {
                     int x = i - 1, y = i + 1;
-                    var assign = (CodeAssignExpression)parts[i];
+                    var assign = (CodeComplexAssignStatement)parts[i];
                     assign.Left = (CodeComplexVariableReferenceExpression)parts[x];
                     assign.Right = (CodeExpression)parts[y];
+                    parts[i] = (CodeMethodInvokeExpression)assign;
                     parts.RemoveAt(x);
                     parts.RemoveAt(i);
                 }

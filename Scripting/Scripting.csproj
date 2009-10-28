@@ -61,7 +61,6 @@
     <Compile Include="IACodeProvider.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Parser\CodeDom\CodeAssignExpression.cs" />
     <Compile Include="Parser\CodeDom\CodeBlock.cs" />
     <Compile Include="Parser\CodeDom\CodeComplexAssignStatement.cs" />
     <Compile Include="Parser\CodeDom\CodeComplexVariableReferenceExpression.cs" />
