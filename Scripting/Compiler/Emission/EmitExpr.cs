@@ -37,19 +37,9 @@ namespace IronAHK.Scripting
             {
                 Generated = EmitPrimitive(Expression as CodePrimitiveExpression);
             }
-            else if(Expression is CodeComplexVariableReferenceExpression)
-            {
-                EmitComplexVariable(Expression as CodeComplexVariableReferenceExpression, false);
-                Generated = typeof(object);
-            }
             else if(Expression is CodeBinaryOperatorExpression)
             {
                 Generated = EmitBinaryOperator(Expression as CodeBinaryOperatorExpression, ForceTypes);
-            }
-            else if (Expression is CodeAssignExpression)
-            {
-                EmitAssignExpression(Expression as CodeAssignExpression);
-                Generated = null;
             }
             else if(Expression is CodeVariableReferenceExpression)
             {

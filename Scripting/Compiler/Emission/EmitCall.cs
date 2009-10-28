@@ -78,7 +78,7 @@ namespace IronAHK.Scripting
                 Type[] types = null;
                 if (target.FullName == typeof(string).FullName && Invoke.Method.MethodName == "Concat")
                     types = new Type[] { typeof(string[]) };
-                MethodInfo method = types == null ? target.GetMethod(Invoke.Method.MethodName) : target.GetMethod(Invoke.Method.MethodName, types);
+                MethodInfo method = FindMethod(target, Invoke.Method.MethodName, types);
                 if (method == null)
                     throw new ArgumentNullException();
 
@@ -89,6 +89,21 @@ namespace IronAHK.Scripting
             {
                 throw new CompileException(Invoke, string.Format("Could not find method {0} in type {1}", Invoke.Method.MethodName, Type.Type.BaseType));
             }
+        }
+
+        MethodInfo FindMethod(Type target, string name, Type[] parameters) // find method recursively from base typess
+        {
+            MethodInfo method = null;
+
+            while (target != null)
+            {
+                method = parameters == null ? target.GetMethod(name) : target.GetMethod(name, parameters);
+                if (method != null)
+                    break;
+                target = target.BaseType;
+            }
+
+            return method;
         }
     }
 }

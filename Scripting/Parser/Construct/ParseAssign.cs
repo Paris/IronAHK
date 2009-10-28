@@ -145,7 +145,7 @@ namespace IronAHK.Scripting
                     {
                         if (sub.Length == 0)
                             throw new ParseException(ExEmptyVarRef, i);
-                        parts.Add(VarId(sub.ToString()));
+                        parts.Add((CodeMethodInvokeExpression)VarId(sub.ToString()));
                         sub.Length = 0;
                         id = false;
                     }
@@ -173,7 +173,7 @@ namespace IronAHK.Scripting
             if (asValue)
                 return StringConcat(all);
             else
-                return new CodeComplexVariableReferenceExpression(all);
+                return (CodeMethodInvokeExpression)(new CodeComplexVariableReferenceExpression(all));
         }
 
         CodeMethodInvokeExpression StringConcat(params CodeExpression[] parts)
