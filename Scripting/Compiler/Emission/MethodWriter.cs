@@ -67,11 +67,11 @@ namespace IronAHK.Scripting
                 Generator.Emit(OpCodes.Ldstr, Primitive.Value as string);
                 Generated = typeof(string);
             }
-            else if(Primitive.Value is int)
+            else if(Primitive.Value is int || Primitive.Value is Script.Operator) // HACK: enums should be handled properly? (can have different base types)
             {
                 Debug("Pushing primitive integer : "+((int)Primitive.Value));
                 Generator.Emit(OpCodes.Ldc_I4, (int)Primitive.Value);
-                Generated = typeof(int);
+                Generated = Primitive.Value is Script.Operator ? typeof(Script.Operator) : typeof(int);
             }
             else if(Primitive.Value is decimal)
             {
@@ -81,7 +81,7 @@ namespace IronAHK.Scripting
             }
             else
             {
-                Debug("Unhandled primitive: "+Primitive.Value.GetType());
+                Debug("Unhandled primitive: " + Primitive.Value.GetType());
                 Generated = null;
             }
             Depth--;

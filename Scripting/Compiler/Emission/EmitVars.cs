@@ -136,14 +136,38 @@ namespace IronAHK.Scripting
                     if(Top != typeof(object)) Generator.Emit(OpCodes.Box, Top);
                     Generator.Emit(OpCodes.Call, ForceString);
                 }
-                else if(Wanted == typeof(float))
+                else if (Wanted == typeof(float))
                 {
-                    if(Top != typeof(object)) Generator.Emit(OpCodes.Box, Top);
+                    if (Top != typeof(object)) Generator.Emit(OpCodes.Box, Top);
                     Generator.Emit(OpCodes.Call, ForceFloat);
+                }
+                else if (Wanted == typeof(decimal))
+                {
+                    if (Top != typeof(object)) Generator.Emit(OpCodes.Box, Top);
+                    Generator.Emit(OpCodes.Call, ForceDecimal);
+                }
+                else if (Wanted == typeof(long))
+                {
+                    if (Top != typeof(object)) Generator.Emit(OpCodes.Box, Top);
+                    Generator.Emit(OpCodes.Call, ForceLong);
+                }
+                else if (Wanted == typeof(int))
+                {
+                    if (Top != typeof(object)) Generator.Emit(OpCodes.Box, Top);
+                    Generator.Emit(OpCodes.Call, ForceInt);
+                }
+                else if (Wanted == typeof(bool))
+                {
+                    if (Top != typeof(object)) Generator.Emit(OpCodes.Box, Top);
+                    Generator.Emit(OpCodes.Call, ForceBool);
+                }
+                else if (Wanted == typeof(object))
+                {
+                    if (Top != typeof(object)) Generator.Emit(OpCodes.Box, Top);
                 }
                 else
                 {
-                    Debug("WARNING: Can not force "+Wanted);
+                    Debug("WARNING: Can not force " + Wanted);
                 }
             }
             Depth--;
