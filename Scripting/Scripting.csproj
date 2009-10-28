@@ -46,8 +46,10 @@
     <None Include="Tests\Main.ia" />
     <Compile Include="Compiler\Compiler.cs" />
     <Compile Include="Compiler\Script\Conversion.cs" />
+    <Compile Include="Compiler\Script\Operate.cs" />
     <Compile Include="Compiler\Script\Parameters.cs" />
     <Compile Include="Compiler\Script\Script.cs" />
+    <Compile Include="Compiler\Script\Types.cs" />
     <Compile Include="CSharpGenerator.cs">
       <SubType>Component</SubType>
     </Compile>
