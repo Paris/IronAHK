@@ -49,7 +49,7 @@ namespace IronAHK.Scripting
         public static explicit operator CodeMethodInvokeExpression(CodeComplexVariableReferenceExpression variable)
         {
             var get = new CodeMethodInvokeExpression();
-            get.Method = new CodeMethodReferenceExpression(new CodeTypeReferenceExpression(typeof(Rusty.Core)), "GetEnv");
+            get.Method = new CodeMethodReferenceExpression(new CodeThisReferenceExpression(), "GetEnv");
             get.Parameters.Add(variable.QualifiedName);
             return get;
         }
