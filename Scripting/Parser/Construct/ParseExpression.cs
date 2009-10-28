@@ -177,16 +177,16 @@ namespace IronAHK.Scripting
             #endregion
 
             #region Assignments
-            // HACK: assignments go from right to left
-            for (int i = 0; i < parts.Count; i++)
+            for (int i = parts.Count - 1; i > 0; i--)
             {
                 if (parts[i] is CodeAssignExpression)
                 {
+                    int x = i - 1, y = i + 1;
                     var assign = (CodeAssignExpression)parts[i];
-                    assign.Left = (CodeComplexVariableReferenceExpression)parts[i - 1];
-                    assign.Right = (CodeExpression)parts[i + 1];
-                    parts.RemoveAt(i - 1);
-                    parts.RemoveAt(i + 1 - 1);
+                    assign.Left = (CodeComplexVariableReferenceExpression)parts[x];
+                    assign.Right = (CodeExpression)parts[y];
+                    parts.RemoveAt(x);
+                    parts.RemoveAt(i);
                 }
             }
             #endregion
