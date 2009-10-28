@@ -164,7 +164,7 @@ namespace IronAHK.Scripting
                         int x = i - 1, y = i + 1;
                         var invoke = new CodeMethodInvokeExpression();
                         invoke.Method = op;
-                        invoke.Parameters.Add(new CodePrimitiveExpression((Script.Operator)parts[i]));
+                        invoke.Parameters.Add(OperatorReference((Script.Operator)parts[i]));
                         invoke.Parameters.Add((CodeExpression)parts[x]);
                         invoke.Parameters.Add((CodeExpression)parts[y]);
                         parts[x] = invoke;
@@ -375,6 +375,14 @@ namespace IronAHK.Scripting
             }
 
             throw new ArgumentOutOfRangeException();
+        }
+
+        CodeFieldReferenceExpression OperatorReference(Script.Operator op)
+        {
+            var field = new CodeFieldReferenceExpression();
+            field.TargetObject = new CodeTypeReferenceExpression(typeof(Script.Operator));
+            field.FieldName = op.ToString();
+            return field;
         }
 
         bool IsAssignOp(string code)
