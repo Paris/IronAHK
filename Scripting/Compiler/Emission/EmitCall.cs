@@ -58,7 +58,7 @@ namespace IronAHK.Scripting
         MethodInfo ResolveCannedMethod(CodeTypeReferenceExpression Type, CodeMethodInvokeExpression Invoke)
         {
             Depth++;
-            Type target, rusty = typeof(Rusty.Core);
+            Type target, rusty = typeof(Script);
             if (Type.Type.BaseType.Equals(rusty.FullName, StringComparison.OrdinalIgnoreCase))
                 target = rusty;
             else

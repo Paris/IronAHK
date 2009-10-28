@@ -24,7 +24,7 @@ namespace IronAHK.Scripting
 
                 string prefix = core.Namespace;
 
-                CodeNamespace space = new CodeNamespace(prefix + ".Script");
+                CodeNamespace space = new CodeNamespace(typeof(Script).Namespace + ".Instance");
                 unit.Namespaces.Add(space);
 
                 space.Imports.Add(new CodeNamespaceImport("System"));
@@ -32,6 +32,7 @@ namespace IronAHK.Scripting
                 space.Imports.Add(new CodeNamespaceImport(prefix));
 
                 var container = new CodeTypeDeclaration("Class");
+                container.BaseTypes.Add(typeof(Script));
                 space.Types.Add(container);
 
                 var start = new CodeEntryPointMethod();
@@ -53,7 +54,7 @@ namespace IronAHK.Scripting
             methods.Add(mainScope, new CodeEntryPointMethod());
             main = methods[mainScope];
 
-            core = typeof(IronAHK.Rusty.Core);
+            core = typeof(Script);
         }
 
         public CodeCompileUnit Parse(TextReader codeStream)
