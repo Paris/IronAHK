@@ -18,6 +18,10 @@ namespace IronAHK.Scripting
         MethodInfo GetEnv;
 
         MethodInfo ForceFloat;
+        MethodInfo ForceDecimal;
+        MethodInfo ForceLong;
+        MethodInfo ForceInt;
+        MethodInfo ForceBool;
         MethodInfo ForceString;
 
         MethodCollection Lookup;
@@ -56,6 +60,10 @@ namespace IronAHK.Scripting
             GetEnv = rusty.GetMethod("GetEnv");
             ForceFloat = typeof(Script).GetMethod("ForceFloat");
             ForceString = typeof(Script).GetMethod("ForceString");
+            ForceDecimal = typeof(Script).GetMethod("ForceDecimal");
+            ForceLong = typeof(Script).GetMethod("ForceLong");
+            ForceInt = typeof(Script).GetMethod("ForceInt");
+            ForceBool = typeof(Script).GetMethod("ForceBool");
             Locals = new Dictionary<string, LocalBuilder>();
         }
 
