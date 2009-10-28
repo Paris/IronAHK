@@ -43,22 +43,80 @@ namespace IronAHK.Scripting
                 case Operator.Add:
                     return ForceDecimal(left) + ForceDecimal(right);
 
-                case Operator.Subtract:
-                    return ForceDecimal(left) - ForceDecimal(right);
-
-                case Operator.Multiply:
-                    return ForceDecimal(left) * ForceDecimal(right);
-
                 case Operator.BitShiftLeft:
                     return ForceLong(left) << ForceInt(right);
+
+                case Operator.BitShiftRight:
+                    return ForceLong(left) >> ForceInt(right);
+
+                case Operator.BitwiseAnd:
+                    return ForceLong(left) & ForceLong(right);
+
+                case Operator.BitwiseOr:
+                    return ForceLong(left) | ForceLong(right);
+
+                case Operator.BooleanAnd:
+                    return ForceBool(left) && ForceBool(right);
+
+                case Operator.BooleanOr:
+                    return ForceBool(left) || ForceBool(right);
 
                 case Operator.Concat:
                     return string.Concat(ForceString(left), ForceString(right));
 
-                // TODO: complete other operators
-            }
+                case Operator.Decrement:
+                    return ForceDecimal(left) - 1; // UNDONE: should unary decrement be here?
 
-            return null;
+                case Operator.Divide:
+                    return ForceDecimal(left) / ForceDecimal(right);
+
+                case Operator.FloorDivide:
+                    return Math.Floor(ForceDecimal(left) / ForceDecimal(right));
+
+                case Operator.GreaterThan:
+                    return ForceDecimal(left) > ForceDecimal(right);
+
+                case Operator.GreaterThanOrEqual:
+                    return ForceDecimal(left) >= ForceDecimal(right);
+
+                case Operator.IdentityEquality:
+                    return left == right;
+
+                case Operator.IdentityInequality:
+                    return left != right;
+
+                case Operator.Increment:
+                    return ForceDecimal(left) + 1; // UNDONE: should unary decrement be here?
+
+                case Operator.LessThan:
+                    return ForceDecimal(left) < ForceDecimal(right);
+
+                case Operator.LessThanOrEqual:
+                    return ForceDecimal(left) <= ForceDecimal(right);
+
+                case Operator.Modulus:
+                    return ForceDecimal(left) % ForceDecimal(right);
+
+                case Operator.Multiply:
+                    return ForceDecimal(left) * ForceDecimal(right);
+
+                case Operator.Power:
+                    return Math.Pow((double)ForceDecimal(left), (double)ForceDecimal(right));
+
+                case Operator.Subtract:
+                    return ForceDecimal(left) - ForceDecimal(right);
+
+                case Operator.ValueEquality:
+                    MatchTypes(ref left, ref right);
+                    return left == right;
+
+                case Operator.ValueInequality:
+                    MatchTypes(ref left, ref right);
+                    return left != right;
+
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
         }
     }
 }
