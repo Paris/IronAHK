@@ -17,6 +17,8 @@ namespace IronAHK.Scripting
             Debug("Emitting method invoke expression for "+Invoke.Method.MethodName);
 
             var Type = Invoke.Method.TargetObject as CodeTypeReferenceExpression;
+            if (Invoke.Method.TargetObject is CodeThisReferenceExpression)
+                Type = new CodeTypeReferenceExpression(typeof(Script));
             MethodInfo Info;
 
             ArgType[] Args = new ArgType[Invoke.Parameters.Count];

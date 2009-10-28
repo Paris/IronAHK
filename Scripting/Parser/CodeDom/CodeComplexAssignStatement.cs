@@ -17,7 +17,7 @@ namespace IronAHK.Scripting
         public static explicit operator CodeMethodInvokeExpression(CodeComplexAssignStatement assignment)
         {
             var set = new CodeMethodInvokeExpression();
-            set.Method = new CodeMethodReferenceExpression(new CodeTypeReferenceExpression(typeof(Rusty.Core)), "SetEnv");
+            set.Method = new CodeMethodReferenceExpression(new CodeThisReferenceExpression(), "SetEnv");
 
             set.Parameters.Add(assignment.Left.QualifiedName);
             set.Parameters.Add(assignment.Right);
