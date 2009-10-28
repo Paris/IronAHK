@@ -27,10 +27,6 @@ namespace IronAHK.Scripting
                 CodeNamespace space = new CodeNamespace(typeof(Script).Namespace + ".Instance");
                 unit.Namespaces.Add(space);
 
-                space.Imports.Add(new CodeNamespaceImport("System"));
-                space.Imports.Add(new CodeNamespaceImport("System.Windows.Forms"));
-                space.Imports.Add(new CodeNamespaceImport(prefix));
-
                 var container = new CodeTypeDeclaration("Class");
                 container.BaseTypes.Add(typeof(Script));
                 space.Types.Add(container);
