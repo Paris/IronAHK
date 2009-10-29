@@ -165,8 +165,11 @@ namespace IronAHK.Scripting
                         var invoke = new CodeMethodInvokeExpression();
                         invoke.Method = op;
                         invoke.Parameters.Add(OperatorReference((Script.Operator)parts[i]));
-                        invoke.Parameters.Add((CodeExpression)parts[x]);
-                        invoke.Parameters.Add((CodeExpression)parts[y]);
+
+                        foreach (int z in new int[] { x, y }) // I know... I'm lazy
+                            invoke.Parameters.Add(parts[z] is CodeComplexVariableReferenceExpression ?
+                                (CodeMethodInvokeExpression)(CodeComplexVariableReferenceExpression)parts[z] : (CodeExpression)parts[z]);
+
                         parts[x] = invoke;
                         parts.RemoveAt(y);
                         parts.RemoveAt(i);
@@ -184,7 +187,8 @@ namespace IronAHK.Scripting
                     int x = i - 1, y = i + 1;
                     var assign = (CodeComplexAssignStatement)parts[i];
                     assign.Left = (CodeComplexVariableReferenceExpression)parts[x];
-                    assign.Right = (CodeExpression)parts[y];
+                    assign.Right = parts[y] is CodeComplexVariableReferenceExpression ? 
+                        (CodeMethodInvokeExpression)(CodeComplexVariableReferenceExpression)parts[y] : (CodeExpression)parts[y];
                     parts[i] = (CodeMethodInvokeExpression)assign;
                     parts.RemoveAt(x);
                     parts.RemoveAt(i);
