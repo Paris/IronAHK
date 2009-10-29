@@ -138,6 +138,48 @@ namespace IronAHK.Scripting
                     #region Binary operators
                     else
                     {
+                        var ops = OperatorFromString(part);
+
+                        if (ops == Script.Operator.Increment || ops == Script.Operator.Decrement)
+                        {
+                            int z = -1, x = i - 1, y = i + 1;
+
+                            if (x > 0 && parts[x] is CodeComplexVariableReferenceExpression)
+                                z = x;
+
+                            if (y < parts.Count && IsIdentifier(parts[y] as string))
+                            {
+                                if (z != -1)
+                                    throw new ParseException("Cannot use both prefix and postfix operators on the same variable");
+                                z = y;
+                            }
+
+                            if (z == -1)
+                                throw new ParseException("Neither left or right hand side of operator is a variable");
+
+                            var list = new List<object>(7);
+                            list.Add(parts[z]);
+                            list.Add(new string(new char[] { ops == Script.Operator.Increment ? Add : Minus, Equal }));
+                            const string d = "1";
+                            list.Add(d);
+                            if (z < i) // postfix, so adjust
+                            {
+                                list.Insert(0, ParenOpen.ToString());
+                                list.Add(ParenClose.ToString());
+                                list.Add((((string)list[2])[0] == Add ? Minus : Add).ToString());
+                                list.Add(d);
+                            }
+
+                            x = Math.Min(i, z);
+                            y = Math.Max(i, z);
+                            parts[x] = ParseExpression(list);
+                            parts.RemoveAt(y);
+                            i = x;
+                        }
+                        else
+                        {
+                            parts[i] = ops;
+                        }
                     }
                     #endregion
                 }
