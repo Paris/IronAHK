@@ -16,14 +16,15 @@ namespace IronAHK.Rusty
         /// </summary>
         /// <param name="Name">The prefixed name of the variable in which to store <paramref name="Value"/>.</param>
         /// <param name="Value">The string or number to store.</param>
-        public static void SetEnv(string Name, object Value)
+        /// <returns>The value set.</returns>
+        public static object SetEnv(string Name, object Value)
         {
             int z = Name.LastIndexOf('.') + 1;
             if (z > 0 && z + A_.Length < Name.Length && Name.Substring(z, A_.Length).Equals(A_, StringComparison.OrdinalIgnoreCase))
             {
                 string name = Name.Substring(z);
                 if (typeof(Core).GetMethod("get_" + name) != null)
-                    return;
+                    return null;
             }
 
             bool exists = variables.ContainsKey(Name);
@@ -40,6 +41,8 @@ namespace IronAHK.Rusty
                 else
                     variables.Add(Name, Value);
             }
+
+            return Value;
         }
 
         /// <summary>
