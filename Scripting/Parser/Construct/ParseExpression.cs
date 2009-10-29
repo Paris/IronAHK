@@ -125,7 +125,7 @@ namespace IronAHK.Scripting
                             i++;
                             parts.Insert(i, parts[i - 2]);
                             i++;
-                            parts.Insert(i, BinaryOperator(part.Substring(0, part.Length - 1)));
+                            parts.Insert(i, OperatorFromString(part.Substring(0, part.Length - 1)));
                         }
                     }
                     #endregion
@@ -138,7 +138,6 @@ namespace IronAHK.Scripting
                     #region Binary operators
                     else
                     {
-                        parts[i] = BinaryOperator(part); // TODO: unary operators
                     }
                     #endregion
                 }
@@ -164,7 +163,7 @@ namespace IronAHK.Scripting
                         int x = i - 1, y = i + 1;
                         var invoke = new CodeMethodInvokeExpression();
                         invoke.Method = op;
-                        invoke.Parameters.Add(OperatorReference((Script.Operator)parts[i]));
+                        invoke.Parameters.Add(OperatorAsFieldReference((Script.Operator)parts[i]));
 
                         foreach (int z in new int[] { x, y }) // I know... I'm lazy
                             invoke.Parameters.Add(parts[z] is CodeComplexVariableReferenceExpression ?
@@ -204,7 +203,7 @@ namespace IronAHK.Scripting
 
         #region Operators
 
-        Script.Operator BinaryOperator(string code)
+        Script.Operator OperatorFromString(string code)
         {
             char[] op = code.ToCharArray();
 
@@ -382,7 +381,7 @@ namespace IronAHK.Scripting
             throw new ArgumentOutOfRangeException();
         }
 
-        CodeFieldReferenceExpression OperatorReference(Script.Operator op)
+        CodeFieldReferenceExpression OperatorAsFieldReference(Script.Operator op)
         {
             var field = new CodeFieldReferenceExpression();
             field.TargetObject = new CodeTypeReferenceExpression(typeof(Script.Operator));
