@@ -76,6 +76,18 @@ namespace IronAHK.Scripting
             return char.IsLetterOrDigit(symbol) || VarExt.IndexOf(symbol) != -1;
         }
 
+        bool IsIdentifier(string token)
+        {
+            if (string.IsNullOrEmpty(token))
+                return false;
+
+            foreach (char sym in token)
+                if (!IsIdentifier(sym))
+                    return false;
+
+            return true;
+        }
+
         bool IsPrimativeObject(string code, out object result)
         {
             if (string.IsNullOrEmpty(code))
