@@ -43,6 +43,7 @@
   <ItemGroup>
     <Compile Include="Compiler\CompilerSetup.cs" />
     <None Include="Tests\ComplexExpression.ia" />
+    <None Include="Tests\CompoundingAssignment.ia" />
     <None Include="Tests\Main.ia" />
     <Compile Include="Compiler\Compiler.cs" />
     <Compile Include="Compiler\Script\Conversion.cs" />
