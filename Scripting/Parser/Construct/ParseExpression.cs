@@ -104,7 +104,7 @@ namespace IronAHK.Scripting
                         parts[i] = new CodePrimitiveExpression(result);
                     #endregion
                     #region Variables
-                    else if (IsIdentifier(part[0]))
+                    else if (IsIdentifier(part))
                         parts[i] = VarId(part);
                     #endregion
                     #region Strings
