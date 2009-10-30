@@ -11,18 +11,25 @@ namespace IronAHK
     {
         static int Main(string[] args)
         {
+            #region Setup
+
             const int ExitSuccess = 0;
             const int ExitError = 1;
 
 #if DEBUG
             const string test = "Goto";
-            args = string.Format("/out test.exe ..{0}..{0}..{0}Scripting{0}Tests{0}" + test + ".ia", Path.DirectorySeparatorChar.ToString()).Split(' ');
+            const string opt = "/csc";
+            const string cmd = opt + " /out test.exe ..{0}..{0}..{0}Scripting{0}Tests{0}" + test + ".ia";
+            args = string.Format(cmd, Path.DirectorySeparatorChar.ToString()).Split(new char[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
 #endif
 
-            #region Command line options
+            #endregion
+
+            #region Command line
 
             string script = null;
             string exe = null;
+            bool csc = false;
 
             for (int i = 0; i < args.Length; i++)
             {
@@ -75,6 +82,10 @@ namespace IronAHK
                             }
                             break;
 
+                        case "CSC":
+                            csc = true;
+                            break;
+
                         case "HELP":
                         case "?":
                             Console.WriteLine("Usage: {0} [{1}out filename] <source file>",
@@ -101,7 +112,10 @@ namespace IronAHK
 
             #endregion
 
+            #region Compile
+
             var ahk = new IACodeProvider();
+            ahk.UseCSharpCompiler = csc;
 
             CompilerParameters options = new CompilerParameters();
 
@@ -124,6 +138,8 @@ namespace IronAHK
                 }
             }
 
+            #endregion
+
 #if DEBUG
             if (!string.IsNullOrEmpty(options.OutputAssembly))
             {
@@ -134,6 +150,8 @@ namespace IronAHK
 
             return ExitSuccess;
         }
+
+        #region Helpers
 
         static string GetExecutingFile(bool quote)
         {
@@ -171,5 +189,7 @@ namespace IronAHK
 
             return cli;
         }
+
+        #endregion
     }
 }

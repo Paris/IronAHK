@@ -12,9 +12,17 @@ namespace IronAHK.Scripting
     {
         #region Extras
 
+        bool csc = false;
+
         public IACodeProvider()
         {
 
+        }
+
+        public bool UseCSharpCompiler
+        {
+            get { return csc; }
+            set { csc = value; }
         }
 
         public override string FileExtension
@@ -105,8 +113,19 @@ namespace IronAHK.Scripting
         {
             PrintCSharpCode(compilationUnits, Console.Out);
 
-            Compiler compiler = new Compiler();
-            CompilerResults results = compiler.CompileAssemblyFromDomBatch(options, compilationUnits);
+            CompilerResults results;
+
+            if (csc)
+            {
+                var cs = new Microsoft.CSharp.CSharpCodeProvider();
+                results = cs.CompileAssemblyFromDom(options, compilationUnits);
+            }
+            else
+            {
+                Compiler compiler = new Compiler();
+                results = compiler.CompileAssemblyFromDomBatch(options, compilationUnits);
+            }
+
             return results;
         }
 
