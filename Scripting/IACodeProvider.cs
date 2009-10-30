@@ -49,59 +49,47 @@ namespace IronAHK.Scripting
 
         public override CompilerResults CompileAssemblyFromFile(CompilerParameters options, params string[] fileNames)
         {
-            var errors = new CompilerErrorCollection();
-            var syntax = new Parser();
+            var readers = new TextReader[fileNames.Length];
 
-            foreach (string file in fileNames)
-            {
-                try
-                {
-                    syntax.Parse(new StreamReader(file));
-                }
-#if !DEBUG
-                catch (Exception e)
-                {
-                    throw e;
-                    errors.Add(new CompilerError(file, 0, 0, e.GetHashCode().ToString(), e.ToString()));
-                }
-#endif
-                finally { }
-            }
+            for (int i = 0; i < fileNames.Length; i++)
+                readers[i] = new StreamReader(fileNames[i]);
 
-            var results = CompileAssemblyFromDom(options, syntax.CompileUnit);
-            results.Errors.AddRange(errors);
-
-            return results;
+            return CompileAssemblyFromReader(options, readers);
         }
 
         public override CompilerResults CompileAssemblyFromSource(CompilerParameters options, params string[] sources)
         {
-            string[] fileNames = new string[sources.Length];
-            var temp = new TempFileCollection();
-            var errors = new CompilerErrorCollection();
+            var readers = new TextReader[sources.Length];
 
             for (int i = 0; i < sources.Length; i++)
+                readers[i] = new StringReader(sources[i]);
+
+            return CompileAssemblyFromReader(options, readers);
+        }
+
+        CompilerResults CompileAssemblyFromReader(CompilerParameters options, params TextReader[] readers)
+        {
+            var units = new CodeCompileUnit[readers.Length];
+            var errors = new CompilerErrorCollection();
+            var syntax = new Parser();
+
+            for (int i = 0; i < readers.Length; i++)
             {
                 try
                 {
-                    string file = Path.GetTempFileName();
-                    File.WriteAllText(file, sources[i]);
-                    temp.AddFile(file, false);
-                    fileNames[i] = file;
+                    units[i] = syntax.Parse(readers[i]);
                 }
 #if !DEBUG
-                catch (Exception e)
+                catch (ParseException e)
                 {
-                    errors.Add(new CompilerError(string.Empty, 0, 0, e.GetHashCode().ToString(), e.Message));
+                    errors.Add(new CompilerError(e.Source, e.Line, 0, e.Message.GetHashCode(), e.Message));
                 }
 #endif
                 finally { }
             }
 
-            var results = CompileAssemblyFromFile(options, fileNames);
+            var results = CompileAssemblyFromDom(options, units);
             results.Errors.AddRange(errors);
-            results.TempFiles = temp;
-            temp.Delete();
 
             return results;
         }
