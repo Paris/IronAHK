@@ -81,6 +81,9 @@ namespace IronAHK.Scripting
                     case ParenOpen:
                         return Token.Expression;
 
+                    case HotkeyBound:
+                        return Token.Label;
+
                     default:
                         int n = i + 1;
                         if (n < code.Length && code[n] == Equal)

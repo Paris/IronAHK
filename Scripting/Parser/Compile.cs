@@ -83,7 +83,7 @@ namespace IronAHK.Scripting
                             break;
 
                         case Token.Label:
-                            ParseLabel(code);
+                            parent.Add(ParseLabel(code));
                             break;
 
                         case Token.Flow:
