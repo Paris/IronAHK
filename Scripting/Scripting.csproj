@@ -52,9 +52,6 @@
     <Compile Include="Compiler\Script\Parameters.cs" />
     <Compile Include="Compiler\Script\Script.cs" />
     <Compile Include="Compiler\Script\Types.cs" />
-    <Compile Include="CSharpGenerator.cs">
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Include="Generator\Generator.cs" />
     <Compile Include="Generator\Supports.cs" />
     <Compile Include="Generator\Type.cs" />
