@@ -1,6 +1,7 @@
 using System;
 using System.CodeDom;
 using System.CodeDom.Compiler;
+using System.Diagnostics;
 using System.IO;
 
 [assembly: CLSCompliant(true)]
@@ -9,11 +10,11 @@ namespace IronAHK.Scripting
 {
     public sealed partial class IACodeProvider : CodeDomProvider
     {
-        Generator generator;
+        #region Extras
 
         public IACodeProvider()
         {
-            generator = new Generator();
+
         }
 
         public override string FileExtension
@@ -29,6 +30,8 @@ namespace IronAHK.Scripting
             }
         }
 
+        #endregion
+
         #region Generator
 
         [Obsolete()]
@@ -40,6 +43,8 @@ namespace IronAHK.Scripting
         #endregion
 
         #region Compiler
+
+        #region Wrappers
 
         [Obsolete()]
         public override ICodeCompiler CreateCompiler()
@@ -66,6 +71,8 @@ namespace IronAHK.Scripting
 
             return CompileAssemblyFromReader(options, readers);
         }
+
+        #endregion
 
         CompilerResults CompileAssemblyFromReader(CompilerParameters options, params TextReader[] readers)
         {
@@ -102,7 +109,24 @@ namespace IronAHK.Scripting
             CompilerResults results = compiler.CompileAssemblyFromDomBatch(options, compilationUnits);
             return results;
         }
-        
+
+        #region Helpers
+
+        [Conditional("DEBUG")]
+        void PrintCSharpCode(CodeCompileUnit[] units, TextWriter writer)
+        {
+            var provider = new Microsoft.CSharp.CSharpCodeProvider();
+            var options = new CodeGeneratorOptions { BracingStyle = "C", ElseOnClosing = false, IndentString = "  " };
+            foreach (CodeCompileUnit code in units)
+            {
+                try { provider.GenerateCodeFromCompileUnit(code, writer, options); }
+                catch (Exception e) { writer.WriteLine(e.Message); }
+                finally { }
+            }
+        }
+
+        #endregion
+
         #endregion
     }
 }
