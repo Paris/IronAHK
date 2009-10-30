@@ -1,0 +1,5 @@
+﻿goto mylabel
+return
+
+mylabel:
+msgbox hi
