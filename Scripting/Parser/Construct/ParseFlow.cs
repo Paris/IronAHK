@@ -171,7 +171,7 @@ namespace IronAHK.Scripting
                 #endregion
 
                 case FlowReturn:
-                    return new CodeMethodReturnStatement(parts.Length > 0 ? ParseSingleExpression(parts[1]) : new CodePrimitiveExpression(null));
+                    return new CodeMethodReturnStatement(parts.Length > 1 ? ParseSingleExpression(parts[1]) : new CodePrimitiveExpression(null));
 
                 default:
                     throw new ParseException(ExUnexpected);
