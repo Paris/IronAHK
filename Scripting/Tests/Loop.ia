@@ -1,2 +1,2 @@
 Loop, 5
-    MsgBox, Loop
+    MsgBox, %A_Index%

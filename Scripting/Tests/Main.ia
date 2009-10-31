@@ -1,4 +1,5 @@
 var = Hello World!
+var := hello("lol")
 msgbox %var%
 
 Loop, 5
