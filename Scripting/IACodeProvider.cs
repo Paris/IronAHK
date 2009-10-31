@@ -115,6 +115,10 @@ namespace IronAHK.Scripting
 
             CompilerResults results;
 
+#if !DEBUG
+            csc = false;
+#endif
+
             if (csc)
             {
                 options.GenerateExecutable = true;
