@@ -44,6 +44,39 @@ namespace IronAHK.Scripting
             return ParseExpression(SplitTokens(code));
         }
 
+        CodeExpression[] ParseMultiExpression(object[] parts)
+        {
+            var expr = new List<CodeExpression>();
+            var sub = new List<object>();
+
+            for (int i = 0; i < parts.Length; i++)
+            {
+                if (parts[i] is string)
+                {
+                    string part = (string)parts[i];
+                    if (part.Length == 1 && part[0] == Multicast)
+                    {
+                        if (sub.Count == 0)
+                            expr.Add(new CodePrimitiveExpression(null));
+                        else
+                        {
+                            expr.Add(ParseExpression(sub));
+                            sub = new List<object>();
+                        }
+                    }
+                    else
+                        sub.Add(parts[i]);
+                }
+                else
+                    sub.Add(parts[i]);
+            }
+
+            if (sub.Count != 0)
+                expr.Add(ParseExpression(sub));
+
+            return expr.ToArray();
+        }
+
         #endregion
 
         CodeExpression ParseExpression(List<object> parts)
@@ -95,9 +128,11 @@ namespace IronAHK.Scripting
                         }
                         if (levels != 0)
                             throw new ParseException(ExUnbalancedParens);
-                        else if (next)
-                            continue;
                     }
+                    #endregion
+                    #region Strings
+                    else if (part.Length > 2 && part[0] == StringBound && part[part.Length - 1] == StringBound)
+                        parts[i] = new CodePrimitiveExpression(part.Substring(1, part.Length - 2));
                     #endregion
                     #region Numerics
                     else if (IsPrimativeObject(part, out result))
@@ -107,9 +142,60 @@ namespace IronAHK.Scripting
                     else if (IsIdentifier(part))
                         parts[i] = VarId(part);
                     #endregion
-                    #region Strings
-                    else if (part.Length > 2 && part[0] == StringBound && part[part.Length - 1] == StringBound)
-                        parts[i] = part.Substring(1, part.Length - 2);
+                    #region Invokes
+                    else if (part.Length > 2 && part[part.Length - 1] == ParenOpen)
+                    {
+                        string name = part.Substring(0, part.Length - 1);
+                        if (!IsIdentifier(name))
+                            throw new ParseException("Invalid function name");
+
+                        int levels = 1;
+                        for (int x = i + 1; x < parts.Count; x++)
+                        {
+                            string current = parts[x] as string;
+                            if (string.IsNullOrEmpty(current))
+                                continue;
+                            switch (current[0])
+                            {
+                                case ParenOpen:
+                                    levels++;
+                                    break;
+
+                                case ParenClose:
+                                    if (--levels == 0)
+                                    {
+                                        int count = x - i - 1;
+
+                                        object[] sub = new object[count];
+
+                                        for (int n = 0; n < count; n++)
+                                            sub[n] = parts[i + 1 + n];
+
+                                        count++;
+
+                                        parts.RemoveRange(i, count + 1);
+
+                                        if (sub.Length > 0)
+                                        {
+                                            var invoke = new CodeMethodInvokeExpression();
+                                            invoke.Method.MethodName = name;
+                                            invoke.Method.TargetObject = new CodeThisReferenceExpression(); // HACK: static methods so refer to parent type
+
+                                            invoke.Parameters.AddRange(ParseMultiExpression(sub));
+
+                                            parts.Insert(i, invoke);
+                                        }
+
+                                        next = true;
+                                    }
+                                    break;
+                            }
+                            if (next)
+                                break;
+                        }
+                        if (levels != 0)
+                            throw new ParseException(ExUnbalancedParens);
+                    }
                     #endregion
                     #region Assignments
                     else if (IsAssignOp(part))
