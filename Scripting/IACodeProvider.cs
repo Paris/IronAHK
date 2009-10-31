@@ -117,6 +117,10 @@ namespace IronAHK.Scripting
 
             if (csc)
             {
+                options.GenerateExecutable = true;
+                options.GenerateInMemory = false;
+                options.IncludeDebugInformation = false;
+                options.CompilerOptions = "/optimize+";
                 var cs = new Microsoft.CSharp.CSharpCodeProvider();
                 results = cs.CompileAssemblyFromDom(options, compilationUnits);
             }
