@@ -79,6 +79,12 @@ namespace IronAHK.Scripting
                 Generator.Emit(OpCodes.Ldc_R4, ((float) ((decimal) Primitive.Value)));
                 Generated = typeof(float);
             }
+            else if (Primitive.Value == null)
+            {
+                Debug("Pushing null");
+                Generator.Emit(OpCodes.Ldnull);
+                Generated = typeof(Nullable);
+            }
             else
             {
                 Debug("Unhandled primitive: " + Primitive.Value.GetType());
