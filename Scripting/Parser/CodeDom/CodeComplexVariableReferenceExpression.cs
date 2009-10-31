@@ -11,7 +11,7 @@ namespace IronAHK.Scripting
         {
             foreach (CodeExpression part in parts)
             {
-                if (!(part is CodePrimitiveExpression || part is CodeComplexVariableReferenceExpression))
+                if (!(part is CodePrimitiveExpression || part is CodeComplexVariableReferenceExpression || part is CodeMethodInvokeExpression))
                     throw new ArgumentException();
             }
 
@@ -39,6 +39,8 @@ namespace IronAHK.Scripting
                         sub[i] = (CodePrimitiveExpression)part;
                     else if (part is CodeComplexVariableReferenceExpression)
                         sub[i] = (CodeMethodInvokeExpression)(CodeComplexVariableReferenceExpression)part;
+                    else if (part is CodeMethodInvokeExpression)
+                        sub[i] = (CodeMethodInvokeExpression)part;
                 }
 
                 concat.Parameters.Add(new CodeArrayCreateExpression(new CodeTypeReference(typeof(string[])), sub));
