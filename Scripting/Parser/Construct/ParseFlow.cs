@@ -171,7 +171,14 @@ namespace IronAHK.Scripting
                 #endregion
 
                 case FlowReturn:
-                    return new CodeMethodReturnStatement(parts.Length > 1 ? ParseSingleExpression(parts[1]) : new CodePrimitiveExpression(null));
+                    if (Scope == mainScope)
+                    {
+                        if (parts.Length > 1)
+                            throw new ParseException("Cannot have return parameter for entry point method");
+                        return new CodeMethodReturnStatement();
+                    }
+                    else
+                        return new CodeMethodReturnStatement(parts.Length > 1 ? ParseSingleExpression(parts[1]) : new CodePrimitiveExpression(null));
 
                 default:
                     throw new ParseException(ExUnexpected);
