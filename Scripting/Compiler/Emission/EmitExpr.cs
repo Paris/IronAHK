@@ -13,6 +13,10 @@ namespace IronAHK.Scripting
             Depth++;
             Debug("Emitting expression statement");
             Type Generated = EmitExpression(Expression.Expression, ForceTypes);
+
+            if (Generated != typeof(void))
+                Generator.Emit(OpCodes.Pop);
+
             Depth--;
 
             return Generated;
