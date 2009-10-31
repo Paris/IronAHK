@@ -198,7 +198,7 @@ namespace IronAHK.Scripting
 
         CodeComplexVariableReferenceExpression VarId(string name)
         {
-            return new CodeComplexVariableReferenceExpression(new CodePrimitiveExpression(Scope + "."), VarNameOrBasicString(name, false));
+            return new CodeComplexVariableReferenceExpression(new CodePrimitiveExpression(Scope + "."), VarNameOrBasicString(name, true));
         }
     }
 }

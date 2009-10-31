@@ -73,7 +73,7 @@ namespace IronAHK.Scripting
         {
             int i = 0;
 
-            while (i < code.Length && IsIdentifier(code[i])) i++;
+            while (i < code.Length && (IsIdentifier(code[i]) || code[i] == Resolve)) i++;
 
             if (i == 0 || i == code.Length)
                 return false;
