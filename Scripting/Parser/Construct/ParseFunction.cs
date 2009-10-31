@@ -139,14 +139,14 @@ namespace IronAHK.Scripting
 
                 // name
                 x = i;
-                while (IsIdentifier(code[i])) i++;
+                while (i < code.Length && IsIdentifier(code[i])) i++;
                 
                 if (x == i)
                     throw new ParseException(ExUnexpected);
                 else
                     names.Add(code.Substring(x, i - x));
 
-                while (IsSpace(code[i])) i++;
+                while (i < code.Length && IsSpace(code[i])) i++;
 
                 if (i == code.Length)
                     break;
