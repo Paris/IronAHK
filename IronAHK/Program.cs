@@ -7,7 +7,7 @@ using IronAHK.Scripting;
 
 namespace IronAHK
 {
-    partial class Program
+    class Program
     {
         static int Main(string[] args)
         {
