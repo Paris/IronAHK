@@ -59,7 +59,7 @@ namespace IronAHK.Scripting
         {
             Depth++;
             Type target, rusty = typeof(Script);
-            if (Type.Type.BaseType.Equals(rusty.FullName, StringComparison.OrdinalIgnoreCase))
+            if (Type.Type.BaseType == rusty.FullName || Type.Type.BaseType == typeof(Rusty.Core).FullName)
                 target = rusty;
             else
             {
