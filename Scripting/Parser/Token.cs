@@ -8,33 +8,36 @@ namespace IronAHK.Scripting
 
         Token GetToken(string code)
         {
+            code = code.TrimStart(Spaces);
+
             if (code.Length == 0)
                 return Token.Unknown;
 
-            char sym;
-            string word;
+            if (code[0] == Directive)
+                return Token.Directive;
+            if (IsFlowOperator(code))
+                return Token.Flow;
+            else if (IsLabel(code))
+                return Token.Label;
+            else if (IsAssignment(code))
+                return Token.Assign;
+            else if (IsCommand(code))
+                return Token.Command;
+            else
+                return Token.Expression;
+        }
 
-            #region Labels and directives
+        bool IsSpace(char sym)
+        {
+            return Array.IndexOf<char>(Spaces, sym) != -1;
+        }
 
-            sym = code[0];
-
-            switch (sym)
-            {
-                case HotkeyBound:
-                    return Token.Label;
-
-                case Directive:
-                    return Token.Directive;
-            }
-
-            #endregion
-
-            #region Flow operators
-
+        bool IsFlowOperator(string code)
+        {
             char[] delimiters = new char[Spaces.Length + 1];
             delimiters[0] = Multicast;
             Spaces.CopyTo(delimiters, 1);
-            word = code.Split(delimiters, 2)[0].ToLowerInvariant();
+            string word = code.Split(delimiters, 2)[0].ToLowerInvariant();
 
             switch (word)
             {
@@ -47,60 +50,62 @@ namespace IronAHK.Scripting
                 case FlowLoop:
                 case FlowReturn:
                 case FlowWhile:
-                    return Token.Flow;
+                    return true;
             }
 
-            #endregion
-
-            #region Assignments and commands
-
-            for (int i = 0; i < code.Length; i++)
-            {
-                sym = code[i];
-
-                if (char.IsLetterOrDigit(sym) || sym == Resolve)
-                    continue;
-
-                while (IsSpace(sym) && i < code.Length)
-                {
-                    i++;
-                    sym = code[i];
-                }
-
-                if (char.IsLetterOrDigit(sym))
-                    return Token.Command;
-
-                switch (sym)
-                {
-                    case Multicast:
-                        return Token.Command;
-
-                    case Equal:
-                        return Token.Assign; // TODO: check if expression assign (var = % 1 + 2)
-
-                    case ParenOpen:
-                        return Token.Expression;
-
-                    case HotkeyBound:
-                        return Token.Label;
-
-                    default:
-                        int n = i + 1;
-                        if (n < code.Length && code[n] == Equal)
-                            return Token.Expression;
-                        else
-                            return Token.Command;
-                }
-            }
-
-            #endregion
-
-            return Token.Expression;
+            return false;
         }
 
-        bool IsSpace(char sym)
+        bool IsLabel(string code)
         {
-            return Array.IndexOf<char>(Spaces, sym) != -1;
+            if (string.IsNullOrEmpty(code))
+                return false;
+
+            if (code[0] == HotkeyBound)
+                return true; // UNDONE: validate hotstring syntax
+
+            code = StripCommentSingle(code);
+
+            return code.Length > 1 && code[code.Length - 1] == HotkeyBound;
+        }
+
+        bool IsAssignment(string code)
+        {
+            int i = 0;
+
+            while (i < code.Length && IsIdentifier(code[i])) i++;
+
+            if (i == 0 || i == code.Length)
+                return false;
+
+            while (IsSpace(code[i])) i++;
+
+            return i < code.Length && code[i] == Equal;
+        }
+
+        bool IsCommand(string code)
+        {
+            int i = 0;
+
+            while (i < code.Length && IsIdentifier(code[i])) i++;
+
+            if (i == 0 || i == code.Length)
+                return false;
+            else if (code[i] == Multicast)
+                return true;
+            else if (IsSpace(code[i]))
+            {
+                i++;
+                while (i < code.Length && IsSpace(code[i])) i++;
+
+                int n = i + 1;
+                if (n < code.Length && code[n] == Equal)
+                    return false;
+
+                return true;
+            }
+            else
+                return false;
         }
     }
 }
