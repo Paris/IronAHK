@@ -2,4 +2,5 @@
 return
 
 mylabel:
-msgbox hi
+MsgBox hi
+return
