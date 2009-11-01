@@ -171,20 +171,15 @@ namespace IronAHK.Scripting
                                         for (int n = 0; n < count; n++)
                                             sub[n] = parts[i + 1 + n];
 
-                                        count++;
+                                        var invoke = new CodeMethodInvokeExpression();
+                                        invoke.Method.MethodName = name;
+                                        invoke.Method.TargetObject = new CodeThisReferenceExpression(); // HACK: static methods so refer to parent type
 
-                                        parts.RemoveRange(i, count + 1);
-
-                                        if (sub.Length > 0)
-                                        {
-                                            var invoke = new CodeMethodInvokeExpression();
-                                            invoke.Method.MethodName = name;
-                                            invoke.Method.TargetObject = new CodeThisReferenceExpression(); // HACK: static methods so refer to parent type
-
+                                        if (count > 1)
                                             invoke.Parameters.AddRange(ParseMultiExpression(sub));
 
-                                            parts.Insert(i, invoke);
-                                        }
+                                        parts.RemoveRange(i, count + 2);
+                                        parts.Insert(i, invoke);
 
                                         next = true;
                                     }
