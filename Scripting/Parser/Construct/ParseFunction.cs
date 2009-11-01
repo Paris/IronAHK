@@ -79,7 +79,6 @@ namespace IronAHK.Scripting
 
             string param = buf.ToString();
             buf.Length = 0;
-            var parameters = ParseFunctionParameters(param);
             i++;
 
             #region Opening brace
@@ -106,9 +105,7 @@ namespace IronAHK.Scripting
             CodeMemberMethod method = new CodeMemberMethod();
             method.Name = name;
             method.ReturnType = new CodeTypeReference(typeof(object));
-
             method.Parameters.Add(new CodeParameterDeclarationExpression(typeof(object[]), argv));
-            method.Statements.Add(parameters);
 
             #endregion
 
@@ -117,6 +114,8 @@ namespace IronAHK.Scripting
             var block = new CodeBlock(line, method.Name, method.Statements);
             block.Type = blockType;
             blocks.Push(block);
+
+            method.Statements.Add(ParseFunctionParameters(param)); // deferred for new scope
 
             #endregion
 
@@ -144,7 +143,7 @@ namespace IronAHK.Scripting
                 if (x == i)
                     throw new ParseException(ExUnexpected);
                 else
-                    names.Add(code.Substring(x, i - x));
+                    names.Add(Scope + ScopeVar + code.Substring(x, i - x));
 
                 while (i < code.Length && IsSpace(code[i])) i++;
 

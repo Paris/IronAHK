@@ -8,6 +8,8 @@ namespace IronAHK.Scripting
 {
     partial class Parser
     {
+        const string ScopeVar = ".";
+
         CodeComplexAssignStatement ParseAssign(string code)
         {
             string name, value;
@@ -198,7 +200,7 @@ namespace IronAHK.Scripting
 
         CodeComplexVariableReferenceExpression VarId(string name)
         {
-            return new CodeComplexVariableReferenceExpression(new CodePrimitiveExpression(Scope + "."), VarNameOrBasicString(name, true));
+            return new CodeComplexVariableReferenceExpression(new CodePrimitiveExpression(Scope + ScopeVar), VarNameOrBasicString(name, true));
         }
     }
 }
