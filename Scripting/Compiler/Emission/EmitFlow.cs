@@ -27,5 +27,32 @@ namespace IronAHK.Scripting
 
             Generator.MarkLabel(End);
         }
+
+        void EmitReturnStatement(CodeMethodReturnStatement Return)
+        {
+            Depth++;
+
+            Debug("Emitting return statement");
+            
+            if(Method.ReturnType != typeof(void))
+            {
+                Type Top;
+                if(Return.Expression == null)
+                {
+                    // Default to an empty string if this method expects a return value
+                    Generator.Emit(OpCodes.Ldstr, "");
+                    Top = typeof(string);
+                }
+                else Top = EmitExpression(Return.Expression);
+
+                ForceTopStack(Top, Method.ReturnType);
+            }
+            else if(Return.Expression != null)
+                throw new CompileException(Return, "Can not return value from void method "+Method.Name);
+
+            Generator.Emit(OpCodes.Ret);
+
+            Depth--;
+        }
     }
 }
