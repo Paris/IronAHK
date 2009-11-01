@@ -175,8 +175,17 @@ namespace IronAHK.Scripting
                                         invoke.Method.MethodName = name;
                                         invoke.Method.TargetObject = new CodeThisReferenceExpression(); // HACK: static methods so refer to parent type
 
-                                        if (count > 1)
-                                            invoke.Parameters.AddRange(ParseMultiExpression(sub));
+                                        if (count == 0)
+                                            invoke.Parameters.Add(new CodePrimitiveExpression(new object[] { }));
+                                        else
+                                        {
+                                            var passed = ParseMultiExpression(sub);
+                                            var obj = new CodeArrayCreateExpression();
+                                            obj.Size = passed.Length;
+                                            obj.CreateType = new CodeTypeReference(typeof(object[]));
+                                            obj.Initializers.AddRange(passed);
+                                            invoke.Parameters.Add(obj);
+                                        }
 
                                         parts.RemoveRange(i, count + 2);
                                         parts.Insert(i, invoke);
