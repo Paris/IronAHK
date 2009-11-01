@@ -16,17 +16,26 @@ namespace IronAHK.Scripting
             Depth++;
             Debug("Emitting method invoke expression for "+Invoke.Method.MethodName);
 
-            var Type = Invoke.Method.TargetObject as CodeTypeReferenceExpression;
-            if (Invoke.Method.TargetObject is CodeThisReferenceExpression)
-                Type = new CodeTypeReferenceExpression(typeof(Script));
-            MethodInfo Info;
+            MethodInfo Info = null;
 
             ArgType[] Args = new ArgType[Invoke.Parameters.Count];
 
-                for(int i = 0; i < Args.Length; i++)
-                    Args[i] = ArgType.Expression;
+            for(int i = 0; i < Args.Length; i++)
+                Args[i] = ArgType.Expression;
 
-            if(Type == null)
+            var Type = Invoke.Method.TargetObject as CodeTypeReferenceExpression;
+
+            bool LocalInvoke = false;
+
+            if (Invoke.Method.TargetObject is CodeThisReferenceExpression && Methods.ContainsKey(Invoke.Method.MethodName))
+            {
+                MethodWriter Writer = Methods[Invoke.Method.MethodName];
+                if(Writer.Member.Parameters.Count == Args.Length)
+                    Info = Writer.Method;
+
+                LocalInvoke = true;
+            }
+            else if(Type == null)
             {
                 Info = Lookup.BestMatch(Invoke.Method.MethodName, Args);
 
@@ -35,16 +44,24 @@ namespace IronAHK.Scripting
             }
             else Info = ResolveCannedMethod(Type, Invoke);
 
-            ParameterInfo[] Parameters = Info.GetParameters();
+            bool Forcing = true;
+            if(Info.Name == "Parameters" && Info.DeclaringType == typeof(IronAHK.Scripting.Script))
+                Forcing = false;
+
+            ParameterInfo[] Parameters = null;
+
+            if(!LocalInvoke)
+                Parameters = Info.GetParameters();
 
             Depth++;
             for(int i = 0; i < Args.Length; i++)
             {
                 Debug("Emitting parameter "+i);
-                Type Generated = EmitExpression(Invoke.Parameters[i]);
+                Type Generated = EmitExpression(Invoke.Parameters[i], Forcing);
                 Args[i] = ArgType.Expression;
 
-                ForceTopStack(Generated, Parameters[i].ParameterType);
+                if(!LocalInvoke && Forcing)
+                    ForceTopStack(Generated, Parameters[i].ParameterType);
             }
             Depth--;
 

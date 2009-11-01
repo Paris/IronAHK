@@ -61,6 +61,11 @@ namespace IronAHK.Scripting
                 EmitCodeFieldReference(Expression as CodeFieldReferenceExpression);
                 Generated = null;
             }
+            else if(Expression is CodeArgumentReferenceExpression)
+            {
+                EmitArgumentReference(Expression as CodeArgumentReferenceExpression);
+                Generated = typeof(object[]);
+            }
             else
             {
                 Depth++;
