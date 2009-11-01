@@ -29,7 +29,9 @@ namespace IronAHK.Scripting
         int Depth = 0;
 
         Stack<LoopMetadata> Loops;
+
         Dictionary<string, LocalBuilder> Locals;
+        Dictionary<string, LabelMetadata> Labels;
 
         public MethodWriter(TypeBuilder Parent, CodeMemberMethod Member, MethodCollection Lookup)
         {
@@ -58,7 +60,9 @@ namespace IronAHK.Scripting
             ForceLong = typeof(Script).GetMethod("ForceLong");
             ForceInt = typeof(Script).GetMethod("ForceInt");
             ForceBool = typeof(Script).GetMethod("ForceBool");
+            
             Locals = new Dictionary<string, LocalBuilder>();
+            Labels = new Dictionary<string, LabelMetadata>();
         }
 
         void GenerateEntryPointHeader()

@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -86,7 +86,6 @@
     <Compile Include="Compiler\Emission\MethodWriter.cs" />
     <Compile Include="Compiler\Emission\MethodSetup.cs" />
     <Compile Include="Compiler\CompileException.cs" />
-    <Compile Include="Compiler\LoopMetadata.cs" />
     <Compile Include="Compiler\Peripheral\NamespaceEmitter.cs" />
     <Compile Include="Compiler\Peripheral\TypeEmitter.cs" />
     <Compile Include="Compiler\Emission\EmitExpr.cs" />
@@ -101,6 +100,10 @@
     <None Include="Tests\ToFloat.ia" />
     <None Include="Tests\SimpleExpr.ia" />
     <None Include="Tests\SimpleFlow.ia" />
+    <Compile Include="Compiler\Emission\EmitLabel.cs" />
+    <Compile Include="Compiler\Metadata\LabelMetadata.cs" />
+    <Compile Include="Compiler\Metadata\LoopMetadata.cs" />
+    <None Include="Tests\Label.ia" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Rusty\Rusty.csproj">
@@ -114,4 +117,7 @@
   <ProjectExtensions>
     <VisualStudio />
   </ProjectExtensions>
+  <ItemGroup>
+    <Folder Include="Compiler\Metadata\" />
+  </ItemGroup>
 </Project>
