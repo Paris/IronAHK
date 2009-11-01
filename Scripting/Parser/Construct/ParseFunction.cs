@@ -236,6 +236,9 @@ namespace IronAHK.Scripting
                 }
                 if (str)
                     throw new ParseException(err);
+
+                code = code.Substring(1, code.Length - 2);
+                code.Replace(new string(StringBound, 2), string.Empty);
             }
             else if (!IsPrimativeObject(code))
                 throw new ParseException(err);
