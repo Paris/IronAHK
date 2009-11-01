@@ -13,6 +13,8 @@ namespace IronAHK.Scripting
         {
             EmitStatementCollection(Member.Statements);
             Generator.Emit(OpCodes.Ret);
+
+            CheckLabelsResolved();
         }
 
         void EmitStatementCollection(CodeStatementCollection Statements)
@@ -29,6 +31,8 @@ namespace IronAHK.Scripting
 
         void EmitStatement(CodeStatement Statement, bool ForceTypes)
         {
+            if(Statement == null) return;
+
             Depth++;
             Debug("Emitting statement");
             if(Statement is CodeAssignStatement)
@@ -46,6 +50,14 @@ namespace IronAHK.Scripting
             else if(Statement is CodeConditionStatement)
             {
                 EmitConditionStatement(Statement as CodeConditionStatement);
+            }
+            else if(Statement is CodeGotoStatement)
+            {
+                EmitGotoStatement(Statement as CodeGotoStatement);
+            }
+            else if(Statement is CodeLabeledStatement)
+            {
+                EmitLabeledStatement(Statement as CodeLabeledStatement);
             }
             else
             {
