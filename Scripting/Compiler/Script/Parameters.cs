@@ -6,7 +6,18 @@ namespace IronAHK.Scripting
         public static void Parameters(string[] names, object[] values, object[] defaults)
         {
             for (int i = 0; i < names.Length; i++)
-                SetEnv(names[i], i < values.Length ? values[i] : i < defaults.Length ? defaults[i] : null);
+            {
+                object init;
+
+                if (i < values.Length)
+                    init = values[i];
+                else if (i < defaults.Length)
+                    init = defaults[i];
+                else
+                    init = null;
+
+                SetEnv(names[i], init);
+            }
         }
     }
 }
