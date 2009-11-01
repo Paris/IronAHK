@@ -17,7 +17,7 @@ namespace IronAHK
             const int ExitError = 1;
 
 #if DEBUG
-            const string test = "Direction";
+            const string test = "SimpleMethod";
             const string opt = ""; // "/csc";
             const string cmd = opt + " /out test.exe ..{0}..{0}..{0}Scripting{0}Tests{0}" + test + ".ia";
             args = string.Format(cmd, Path.DirectorySeparatorChar.ToString()).Split(new char[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);

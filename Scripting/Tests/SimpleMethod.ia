@@ -1,8 +1,9 @@
 MsgBox, hoi
 
-method("asd")
+method()
+method("passed")
 
-method(arg) {
+method(arg = "default") {
     MsgBox, %arg%
 }
 
