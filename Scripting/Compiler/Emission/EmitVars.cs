@@ -8,6 +8,14 @@ namespace IronAHK.Scripting
 {
     internal partial class MethodWriter
     {
+        void EmitArgumentReference(CodeArgumentReferenceExpression Argument)
+        {
+            Depth++;
+            Debug("Emitting argument reference");
+            Generator.Emit(OpCodes.Ldarg, 0); // for now only used to refer to the sole object[] parameter
+            Depth--;
+        }
+
         void EmitAssignStatement(CodeAssignStatement Assign, bool ForceTypes)
         {
             EmitAssignment(Assign.Left, Assign.Right, ForceTypes);
@@ -71,7 +79,17 @@ namespace IronAHK.Scripting
                 return string.Concat(Member.Name, sep, Var.VariableName);
         }
 
+        void ConditionalBox(Type Top)
+        {
+            if(Top != typeof(object)) Generator.Emit(OpCodes.Box, Top);
+        }
+
         void ForceTopStack(Type Top, Type Wanted)
+        {
+            ForceTopStack(Top, Wanted, true);
+        }
+
+        void ForceTopStack(Type Top, Type Wanted, bool ForceTypes)
         {
             Depth++;
             if(Top != Wanted)
@@ -79,37 +97,37 @@ namespace IronAHK.Scripting
                 Debug("Forcing top stack "+Top+" to "+Wanted);
                 if(Wanted == typeof(string))
                 {
-                    if(Top != typeof(object)) Generator.Emit(OpCodes.Box, Top);
+                    ConditionalBox(Top);
                     Generator.Emit(OpCodes.Call, ForceString);
                 }
                 else if (Wanted == typeof(float))
                 {
-                    if (Top != typeof(object)) Generator.Emit(OpCodes.Box, Top);
+                    ConditionalBox(Top);
                     Generator.Emit(OpCodes.Call, ForceFloat);
                 }
                 else if (Wanted == typeof(decimal))
                 {
-                    if (Top != typeof(object)) Generator.Emit(OpCodes.Box, Top);
+                    ConditionalBox(Top);
                     Generator.Emit(OpCodes.Call, ForceDecimal);
                 }
                 else if (Wanted == typeof(long))
                 {
-                    if (Top != typeof(object)) Generator.Emit(OpCodes.Box, Top);
+                    ConditionalBox(Top);
                     Generator.Emit(OpCodes.Call, ForceLong);
                 }
                 else if (Wanted == typeof(int))
                 {
-                    if (Top != typeof(object)) Generator.Emit(OpCodes.Box, Top);
+                    ConditionalBox(Top);
                     Generator.Emit(OpCodes.Call, ForceInt);
                 }
                 else if (Wanted == typeof(bool))
                 {
-                    if (Top != typeof(object)) Generator.Emit(OpCodes.Box, Top);
+                    ConditionalBox(Top);
                     Generator.Emit(OpCodes.Call, ForceBool);
                 }
                 else if (Wanted == typeof(object))
                 {
-                    if (Top != typeof(object)) Generator.Emit(OpCodes.Box, Top);
+                    ConditionalBox(Top);
                 }
                 else
                 {

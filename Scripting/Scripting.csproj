@@ -105,6 +105,7 @@
     <Compile Include="Compiler\Metadata\LoopMetadata.cs" />
     <None Include="Tests\Label.ia" />
     <None Include="Tests\SimpleReturn.ia" />
+    <None Include="Tests\SimpleMethod.ia" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Rusty\Rusty.csproj">

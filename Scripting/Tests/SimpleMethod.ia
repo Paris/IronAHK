@@ -1,0 +1,8 @@
+MsgBox, hoi
+
+method("asd")
+
+method(arg) {
+    MsgBox, %arg%
+}
+

@@ -12,6 +12,9 @@ namespace IronAHK.Scripting
         public void Emit()
         {
             EmitStatementCollection(Member.Statements);
+
+            if(Method.ReturnType != typeof(void))
+                Generator.Emit(OpCodes.Ldstr, "");
             Generator.Emit(OpCodes.Ret);
 
             CheckLabelsResolved();
@@ -74,28 +77,56 @@ namespace IronAHK.Scripting
 
         Type EmitPrimitive(CodePrimitiveExpression Primitive)
         {
-            Depth++;
-            Type Generated;
+            Type T;
+            if(Primitive.Value == null) T = null;
+            else T = Primitive.Value.GetType();
 
-            if(Primitive.Value is string)
+            if(T.IsArray)
             {
-                Debug("Pushing primitive string : \""+(Primitive.Value as string)+"\"");
-                Generator.Emit(OpCodes.Ldstr, Primitive.Value as string);
-                Generated = typeof(string);
+                object[] Contents = Primitive.Value as object[];
+                Type Element = T.GetElementType();
+                Generator.Emit(OpCodes.Ldc_I4, Contents.Length);
+                Generator.Emit(OpCodes.Newarr, Element);
+
+                int i = 0;
+                foreach(object Value in Contents)
+                {
+                    Generator.Emit(OpCodes.Dup);
+                    Generator.Emit(OpCodes.Ldc_I4, i);
+
+                    EmitLiteral(Element, Value);
+                    Generator.Emit(OpCodes.Stelem_Ref);
+
+                    i++;
+                }
+
+                return T;
             }
-            else if(Primitive.Value is int)
+            else return EmitLiteral(T, Primitive.Value);
+        }
+
+        Type EmitLiteral(Type T, object Value)
+        {
+            Depth++;
+            Type Generated = T;
+
+            if(T == typeof(string))
             {
-                Debug("Pushing primitive integer : "+((int)Primitive.Value));
-                Generator.Emit(OpCodes.Ldc_I4, (int)Primitive.Value);
-                Generated = typeof(int);
+                Debug("Pushing primitive string : \""+(Value as string)+"\"");
+                Generator.Emit(OpCodes.Ldstr, Value as string);
             }
-            else if(Primitive.Value is decimal)
+            else if(T == typeof(int))
             {
-                Debug("Pushing decimal : "+((decimal) Primitive.Value));
-                Generator.Emit(OpCodes.Ldc_R4, ((float) ((decimal) Primitive.Value)));
+                Debug("Pushing primitive integer : "+((int) Value));
+                Generator.Emit(OpCodes.Ldc_I4, (int) Value);
+            }
+            else if(T == typeof(decimal))
+            {
+                Debug("Pushing decimal : "+((decimal) Value));
+                Generator.Emit(OpCodes.Ldc_R4, ((float) ((decimal) Value)));
                 Generated = typeof(float);
             }
-            else if (Primitive.Value == null)
+            else if (Value == null)
             {
                 Debug("Pushing null");
                 Generator.Emit(OpCodes.Ldnull);
@@ -103,7 +134,7 @@ namespace IronAHK.Scripting
             }
             else
             {
-                Debug("Unhandled primitive: " + Primitive.Value.GetType());
+                Debug("Unhandled primitive: " + Value.GetType());
                 Generated = null;
             }
             Depth--;

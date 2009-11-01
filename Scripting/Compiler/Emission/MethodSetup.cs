@@ -11,7 +11,6 @@ namespace IronAHK.Scripting
     internal partial class MethodWriter
     {
         TypeBuilder Parent;
-        CodeMemberMethod Member;
         ILGenerator Generator;
 
         MethodInfo ForceFloat;
@@ -25,6 +24,8 @@ namespace IronAHK.Scripting
 
         public bool IsEntryPoint = false;
         public MethodBuilder Method;
+        public Dictionary<string, MethodWriter> Methods; // Set in TypeEmitter.cs
+        public CodeMemberMethod Member;
 
         int Depth = 0;
 
@@ -47,7 +48,7 @@ namespace IronAHK.Scripting
                                                           typeof(void), new Type[] { typeof(string[]) });
                 IsEntryPoint = true;
             }
-            else Method = Parent.DefineMethod(Member.Name, MethodAttributes.Static);
+            else Method = Parent.DefineMethod(Member.Name, MethodAttributes.Static, typeof(object), new Type[] { typeof(object[]) });
 
             Generator = Method.GetILGenerator();
 
