@@ -52,18 +52,23 @@ namespace IronAHK.Scripting
             Depth++;
             Debug("Emitting dynamic name expression");
             // Bail if it's not a string, we only use it for that
-            if(Dynamic.CreateType.BaseType != "System.String")
-                throw new CompileException(Dynamic, "CodeArrayCreateExpression is only used for dynamic names. System.String only");
+
+            Type ElementType;
+            if(Dynamic.CreateType.BaseType == "System.String")
+                ElementType = typeof(string);
+            else if(Dynamic.CreateType.BaseType == "System.Object")
+                ElementType = typeof(object);
+            else throw new CompileException(Dynamic, "Unable to create array of type "+Dynamic.CreateType.BaseType);
 
             Generator.Emit(OpCodes.Ldc_I4, Dynamic.Initializers.Count);
-            Generator.Emit(OpCodes.Newarr, typeof(string));
+            Generator.Emit(OpCodes.Newarr, ElementType);
 
             for(int i = 0; i < Dynamic.Initializers.Count; i++)
             {
                 Generator.Emit(OpCodes.Dup);
                 Generator.Emit(OpCodes.Ldc_I4, i);
                 Type Generated = EmitExpression(Dynamic.Initializers[i]);
-                ForceTopStack(Generated, typeof(string));
+                ForceTopStack(Generated, ElementType);
 
                 Generator.Emit(OpCodes.Stelem_Ref);
             }
