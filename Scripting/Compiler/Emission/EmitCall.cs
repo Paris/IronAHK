@@ -29,29 +29,23 @@ namespace IronAHK.Scripting
 
             if (Invoke.Method.TargetObject is CodeThisReferenceExpression && Methods.ContainsKey(Invoke.Method.MethodName))
             {
-                MethodWriter Writer = Methods[Invoke.Method.MethodName];
-                if(Writer.Member.Parameters.Count == Args.Length)
-                    Info = Writer.Method;
-
-                LocalInvoke = true;
+                EmitLocalInvoke(Invoke);
+                return typeof(object);
             }
             else if(Type == null)
             {
                 Info = Lookup.BestMatch(Invoke.Method.MethodName, Args);
-
-                if(Info == null)
-                    throw new CompileException(Invoke, "Could not look up method "+Invoke.Method.MethodName);
             }
             else Info = ResolveCannedMethod(Type, Invoke);
+
+            if(Info == null)
+                throw new CompileException(Invoke, "Could not look up method "+Invoke.Method.MethodName);
 
             bool Forcing = true;
             if(Info.Name == "Parameters" && Info.DeclaringType == typeof(IronAHK.Scripting.Script))
                 Forcing = false;
 
-            ParameterInfo[] Parameters = null;
-
-            if(!LocalInvoke)
-                Parameters = Info.GetParameters();
+            ParameterInfo[] Parameters = Info.GetParameters();
 
             Depth++;
             for(int i = 0; i < Args.Length; i++)
@@ -60,7 +54,7 @@ namespace IronAHK.Scripting
                 Type Generated = EmitExpression(Invoke.Parameters[i], Forcing);
                 Args[i] = ArgType.Expression;
 
-                if(!LocalInvoke && Forcing)
+                if(Forcing)
                     ForceTopStack(Generated, Parameters[i].ParameterType);
             }
             Depth--;
@@ -69,6 +63,15 @@ namespace IronAHK.Scripting
             Depth--;
 
             return Info.ReturnType;
+        }
+
+        void EmitLocalInvoke(CodeMethodInvokeExpression Local)
+        {
+            MethodWriter Writer = Methods[Local.Method.MethodName];
+            MethodInfo Info = Writer.Method;
+
+            EmitExpression(Local.Parameters[0]);
+            Generator.Emit(OpCodes.Call, Info);
         }
 
         // Method to quickly resolve methods emitted frequently by parser
