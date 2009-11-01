@@ -59,6 +59,10 @@ namespace IronAHK.Scripting
             {
                 EmitLabeledStatement(Statement as CodeLabeledStatement);
             }
+            else if(Statement is CodeMethodReturnStatement)
+            {
+                EmitReturnStatement(Statement as CodeMethodReturnStatement);
+            }
             else
             {
                 Depth++;
