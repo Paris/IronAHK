@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -42,11 +42,6 @@
   -->
   <ItemGroup>
     <Compile Include="Compiler\CompilerSetup.cs" />
-    <None Include="Tests\ComplexExpression.ia" />
-    <None Include="Tests\CompoundingAssignment.ia" />
-    <None Include="Tests\Direction.ia" />
-    <None Include="Tests\Goto.ia" />
-    <None Include="Tests\Main.ia" />
     <Compile Include="Compiler\Compiler.cs" />
     <Compile Include="Compiler\Script\Conversion.cs" />
     <Compile Include="Compiler\Script\Operate.cs" />
@@ -92,20 +87,10 @@
     <Compile Include="Compiler\Emission\EmitFlow.cs" />
     <Compile Include="Compiler\Emission\EmitLoop.cs" />
     <Compile Include="Compiler\Emission\EmitVars.cs" />
-    <None Include="Tests\Loop.ia" />
-    <None Include="Tests\SimpleVar.ia" />
-    <None Include="Tests\ComplexVar.ia" />
     <Compile Include="Compiler\Emission\EmitCall.cs" />
-    <None Include="Tests\ToString.ia" />
-    <None Include="Tests\ToFloat.ia" />
-    <None Include="Tests\SimpleExpr.ia" />
-    <None Include="Tests\SimpleFlow.ia" />
     <Compile Include="Compiler\Emission\EmitLabel.cs" />
     <Compile Include="Compiler\Metadata\LabelMetadata.cs" />
     <Compile Include="Compiler\Metadata\LoopMetadata.cs" />
-    <None Include="Tests\Label.ia" />
-    <None Include="Tests\SimpleReturn.ia" />
-    <None Include="Tests\SimpleMethod.ia" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Rusty\Rusty.csproj">
@@ -119,7 +104,4 @@
   <ProjectExtensions>
     <VisualStudio />
   </ProjectExtensions>
-  <ItemGroup>
-    <Folder Include="Compiler\Metadata\" />
-  </ItemGroup>
 </Project>
