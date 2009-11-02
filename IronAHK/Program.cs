@@ -11,17 +11,28 @@ namespace IronAHK
     {
         static int Main(string[] args)
         {
-            #region Setup
-
-            const int ExitSuccess = 0;
-            const int ExitError = 1;
+            #region Test run
 
 #if DEBUG
             const string test = "SimpleMethod";
-            const string opt = ""; // "/csc";
-            const string cmd = opt + " /out test.exe ..{0}..{0}..{0}Scripting{0}Tests{0}" + test + ".ia";
+            const string output = "/out test.exe";
+            const string extra = "";
+            const string cmd = extra + " " + output + " ..{0}..{0}..{0}Tests{0}Scripting{0}Code{0}" + test + ".ia";
+          
             args = string.Format(cmd, Path.DirectorySeparatorChar.ToString()).Split(new char[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
 #endif
+
+            #endregion
+
+            #region Constants
+
+            const int ExitSuccess = 0;
+
+            const int ExitInvalidFunction = 1;
+            const string ErrorInvalidFunction = "Incorrect function.";
+
+            const int ExitFileNotFound = 2;
+            const string ErrorFileNotFound = "The system cannot find the file specified.";
 
             #endregion
 
@@ -60,8 +71,8 @@ namespace IronAHK
                         script = option;
                     else
                     {
-                        Console.Error.WriteLine("Specify one file name.");
-                        return ExitError;
+                        Console.Error.WriteLine(ErrorFileNotFound);
+                        return ExitInvalidFunction;
                     }
                 }
                 else
@@ -77,13 +88,9 @@ namespace IronAHK
                             }
                             else
                             {
-                                Console.Error.WriteLine("No output file specified.");
-                                return ExitError;
+                                Console.Error.WriteLine(ErrorFileNotFound);
+                                return ExitInvalidFunction;
                             }
-                            break;
-
-                        case "CSC":
-                            csc = true;
                             break;
 
                         case "HELP":
@@ -93,21 +100,16 @@ namespace IronAHK
                             return ExitSuccess;
 
                         default:
-                            Console.Error.WriteLine("Unrecognised option.");
-                            return ExitError;
+                            Console.Error.WriteLine(ErrorInvalidFunction);
+                            return ExitInvalidFunction;
                     }
                 }
             }
 
-            if (script == null)
+            if (script == null || !File.Exists(script))
             {
-                Console.Error.WriteLine("No input file specified.");
-                return ExitError;
-            }
-            else if (!File.Exists(script))
-            {
-                Console.Error.WriteLine("Input file not found.");
-                return ExitError;
+                Console.Error.WriteLine(ErrorFileNotFound);
+                return ExitInvalidFunction;
             }
 
             #endregion
@@ -119,14 +121,19 @@ namespace IronAHK
 
             CompilerParameters options = new CompilerParameters();
 
-            options.ReferencedAssemblies.Add(Path.GetFullPath(typeof(IronAHK.Rusty.Core).Namespace + ".dll"));
+            options.ReferencedAssemblies.Add(typeof(IronAHK.Rusty.Core).Namespace + ".dll");
 
-            if (exe != null)
+            bool reflect = exe == null;
+
+            if (!reflect)
             {
                 if (File.Exists(exe))
                     File.Delete(exe);
                 options.OutputAssembly = exe;
             }
+
+            options.GenerateExecutable = !reflect;
+            options.GenerateInMemory = reflect;
 
             CompilerResults results = ahk.CompileAssemblyFromFile(options, script);
 
@@ -140,14 +147,20 @@ namespace IronAHK
 
             #endregion
 
+            #region Run
+
 #if DEBUG
-            if (!string.IsNullOrEmpty(options.OutputAssembly))
+            reflect = true;
+#endif
+
+            if (reflect)
             {
                 AppDomain domain = AppDomain.CreateDomain(Path.GetFileNameWithoutExtension(options.OutputAssembly));
                 domain.ExecuteAssembly(options.OutputAssembly);
             }
-#endif
 
+            #endregion
+            
             return ExitSuccess;
         }
 
