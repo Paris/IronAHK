@@ -37,46 +37,41 @@ namespace IronAHK.Rusty
         {
             OutputVar = Math.Floor((double)(new DriveInfo(Path)).TotalFreeSpace / 1024 / 1024);
         }
-
+        
         /// <summary>
         /// Writes text to the end of a file, creating it first if necessary.
         /// </summary>
         /// <param name="Text">The text to append to the file.</param>
-        /// <param name="Filename">
-        /// <para>The name of the file to be appended, which is assumed to be in %A_WorkingDir% if an absolute path isn't specified.</para>
-        /// <para>Binary mode: To append in binary mode rather than text mode, prepend an asterisk to the filename.</para>
-        /// <para>Standard Output (stdout): Specifying an asterisk (*) for Filename causes Text to be sent to standard output (stdout).</para>
+        /// <param name="Filename">The name of the file to be appended.
+        /// <list type="bullet">
+        /// <item><description>Binary mode: to append in binary mode rather than text mode, prepend an asterisk to the <paramref name="Filename"/>.</description></item>
+        /// <item><description>Standard output (stdout): specifying an asterisk (*) for <paramref name="Filename"/> causes <paramref name="Text"/> to be written to the console.</description></item>
+        /// </list>
         /// </param>
         public static void FileAppend(string Text, string Filename)
         {
             try
             {
-                if (Filename.Length < 1)
-                    throw new ArgumentNullException();
-
-                Stream source = File.Open(Filename, FileMode.Append);
-                bool wildcard = Filename[0] == '*';
-
-                if (Filename.Length > 2 && wildcard) // binary mode
-                {
-                    BinaryWriter writer = new BinaryWriter(source);
-                    writer.Write(Text);
-                    writer.Close();
-                }
-                else if (wildcard) // to stdout
-                {
+                if (Filename == "*")
                     Console.Write(Text);
-                }
-                else // text mode
+                else
                 {
-                    StreamWriter writer = new StreamWriter(source);
-                    writer.Write(Text);
-                    writer.Close();
+                    if (Filename.Length > 0 && Filename[0] == '*')
+                    {
+                        Filename = Filename.Substring(1);
+                        var writer = new BinaryWriter(File.Open(Filename, FileMode.OpenOrCreate));
+                        writer.Write(Text);
+                    }
+                    else
+                        File.AppendAllText(Filename, Text);
                 }
 
                 error = 0;
             }
-            catch (Exception) { error = 1; }
+            catch (Exception)
+            {
+                error = 1;
+            }
         }
 
         /// <summary>
