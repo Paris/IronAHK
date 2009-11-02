@@ -1,4 +1,5 @@
 MsgBox, hoi
+FileAppend, pass, *
 
 method()
 method("passed")
