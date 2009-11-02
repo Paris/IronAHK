@@ -81,14 +81,10 @@ namespace IronAHK.Scripting
                 case FlowGoto:
                     if (parts.Length < 1)
                         throw new ParseException("No label specified");
-                    for (int i = 0; i < parts[1].Length; i++)
-                    {
-                        sym = parts[1][i];
-                        if (sym == Resolve)
-                            throw new ParseException("Dynamic label references are not supported"); // TODO: dynamic goto label references
-                        else if (!IsIdentifier(sym))
-                            throw new ParseException("Illegal character in label name");
-                    }
+                    if (parts[1].IndexOf(Resolve) != 1)
+                        throw new ParseException("Dynamic label references are not supported"); // TODO: dynamic goto label references
+                    else if (!IsIdentifier(parts[1]))
+                        throw new ParseException("Illegal character in label name");
                     return new CodeGotoStatement(parts[1]); // TODO: gosub
 
                 #endregion
