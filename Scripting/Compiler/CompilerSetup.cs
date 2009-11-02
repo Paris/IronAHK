@@ -28,7 +28,7 @@ namespace IronAHK.Scripting
         
         public void LinkTo(string File)
         {
-            LinkingTo = Assembly.LoadFile(File);
+            LinkingTo = Assembly.LoadFrom(File);
                 
             MineTypes(LinkingTo);
         }
