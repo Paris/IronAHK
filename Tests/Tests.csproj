@@ -42,7 +42,6 @@
     <Compile Include="Rusty\Math.cs" />
     <Compile Include="Rusty\PInvoke.cs" />
     <Compile Include="Rusty\Rusty.cs" />
-    <Compile Include="Scripting\Dummy.cs" />
     <Compile Include="Scripting\Scripting.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -60,6 +59,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Scripting\Code\AsFloat.ia" />
     <None Include="Scripting\Code\ComplexExpression.ia" />
     <None Include="Scripting\Code\ComplexVar.ia" />
     <None Include="Scripting\Code\CompoundingAssignment.ia" />
@@ -73,7 +73,6 @@
     <None Include="Scripting\Code\SimpleMethod.ia" />
     <None Include="Scripting\Code\SimpleReturn.ia" />
     <None Include="Scripting\Code\SimpleVar.ia" />
-    <None Include="Scripting\Code\AsFloat.ia" />
     <None Include="Scripting\Code\AsString.ia" />
     <None Include="Tests.nunit" />
   </ItemGroup>
