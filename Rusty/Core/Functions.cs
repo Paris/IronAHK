@@ -54,7 +54,7 @@ namespace IronAHK.Rusty
         /// <returns></returns>
         public static decimal ATan(decimal Number)
         {
-            return (decimal)Math.Acos((double)Number);
+            return (decimal)Math.Atan((double)Number);
         }
 
         /// <summary>
