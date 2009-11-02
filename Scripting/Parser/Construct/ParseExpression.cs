@@ -278,7 +278,7 @@ namespace IronAHK.Scripting
             #region Binary operators
 
             var op = new CodeMethodReferenceExpression();
-            op.TargetObject = new CodeThisReferenceExpression();
+            op.TargetObject = new CodeTypeReferenceExpression(typeof(Script)); // TODO: clean up references
             op.MethodName = "Operate";
             bool scan = true;
 
