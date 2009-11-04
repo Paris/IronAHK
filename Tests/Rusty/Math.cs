@@ -22,8 +22,18 @@ namespace Tests
                 s = r.ToString();
                 if (r < -1 || r > 1)
                 {
-                    Assert.Throws<OverflowException>(delegate { Core.ASin(r); }, "asin " + s);
-                    Assert.Throws<OverflowException>(delegate { Core.ACos(r); }, "acos " + s);
+                    try
+                    {
+                        Core.ASin(r);
+                        throw new ArithmeticException();
+                    }
+                    catch (Exception e) { Assert.IsTrue(e is OverflowException, "asin " + s); }
+                    try
+                    {
+                        Core.ACos(r);
+                        throw new ArithmeticException();
+                    }
+                    catch (Exception e) { Assert.IsTrue(e is OverflowException, "acos " + s); }
                 }
                 else
                 {
