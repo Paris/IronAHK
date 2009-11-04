@@ -33,13 +33,14 @@ namespace Tests
 
                 if (exists)
                 {
-                    AppDomain domain = AppDomain.CreateDomain(Path.GetFileNameWithoutExtension(options.OutputAssembly));
+                    AppDomain domain = AppDomain.CreateDomain(name);
 
                     var buffer = new StringBuilder();
                     var writer = new StringWriter(buffer);
                     Console.SetOut(writer);
 
                     domain.ExecuteAssembly(options.OutputAssembly);
+                    AppDomain.Unload(domain);
 
                     string output = buffer.ToString();
                     Assert.AreEqual("pass", output, name);
