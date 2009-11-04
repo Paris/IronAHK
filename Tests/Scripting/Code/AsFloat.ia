@@ -1,3 +1,5 @@
 var = 1
 test := var + 1
-MsgBox, %test%
+
+if test = 2
+	FileAppend, pass, *
