@@ -38,9 +38,10 @@ namespace IronAHK.Scripting
             string name = Path.GetFileName(Options.OutputAssembly);
             if (name.Length == 0)
                 throw new ArgumentNullException();
-          
+
+            string OutDir = Path.GetDirectoryName(Options.OutputAssembly);
             AName = new AssemblyName(name);
-            ABuilder = AppDomain.CurrentDomain.DefineDynamicAssembly(AName, AssemblyBuilderAccess.Save);
+            ABuilder = AppDomain.CurrentDomain.DefineDynamicAssembly(AName, AssemblyBuilderAccess.Save, OutDir);
 
 #if DEBUG
             // from http://blogs.msdn.com/rmbyers/archive/2005/06/26/432922.aspx
@@ -84,7 +85,7 @@ namespace IronAHK.Scripting
 
         public void Save()
         {
-            ABuilder.Save(AName.Name); // TODO: needs to save in requested directory
+            ABuilder.Save(AName.Name);
         }
     }
 }
