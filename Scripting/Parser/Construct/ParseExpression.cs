@@ -707,6 +707,7 @@ namespace IronAHK.Scripting
                                 case Multicast:
                                 case ParenOpen:
                                 case ParenClose:
+                                case Equal:
                                     op.Append(sym);
                                     break;
 
