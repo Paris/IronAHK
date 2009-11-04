@@ -39,7 +39,7 @@ namespace IronAHK.Scripting
             if (name.Length == 0)
                 throw new ArgumentNullException();
 
-            string OutDir = Path.GetDirectoryName(Options.OutputAssembly);
+            string OutDir = Path.GetDirectoryName(Path.GetFullPath(Options.OutputAssembly));
             AName = new AssemblyName(name);
             ABuilder = AppDomain.CurrentDomain.DefineDynamicAssembly(AName, AssemblyBuilderAccess.Save, OutDir);
 
