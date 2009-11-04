@@ -1,4 +1,6 @@
-﻿using System.CodeDom;
+﻿using System;
+using System.CodeDom;
+using System.Text;
 
 namespace IronAHK.Scripting
 {
@@ -23,7 +25,6 @@ namespace IronAHK.Scripting
             if (parts.Length > 1)
                 parts[1] = parts[1].Trim(Spaces);
 
-            char sym;
             int n;
 
             bool gosub = false;
@@ -166,6 +167,8 @@ namespace IronAHK.Scripting
 
                 #endregion
 
+                #region Return
+
                 case FlowReturn:
                     if (Scope == mainScope)
                     {
@@ -176,12 +179,16 @@ namespace IronAHK.Scripting
                     else
                         return new CodeMethodReturnStatement(parts.Length > 1 ? ParseSingleExpression(parts[1]) : new CodePrimitiveExpression(null));
 
+                #endregion
+
                 default:
                     throw new ParseException(ExUnexpected);
             }
 
             return null;
         }
+
+        #region Flow argument
 
         CodeExpression ParseFlowParameter(string code, bool inequality, out bool blockOpen)
         {
@@ -246,101 +253,48 @@ namespace IronAHK.Scripting
             return false;
         }
 
-        CodeBinaryOperatorExpression ParseInequality(string code)
+        CodeExpression ParseInequality(string code)
         {
-            string var;
-            CodeBinaryOperatorType op;
-            CodeExpression value;
-            int i;
-            char sym;
+            var buf = new StringBuilder(code.Length);
+            int i = 0;
 
-            for (i = 0; i < code.Length; i++)
-            {
-                sym = code[i];
+            while (i < code.Length && IsSpace(code[i])) i++;
 
-                if (!IsIdentifier(sym))
-                    break;
-            }
+            while (i < code.Length && (IsIdentifier(code[i]) || code[i] == Resolve))
+                buf.Append(code[i++]);
 
-            if (i == 0)
-                throw new ParseException(ExUnexpected);
-
-            var = code.Substring(0, i);
-
-            while (i < code.Length && IsSpace(code[i]))
-                i++;
+            while (i < code.Length && IsSpace(code[i])) i++;
 
             if (i == code.Length)
             {
-                op = CodeBinaryOperatorType.IdentityInequality;
-                value = new CodePrimitiveExpression(null);
+                buf.Append(Not);
+                buf.Append(Equal);
+                buf.Append(StringBound);
+                buf.Append(StringBound);
             }
             else
             {
-                int n = i + 1;
-                sym = n < code.Length ? code[n] : '\0';
-                bool doubleOp = false;
+                char[] op = new char[] { Equal, Not, Greater, Less };
+                
+                if (Array.IndexOf<char>(op, code[i]) == -1)
+                    throw new ParseException(ExUnexpected);
 
-                switch (code[i])
-                {
-                    case Equal:
-                        if (sym == Equal)
-                        {
-                            doubleOp = true;
-                            op = CodeBinaryOperatorType.IdentityInequality;
-                        }
-                        else
-                            op = CodeBinaryOperatorType.ValueEquality;
-                        break;
+                buf.Append(code[i++]);
 
-                    case Not:
-                        if (sym != Equal)
-                            throw new ParseException(ExUnexpected);
-                        doubleOp = true;
-                        op = CodeBinaryOperatorType.IdentityInequality;
-                        break;
+                if (i < code.Length && Array.IndexOf<char>(op, code[i]) != -1)
+                    buf.Append(code[i++]);
 
-                    case Greater:
-                        if (sym == Equal)
-                        {
-                            doubleOp = true;
-                            op = CodeBinaryOperatorType.GreaterThanOrEqual;
-                        }
-                        else
-                            op = CodeBinaryOperatorType.GreaterThan;
-                        break;
+                buf.Append(StringBound);
 
-                    case Less:
-                        doubleOp = true;
-                        if (sym == Equal)
-                            op = CodeBinaryOperatorType.LessThanOrEqual;
-                        else if (sym == Greater)
-                            op = CodeBinaryOperatorType.IdentityInequality;
-                        else
-                        {
-                            doubleOp = false;
-                            op = CodeBinaryOperatorType.LessThan;
-                        }
-                        break;
+                if (i < code.Length)
+                    buf.Append(code.Substring(i));
 
-                    default:
-                        throw new ParseException(ExUnexpected);
-                }
-
-                i++;
-                if (doubleOp)
-                    i++;
-
-                if (i == code.Length)
-                    value = new CodePrimitiveExpression(null);
-                else
-                {
-                    string valueStr = code.Substring(i);
-                    value = VarNameOrBasicString(valueStr, true);
-                }
+                buf.Append(StringBound);
             }
 
-            return new CodeBinaryOperatorExpression(VarNameOrBasicString(var, false), op, value);
+            return ParseSingleExpression(buf.ToString());
         }
+
+        #endregion
     }
 }
