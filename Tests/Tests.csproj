@@ -59,6 +59,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include=".gitignore" />
     <None Include="Scripting\Code\AsFloat.ia" />
     <None Include="Scripting\Code\ComplexExpression.ia" />
     <None Include="Scripting\Code\ComplexVar.ia" />
