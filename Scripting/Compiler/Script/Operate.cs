@@ -80,10 +80,10 @@ namespace IronAHK.Scripting
                     return ForceDecimal(left) >= ForceDecimal(right);
 
                 case Operator.IdentityEquality:
-                    return left == right;
+                    return left.Equals(right);
 
                 case Operator.IdentityInequality:
-                    return left != right;
+                    return !left.Equals(right);
 
                 case Operator.Increment:
                     return ForceDecimal(left) + 1; // UNDONE: should unary decrement be here?
@@ -108,11 +108,11 @@ namespace IronAHK.Scripting
 
                 case Operator.ValueEquality:
                     MatchTypes(ref left, ref right);
-                    return left == right;
+                    return left.Equals(right);
 
                 case Operator.ValueInequality:
                     MatchTypes(ref left, ref right);
-                    return left != right;
+                    return !left.Equals(right);
 
                 default:
                     throw new ArgumentOutOfRangeException();
