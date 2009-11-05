@@ -33,21 +33,22 @@ namespace Tests
 
                 if (exists)
                 {
-                    AppDomain domain = AppDomain.CreateDomain(name);
-
                     var buffer = new StringBuilder();
                     var writer = new StringWriter(buffer);
                     Console.SetOut(writer);
 
-                    domain.ExecuteAssembly(options.OutputAssembly);
-                    AppDomain.Unload(domain);
+                    AppDomain.CurrentDomain.ExecuteAssembly(options.OutputAssembly);
 
+                    try { File.Delete(options.OutputAssembly); }
+                    catch (UnauthorizedAccessException) { }
+
+                    writer.Flush();
                     string output = buffer.ToString();
                     Assert.AreEqual("pass", output, name);
 
-                    var standardOutput = new StreamWriter(Console.OpenStandardOutput());
-                    standardOutput.AutoFlush = true;
-                    Console.SetOut(standardOutput);
+                    var stdout = new StreamWriter(Console.OpenStandardOutput());
+                    stdout.AutoFlush = true;
+                    Console.SetOut(stdout);
                 }
             }
         }
