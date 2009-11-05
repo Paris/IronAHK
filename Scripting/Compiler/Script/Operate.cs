@@ -118,5 +118,17 @@ namespace IronAHK.Scripting
                     throw new ArgumentOutOfRangeException();
             }
         }
+
+        public static bool IfTest(object result)
+        {
+            if (result is bool)
+                return (bool)result;
+            else if (result is decimal || result is long || result is int || result is float)
+                return ((decimal)result) != 0;
+            else if (result is string)
+                return !string.IsNullOrEmpty((string)result);
+            else
+                return result != null;
+        }
     }
 }

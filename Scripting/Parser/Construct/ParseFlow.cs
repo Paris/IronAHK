@@ -45,7 +45,13 @@ namespace IronAHK.Scripting
                         bool blockOpen = false;
                         CodeExpression condition = ParseFlowParameter(parts[1], true, out blockOpen);
                         CodeConditionStatement ifelse = new CodeConditionStatement();
-                        ifelse.Condition = condition;
+
+                        var iftest = new CodeMethodInvokeExpression();
+                        iftest.Method.TargetObject = new CodeTypeReferenceExpression(typeof(Script));
+                        iftest.Method.MethodName = "IfTest";
+                        iftest.Parameters.Add(condition);
+
+                        ifelse.Condition = iftest;
                         var block = new CodeBlock(line, Scope, ifelse.TrueStatements);
                         block.Type = blockOpen ? CodeBlock.BlockType.Within : CodeBlock.BlockType.Expect;
                         blocks.Push(block);
