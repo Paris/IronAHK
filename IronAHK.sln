@@ -49,38 +49,4 @@ Global
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
-	GlobalSection(MonoDevelopProperties) = preSolution
-		version = 0.1
-		StartupItem = IronAHK\IronAHK.csproj
-		Policies = $0
-		$0.ChangeLogPolicy = $1
-		$1.UpdateMode = Nearest
-		$1.MessageStyle = $2
-		$2.LineAlign = 0
-		$1.inheritsSet = Mono
-		$0.TextStylePolicy = $3
-		$3.FileWidth = 120
-		$3.inheritsSet = VisualStudio
-		$3.inheritsScope = text/plain
-		$0.DotNetNamingPolicy = $4
-		$4.DirectoryNamespaceAssociation = None
-		$4.ResourceNamePolicy = FileFormatDefault
-		$0.TextStylePolicy = $5
-		$5.FileWidth = 120
-		$5.RemoveTrailingWhitespace = True
-		$5.inheritsSet = VisualStudio
-		$5.inheritsScope = text/plain
-		$5.scope = text/plain
-		$0.TextStylePolicy = $6
-		$6.inheritsSet = null
-		$6.scope = application/x-shellscript
-		$0.TextStylePolicy = $7
-		$7.inheritsSet = null
-		$7.scope = text/x-csharp
-		$0.CSharpFormattingPolicy = $8
-		$8.inheritsSet = Mono
-		$8.inheritsScope = text/x-csharp
-		$8.scope = text/x-csharp
-		name = IronAHK
-	EndGlobalSection
 EndGlobal
