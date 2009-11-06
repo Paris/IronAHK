@@ -97,7 +97,7 @@ namespace IronAHK.Scripting
 #if !DEBUG
                 catch (ParseException e)
                 {
-                    errors.Add(new CompilerError(e.Source, e.Line, 0, e.Message.GetHashCode(), e.Message));
+                    errors.Add(new CompilerError(e.Source, e.Line, 0, e.Message.GetHashCode().ToString(), e.Message));
                 }
 #endif
                 finally { }
