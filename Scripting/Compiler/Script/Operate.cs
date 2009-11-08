@@ -27,13 +27,23 @@ namespace IronAHK.Scripting
             Increment,
             Decrement,
 
+            Minus,
+            LogicalNot,
+            BitwiseNot,
+            Address,
+            Dereference,
+
             Power,
             FloorDivide,
             BitShiftRight,
             BitShiftLeft,
+            BitwiseXor,
             ValueInequality,
-
             Concat,
+
+            LogicalNotEx,
+
+            Ternary,
         };
 
         public static object Operate(Operator op, object left, object right)
