@@ -79,8 +79,12 @@ namespace IronAHK.Scripting
 
         #endregion
 
+        #region Parser
+
         CodeExpression ParseExpression(List<object> parts)
         {
+            #region Scanner
+
             for (int i = 0; i < parts.Count; i++)
             {
                 if (parts[i] is string)
@@ -275,14 +279,15 @@ namespace IronAHK.Scripting
                 }
             }
 
+            #endregion
+
             #region Binary operators
 
             var op = new CodeMethodReferenceExpression();
             op.TargetObject = new CodeTypeReferenceExpression(typeof(Script)); // TODO: clean up references
             op.MethodName = "Operate";
             bool scan = true;
-
-            // HACK: operator precedence
+            int level = -1;
 
             while (scan)
             {
@@ -292,10 +297,15 @@ namespace IronAHK.Scripting
                     if (parts[i] is Script.Operator)
                     {
                         scan = true;
+                        var _op = (Script.Operator)parts[i];
+
+                        if (OperatorPrecedence(_op) < level)
+                            continue;
+
                         int x = i - 1, y = i + 1;
                         var invoke = new CodeMethodInvokeExpression();
                         invoke.Method = op;
-                        invoke.Parameters.Add(OperatorAsFieldReference((Script.Operator)parts[i]));
+                        invoke.Parameters.Add(OperatorAsFieldReference(_op));
 
                         foreach (int z in new int[] { x, y }) // I know... I'm lazy
                             invoke.Parameters.Add(parts[z] is CodeComplexVariableReferenceExpression ?
@@ -306,6 +316,7 @@ namespace IronAHK.Scripting
                         parts.RemoveAt(i);
                     }
                 }
+                level--;
             }
 
             #endregion
@@ -332,6 +343,8 @@ namespace IronAHK.Scripting
 
             return (CodeExpression)parts[0];
         }
+
+        #endregion
 
         #region Operators
 
@@ -480,6 +493,9 @@ namespace IronAHK.Scripting
                 case Not:
                     switch (op.Length)
                     {
+                        case 1:
+                            return Script.Operator.LogicalNot;
+
                         case 2:
                             if (op[1] == Equal)
                                 return Script.Operator.ValueInequality;
@@ -511,6 +527,65 @@ namespace IronAHK.Scripting
             }
 
             throw new ArgumentOutOfRangeException();
+        }
+
+        int OperatorPrecedence(Script.Operator op)
+        {
+            switch (op)
+            {
+                case Script.Operator.Power:
+                    return -1;
+
+                case Script.Operator.Minus:
+                case Script.Operator.LogicalNot:
+                case Script.Operator.BitwiseNot:
+                case Script.Operator.Address:
+                case Script.Operator.Dereference:
+                    return -2;
+
+                case Script.Operator.Multiply:
+                case Script.Operator.Divide:
+                case Script.Operator.FloorDivide:
+                    return -3;
+
+                case Script.Operator.Add:
+                case Script.Operator.Subtract:
+                    return -4;
+
+                case Script.Operator.BitShiftLeft:
+                case Script.Operator.BitShiftRight:
+                    return -5;
+
+                case Script.Operator.BitwiseAnd:
+                case Script.Operator.BitwiseXor:
+                case Script.Operator.BitwiseOr:
+                    return -6;
+
+                case Script.Operator.GreaterThan:
+                case Script.Operator.LessThan:
+                case Script.Operator.GreaterThanOrEqual:
+                case Script.Operator.LessThanOrEqual:
+                    return -7;
+
+                case Script.Operator.ValueEquality:
+                case Script.Operator.IdentityEquality:
+                case Script.Operator.ValueInequality:
+                case Script.Operator.IdentityInequality:
+                    return -8;
+
+                case Script.Operator.LogicalNotEx:
+                    return -9;
+
+                case Script.Operator.BooleanAnd:
+                case Script.Operator.BooleanOr:
+                    return -10;
+
+                case Script.Operator.Ternary:
+                    return -11;
+
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
         }
 
         CodeFieldReferenceExpression OperatorAsFieldReference(Script.Operator op)
