@@ -64,9 +64,6 @@ namespace IronAHK.Scripting
                 case Operator.Concat:
                     return string.Concat(ForceString(left), ForceString(right));
 
-                case Operator.Decrement:
-                    return ForceDecimal(left) - 1; // UNDONE: should unary decrement be here?
-
                 case Operator.Divide:
                     return ForceDecimal(left) / ForceDecimal(right);
 
@@ -84,9 +81,6 @@ namespace IronAHK.Scripting
 
                 case Operator.IdentityInequality:
                     return !left.Equals(right);
-
-                case Operator.Increment:
-                    return ForceDecimal(left) + 1; // UNDONE: should unary decrement be here?
 
                 case Operator.LessThan:
                     return ForceDecimal(left) < ForceDecimal(right);
