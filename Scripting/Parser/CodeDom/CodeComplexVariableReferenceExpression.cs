@@ -27,8 +27,7 @@ namespace IronAHK.Scripting
         {
             get
             {
-                var concat = new CodeMethodInvokeExpression();
-                concat.Method = new CodeMethodReferenceExpression(new CodeTypeReferenceExpression(typeof(string)), "Concat", new CodeTypeReference(typeof(string[])));
+                var concat = (CodeMethodInvokeExpression)Parser.InternalMethods.Concat;
 
                 CodeExpression[] sub = new CodeExpression[parts.Length];
 
@@ -50,8 +49,7 @@ namespace IronAHK.Scripting
 
         public static explicit operator CodeMethodInvokeExpression(CodeComplexVariableReferenceExpression variable)
         {
-            var get = new CodeMethodInvokeExpression();
-            get.Method = new CodeMethodReferenceExpression(new CodeThisReferenceExpression(), "GetEnv");
+            var get = (CodeMethodInvokeExpression)Parser.InternalMethods.GetEnv;
             get.Parameters.Add(variable.QualifiedName);
             return get;
         }

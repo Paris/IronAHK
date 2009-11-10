@@ -62,6 +62,8 @@
     <Compile Include="Parser\Compile.cs" />
     <Compile Include="Parser\Function.cs" />
     <Compile Include="Parser\CodeDom\CodeLine.cs" />
+    <Compile Include="Parser\InternalMethods.cs" />
+    <Compile Include="Parser\MethodReference.cs" />
     <Compile Include="Parser\MulitlineString.cs" />
     <Compile Include="Parser\Construct\ParseAssign.cs" />
     <Compile Include="Parser\Construct\ParseCommand.cs" />

@@ -193,7 +193,7 @@ namespace IronAHK.Scripting
         CodeMethodInvokeExpression StringConcat(params CodeExpression[] parts)
         {
             Type str = typeof(string);
-            var method = new CodeMethodReferenceExpression(new CodeTypeReferenceExpression(str), "Concat");
+            var method = (CodeMethodReferenceExpression)InternalMethods.Concat;
             var all = new CodeArrayCreateExpression(str, parts);
             return new CodeMethodInvokeExpression(method, all);
         }
