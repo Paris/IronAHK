@@ -8,122 +8,71 @@ namespace IronAHK.Scripting
 {
     internal partial class MethodWriter
     {
-        Type EmitMethodInvoke(CodeMethodInvokeExpression Invoke)
+        Type EmitMethodInvoke(CodeMethodInvokeExpression invoke)
         {
-            if(Invoke.Method.MethodName == string.Empty)
-                throw new CompileException(Invoke, "Empty method name");
+            MethodInfo target = null;
+            var type = invoke.Method.TargetObject as CodeTypeReferenceExpression;
 
             Depth++;
-            Debug("Emitting method invoke expression for "+Invoke.Method.MethodName);
+            Debug("Emitting method invoke " + invoke.Method.MethodName);
 
-            MethodInfo Info = null;
-
-            ArgType[] Args = new ArgType[Invoke.Parameters.Count];
-
-            for(int i = 0; i < Args.Length; i++)
-                Args[i] = ArgType.Expression;
-
-            var Type = Invoke.Method.TargetObject as CodeTypeReferenceExpression;
-
-            bool LocalInvoke = false;
-
-            if (Invoke.Method.TargetObject is CodeThisReferenceExpression && Methods.ContainsKey(Invoke.Method.MethodName))
+            if (invoke.Method.TargetObject is CodeThisReferenceExpression && Methods.ContainsKey(invoke.Method.MethodName))
+                target = Methods[invoke.Method.MethodName].Method;
+            else if (type == null)
             {
-                EmitLocalInvoke(Invoke);
-                return typeof(object);
+                var args = new ArgType[invoke.Parameters.Count];
+
+                for (int i = 0; i < args.Length; i++)
+                    args[i] = ArgType.Expression;
+
+                target = Lookup.BestMatch(invoke.Method.MethodName, args);
             }
-            else if(Type == null)
-            {
-                Info = Lookup.BestMatch(Invoke.Method.MethodName, Args);
-            }
-            else Info = ResolveCannedMethod(Type, Invoke);
-
-            if(Info == null)
-                throw new CompileException(Invoke, "Could not look up method "+Invoke.Method.MethodName);
-
-            bool Forcing = true;
-            if(Info.Name == "Parameters" && Info.DeclaringType == typeof(IronAHK.Scripting.Script))
-                Forcing = false;
-
-            ParameterInfo[] Parameters = Info.GetParameters();
-
-            Depth++;
-            for(int i = 0; i < Args.Length; i++)
-            {
-                Debug("Emitting parameter "+i);
-                Type Generated = EmitExpression(Invoke.Parameters[i], Forcing);
-                Args[i] = ArgType.Expression;
-
-                if(Forcing)
-                    ForceTopStack(Generated, Parameters[i].ParameterType);
-            }
-            Depth--;
-
-            Generator.Emit(OpCodes.Call, Info);
-            Depth--;
-
-            return Info.ReturnType;
-        }
-
-        void EmitLocalInvoke(CodeMethodInvokeExpression Local)
-        {
-            MethodWriter Writer = Methods[Local.Method.MethodName];
-            MethodInfo Info = Writer.Method;
-
-            EmitExpression(Local.Parameters[0]);
-            Generator.Emit(OpCodes.Call, Info);
-        }
-
-        // Method to quickly resolve methods emitted frequently by parser
-        MethodInfo ResolveCannedMethod(CodeTypeReferenceExpression Type, CodeMethodInvokeExpression Invoke)
-        {
-            Depth++;
-            Type target, rusty = typeof(Script);
-            if (Type.Type.BaseType == rusty.FullName || Type.Type.BaseType == typeof(Rusty.Core).FullName)
-                target = rusty;
             else
-            {
-                try
-                {
-                    target = System.Type.GetType(Type.Type.BaseType, true, false);
-                }
-                catch (Exception)
-                {
-                    throw new CompileException(Type, "Could not access type " + Type.Type.BaseType);
-                }
-            }
+                target = GetMethodInfo(invoke.Method);
 
-            try
-            {
-                Type[] types = null;
-                if (target.FullName == typeof(string).FullName && Invoke.Method.MethodName == "Concat")
-                    types = new Type[] { typeof(string[]) };
-                MethodInfo method = FindMethod(target, Invoke.Method.MethodName, types);
-                if (method == null)
-                    throw new ArgumentNullException();
+            var parameters = target.GetParameters();
 
-                Depth--;
-                return method;
-            }
-            catch (Exception)
+            Depth++;
+            for (int i = 0; i < invoke.Parameters.Count; i++)
             {
-                throw new CompileException(Invoke, string.Format("Could not find method {0} in type {1}", Invoke.Method.MethodName, Type.Type.BaseType));
+                Debug("Emitting parameter " + i);
+                var generated = EmitExpression(invoke.Parameters[i], true);
+                ForceTopStack(generated, parameters[i].ParameterType);
             }
+            Depth--;
+
+            Generator.Emit(OpCodes.Call, target);
+            Depth--;
+            return target.ReturnType;
         }
 
-        MethodInfo FindMethod(Type target, string name, Type[] parameters) // find method recursively from base typess
+        MethodInfo GetMethodInfo(CodeMethodReferenceExpression reference)
         {
+            const string id = "MethodInfo";
+            if (reference.UserData.Contains(id) && reference.UserData[id] is MethodInfo)
+                return (MethodInfo)reference.UserData[id];
+
             MethodInfo method = null;
+            Type target = Type.GetType(((CodeTypeReferenceExpression)reference.TargetObject).Type.BaseType);
+            Type[] parameters = new Type[reference.TypeArguments.Count];
+
+            for (int i = 0; i < reference.TypeArguments.Count; i++)
+                parameters[i] = Type.GetType(reference.TypeArguments[i].BaseType);
 
             while (target != null)
             {
-                method = parameters == null ? target.GetMethod(name) : target.GetMethod(name, parameters);
+                method = parameters.Length == 0 ? target.GetMethod(reference.MethodName) : target.GetMethod(reference.MethodName, parameters);
+
                 if (method != null)
+                    return method;
+
+                if (target == typeof(object))
                     break;
+
                 target = target.BaseType;
             }
 
-            return method;
+            throw new CompileException(reference, "Could not find method");
         }
     }
 }
