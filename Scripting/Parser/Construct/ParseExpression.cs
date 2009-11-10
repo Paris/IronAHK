@@ -283,9 +283,7 @@ namespace IronAHK.Scripting
 
             #region Binary operators
 
-            var op = new CodeMethodReferenceExpression();
-            op.TargetObject = new CodeTypeReferenceExpression(typeof(Script)); // TODO: clean up references
-            op.MethodName = "Operate";
+            var calc = (CodeMethodReferenceExpression)InternalMethods.Operate;
             bool scan = true;
             int level = -1;
 
@@ -297,15 +295,15 @@ namespace IronAHK.Scripting
                     if (parts[i] is Script.Operator)
                     {
                         scan = true;
-                        var _op = (Script.Operator)parts[i];
+                        var op = (Script.Operator)parts[i];
 
-                        if (OperatorPrecedence(_op) < level)
+                        if (OperatorPrecedence(op) < level)
                             continue;
 
                         int x = i - 1, y = i + 1;
                         var invoke = new CodeMethodInvokeExpression();
-                        invoke.Method = op;
-                        invoke.Parameters.Add(OperatorAsFieldReference(_op));
+                        invoke.Method = calc;
+                        invoke.Parameters.Add(OperatorAsFieldReference(op));
 
                         foreach (int z in new int[] { x, y }) // I know... I'm lazy
                             invoke.Parameters.Add(parts[z] is CodeComplexVariableReferenceExpression ?
