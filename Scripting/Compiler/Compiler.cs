@@ -1,6 +1,7 @@
 using System.CodeDom;
 using System.CodeDom.Compiler;
 using System.IO;
+using System.Reflection.Emit;
 
 namespace IronAHK.Scripting
 {
@@ -15,7 +16,7 @@ namespace IronAHK.Scripting
                 EmitNamespace(ABuilder, Unit.Namespaces[0]);
             }
             
-            ABuilder.SetEntryPoint(EntryPoint);
+            ABuilder.SetEntryPoint(EntryPoint, PEFileKinds.WindowApplication);
             Save();
 
             return new CompilerResults(null);
