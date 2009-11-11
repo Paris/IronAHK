@@ -137,13 +137,8 @@ namespace IronAHK
 
             CompilerResults results = ahk.CompileAssemblyFromFile(options, script);
 
-            if (results.Errors.HasErrors)
-            {
-                foreach (CompilerError error in results.Errors)
-                {
-                    Console.Error.WriteLine("{0} ({1}): ==> {2}", error.FileName, error.Line.ToString(), error.ErrorText);
-                }
-            }
+            foreach (CompilerError error in results.Errors)
+                Console.Error.WriteLine("{0} ({1}): ==> {2}", error.FileName, error.Line.ToString(), error.ErrorText);
 
             #endregion
 
