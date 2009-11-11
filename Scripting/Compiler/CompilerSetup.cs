@@ -43,16 +43,6 @@ namespace IronAHK.Scripting
             AName = new AssemblyName(name);
             ABuilder = AppDomain.CurrentDomain.DefineDynamicAssembly(AName, AssemblyBuilderAccess.Save, OutDir);
 
-#if DEBUG
-            // from http://blogs.msdn.com/rmbyers/archive/2005/06/26/432922.aspx
-            Type daType = typeof(DebuggableAttribute);
-            ConstructorInfo daCtor = daType.GetConstructor(new Type[] { typeof(DebuggableAttribute.DebuggingModes) });
-            CustomAttributeBuilder daBuilder = new CustomAttributeBuilder(daCtor, new object[] {
-                DebuggableAttribute.DebuggingModes.DisableOptimizations |
-                DebuggableAttribute.DebuggingModes.Default });
-            ABuilder.SetCustomAttribute(daBuilder);
-            // HACK: this doesn't work, I still get warning messages in VS08
-#endif
 
             foreach (string assembly in Options.ReferencedAssemblies)
             {
