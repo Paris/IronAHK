@@ -44,8 +44,7 @@ namespace IronAHK.Scripting
 
             if(Member is CodeEntryPointMethod)
             {
-                Method = Parent.DefineMethod("Main", MethodAttributes.Private | MethodAttributes.Static,
-                                                          typeof(void), new Type[] { typeof(string[]) });
+                Method = Parent.DefineMethod("Main", MethodAttributes.Private | MethodAttributes.Static, typeof(void), null);
                 IsEntryPoint = true;
             }
             else Method = Parent.DefineMethod(Member.Name, MethodAttributes.Static, typeof(object), new Type[] { typeof(object[]) });
