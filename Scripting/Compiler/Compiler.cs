@@ -1,6 +1,7 @@
 using System.CodeDom;
 using System.CodeDom.Compiler;
 using System.IO;
+using System.Reflection;
 using System.Reflection.Emit;
 
 namespace IronAHK.Scripting
@@ -19,7 +20,12 @@ namespace IronAHK.Scripting
             ABuilder.SetEntryPoint(EntryPoint, PEFileKinds.WindowApplication);
             Save();
 
-            return new CompilerResults(null);
+            var results = new CompilerResults(null);
+
+            if (options.GenerateInMemory)
+                results.CompiledAssembly = Assembly.LoadFile(Path.GetFullPath(options.OutputAssembly));
+
+            return results;
         }
 
         #region Inherited methods

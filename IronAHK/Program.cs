@@ -15,7 +15,7 @@ namespace IronAHK
 
 #if DEBUG
             const string test = "ComplexExpression";
-            const string output = "/out test.exe";
+            const string output = ""; // "/out test.exe";
             const string extra = "";
             const string cmd = extra + " " + output + " ..{0}..{0}..{0}Tests{0}Scripting{0}Code{0}" + test + ".ia";
           
@@ -144,15 +144,15 @@ namespace IronAHK
 
             #region Run
 
-#if DEBUG
-            reflect = true;
-#endif
+            if (!options.GenerateExecutable)
+            {
+                try { File.Delete(options.OutputAssembly); } // TODO: safe delete temp executable
+                catch (UnauthorizedAccessException) { Console.Error.WriteLine("Unable to delete temporary assembly"); }
+                finally { }
+            }
 
             if (reflect)
-            {
-                AppDomain domain = AppDomain.CreateDomain(Path.GetFileNameWithoutExtension(options.OutputAssembly));
-                domain.ExecuteAssembly(options.OutputAssembly);
-            }
+                results.CompiledAssembly.EntryPoint.Invoke(null, null);
 
             #endregion
             

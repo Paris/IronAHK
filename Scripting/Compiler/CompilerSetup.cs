@@ -34,15 +34,35 @@ namespace IronAHK.Scripting
         }
         
         void Setup(CompilerParameters Options)
-        { 
+        {
+            if (string.IsNullOrEmpty(Options.OutputAssembly))
+            {
+                if (Options.GenerateExecutable)
+                    throw new ArgumentNullException();
+                else
+                {
+                    // HACK: always use temp path and delete safely after loading assembly
+
+                    const string ext = ".exe";
+                    string path = Path.Combine(Path.GetTempPath(), "~ia" + ext);
+
+                    if (File.Exists(path))
+                    {
+                        bool next = false;
+                        try { File.Delete(path); }
+                        catch (Exception) { next = true; }
+                        if (next)
+                            path = Path.Combine(Path.GetTempPath(), Path.GetFileNameWithoutExtension(Path.GetRandomFileName()) + ext);
+                    }
+
+                    Options.OutputAssembly = path;
+                }
+            }
+
             string name = Path.GetFileName(Options.OutputAssembly);
-            if (name.Length == 0)
-                throw new ArgumentNullException();
-
-            string OutDir = Path.GetDirectoryName(Path.GetFullPath(Options.OutputAssembly));
+            string dir = Path.GetDirectoryName(Path.GetFullPath(Options.OutputAssembly));
             AName = new AssemblyName(name);
-            ABuilder = AppDomain.CurrentDomain.DefineDynamicAssembly(AName, AssemblyBuilderAccess.Save, OutDir);
-
+            ABuilder = AppDomain.CurrentDomain.DefineDynamicAssembly(AName, AssemblyBuilderAccess.RunAndSave, dir);
 
             foreach (string assembly in Options.ReferencedAssemblies)
             {
