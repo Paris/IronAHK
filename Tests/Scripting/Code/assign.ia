@@ -1,0 +1,10 @@
+x = 1
+y=2
+
+If x != 1
+	FileAppend, fail, *
+
+If y!=2
+	FileAppend, fail, *
+
+FileAppend, pass, *

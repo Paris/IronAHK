@@ -1,5 +1,0 @@
-var = 1
-test := var + 1
-
-if test = 2
-	FileAppend, pass, *

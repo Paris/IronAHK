@@ -1,0 +1,7 @@
+x = 1
+
+If x = 2
+	FileAppend, fail, *
+ELSE if x    =1
+	FileAppend, pass, *
+else FileAppend, fail, *

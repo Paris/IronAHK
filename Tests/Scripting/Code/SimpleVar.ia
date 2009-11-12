@@ -1,2 +1,0 @@
-var = hoi
-MsgBox, %var%

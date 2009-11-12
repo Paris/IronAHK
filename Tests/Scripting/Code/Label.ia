@@ -1,7 +1,0 @@
-goto testlabel
-
-MsgBox You should not see me
-
-testlabel:
-
-MsgBox You should see me
