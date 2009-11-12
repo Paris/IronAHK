@@ -1,6 +1,15 @@
-﻿goto mylabel
-return
+Gosub, labelA
+x++
 
-mylabel:
-MsgBox hi
-return
+labelB:
+x++
+Goto, LABELC
+x++
+
+labelc:
+If x = 3
+	FileAppend, pass, *
+Return
+
+labelA:
+x = 1

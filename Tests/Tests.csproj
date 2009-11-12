@@ -60,21 +60,17 @@
   </ItemGroup>
   <ItemGroup>
     <None Include=".gitignore" />
-    <None Include="Scripting\Code\AsFloat.ia" />
-    <None Include="Scripting\Code\ComplexExpression.ia" />
-    <None Include="Scripting\Code\ComplexVar.ia" />
-    <None Include="Scripting\Code\CompoundingAssignment.ia" />
-    <None Include="Scripting\Code\Direction.ia" />
-    <None Include="Scripting\Code\Goto.ia" />
-    <None Include="Scripting\Code\Label.ia" />
-    <None Include="Scripting\Code\Loop.ia" />
-    <None Include="Scripting\Code\Main.ia" />
-    <None Include="Scripting\Code\SimpleExpr.ia" />
-    <None Include="Scripting\Code\SimpleFlow.ia" />
-    <None Include="Scripting\Code\SimpleMethod.ia" />
-    <None Include="Scripting\Code\SimpleReturn.ia" />
-    <None Include="Scripting\Code\SimpleVar.ia" />
-    <None Include="Scripting\Code\AsString.ia" />
+    <Content Include="Scripting\Code\order.txt" />
+    <None Include="Scripting\Code\comments.ia" />
+    <None Include="Scripting\Code\pass.ia" />
+    <None Include="Scripting\Code\if.ia" />
+    <None Include="Scripting\Code\assign.ia" />
+    <None Include="Scripting\Code\command.ia" />
+    <None Include="Scripting\Code\directive.ia" />
+    <None Include="Scripting\Code\loop.ia" />
+    <None Include="Scripting\Code\hotkey.ia" />
+    <None Include="Scripting\Code\functions.ia" />
+    <None Include="Scripting\Code\goto.ia" />
     <None Include="Tests.nunit" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

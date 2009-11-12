@@ -1,6 +1,6 @@
 ﻿using NUnit.Framework;
 
-namespace Tests
+namespace IronAHK.Tests
 {
     [TestFixture]
     public partial class Rusty { }

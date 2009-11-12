@@ -2,7 +2,7 @@
 using IronAHK.Rusty;
 using NUnit.Framework;
 
-namespace Tests
+namespace IronAHK.Tests
 {
     partial class Rusty
     {

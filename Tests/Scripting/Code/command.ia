@@ -1,0 +1,6 @@
+FileAppend, pass, *
+fileappend		 pass, *
+
+FileAPPEND
+	, pass
+, *

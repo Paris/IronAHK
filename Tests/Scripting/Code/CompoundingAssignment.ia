@@ -1,4 +1,0 @@
-﻿x = 3
-y := 2
-var := ++x * y
-msgbox %var% (%x% %y%)

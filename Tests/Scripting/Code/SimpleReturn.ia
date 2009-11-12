@@ -1,5 +1,0 @@
-MsgBox You should see me
-
-return
-
-MsgBox You should not see me

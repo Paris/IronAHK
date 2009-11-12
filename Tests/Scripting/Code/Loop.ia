@@ -1,2 +1,7 @@
-Loop, 5
-    MsgBox, %A_Index%
+y = 5
+
+Loop, %y%
+	x = %A_Index%
+
+If x = 5
+	FileAppend, pass, *

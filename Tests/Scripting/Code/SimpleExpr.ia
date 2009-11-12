@@ -1,2 +1,0 @@
-var := 2 * (5 - 4)
-MsgBox, %var%
