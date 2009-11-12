@@ -1,8 +1,5 @@
-*.csproj.user
-.svn
+*.pidb
+*.user*
 /*.suo
 bin
 obj
-*.pidb
-*.usertasks
-*.userprefs
