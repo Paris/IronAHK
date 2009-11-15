@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 
 namespace IronAHK.Rusty
@@ -748,16 +749,15 @@ namespace IronAHK.Rusty
             /*set { Settings.NowUTC = value; }*/
         }
 
-#if LEGACY
         /// <summary>
         /// See <see cref="A_BatchLines"/>.
         /// </summary>
+        [Obsolete]
         public static string A_NumBatchLines
         {
             get { return A_BatchLines; }
             /*set { Settings.NumBatchLines = value; }*/
         }
-#endif
 
         /// <summary>
         /// The type of Operating System being run.  Either WIN32_WINDOWS (i.e. Windows 95/98/ME) or WIN32_NT (i.e. Windows NT4/2000/XP/2003/Vista).

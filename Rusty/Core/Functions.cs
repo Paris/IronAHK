@@ -127,7 +127,7 @@ namespace IronAHK.Rusty
         public static string GetKeyState(string KeyName, string Mode)
         {
             int VK = 0;
-            if (Core.IfInString(KeyName,"VK"))
+            if (KeyName.Contains("VK"))
             {
                 try
                 {

@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 
 namespace IronAHK.Rusty
 {
@@ -187,7 +188,6 @@ namespace IronAHK.Rusty
             Windows.Windows.SetWindowText(hwnd, NewText);
         }
 
-#if LEGACY
         /// <summary>
         /// Determines whether invisible text in a window is "seen" for the purpose of finding the window. This affects commands such as IfWinExist and WinActivate.
         /// </summary>
@@ -195,13 +195,12 @@ namespace IronAHK.Rusty
         /// <para>On: This is the default for non-AutoIt v2 scripts (e.g. .ahk, .ini). Hidden text will be detected.</para>
         /// <para>Off: This is the default for AutoIt v2 scripts. Hidden text is not detected.</para>
         /// </param>
+        [Obsolete, Conditional("LEGACY")]
         public static void DetectHiddenText(string Mode)
         {
             Formats.OnOff(ref Settings.DetectHiddenText, Mode);
         }
-#endif
 
-#if LEGACY
         /// <summary>
         /// Determines whether invisible windows are "seen" by the script.
         /// </summary>
@@ -209,11 +208,11 @@ namespace IronAHK.Rusty
         /// <para>On: Hidden windows are detected. </para>
         /// <para>Off: This is the default. Hidden windows are not detected, except by the WinShow command.</para>
         /// </param>
+        [Obsolete, Conditional("LEGACY")]
         public static void DetectHiddenWindows(string Mode)
         {
             Formats.OnOff(ref Settings.DetectHiddenWindows, Mode);
         }
-#endif
 
         /// <summary>
         /// Activates the next window in a window group that was defined with GroupAdd.
@@ -267,7 +266,6 @@ namespace IronAHK.Rusty
             throw new NotImplementedException();
         }
         
-#if LEGACY
         /// <summary>
         /// Checks if the specified window exists and is currently active (foremost).
         /// </summary>
@@ -276,16 +274,12 @@ namespace IronAHK.Rusty
         /// <param name="ExcludeTitle">Windows whose titles include this value will not be considered. Note: Due to backward compatibility with .aut scripts, this parameter will be interpreted as a command if it exactly matches the name of a command. To work around this, use the WinActive() function instead.</param>
         /// <param name="ExcludeText">Windows whose text include this value will not be considered.</param>
         /// <returns></returns>
-        public static bool IfWinActive(string WinTitle, string WinText, string ExcludeTitle, string ExcludeText)
+        [Obsolete, Conditional("FLOW")]
+        public static void IfWinActive(string WinTitle, string WinText, string ExcludeTitle, string ExcludeText)
         {
-            if (Environment.OSVersion.Platform != PlatformID.Win32NT)
-                throw new Win32Required();
-
-            return Windows.Windows.GetActiveWindow() == Settings.Windows.FindWindow(WinTitle, WinText, ExcludeTitle, ExcludeText);
+            throw new NotSupportedException();
         }
-#endif
-        
-#if LEGACY
+
         /// <summary>
         /// Checks if the specified window exists.
         /// </summary>
@@ -294,16 +288,12 @@ namespace IronAHK.Rusty
         /// <param name="ExcludeTitle">Windows whose titles include this value will not be considered. Note: Due to backward compatibility with .aut scripts, this parameter will be interpreted as a command if it exactly matches the name of a command. To work around this, use the WinExist() function instead.</param>
         /// <param name="ExcludeText">Windows whose text include this value will not be considered.</param>
         /// <returns></returns>
-        public static bool IfWinExist(string WinTitle, string WinText, string ExcludeTitle, string ExcludeText)
+        [Obsolete, Conditional("FLOW")]
+        public static void IfWinExist(string WinTitle, string WinText, string ExcludeTitle, string ExcludeText)
         {
-            if (Environment.OSVersion.Platform != PlatformID.Win32NT)
-                throw new Win32Required();
-
-            return IntPtr.Zero != Settings.Windows.FindWindow(WinTitle, WinText, ExcludeTitle, ExcludeText);
+            throw new NotSupportedException();
         }
-#endif
-        
-#if LEGACY
+
         /// <summary>
         /// Checks if the specified window exists and is currently active (foremost).
         /// </summary>
@@ -312,13 +302,12 @@ namespace IronAHK.Rusty
         /// <param name="ExcludeTitle">Windows whose titles include this value will not be considered. Note: Due to backward compatibility with .aut scripts, this parameter will be interpreted as a command if it exactly matches the name of a command. To work around this, use the WinActive() function instead.</param>
         /// <param name="ExcludeText">Windows whose text include this value will not be considered.</param>
         /// <returns></returns>
-        public static bool IfWinNotActive(string WinTitle, string WinText, string ExcludeTitle, string ExcludeText)
+        [Obsolete, Conditional("FLOW")]
+        public static void IfWinNotActive(string WinTitle, string WinText, string ExcludeTitle, string ExcludeText)
         {
-            return !IfWinActive(WinTitle, WinText, ExcludeTitle, ExcludeText);
+            throw new NotSupportedException();
         }
-#endif
-        
-#if LEGACY
+
         /// <summary>
         /// Checks if the specified window exists.
         /// </summary>
@@ -327,11 +316,11 @@ namespace IronAHK.Rusty
         /// <param name="ExcludeTitle">Windows whose titles include this value will not be considered. Note: Due to backward compatibility with .aut scripts, this parameter will be interpreted as a command if it exactly matches the name of a command. To work around this, use the WinExist() function instead.</param>
         /// <param name="ExcludeText">Windows whose text include this value will not be considered.</param>
         /// <returns></returns>
-        public static bool IfWinNotExist(string WinTitle, string WinText, string ExcludeTitle, string ExcludeText)
+        [Obsolete, Conditional("FLOW")]
+        public static void IfWinNotExist(string WinTitle, string WinText, string ExcludeTitle, string ExcludeText)
         {
-            return !IfWinExist(WinTitle, WinText, ExcludeTitle, ExcludeText);
+            throw new NotSupportedException();
         }
-#endif
         
         /// <summary>
         /// Sends a message to a window or control (SendMessage additionally waits for acknowledgement).
@@ -356,22 +345,24 @@ namespace IronAHK.Rusty
             error = Windows.Windows.PostMessage(hwnd, (uint)Msg, new IntPtr(wParam), new IntPtr(lParam)) ? 0 : 1;
         }
 
-#if FLOW
         /// <summary>
         /// Perform a series of commands repeatedly: either the specified number of times or until break is encountered.
         /// </summary>
-        [Obsolete()]
-        public static void Repeat() { }
-#endif
+        [Obsolete, Conditional("FLOW")]
+        public static void Repeat()
+        {
+            throw new NotSupportedException();
+        }
 
-#if FLOW
         /// <summary>
         /// Returns from a subroutine to which execution had previously jumped via function-call, Gosub, Hotkey activation, GroupActivate, or other means.
         /// </summary>
         /// <param name="Expression">This parameter should be omitted except when return is used inside a function.</param>
-        [Obsolete()]
-        public static void Return(string Expression) { }
-#endif
+        [Obsolete, Conditional("FLOW")]
+        public static void Return(string Expression)
+        {
+            throw new NotSupportedException();
+        }
 
         /// <summary>
         /// Sends a message to a window or control (SendMessage additionally waits for acknowledgement).
@@ -396,7 +387,6 @@ namespace IronAHK.Rusty
             error = Windows.Windows.SendMessage(hwnd, (uint)Msg, new IntPtr(wParam), new IntPtr(lParam)).ToInt32();
         }
 
-#if LEGACY
         /// <summary>
         /// Sets the state of the Capslock key. Can also force the key to stay on or off.
         /// </summary>
@@ -407,24 +397,22 @@ namespace IronAHK.Rusty
         /// <para>AlwaysOn: Forces the key to stay on permanently (has no effect on Windows 9x).</para>
         /// <para>AlwaysOff: Forces the key to stay off permanently (has no effect on Windows 9x).</para>
         /// </param>
+        [Obsolete, Conditional("LEGACY")]
         public static void SetCapsLockState(string Mode)
         {
 
         }
-#endif
 
-#if LEGACY
         /// <summary>
         /// Sets the delay that will occur after each control-modifying command.
         /// </summary>
         /// <param name="Delay">Time in milliseconds. Use -1 for no delay at all and 0 for the smallest possible delay. If unset, the default delay is 20.</param>
+        [Obsolete, Conditional("LEGACY")]
         public static void SetControlDelay(int Delay)
         {
             Settings.ControlDelay = Delay;
         }
-#endif
 
-#if LEGACY
         /// <summary>
         /// Sets the matching behavior of the WinTitle parameter in commands such as WinWait.
         /// </summary>
@@ -438,6 +426,7 @@ namespace IronAHK.Rusty
         /// <para>RegEx: Changes WinTitle, WinText, ExcludeTitle, and ExcludeText to be regular expressions. Do not enclose such expressions in quotes when using them with commands. For example: WinActivate Untitled.*Notepad. RegEx also applies to ahk_group and ahk_class; for example, ahk_class IEFrame searches for any window whose class name contains IEFrame anywhere (this is because by default, regular expressions find a match anywhere in the target string). Note: For WinText, each text element (i.e. each control's text) is matched against the RegEx separately. Therefore, it is not possible to have a match span more than one text element.</para>
         /// <para>The modes above also affect ExcludeTitle in the same way as WinTitle. For example, mode 3 requires that a window's title exactly match ExcludeTitle for that window to be excluded.</para>
         /// </param>
+        [Obsolete, Conditional("LEGACY")]
         public static void SetTitleMatchMode(string Mode)
         {
             switch (Mode.ToLower())
@@ -450,18 +439,16 @@ namespace IronAHK.Rusty
                 case Keywords.Slow: Settings.TitleMatchModeSpeed = false; break;
             }
         }
-#endif
 
-#if LEGACY
         /// <summary>
         /// Sets the delay that will occur after each windowing command, such as WinActivate.
         /// </summary>
         /// <param name="Delay">Time in milliseconds. Use -1 for no delay at all and 0 for the smallest possible delay. If unset, the default delay is 100.</param>
+        [Obsolete, Conditional("LEGACY")]
         public static void SetWinDelay(int Delay)
         {
             Settings.WinDelay = Delay;
         }
-#endif
 
         /// <summary>
         /// Creates a customizable text popup window.

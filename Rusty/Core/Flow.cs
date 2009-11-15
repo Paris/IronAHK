@@ -1,24 +1,19 @@
 using System;
+using System.Diagnostics;
 using System.Windows.Forms;
 
 namespace IronAHK.Rusty
 {
     partial class Core
     {
-#if FLOW
-        [Obsolete()]
+        [Obsolete, Conditional("FLOW")]
         public static void Break() { }
-#endif
 
-#if FLOW
-        [Obsolete()]
+        [Obsolete, Conditional("FLOW")]
         public static void Continue() { }
-#endif
 
-#if FLOW
-        [Obsolete()]
+        [Obsolete, Conditional("FLOW")]
         public static void Else() { }
-#endif
 
         /// <summary>
         /// Exits the current thread or (if the script is not persistent contains no hotkeys) the entire script.
@@ -40,24 +35,20 @@ namespace IronAHK.Rusty
             Application.Exit();
         }
 
-#if FLOW
-        [Obsolete()]
+        [Obsolete, Conditional("FLOW")]
         public static void Gosub(string Label) { }
-#endif
 
-#if FLOW
-        [Obsolete()]
+        [Obsolete, Conditional("FLOW")]
         public static void Goto(string Label) { }
-#endif
 
-#if DEPRECATED
         /// <summary>
         /// Specifies a subroutine to run automatically when the script exits.
         /// </summary>
         /// <param name="Label">If omitted, the script is returned to its normal exit behavior. Otherwise, specify the name of the label whose contents will be executed (as a new thread) when the script exits by any means.</param>
-        [Obsolete()]
-        public static void OnExit(string Label) { }
-#endif
+        public static void OnExit(string Label)
+        {
+            throw new NotImplementedException();
+        }
 
         /// <summary>
         /// Pauses the script's current thread.
@@ -76,7 +67,7 @@ namespace IronAHK.Rusty
         /// </param>
         public static void Pause(string Mode, bool OperateOnUnderlyingThread)
         {
-
+            throw new NotImplementedException();
         }
 
         /// <summary>

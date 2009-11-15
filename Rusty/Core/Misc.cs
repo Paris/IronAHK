@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Net;
@@ -9,23 +10,11 @@ namespace IronAHK.Rusty
 {
     partial class Core
     {
-#if LEGACY
-        /// <summary>
-        /// Determines whether "Var1 = %Var2%" statements omit spaces and tabs from the beginning and end of Var2.
-        /// </summary>
-        /// <param name="Mode">
-        /// <para>On: In a statement such as Var1 = %Var2%, tabs and spaces at the beginning and end of a Var2 are omitted from Var1. This is the default.</para>
-        /// <para>Off: Such tabs and spaces are not omitted. However, any literal tab and spaces (including `t) are omitted regardless of this setting. For example, the statement Var1 = `t%Var2% always ignores the `t character. To prevent this, use one of the following:</para>
-        /// <code>
-        /// Var1 = %A_Tab%%Var2%%A_Space%  ; AutoTrim must be OFF for this to work.
-        /// Var1 := "`t" . Var2 . " "  ; The setting of AutoTrim doesn't matter because this is an expression.
-        /// </code>
-        /// </param>
+        [Obsolete, Conditional("LEGACY")]
         public static void AutoTrim(string Mode)
         {
             Formats.OnOff(ref Settings.AutoTrim, Mode);
         }
-#endif
 
         /// <summary>
         /// Sets coordinate mode for various commands to be relative to either the active window or the screen.
@@ -77,12 +66,11 @@ namespace IronAHK.Rusty
                 ThreadPriority.Highest : ThreadPriority.Normal;
         }
 
-#if LEGACY
-        /// <summary>
-        /// Opens the current script for editing in the associated editor.
-        /// </summary>
-        public static void Edit() { }
-#endif
+        [Obsolete, Conditional("LEGACY")]
+        public static void Edit()
+        {
+            throw new NotSupportedException();
+        }
 
         /// <summary>
         /// Searches a region of the screen for an image.
@@ -109,19 +97,23 @@ namespace IronAHK.Rusty
             OutputVarY = null;
         }
 
-#if LEGACY
         /// <summary>
         /// Displays the script lines most recently executed.
         /// </summary>
-        public static void ListLines() { }
-#endif
+        [Obsolete, Conditional("LEGACY")]
+        public static void ListLines()
+        {
+            throw new NotSupportedException();
+        }
 
-#if LEGACY
         /// <summary>
         /// Displays the script's variables: their names and current contents.
         /// </summary>
-        public static void ListVars() { }
-#endif
+        [Obsolete, Conditional("LEGACY")]
+        public static void ListVars()
+        {
+            throw new NotSupportedException();
+        }
 
         /// <summary>
         /// Creates, deletes, modifies and displays menus and menu items. Changes the tray icon and its tooltip. Controls whether the main window of a compiled script can be opened.

@@ -5,7 +5,6 @@ namespace IronAHK.Rusty
 {
     partial class Core
     {
-#if !LEGACY || FORCENEW
         /// <summary>
         /// Converts a JSON encoded string into an associative array.
         /// </summary>
@@ -22,9 +21,7 @@ namespace IronAHK.Rusty
             catch (Exception) { error = 1; }
             return null;
         }
-#endif
 
-#if !LEGACY || FORCENEW
         /// <summary>
         /// Returns a string containing the JSON representation of <paramref name="Data"/>.
         /// </summary>
@@ -34,6 +31,5 @@ namespace IronAHK.Rusty
         {
             return Extras.SimpleJSON.Encode.Parse(Data);
         }
-#endif
     }
 }
