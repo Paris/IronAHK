@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.Drawing;
 using System.Runtime.InteropServices;
 
@@ -97,7 +98,6 @@ namespace IronAHK.Rusty
 
         }
 
-#if LEGACY
         /// <summary>
         /// Clicks or holds down a mouse button, or turns the mouse wheel. NOTE: The Click command is generally more flexible and easier to use.
         /// </summary>
@@ -120,6 +120,7 @@ namespace IronAHK.Rusty
         /// </list>
         /// </param>
         /// <param name="R">If this parameter is the letter R, the X and Y coordinates will be treated as offsets from the current mouse position. In other words, the cursor will be moved from its current position by X pixels to the right (left if negative) and Y pixels down (up if negative).</param>
+        [Obsolete, Conditional("LEGACY")]
         public static void MouseClick(string WhichButton, int X, int Y, int ClickCount, int Speed, string DU, bool R)
         {
             int WHEEL_DELTA = 120;
@@ -199,9 +200,7 @@ namespace IronAHK.Rusty
                 }
             }
         }
-#endif
-    
-#if LEGACY
+
         /// <summary>
         /// Clicks and holds the specified mouse button, moves the mouse to the destination coordinates, then releases the button.
         /// </summary>
@@ -221,12 +220,12 @@ namespace IronAHK.Rusty
         /// <para>If this parameter is the letter R, the X1 and Y1 coordinates will be treated as offsets from the current mouse position. In other words, the cursor will be moved from its current position by X1 pixels to the right (left if negative) and Y1 pixels down (up if negative).</para>
         /// <para>Similarly, the X2 and Y2 coordinates will be treated as offsets from the X1 and Y1 coordinates. For example, the following would first move the cursor down and to the right by 5 pixels from its starting position, and then drag it from that position down and to the right by 10 pixels: MouseClickDrag, Left, 5, 5, 10, 10, , R</para>
         /// </param>
+        [Obsolete, Conditional("LEGACY")]
         public static void MouseClickDrag(string WhichButton, int X1, int Y1, int X2, int Y2, int Speed, bool R)
         {
             MouseClick(WhichButton, X1, Y1, 1, Speed, "down", R);
             MouseClick(WhichButton, X2, Y2, 1, Speed, "up", R);
         }
-#endif
 
         /// <summary>
         /// Retrieves the current position of the mouse cursor, and optionally which window and control it is hovering over.
@@ -278,7 +277,6 @@ namespace IronAHK.Rusty
             }
         }
 
-#if LEGACY
         /// <summary>
         /// Moves the mouse cursor.
         /// </summary>
@@ -289,6 +287,7 @@ namespace IronAHK.Rusty
         /// <para>Speed is ignored for SendInput/Play modes; they move the mouse instantaneously (though SetMouseDelay has a mode that applies to SendPlay). To visually move the mouse more slowly -- such as a script that performs a demonstration for an audience -- use SendEvent {Click 100, 200} or SendMode Event (optionally in conjuction with BlockInput).</para>
         /// </param>
         /// <param name="R">If this parameter is the letter R, the X and Y coordinates will be treated as offsets from the current mouse position. In other words, the cursor will be moved from its current position by X pixels to the right (left if negative) and Y pixels down (up if negative).</param>
+        [Obsolete, Conditional("LEGACY")]
         public static void MouseMove(int X, int Y, int Speed, bool R)
         {
             int ScreenWidth = Core.A_ScreenWidth, ScreenHeight = Core.A_ScreenHeight;
@@ -343,7 +342,6 @@ namespace IronAHK.Rusty
             }
             DoIncrementalMouseMove(MOUSE_COORD_TO_ABS(mousex, ScreenWidth), MOUSE_COORD_TO_ABS(mousey, ScreenHeight), MOUSE_COORD_TO_ABS(X, ScreenWidth), MOUSE_COORD_TO_ABS(Y, ScreenHeight), Speed);
         }
-#endif
 
         private static int MOUSE_COORD_TO_ABS(int coord, int width_or_height)
         {
@@ -415,28 +413,27 @@ namespace IronAHK.Rusty
             }
         }
 
-#if LEGACY
         /// <summary>
         /// Sets the mouse speed that will be used if unspecified in Click and MouseMove/Click/Drag.
         /// </summary>
         /// <param name="Speed">The speed to move the mouse in the range 0 (fastest) to 100 (slowest).  Note: a speed of 0 will move the mouse instantly.</param>
+        [Obsolete, Conditional("LEGACY")]
         public static void SetDefaultMouseSpeed(int Speed)
         {
             Settings.DefaultMouseSpeed = Speed;
         }
-#endif
 
-#if LEGACY
         /// <summary>
         /// Sets the delay that will occur after each mouse movement or click.
         /// </summary>
         /// <param name="Delay">Time in milliseconds, which can be an expression. Use -1 for no delay at all and 0 for the smallest possible delay (however, if the Play parameter is present, both 0 and -1 produce no delay). If unset, the default delay is 10 for the traditional SendEvent mode and -1 for SendPlay mode.</param>
         /// <param name="Play">The word Play applies the delay to the SendPlay mode rather than the traditional Send/SendEvent mode. If a script never uses this parameter, the delay is always -1 for SendPlay.</param>
+        [Obsolete, Conditional("LEGACY")]
         public static void SetMouseDelay(int Delay, string Play)
         {
             Settings.MouseDelay = Delay;
         }
-#endif
+
         [DllImport("user32.dll", EntryPoint = "GetCursorPos")]
         private static extern int GetCursorPos(out POINTAPI point);
 

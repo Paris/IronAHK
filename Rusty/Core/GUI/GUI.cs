@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Windows.Forms;
 using System;
 using System.Runtime.InteropServices;
@@ -48,45 +49,11 @@ namespace IronAHK.Rusty
             OutputVar = null;
         }
 
-#if LEGACY
-        /// <summary>
-        /// Checks which button was pushed by the user during the most recent MsgBox command.
-        /// </summary>
-        /// <param name="Mode">
-        /// One of the following strings to represent which button the user pressed in the most recent MsgBox command:
-        /// <list type="">
-        /// <item>Yes</item>
-        /// <item>No</item>
-        /// <item>OK</item>
-        /// <item>Cancel</item>
-        /// <item>Abort</item>
-        /// <item>Ignore</item>
-        /// <item>Retry</item>
-        /// <item>Continue</item>
-        /// <item>TryAgain</item>
-        /// <item>Timeout</item>
-        /// </list>
-        /// </param>
-        /// <returns></returns>
-        public static bool IfMsgBox(string Mode)
+        [Obsolete, Conditional("FLOW")]
+        public static void IfMsgBox(string Mode)
         {
-            Mode = Mode.ToLower();
-
-            switch (Settings.MsgBox)
-            {
-                case DialogResult.Abort: return Mode == Keywords.Abort;
-                case DialogResult.Cancel: return Mode == Keywords.Cancel;
-                case DialogResult.Ignore: return Mode == Keywords.Ignore;
-                case DialogResult.No: return Mode == Keywords.No;
-                case DialogResult.None: return Mode == Keywords.None;
-                case DialogResult.OK: return Mode == Keywords.Ok;
-                case DialogResult.Retry: return Mode == Keywords.Retry;
-                case DialogResult.Yes: return Mode == Keywords.Yes;
-            }
-
-            return false;
+            throw new NotSupportedException();
         }
-#endif
 
         /// <summary>
         /// Displays an input box to ask the user to enter a string.
@@ -178,7 +145,6 @@ namespace IronAHK.Rusty
                 (Options & 0xf000) == 16384);
         }
 
-#if LEGACY
         /// <summary>
         /// Creates or updates a window containing a progress bar or an image.
         /// </summary>
@@ -198,11 +164,11 @@ namespace IronAHK.Rusty
         /// <para>The name of the font to use for both MainText and SubText. The font table lists the fonts included with the various versions of Windows. If unspecified or if the font cannot be found, the system's default GUI font will be used.</para>
         /// <para>See the options section below for how to change the size, weight, and color of the font.</para>
         /// </param>
+        [Obsolete, Conditional("LEGACY")]
         public static void Progress(string ProgressParam1, string SubText, string MainText, string WinTitle, string FontName)
         {
 
         }
-#endif
 
         /// <summary>
         /// Creates or updates a window containing a progress bar or an image.

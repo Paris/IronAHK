@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.Windows.Forms;
 
 namespace IronAHK.Rusty
@@ -50,29 +51,27 @@ namespace IronAHK.Rusty
             Var = Formats.FromTime(x);
         }
 
-#if LEGACY
         /// <summary>
         /// Sets a variable to itself divided by the given value. Synonymous with: var /= value
         /// </summary>
         /// <param name="Var">The name of the variable upon which to operate.</param>
         /// <param name="Value">Any integer or floating point number.</param>
+        [Obsolete, Conditional("LEGACY")]
         public static void EnvDiv(ref double Var, double Value)
         {
             Var /= Value;
         }
-#endif
-
-#if LEGACY
+        
         /// <summary>
         /// Sets a variable to itself times the given value. Synonymous with: var *= value
         /// </summary>
         /// <param name="Var">The name of the variable upon which to operate.</param>
         /// <param name="Value">Any integer or floating point number.</param>
+        [Obsolete, Conditional("LEGACY")]
         public static void EnvMult(ref double Var, double Value)
         {
             Var *= Value;
         }
-#endif
 
         /// <summary>
         /// Sets a variable to itself minus the given value (can also compare date-time values). Synonymous with: var -= value
@@ -92,107 +91,41 @@ namespace IronAHK.Rusty
             EnvAdd(ref Var, -Value, TimeUnits);
         }
 
-#if LEGACY
-        /// <summary>
-        /// Specifies the command(s) to perform if the comparison of a variable to a value evalutes to TRUE. When more than one command is present, enclose them in a block (braces).
-        /// </summary>
-        /// <param name="var">The variable name.</param>
-        /// <param name="value">A literal string, number, or variable reference (e.g. %var2%). Value can be omitted if you wish to compare var to an empty string (blank).</param>
-        /// <returns></returns>
-        public static bool IfEqual(ref string var, string value)
+        [Obsolete, Conditional("FLOW")]
+        public static void IfEqual(ref string var, string value)
         {
-            double x, y;
-            if (double.TryParse(var, out x) && double.TryParse(value, out y))
-                return x == y;
-            else
-                return string.Compare(var, value, Settings.StringCaseSense) == 0;
+            throw new NotSupportedException();
         }
-#endif
 
-#if LEGACY
-        /// <summary>
-        /// Specifies the command(s) to perform if the comparison of a variable to a value evalutes to TRUE. When more than one command is present, enclose them in a block (braces).
-        /// </summary>
-        /// <param name="var">The variable name.</param>
-        /// <param name="value">A literal string, number, or variable reference (e.g. %var2%). Value can be omitted if you wish to compare var to an empty string (blank).</param>
-        /// <returns></returns>
-        public static bool IfGreater(ref string var, string value)
+        [Obsolete, Conditional("FLOW")]
+        public static void IfGreater(ref string var, string value)
         {
-            double x, y;
-            if (double.TryParse(var, out x) && double.TryParse(value, out y))
-                return x > y;
-            else
-                return string.Compare(var, value, Settings.StringCaseSense) > 0;
+            throw new NotSupportedException();
         }
-#endif
 
-#if LEGACY
-        /// <summary>
-        /// Specifies the command(s) to perform if the comparison of a variable to a value evalutes to TRUE. When more than one command is present, enclose them in a block (braces).
-        /// </summary>
-        /// <param name="var">The variable name.</param>
-        /// <param name="value">A literal string, number, or variable reference (e.g. %var2%). Value can be omitted if you wish to compare var to an empty string (blank).</param>
-        /// <returns></returns>
-        public static bool IfGreaterOrEqual(ref string var, string value)
+        [Obsolete, Conditional("FLOW")]
+        public static void IfGreaterOrEqual(ref string var, string value)
         {
-            double x, y;
-            if (double.TryParse(var, out x) && double.TryParse(value, out y))
-                return x >= y;
-            else
-                return string.Compare(var, value, Settings.StringCaseSense) >= 0;
+            throw new NotSupportedException();
         }
-#endif
 
-#if LEGACY
-        /// <summary>
-        /// Specifies the command(s) to perform if the comparison of a variable to a value evalutes to TRUE. When more than one command is present, enclose them in a block (braces).
-        /// </summary>
-        /// <param name="var">The variable name.</param>
-        /// <param name="value">A literal string, number, or variable reference (e.g. %var2%). Value can be omitted if you wish to compare var to an empty string (blank).</param>
-        /// <returns></returns>
-        public static bool IfLess(ref string var, string value)
+        [Obsolete, Conditional("FLOW")]
+        public static void IfLess(ref string var, string value)
         {
-            double x, y;
-            if (double.TryParse(var, out x) && double.TryParse(value, out y))
-                return x < y;
-            else
-                return string.Compare(var, value, Settings.StringCaseSense) < 0;
+            throw new NotSupportedException();
         }
-#endif
 
-#if LEGACY
-        /// <summary>
-        /// Specifies the command(s) to perform if the comparison of a variable to a value evalutes to TRUE. When more than one command is present, enclose them in a block (braces).
-        /// </summary>
-        /// <param name="var">The variable name.</param>
-        /// <param name="value">A literal string, number, or variable reference (e.g. %var2%). Value can be omitted if you wish to compare var to an empty string (blank).</param>
-        /// <returns></returns>
-        public static bool IfLessOrEqual(ref string var, string value)
+        [Obsolete, Conditional("FLOW")]
+        public static void IfLessOrEqual(ref string var, string value)
         {
-            double x, y;
-            if (double.TryParse(var, out x) && double.TryParse(value, out y))
-                return x <= y;
-            else
-                return string.Compare(var, value, Settings.StringCaseSense) <= 0;
+            throw new NotSupportedException();
         }
-#endif
 
-#if LEGACY
-        /// <summary>
-        /// Specifies the command(s) to perform if the comparison of a variable to a value evalutes to TRUE. When more than one command is present, enclose them in a block (braces).
-        /// </summary>
-        /// <param name="var">The variable name.</param>
-        /// <param name="value">A literal string, number, or variable reference (e.g. %var2%). Value can be omitted if you wish to compare var to an empty string (blank).</param>
-        /// <returns></returns>
-        public static bool IfNotEqual(ref string var, string value)
+        [Obsolete, Conditional("FLOW")]
+        public static void IfNotEqual(ref string var, string value)
         {
-            double x, y;
-            if (double.TryParse(var, out x) && double.TryParse(value, out y))
-                return x != y;
-            else
-                return string.Compare(var, value, Settings.StringCaseSense) != 0;
+            throw new NotSupportedException();
         }
-#endif
 
         /// <summary>
         /// Generates a pseudo-random number.
@@ -239,7 +172,6 @@ namespace IronAHK.Rusty
             }
         }
 
-#if LEGACY
         /// <summary>
         /// Performs miscellaneous math functions, bitwise operations, and tasks such as ASCII/Unicode conversion.
         /// </summary>
@@ -247,7 +179,8 @@ namespace IronAHK.Rusty
         /// <param name="Cmd">See list below.</param>
         /// <param name="Value1">See list below.</param>
         /// <param name="Value2">See list below.</param>
-        public static void Transform(out string OutputVar, string Cmd, string Value1, string Value2)
+        [Obsolete, Conditional("LEGACY")]
+        public static void Transform(ref string OutputVar, string Cmd, string Value1, string Value2)
         {
             OutputVar = string.Empty;
             switch (Cmd.Trim().ToLower())
@@ -344,6 +277,5 @@ namespace IronAHK.Rusty
                     break;
             }
         }
-#endif
     }
 }

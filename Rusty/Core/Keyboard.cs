@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.Windows.Forms;
 
 namespace IronAHK.Rusty
@@ -52,13 +53,14 @@ namespace IronAHK.Rusty
 
         }
 
-#if DEPRECATED
         /// <summary>
         /// Displays the hotkeys in use by the current script, whether their subroutines are currently running, and whether or not they use the keyboard or mouse hook.
         /// </summary>
-        [Obsolete()]
-        public static void ListHotkeys() { }
-#endif
+        [Obsolete, Conditional("LEGACY")]
+        public static void ListHotkeys()
+        {
+            throw new NotSupportedException();
+        }
 
         /// <summary>
         /// Replaces the currently running instance of the script with a new one.
@@ -135,13 +137,14 @@ namespace IronAHK.Rusty
             OutputVar = null;
         }
 
-#if DEPRECATED
         /// <summary>
         /// Displays script info and a history of the most recent keystrokes and mouse clicks.
         /// </summary>
-        [Obsolete()]
-        public static void KeyHistory() { }
-#endif
+        [Obsolete, Conditional("LEGACY")]
+        public static void KeyHistory()
+        {
+            throw new NotSupportedException();
+        }
 
         /// <summary>
         /// Waits for a key or mouse/joystick button to be released or pressed down.

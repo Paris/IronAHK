@@ -366,7 +366,6 @@ namespace IronAHK.Rusty
             catch (Exception) { error = 1; }
         }
 
-#if DEPRECATED
         /// <summary>
         /// Includes the specified file inside the compiled version of the script.
         /// </summary>
@@ -383,9 +382,11 @@ namespace IronAHK.Rusty
         /// </list>
         /// <para>This parameter can be an expression, even one that evalutes to true or false (since true and false are stored internally as 1 and 0).</para>
         /// </param>
-        [Obsolete()]
-        public static void FileInstall(string Source, string Dest, string Flag) { }
-#endif
+        [Obsolete, Conditional("LEGACY")]
+        public static void FileInstall(string Source, string Dest, string Flag)
+        {
+            throw new NotSupportedException();
+        }
 
         /// <summary>
         /// Moves or renames one or more files.
@@ -729,31 +730,27 @@ namespace IronAHK.Rusty
             catch (Exception) { error = 1; }
         }
 
-#if LEGACY
         /// <summary>
         /// Checks for the existence of a file or folder.
         /// </summary>
         /// <param name="File_Dir_Pattern">The path, filename, or file pattern to check. FilePattern is assumed to be in %A_WorkingDir% if an absolute path isn't specified.</param>
         /// <returns>Boolean.</returns>
-        public static bool IfExist(string File_Dir_Pattern)
+        [Obsolete, Conditional("FLOW")]
+        public static void IfExist(string File_Dir_Pattern)
         {
-            string src = (File_Dir_Pattern);
-            return Directory.Exists(src) || File.Exists(src);
+            throw new NotSupportedException();
         }
-#endif
 
-#if LEGACY
         /// <summary>
         /// Checks for the existence of a file or folder.
         /// </summary>
         /// <param name="File_Dir_Pattern">The path, filename, or file pattern to check. FilePattern is assumed to be in %A_WorkingDir% if an absolute path isn't specified.</param>
         /// <returns>Boolean.</returns>
-        public static bool IfNotExist(string File_Dir_Pattern)
+        [Obsolete, Conditional("FLOW")]
+        public static void IfNotExist(string File_Dir_Pattern)
         {
-            string src = (File_Dir_Pattern);
-            return !Directory.Exists(src) || !File.Exists(src);
+            throw new NotSupportedException();
         }
-#endif
 
         /// <summary>
         /// Changes the script's current working directory.
