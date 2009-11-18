@@ -7,7 +7,7 @@ using IronAHK.Scripting;
 
 namespace IronAHK
 {
-    class Program
+    static class Program
     {
         static int Main(string[] args)
         {
@@ -116,11 +116,9 @@ namespace IronAHK
 
             #region Compile
 
-            var ahk = new IACodeProvider();
-            ahk.UseCSharpCompiler = csc;
+            var ahk = new IACodeProvider { UseCSharpCompiler = csc };
 
-            CompilerParameters options = new CompilerParameters();
-
+            var options = new CompilerParameters();
             options.ReferencedAssemblies.Add(typeof(IronAHK.Rusty.Core).Namespace + ".dll");
 
             bool reflect = exe == null;
@@ -135,7 +133,7 @@ namespace IronAHK
             options.GenerateExecutable = !reflect;
             options.GenerateInMemory = reflect;
 
-            CompilerResults results = ahk.CompileAssemblyFromFile(options, script);
+            var results = ahk.CompileAssemblyFromFile(options, script);
 
             foreach (CompilerError error in results.Errors)
                 Console.Error.WriteLine("{0} ({1}): ==> {2}", error.FileName, error.Line.ToString(), error.ErrorText);
@@ -148,7 +146,6 @@ namespace IronAHK
             {
                 try { File.Delete(options.OutputAssembly); } // TODO: safe delete temp executable
                 catch (UnauthorizedAccessException) { Console.Error.WriteLine("Unable to delete temporary assembly"); }
-                finally { }
             }
 
             if (reflect)
