@@ -7,7 +7,6 @@ namespace IronAHK.Scripting
     partial class Parser
     {
         int loops = 0;
-        CodeStatementCollection lastelse = null;
 
         CodeStatement ParseFlow(CodeLine line, out bool rewind)
         {
@@ -46,9 +45,7 @@ namespace IronAHK.Scripting
                         CodeExpression condition = ParseFlowParameter(parts[1], true, out blockOpen);
                         CodeConditionStatement ifelse = new CodeConditionStatement();
 
-                        var iftest = new CodeMethodInvokeExpression();
-                        iftest.Method.TargetObject = new CodeTypeReferenceExpression(typeof(Script));
-                        iftest.Method.MethodName = "IfTest";
+                        var iftest = (CodeMethodInvokeExpression)InternalMethods.IfElse;
                         iftest.Parameters.Add(condition);
 
                         ifelse.Condition = iftest;
@@ -56,24 +53,25 @@ namespace IronAHK.Scripting
                         block.Type = blockOpen ? CodeBlock.BlockType.Within : CodeBlock.BlockType.Expect;
                         blocks.Push(block);
 
-                        lastelse = ifelse.FalseStatements;
+                        elses.Push(ifelse.FalseStatements);
                         return ifelse;
                     }
 
                 case FlowElse:
                     {
-                        if (lastelse == null)
+                        if (elses.Count == 0)
                             throw new ParseException("Else with no preceeding if block");
 
                         bool blockOpen = parts.Length > 1 && parts[1][0] == BlockOpen;
-                        var block = new CodeBlock(line, Scope, lastelse);
+                        var block = new CodeBlock(line, Scope, elses.Pop());
                         block.Type = blockOpen ? CodeBlock.BlockType.Within : CodeBlock.BlockType.Expect;
-                        blocks.Push(block);
 
-                        lastelse = null;
+                        line.Code = line.Code.TrimStart(Spaces).Substring(FlowElse.Length).TrimStart(Spaces);
+                        rewind = line.Code.Length != 0;
 
-                        line.Code = line.Code.Substring(FlowElse.Length).TrimStart(Spaces);
-                        rewind = true;
+                        // don't push block for if/else chains (unless braces are used)
+                        if (rewind && !line.Code.Split(Spaces)[0].Equals(FlowIf, StringComparison.OrdinalIgnoreCase))
+                            blocks.Push(block);
                     }
                     break;
 
