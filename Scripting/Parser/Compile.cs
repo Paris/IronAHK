@@ -6,10 +6,12 @@ namespace IronAHK.Scripting
     partial class Parser
     {
         Stack<CodeBlock> blocks;
+        Stack<CodeStatementCollection> elses;
 
         void Compile(List<CodeLine> lines)
         {
             blocks = new Stack<CodeBlock>();
+            elses = new Stack<CodeStatementCollection>();
 
             for (int i = 0; i < lines.Count; i++)
             {
@@ -18,7 +20,6 @@ namespace IronAHK.Scripting
                 if (string.IsNullOrEmpty(code))
                     continue;
 
-                Token token = GetToken(code);
                 var parent = blocks.Count > 0 ? blocks.Peek().Statements : main.Statements;
 
                 #region Blocks
@@ -49,7 +50,7 @@ namespace IronAHK.Scripting
                             break;
 
                         default:
-                            if (blocks.Count > 0 && blocks.Peek().Type == CodeBlock.BlockType.Expect)
+                            if (blocks.Count > 0 && lines[i].LineNumber - 1 >= blocks.Peek().Line.LineNumber && blocks.Peek().Type == CodeBlock.BlockType.Expect)
                             {
                                 blockSingle = true;
                                 block = blocks.Peek();
@@ -63,12 +64,15 @@ namespace IronAHK.Scripting
                         code = codeTrim.Substring(1);
                         if (code.Length == 0)
                             continue;
+                        lines[i].Code = code;
                     }
                 }
 
                 codeTrim = null;
 
                 #endregion
+
+                var token = GetToken(code);
 
                 try
                 {
@@ -92,10 +96,7 @@ namespace IronAHK.Scripting
                             if (result != null)
                                 parent.Add(result);
                             if (rewind)
-                            {
                                 i--;
-                                continue;
-                            }
                             break;
 
                         case Token.Expression:
@@ -126,6 +127,9 @@ namespace IronAHK.Scripting
                 if (blockSingle)
                     blocks.Pop();
             }
+
+            if (blocks.Count > 0 && lines[lines.Count - 1].LineNumber == blocks.Peek().Line.LineNumber && blocks.Peek().Type == CodeBlock.BlockType.Expect)
+                blocks.Pop();
 
             if (blocks.Count > 0)
                 throw new ParseException(ExUnclosedBlock, blocks.Peek().Line);

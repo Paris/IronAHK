@@ -14,7 +14,7 @@ namespace IronAHK
             #region Test run
 
 #if DEBUG
-            const string test = "pass";
+            const string test = "if";
             const string output = ""; // "/out test.exe";
             const string extra = "";
             const string cmd = extra + " " + output + " ..{0}..{0}..{0}Tests{0}Scripting{0}Code{0}" + test + ".ia";
@@ -151,8 +151,12 @@ namespace IronAHK
             if (reflect)
                 results.CompiledAssembly.EntryPoint.Invoke(null, null);
 
+#if DEBUG
+            Console.Read();
+#endif
+
             #endregion
-            
+
             return ExitSuccess;
         }
 
