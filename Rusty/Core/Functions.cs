@@ -332,9 +332,9 @@ namespace IronAHK.Rusty
         /// </summary>
         /// <param name="LabelName"></param>
         /// <returns></returns>
-        public static bool IsLabel(object LabelName)
+        public static bool IsLabel(string LabelName)
         {
-            return LabelName.GetType() == typeof(PseudoLabel);
+            throw new NotImplementedException();
         }
 
         /// <summary>

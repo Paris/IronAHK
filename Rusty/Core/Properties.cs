@@ -10,9 +10,11 @@ namespace IronAHK.Rusty
         static int error = 0;
 
         /// <summary>
-        /// Fake label.
+        /// A function.
         /// </summary>
-        public delegate void PseudoLabel();
+        /// <param name="args">Parameters.</param>
+        /// <returns>A value.</returns>
+        public delegate object GenericFunction(object[] args);
 
         /// <summary>
         /// Indicates the success or failure of some of the command.
