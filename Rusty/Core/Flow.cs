@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Timers;
 using System.Windows.Forms;
 
 namespace IronAHK.Rusty
@@ -86,28 +88,86 @@ namespace IronAHK.Rusty
         }
 
         /// <summary>
-        /// Causes a subroutine to be launched automatically and repeatedly at a specified time interval.
+        /// Calls a function automatically at every specified interval.
         /// </summary>
-        /// <param name="Label">The name of the label or hotkey label to which to jump, which causes the commands beneath Label to be executed until a Return or Exit is encountered. As with the parameters of almost all other commands, Label can be a variable reference such as %MyLabel%, in which case the name stored in the variable is used as the target.</param>
+        /// <param name="Label">Name of the function to call.</param>
         /// <param name="Mode">
-        /// <para>On: Re-enables a previously disabled timer at its former period. If the timer doesn't exist, it is created (with a default period of 250). If the timer exists but was previously set to run-only-once mode, it will again run only once.</para>
-        /// <para>Off: Disables an existing timer.</para>
-        /// <para>Period: Creates or updates a timer using this parameter as the number of milliseconds that must pass since the last time the Label subroutine was started. When this amount of time has passed, Label will be run again (unless it is still running from the last time). The timer will be automatically enabled. To prevent this, call the command a second time immediately afterward, specifying OFF for this parameter.</para>
-        /// <para>If this parameter is blank and:</para>
-        /// <list type="">
-        /// <item>1) the timer does not exist: it will be created with a period of 250.</item>
-        /// <item>2) the timer already exists: it will be enabled and reset at its former period unless a Priority is specified.</item>
+        /// <list type="bullet">
+        /// <item><description>On: enables a previously disabled timer or creates a new one at 250ms intervals.</description></item>
+        /// <item><description>Off: disables an existing timer.</description></item>
+        /// <item><description>Period: creates a new timer at the specified interval in milliseconds.
+        /// If this value is negative the timer will only run once.</description></item>
         /// </list>
-        /// <para>Run only once: Specify a negative Period to indicate that the timer should run only once. For example, specifying -100 would run the timer 100 ms from now then disable the timer as though SetTimer, Label, Off had been used.</para>
         /// </param>
-        /// <param name="Priority">
-        /// <para>This optional parameter is an integer between -2147483648 and 2147483647 (or an expression) to indicate this timer's thread priority. If omitted, 0 will be used. See Threads for details.</para>
-        /// <para>To change the priority of an existing timer without affecting it in any other way, leave the parameter before this one blank.</para>
-        /// </param>
-        public static void SetTimer(PseudoLabel Label, string Mode, string Priority)
+        /// <param name="Priority">A value between 0 and 4 inclusive to indicate the priority of the timer's thread.</param>
+        public static void SetTimer(GenericFunction Label, string Mode, int Priority)
         {
+            string name = Label.Method.Name;
 
+            switch (Mode.ToLowerInvariant())
+            {
+                case Keywords.On:
+                    if (timers.ContainsKey(name))
+                    {
+                        timers[name].Start();
+                        return;
+                    }
+                    else
+                        Mode = "250";
+                    break;
+
+                case Keywords.Off:
+                    if (timers.ContainsKey(name))
+                        timers[name].Stop();
+                    else
+                        error = 1;
+                    return;
+            }
+
+            int interval = 250;
+
+            if (!string.IsNullOrEmpty(Mode) && !int.TryParse(Mode, out interval))
+            {
+                error = 2;
+                return;
+            }
+
+            var timer = new System.Timers.Timer();
+
+            bool once = interval < 0;
+
+            if (once)
+                interval = -interval;
+
+            if (timers.ContainsKey(name))
+                timers[name].Interval = interval;
+            else
+                timers.Add(name, timer);
+
+            if (once)
+                timers.Remove(name);
+
+            timer.Interval = interval;
+
+            var priority = System.Threading.ThreadPriority.Normal;
+
+            if (Priority > -1 && Priority < 5)
+                priority = (System.Threading.ThreadPriority)Priority;
+
+            timer.Elapsed += new ElapsedEventHandler(delegate(object s, ElapsedEventArgs e)
+            {
+                System.Threading.Thread.CurrentThread.Priority = priority;
+                Label(new object[] { });
+
+                if (once)
+                {
+                    timer.Stop();
+                    timer.Dispose();
+                }
+            });
         }
+
+        static Dictionary<string, System.Timers.Timer> timers = new Dictionary<string, System.Timers.Timer>();
 
         /// <summary>
         /// Waits the specified amount of time before continuing.
