@@ -12,6 +12,7 @@ namespace IronAHK.Scripting
             var part = new StringBuilder();
             var param = new List<CodeExpression>();
             bool skipDelimt = false;
+            code = code.TrimStart(Spaces);
 
             for (int i = 0; i < code.Length; i++)
             {
