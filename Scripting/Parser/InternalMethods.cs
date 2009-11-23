@@ -26,6 +26,11 @@ namespace IronAHK.Scripting
                 get { return new MethodReference(typeof(Script), "IfTest"); }
             }
 
+            public static MethodReference Parameters
+            {
+                get { return new MethodReference(typeof(Script), "Parameters"); }
+            }
+
             public static MethodReference Concat
             {
                 get { return new MethodReference(typeof(string), "Concat", new Type[] { typeof(string[]) }); }

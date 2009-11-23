@@ -195,7 +195,7 @@ namespace IronAHK.Scripting
             #region Method
 
             CodeMethodInvokeExpression fix = new CodeMethodInvokeExpression();
-            fix.Method = new CodeMethodReferenceExpression(new CodeTypeReferenceExpression(typeof(Rusty.Core)), "Parameters");
+            fix.Method = (CodeMethodReferenceExpression)InternalMethods.Parameters;
 
             fix.Parameters.Add(new CodePrimitiveExpression(names.ToArray()));
             fix.Parameters.Add(new CodeArgumentReferenceExpression(argv));
