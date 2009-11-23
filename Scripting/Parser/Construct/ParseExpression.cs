@@ -147,7 +147,7 @@ namespace IronAHK.Scripting
                         parts[i] = VarId(part);
                     #endregion
                     #region Invokes
-                    else if (part.Length > 2 && part[part.Length - 1] == ParenOpen)
+                    else if (part.Length > 1 && part[part.Length - 1] == ParenOpen)
                     {
                         string name = part.Substring(0, part.Length - 1);
                         if (!IsIdentifier(name))
@@ -516,6 +516,9 @@ namespace IronAHK.Scripting
                     else
                         throw new ParseException(ExUnexpected);
 
+                case Concatenate:
+                    return Script.Operator.Concat;
+
                 default:
                     if (code.Length == AndTxt.Length && code.Equals(AndTxt, StringComparison.OrdinalIgnoreCase))
                         return Script.Operator.BooleanAnd;
@@ -559,27 +562,30 @@ namespace IronAHK.Scripting
                 case Script.Operator.BitwiseOr:
                     return -6;
 
+                case Script.Operator.Concat:
+                    return -7;
+
                 case Script.Operator.GreaterThan:
                 case Script.Operator.LessThan:
                 case Script.Operator.GreaterThanOrEqual:
                 case Script.Operator.LessThanOrEqual:
-                    return -7;
+                    return -8;
 
                 case Script.Operator.ValueEquality:
                 case Script.Operator.IdentityEquality:
                 case Script.Operator.ValueInequality:
                 case Script.Operator.IdentityInequality:
-                    return -8;
+                    return -9;
 
                 case Script.Operator.LogicalNotEx:
-                    return -9;
+                    return -10;
 
                 case Script.Operator.BooleanAnd:
                 case Script.Operator.BooleanOr:
-                    return -10;
+                    return -11;
 
                 case Script.Operator.Ternary:
-                    return -11;
+                    return -12;
 
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -781,6 +787,7 @@ namespace IronAHK.Scripting
                                 case ParenOpen:
                                 case ParenClose:
                                 case Equal:
+                                case Concatenate:
                                     op.Append(sym);
                                     break;
 
