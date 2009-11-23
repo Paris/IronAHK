@@ -72,7 +72,7 @@ namespace IronAHK.Scripting
                 target = target.BaseType;
             }
 
-            throw new CompileException(reference, "Could not find method");
+            throw new CompileException(reference, "Could not find method " + reference.MethodName);
         }
     }
 }
