@@ -74,10 +74,6 @@ namespace IronAHK.Rusty
             OutputVar = null;
         }
 
-        /// <summary>
-        /// Displays the specified text in a small window.
-        /// </summary>
-        /// <param name="Text">If all the parameters are omitted, the MsgBox will display the text "Press OK to continue." Otherwise, this parameter is the text displayed inside the message box to instruct the user what to do, or to present information.</param>
         public static void MsgBox(string Text)
         {
             MessageBox.Show(Text);
