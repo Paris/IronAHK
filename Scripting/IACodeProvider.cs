@@ -144,12 +144,20 @@ namespace IronAHK.Scripting
         {
             var provider = new Microsoft.CSharp.CSharpCodeProvider();
             var options = new CodeGeneratorOptions { BracingStyle = "C", ElseOnClosing = false, IndentString = "  " };
+            var buf = new StringWriter();
+
             foreach (CodeCompileUnit code in units)
             {
-                try { provider.GenerateCodeFromCompileUnit(code, writer, options); }
-                catch (Exception e) { writer.WriteLine(e.Message); }
+                try { provider.GenerateCodeFromCompileUnit(code, buf, options); }
+                catch (Exception e) { buf.WriteLine(e.Message); }
                 finally { }
             }
+
+            const string ext = ".", prefix = "namespace ";
+            string space = typeof(Script).Namespace + ext;
+            string output = buf.ToString().Replace(typeof(Rusty.Core).Namespace + ext, string.Empty).Replace(space, string.Empty);
+            output = output.Substring(output.IndexOf(prefix)).Replace(prefix, prefix + space);
+            writer.Write(output);
         }
 
         #endregion
