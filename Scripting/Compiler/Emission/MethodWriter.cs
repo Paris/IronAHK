@@ -81,7 +81,7 @@ namespace IronAHK.Scripting
             if(Primitive.Value == null) T = null;
             else T = Primitive.Value.GetType();
 
-            if(T.IsArray)
+            if(T != null && T.IsArray)
             {
                 object[] Contents = Primitive.Value as object[];
                 Type Element = T.GetElementType();
@@ -110,7 +110,13 @@ namespace IronAHK.Scripting
             Depth++;
             Type Generated = T;
 
-            if(T == typeof(string))
+            if (Value == null)
+            {
+                Debug("Pushing null");
+                Generator.Emit(OpCodes.Ldnull);
+                Generated = typeof(Nullable);
+            }
+            else if(T == typeof(string))
             {
                 Debug("Pushing primitive string : \""+(Value as string)+"\"");
                 Generator.Emit(OpCodes.Ldstr, Value as string);
@@ -125,12 +131,6 @@ namespace IronAHK.Scripting
                 Debug("Pushing decimal : "+((decimal) Value));
                 Generator.Emit(OpCodes.Ldc_R4, ((float) ((decimal) Value)));
                 Generated = typeof(float);
-            }
-            else if (Value == null)
-            {
-                Debug("Pushing null");
-                Generator.Emit(OpCodes.Ldnull);
-                Generated = typeof(Nullable);
             }
             else
             {
