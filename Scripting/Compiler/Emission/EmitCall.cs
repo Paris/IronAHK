@@ -11,13 +11,17 @@ namespace IronAHK.Scripting
         Type EmitMethodInvoke(CodeMethodInvokeExpression invoke)
         {
             MethodInfo target = null;
+            Type[] types = null;
             var type = invoke.Method.TargetObject as CodeTypeReferenceExpression;
 
             Depth++;
             Debug("Emitting method invoke " + invoke.Method.MethodName);
 
             if (invoke.Method.TargetObject is CodeThisReferenceExpression && Methods.ContainsKey(invoke.Method.MethodName))
+            {
                 target = Methods[invoke.Method.MethodName].Method;
+                types = ParameterTypes[invoke.Method.MethodName];
+            }
             else if (type == null)
             {
                 var args = new ArgType[invoke.Parameters.Count];
@@ -30,14 +34,21 @@ namespace IronAHK.Scripting
             else
                 target = GetMethodInfo(invoke.Method);
 
-            var parameters = target.GetParameters();
+            if (types == null)
+            {
+                var param = target.GetParameters();
+                types = new Type[param.Length];
+
+                for (int i = 0; i < types.Length; i++)
+                    types[i] = param[i].ParameterType;
+            }
 
             Depth++;
             for (int i = 0; i < invoke.Parameters.Count; i++)
             {
                 Debug("Emitting parameter " + i);
                 var generated = EmitExpression(invoke.Parameters[i], true);
-                ForceTopStack(generated, parameters[i].ParameterType);
+                ForceTopStack(generated, types[i]);
             }
             Depth--;
 

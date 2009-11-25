@@ -45,7 +45,8 @@ namespace IronAHK.Scripting
                 }
                 else Top = EmitExpression(Return.Expression);
 
-                ForceTopStack(Top, Method.ReturnType);
+                if (Top != null)
+                    ForceTopStack(Top, Method.ReturnType);
             }
             else if(Return.Expression != null)
                 throw new CompileException(Return, "Can not return value from void method "+Method.Name);

@@ -15,20 +15,34 @@ namespace IronAHK.Scripting
 
             // Allow for late binding
             var LocalMethods = new Dictionary<string, MethodWriter>();
+            var LocalParameters = new Dictionary<string, Type[]>();
+
             foreach(CodeMemberMethod Method in Decl.Members)
             {
                 MethodWriter Writer = new MethodWriter(Type, Method, Methods);
+                LocalParameters.Add(Method.Name, GetParameterTypes(Method.Parameters));
                 LocalMethods.Add(Method.Name, Writer);
             }
 
             foreach(MethodWriter Writer in LocalMethods.Values)
             {
+                Writer.ParameterTypes = LocalParameters;
                 Writer.Methods = LocalMethods;
                 Writer.Emit();
                 if(Writer.IsEntryPoint) EntryPoint = Writer.Method;
             }
 
             Type.CreateType();
+        }
+
+        Type[] GetParameterTypes(CodeParameterDeclarationExpressionCollection param)
+        {
+            var types = new Type[param.Count];
+
+            for (int i = 0; i < types.Length; i++)
+                types[i] = Type.GetType(param[i].Type.BaseType);
+
+            return types;
         }
     }
 }

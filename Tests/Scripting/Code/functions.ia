@@ -1,16 +1,16 @@
 x := a() . b() . c("a()")
 
-if x = 1a()z
+if x =l!a()z
 	FileAppend, pass, *
 
 a() {
-	return
+	return "l"
 }
 
 b(x)
 {
-	x = 1
-	return x
+;	return x
+	return "!" . x
 }
 
 c(x, y = "z")

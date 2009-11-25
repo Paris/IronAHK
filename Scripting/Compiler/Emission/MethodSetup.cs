@@ -25,6 +25,7 @@ namespace IronAHK.Scripting
         public bool IsEntryPoint = false;
         public MethodBuilder Method;
         public Dictionary<string, MethodWriter> Methods; // Set in TypeEmitter.cs
+        public Dictionary<string, Type[]> ParameterTypes;
         public CodeMemberMethod Member;
 
         int Depth = 0;
