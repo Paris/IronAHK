@@ -89,6 +89,12 @@
       <Link>license.txt</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Documentation\base.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Documentation\view.xsl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Resources\favicon.ico" />
     <Content Include="Resources\_file.png" />
     <Content Include="Resources\_icon.png" />
