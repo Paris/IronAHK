@@ -524,20 +524,6 @@ namespace IronAHK.Rusty
         }
 
         /// <summary>
-        /// Activates the specified window (makes it foremost).
-        /// </summary>
-        /// <param name="WinTitle">The title of the window to activate</param>
-        public static void WinActivate(string WinTitle)
-        {
-            IntPtr hwnd = Windows.Windows.FindWindow(IntPtr.Zero, WinTitle);
-            Windows.Windows.ShowWindow(hwnd, Windows.Windows.SW_SHOWNORMAL);
-            Windows.Windows.SetForegroundWindow(hwnd);
-            Windows.Windows.SetActiveWindow(hwnd);
-            if (Settings.WinDelay >= 0)
-                Core.Sleep(Settings.WinDelay);
-        }
-
-        /// <summary>
         /// Same as WinActivate except that it activates the bottommost (least recently active) matching window rather than the topmost.
         /// </summary>
         /// <param name="WinTitle">The title or partial title of the target window (the matching behavior is determined by SetTitleMatchMode). To use a window class, specify ahk_class ExactClassName (shown by Window Spy). To use a process identifier (PID), specify ahk_pid %VarContainingPID%. To use a window group, specify ahk_group GroupName. To use a window's unique ID number, specify ahk_id %VarContainingID%. The search can be narrowed by specifying multiple criteria. For example: My File.txt ahk_class Notepad</param>
