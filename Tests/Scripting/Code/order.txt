@@ -1,8 +1,8 @@
 pass
 if
 functions
-!
 comments
+!
 assign
 command
 directive

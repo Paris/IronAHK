@@ -245,7 +245,7 @@ namespace IronAHK.Scripting
                 if (!char.IsLetterOrDigit(codeTrim, 0) && except)
                 {
 #if LEGACY
-                    if (codeTrim.Length > Comment.Length && codeTrim.Substring(0, Comment.Length) == Comment)
+                    if (codeTrim.Length >= Comment.Length && codeTrim.Substring(0, Comment.Length) == Comment)
 #endif
 #if !LEGACY
                     if (codeTrim.Length > 0 && codeTrim[0] == Comment)

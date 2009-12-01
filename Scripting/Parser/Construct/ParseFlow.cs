@@ -214,7 +214,7 @@ namespace IronAHK.Scripting
             }
             else
             {
-                code = StripComment(code);
+                code = StripCommentSingle(code);
 
                 if (inequality)
                     return ParseInequality(code);
