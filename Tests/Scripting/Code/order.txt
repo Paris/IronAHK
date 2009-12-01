@@ -2,9 +2,9 @@ pass
 if
 functions
 comments
+directive
 !
 assign
 command
-directive
 goto
 loop
