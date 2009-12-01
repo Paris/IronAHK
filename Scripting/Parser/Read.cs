@@ -234,6 +234,7 @@ namespace IronAHK.Scripting
 
                 switch (codeTrim[0])
                 {
+                    case Directive:
                     case Resolve:
                     case BlockOpen:
                     case BlockClose:
