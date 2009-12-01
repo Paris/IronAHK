@@ -8,5 +8,5 @@ x = ;
 */ x =0;1 ;2
 
 ; If x =
-If x = 0;1 ;
+If x = 0;1;2 ;
 	FileAppend, pass, *

@@ -31,7 +31,7 @@ namespace IronAHK.Scripting
                 bool spaced = i > 0 && IsSpace(code[i - 1]);
 
 #if LEGACY
-                if (code.Length - i > Comment.Length && code.Substring(i, Comment.Length) == Comment && (i == 0 || spaced))
+                if (code.Length - i >= Comment.Length && code.Substring(i, Comment.Length) == Comment && (i == 0 || spaced))
 #endif
 #if !LEGACY
                 if (code[i] == Comment && (i == 0 || spaced))

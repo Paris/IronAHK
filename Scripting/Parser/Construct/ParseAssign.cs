@@ -67,6 +67,8 @@ namespace IronAHK.Scripting
             if (value.Length == 0)
                 value = null;
 
+            value = StripCommentSingle(value);
+
             #endregion
 
             CodeExpression result = VarNameOrBasicString(value, true);
