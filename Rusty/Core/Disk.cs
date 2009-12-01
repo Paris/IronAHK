@@ -427,27 +427,21 @@ namespace IronAHK.Rusty
         /// </param>
         public static void FileMoveDir(string Source, string Dest, string Flag)
         {
-            try
+            error = 0;
+
+            switch (Flag)
             {
-                char flag = Flag[0];
+                case "0":
+                    if (Directory.Exists(Dest))
+                        return;
+                    break;
 
-                switch (Flag[0])
-                {
-                    case '0':
-                        if (Directory.Exists(Dest))
-                            throw new ErrorLevelException();
-                        break;
-
-                    default:
-                        if (Flag.Length != 0)
-                            throw new ArgumentOutOfRangeException();
-                        break;
-                }
-
-                Directory.Move(Source, Dest);
-                error = 0;
+                default:
+                    error = 1;
+                    return;
             }
-            catch (ErrorLevelException e) { error = e.Level; }
+
+            Directory.Move(Source, Dest);
         }
 
         /// <summary>

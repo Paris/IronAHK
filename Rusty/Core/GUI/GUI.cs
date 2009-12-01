@@ -49,6 +49,10 @@ namespace IronAHK.Rusty
             OutputVar = null;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="Mode"></param>
         [Obsolete, Conditional("FLOW")]
         public static void IfMsgBox(string Mode)
         {
@@ -74,6 +78,10 @@ namespace IronAHK.Rusty
             OutputVar = null;
         }
 
+        /// <summary>
+        /// Show a message box.
+        /// </summary>
+        /// <param name="Text">The text to show in the prompt.</param>
         public static void MsgBox(string Text)
         {
             MessageBox.Show(Text);

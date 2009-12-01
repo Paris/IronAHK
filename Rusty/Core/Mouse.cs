@@ -13,55 +13,7 @@ namespace IronAHK.Rusty
         /// <param name="Options"></param>
         public static void Click(string[] Options)
         {
-            Point pos;
-            if (Environment.OSVersion.Platform == PlatformID.Win32NT)
-                Windows.MouseKeyboard.GetCursorPos(out pos);
-            else pos = System.Windows.Forms.Control.MousePosition;
-
-            var opts = Formats.ParseKeys(Options);
-            string button = "l";
-            int x = pos.X, y = pos.Y, count = 1;
-            string downup = string.Empty;
-            bool rel = false;
-
-            int[] z = new int[3] { -1, -1, -1 };
-            int zc = 0;
-
-            opts.ForEach(delegate(string name)
-            {
-                switch (name[0])
-                {
-                    case 'l':
-                    case 'm':
-                    //case 'r':
-                    case 'x':
-                    case 'w':
-                        button = name;
-                        break;
-                    case 'r':
-                        if (name[1] == 'e')
-                            rel = true;
-                        else button = name;
-                        break;
-                    default:
-                        int i;
-                        if (zc < 3 && int.TryParse(name, out i))
-                            z[zc] = i;
-                        break;
-                }
-            });
-
-            if (z[0] != -1 && z[1] == -1 && z[2] == -1)
-                count = z[0];
-            else if (z[0] != -1 && z[1] != -1)
-            {
-                x = z[0];
-                y = z[1];
-                if (z[2] != -1)
-                    count = z[2];
-            }
-
-            MouseClick(button, x, y, count, 0, downup, rel);
+            throw new NotImplementedException();
         }
         
         /// <summary>

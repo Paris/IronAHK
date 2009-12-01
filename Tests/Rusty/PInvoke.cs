@@ -8,7 +8,7 @@ namespace IronAHK.Tests
         [Test, Category("PInvoke")]
         public void Address()
         {
-            const int length = 9000, fill = 46, alt = 115, offset = 20;
+            const int length = 9000, fill = 46;
             byte[] var;
             Core.VarSetCapacity(out var, length, fill);
 

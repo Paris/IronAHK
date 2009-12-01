@@ -91,36 +91,66 @@ namespace IronAHK.Rusty
             EnvAdd(ref Var, -Value, TimeUnits);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="var"></param>
+        /// <param name="value"></param>
         [Obsolete, Conditional("FLOW")]
         public static void IfEqual(ref string var, string value)
         {
             throw new NotSupportedException();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="var"></param>
+        /// <param name="value"></param>
         [Obsolete, Conditional("FLOW")]
         public static void IfGreater(ref string var, string value)
         {
             throw new NotSupportedException();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="var"></param>
+        /// <param name="value"></param>
         [Obsolete, Conditional("FLOW")]
         public static void IfGreaterOrEqual(ref string var, string value)
         {
             throw new NotSupportedException();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="var"></param>
+        /// <param name="value"></param>
         [Obsolete, Conditional("FLOW")]
         public static void IfLess(ref string var, string value)
         {
             throw new NotSupportedException();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="var"></param>
+        /// <param name="value"></param>
         [Obsolete, Conditional("FLOW")]
         public static void IfLessOrEqual(ref string var, string value)
         {
             throw new NotSupportedException();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="var"></param>
+        /// <param name="value"></param>
         [Obsolete, Conditional("FLOW")]
         public static void IfNotEqual(ref string var, string value)
         {

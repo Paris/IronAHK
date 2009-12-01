@@ -10,6 +10,10 @@ namespace IronAHK.Rusty
 {
     partial class Core
     {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="Mode"></param>
         [Obsolete, Conditional("LEGACY")]
         public static void AutoTrim(string Mode)
         {
@@ -66,6 +70,9 @@ namespace IronAHK.Rusty
                 ThreadPriority.Highest : ThreadPriority.Normal;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         [Obsolete, Conditional("LEGACY")]
         public static void Edit()
         {

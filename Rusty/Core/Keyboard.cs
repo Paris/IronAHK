@@ -217,22 +217,6 @@ namespace IronAHK.Rusty
         /// <param name="Keys">The sequence of keys to send.</param>
         public static void Send(string Keys)
         {
-            if (Keys == "{WheelDown}" || Keys == "{wheeldown}" || Keys == "{Wheeldown}" || Keys == "{WD}")
-            {
-                int mousex, mousey, outputvarwin;
-                string outputvarcontrol;
-                Core.MouseGetPos(out mousex, out mousey, out outputvarwin, out outputvarcontrol, 0);
-                Core.MouseClick("WD", mousex, mousey, 1, Settings.DefaultMouseSpeed, "", false);
-                return;
-            }
-            if (Keys == "{WheelUp}" || Keys == "{wheelup}" || Keys == "{Wheelup}" || Keys == "{WU}")
-            {
-                int mousex, mousey, outputvarwin;
-                string outputvarcontrol;
-                Core.MouseGetPos(out mousex, out mousey, out outputvarwin, out outputvarcontrol, 0);
-                Core.MouseClick("WU", mousex, mousey, 1, Settings.DefaultMouseSpeed, "", false);
-                return;
-            }
             SendKeys.Send(Keys);
         }
 
