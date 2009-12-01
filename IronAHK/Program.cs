@@ -109,7 +109,7 @@ namespace IronAHK
             if (script == null || !File.Exists(script))
             {
                 Console.Error.WriteLine(ErrorFileNotFound);
-                return ExitInvalidFunction;
+                return script == null ? ExitInvalidFunction : ExitFileNotFound;
             }
 
             #endregion

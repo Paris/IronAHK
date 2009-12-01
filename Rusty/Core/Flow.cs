@@ -8,12 +8,21 @@ namespace IronAHK.Rusty
 {
     partial class Core
     {
+        /// <summary>
+        /// Exits (terminates) a loop. Valid inside any kind of loop.
+        /// </summary>
         [Obsolete, Conditional("FLOW")]
         public static void Break() { }
 
+        /// <summary>
+        /// Skips the rest of the current loop iteration and begins a new one. Valid inside any kind of loop.
+        /// </summary>
         [Obsolete, Conditional("FLOW")]
         public static void Continue() { }
 
+        /// <summary>
+        /// Specifies the command(s) to perform if an IF-statement evaluates to FALSE. When more than one command is present, enclose them in a block (braces). 
+        /// </summary>
         [Obsolete, Conditional("FLOW")]
         public static void Else() { }
 
@@ -37,11 +46,25 @@ namespace IronAHK.Rusty
             Application.Exit();
         }
 
+        /// <summary>
+        /// Jumps to the specified label and continues execution until Return is encountered.
+        /// </summary>
+        /// <param name="Label"></param>
         [Obsolete, Conditional("FLOW")]
-        public static void Gosub(string Label) { }
+        public static void Gosub(string Label)
+        {
+            throw new NotSupportedException();
+        }
 
+        /// <summary>
+        /// Jumps to the specified label and continues execution.
+        /// </summary>
+        /// <param name="Label"></param>
         [Obsolete, Conditional("FLOW")]
-        public static void Goto(string Label) { }
+        public static void Goto(string Label)
+        {
+            throw new NotSupportedException();
+        }
 
         /// <summary>
         /// Specifies a subroutine to run automatically when the script exits.

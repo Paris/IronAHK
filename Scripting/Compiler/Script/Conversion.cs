@@ -3,8 +3,6 @@ namespace IronAHK.Scripting
 {
     partial class Script
     {
-        static int Called = 0;
-
         #region Numeric
 
         public static float ForceFloat(object input)
