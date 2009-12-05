@@ -1,6 +1,5 @@
 ﻿using System.CodeDom;
 using System.Collections.Generic;
-using System.Text;
 
 namespace IronAHK.Scripting
 {
@@ -8,73 +7,89 @@ namespace IronAHK.Scripting
     {
         CodeMethodInvokeExpression ParseCommand(string code)
         {
-            string name = null;
-            var part = new StringBuilder();
-            var param = new List<CodeExpression>();
-            bool skipDelimt = false;
+            char[] anchors = new char[Spaces.Length + 1];
+            anchors[0] = Multicast;
+            Spaces.CopyTo(anchors, 1);
+
             code = code.TrimStart(Spaces);
+            string[] parts = code.Split(anchors, 2);
+            string name = parts[0];
+
+            var invoke = new CodeMethodInvokeExpression();
+            invoke.Method = new CodeMethodReferenceExpression(null, name);
+
+            if (parts.Length > 1 && parts[1].Length != 0)
+            {
+                int cast = parts[1].IndexOf(Multicast);
+                if (cast != -1 && IsSpace(parts[1].Substring(0, cast)))
+                    parts[1] = parts[1].Substring(cast + 1);
+
+                if (parts[1].Length != 0)
+                    foreach (string param in SplitCommandParameters(parts[1]))
+                        invoke.Parameters.Add(ParseCommandParameter(param));
+            }
+
+            return invoke;
+        }
+
+        string[] SplitCommandParameters(string code)
+        {
+            var parts = new List<string>();
+            bool start = true, expr = false, str = false;
+            int last = 0, parens = 0;
 
             for (int i = 0; i < code.Length; i++)
             {
                 char sym = code[i];
 
-                if (name == null)
+                if (str)
                 {
-                    bool spaced = IsSpace(sym);
-                    bool symbol = !char.IsLetterOrDigit(sym);
-
-                    if (char.IsLetter(sym))
-                        part.Append(sym);
-                    else if (sym == Multicast || spaced || symbol)
-                    {
-                        if (spaced)
-                            skipDelimt = true;
-                        name = part.ToString();
-                        part.Length = 0;
-                        if (symbol && sym != Multicast && !spaced)
-                            part.Append(sym);
-                    }
-                    else
-                        throw new ParseException(ExCommand);
+                    if (sym == StringBound)
+                        str = !str;
+                    continue;
                 }
-                else
+
+                if (start)
                 {
-                    if (sym == Multicast)
-                    {
-                        if (skipDelimt)
-                            skipDelimt = false;
-                        else
-                        {
-                            param.Add(ParseCommandParameter(part.ToString()));
-                            part.Length = 0;
-                        }
-                    }
+                    if (IsSpace(sym))
+                        continue;
                     else
-                        part.Append(sym);
+                    {
+                        start = false;
+                        int n = i + 1;
+                        expr = sym == Resolve && (n < code.Length ? IsSpace(code[n]) : true);
+                    }
+                }
+
+                if (expr)
+                {
+                    switch (sym)
+                    {
+                        case StringBound: str = !str; break;
+                        case ParenOpen: parens++; break;
+                        case ParenClose: parens--; break;
+                    }
+                }
+
+                if (sym == Multicast && code[i - 1] != Escape && (!str && parens == 0))
+                {
+                    parts.Add(code.Substring(last, i - last));
+                    last = i + 1;
+                    start = true;
+                    expr = false;
                 }
             }
 
-            if (part.Length != 0)
-            {
-                if (name == null)
-                    name = part.ToString();
-                else
-                {
-                    param.Add(ParseCommandParameter(part.ToString()));
-                }
-            }
+            int d = code.Length - last;
+            if (d != 0)
+                parts.Add(code.Substring(last, d));
 
-            if (name == null)
-                return null;
-
-            var method = new CodeMethodReferenceExpression(null, name);
-            var expr = new CodeMethodInvokeExpression(method, param.ToArray());
-            return expr;
+            return parts.ToArray();
         }
 
         CodeExpression ParseCommandParameter(string code)
         {
-            code = code.Trim();
+            code = code.Trim(); // should depend on AutoTrim
 
             if (code.Length == 0)
                 return new CodePrimitiveExpression(null);
