@@ -4,3 +4,6 @@ fileappend		 pass, *
 FileAPPEND
 	, pass
 , *
+
+
+FileAppend, % "pass",*

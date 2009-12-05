@@ -3,8 +3,8 @@ if
 functions
 comments
 directive
+command
 !
 assign
-command
 goto
 loop

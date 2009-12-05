@@ -32,6 +32,14 @@ namespace IronAHK.Scripting
             return Array.IndexOf<char>(Spaces, sym) != -1;
         }
 
+        bool IsSpace(string code)
+        {
+            foreach (char sym in code)
+                if (!IsSpace(sym))
+                    return false;
+            return true;
+        }
+
         bool IsFlowOperator(string code)
         {
             char[] delimiters = new char[Spaces.Length + 1];
