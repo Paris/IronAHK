@@ -16,6 +16,11 @@ namespace IronAHK.Scripting
                 get { return new MethodReference(typeof(Rusty.Core), "SetEnv"); }
             }
 
+            public static MethodReference Loop
+            {
+                get { return new MethodReference(typeof(Rusty.Core), "Loop"); }
+            }
+
             public static MethodReference Operate
             {
                 get { return new MethodReference(typeof(Script), "Operate"); }

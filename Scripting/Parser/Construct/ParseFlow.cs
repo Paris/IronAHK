@@ -99,44 +99,26 @@ namespace IronAHK.Scripting
                 case FlowLoop:
                     {
                         bool blockOpen = false;
-                        int i;
 
-                        if (parts.Length > 0)
-                        {
-                            string arg = parts[1];
-                            arg = StripComment(arg);
-                            n = arg.Length - 1;
-                            if (arg.Length > 1 && arg[n] == BlockOpen)
-                            {
-                                blockOpen = true;
-                                arg = arg.Substring(0, n);
-                            }
-                            arg = arg.Trim(Spaces);
-                            if (arg.Length == 0)
-                                i = 0;
-                            else
-                            {
-                                if (!int.TryParse(arg, out i))
-                                    throw new ParseException("Loop iterations is not a valid integer");
-                            }
-                        }
-                        else
-                            i = 0;
-
-                        string id = "loop" + loops.ToString();
+                        string id = "e" + loops.ToString();
                         loops++;
 
-                        var init = new CodeAssignStatement(new CodeVariableReferenceExpression(id), new CodePrimitiveExpression(0));
+                        // HACK: find real loop type and arguments
+                        var enumerator = (CodeMethodInvokeExpression)InternalMethods.Loop;
+                        enumerator.Parameters.Add(new CodePrimitiveExpression(2));
 
-                        var condition = new CodeBinaryOperatorExpression(new CodeVariableReferenceExpression(id),
-                            CodeBinaryOperatorType.LessThan, new CodePrimitiveExpression(i));
+                        var init = new CodeVariableDeclarationStatement();
+                        init.Name = id;
+                        init.Type = new CodeTypeReference(typeof(System.Collections.IEnumerable));
+                        init.InitExpression = new CodeMethodInvokeExpression(enumerator, "GetEnumerator", new CodeExpression[] { });
 
-                        var inc = new CodeAssignStatement(new CodeVariableReferenceExpression(id),
-                            new CodeBinaryOperatorExpression(new CodeVariableReferenceExpression(id), CodeBinaryOperatorType.Add, new CodePrimitiveExpression(1)));
+                        var condition = new CodeMethodInvokeExpression();
+                        condition.Method.TargetObject = new CodeVariableReferenceExpression(id);
+                        condition.Method.MethodName = "MoveNext";
 
                         CodeIterationStatement loop = new CodeIterationStatement();
                         loop.InitStatement = init;
-                        loop.IncrementStatement = inc;
+                        loop.IncrementStatement = new CodeCommentStatement(string.Empty); // for C# display
                         loop.TestExpression = condition;
 
                         var block = new CodeBlock(line, Scope, loop.Statements);
