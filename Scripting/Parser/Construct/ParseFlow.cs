@@ -6,8 +6,6 @@ namespace IronAHK.Scripting
 {
     partial class Parser
     {
-        int loops = 0;
-
         CodeStatement ParseFlow(CodeLine line, out bool rewind)
         {
             #region Variables
@@ -155,8 +153,7 @@ namespace IronAHK.Scripting
                             iterator.Parameters.Add(new CodePrimitiveExpression(int.MaxValue));
                         }
 
-                        string id = "e" + loops.ToString();
-                        loops++;
+                        string id = InternalID;
 
                         var init = new CodeVariableDeclarationStatement();
                         init.Name = id;

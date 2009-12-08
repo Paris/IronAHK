@@ -7,6 +7,7 @@ namespace IronAHK.Scripting
     {
         Stack<CodeBlock> blocks;
         Stack<CodeStatementCollection> elses;
+        int internalID;
 
         void Compile(List<CodeLine> lines)
         {
@@ -138,6 +139,11 @@ namespace IronAHK.Scripting
         string Scope
         {
             get { return blocks.Count > 0 ? blocks.Peek().Method : mainScope; }
+        }
+
+        string InternalID
+        {
+            get { return "e" + internalID++.ToString(); }
         }
     }
 }
