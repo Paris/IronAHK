@@ -232,37 +232,38 @@ namespace IronAHK.Rusty
             return new DateTime(t[0] * 1000 + t[1], t[2], t[3], t[4], t[5], t[6]);
         }
 
-        internal static RegistryKey ToRegKey(string RootKey, ref string SubKey, bool Parent)
+        internal static RegistryKey ToRegRootKey(string name)
         {
-            RegistryKey reg = null;
-
-            switch (RootKey.ToLower())
+            switch (name.ToLowerInvariant())
             {
                 case Keywords.HKey_Local_Machine:
                 case Keywords.HKLM:
-                    reg = Registry.LocalMachine;
-                    break;
-                
+                    return Registry.LocalMachine;
+
                 case Keywords.HKey_Users:
                 case Keywords.HKU:
-                    reg = Registry.Users;
-                    break;
-                
+                    return Registry.Users;
+
                 case Keywords.HKey_Current_User:
                 case Keywords.HKCU:
-                    reg = Registry.CurrentUser;
-                    break;
-                
+                    return Registry.CurrentUser;
+
                 case Keywords.HKey_Classes_Root:
                 case Keywords.HKCR:
-                    reg = Registry.ClassesRoot;
-                    break;
+                    return Registry.ClassesRoot;
 
                 case Keywords.HKey_Current_Config:
                 case Keywords.HKCC:
-                    reg = Registry.CurrentConfig;
-                    break;
+                    return Registry.CurrentConfig;
+
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
+        }
+
+        internal static RegistryKey ToRegKey(string RootKey, ref string SubKey, bool Parent)
+        {
+            RegistryKey reg = ToRegRootKey(RootKey);
             
             string[] keys = SubKey.Split('/');
             int j = keys.Length - (Parent ? 1 : 0);
