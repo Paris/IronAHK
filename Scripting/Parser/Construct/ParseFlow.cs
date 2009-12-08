@@ -99,18 +99,69 @@ namespace IronAHK.Scripting
                 case FlowLoop:
                     {
                         bool blockOpen = false;
+                        CodeMethodInvokeExpression iterator;
+                        bool skip = false;
+
+                        if (parts.Length > 0)
+                        {
+                            switch (parts[0].ToUpperInvariant())
+                            {
+                                case "READ":
+                                    skip = true;
+                                    iterator = (CodeMethodInvokeExpression)InternalMethods.LoopRead;
+                                    break;
+
+                                case "PARSE":
+                                    skip = true;
+                                    iterator = (CodeMethodInvokeExpression)InternalMethods.LoopParse;
+                                    break;
+
+                                case "HKEY_LOCAL_MACHINE":
+                                case "HKLM":
+                                case "HKEY_USERS":
+                                case "HKU":
+                                case "HKEY_CURRENT_USER":
+                                case "HKCU":
+                                case "HKEY_CLASSES_ROOT":
+                                case "HKCR":
+                                case "HKEY_CURRENT_CONFIG":
+                                case "HKCC":
+                                    skip = true;
+                                    iterator = (CodeMethodInvokeExpression)InternalMethods.LoopRegistry;
+                                    break;
+
+                                default:
+                                    // TODO: file and normal loops
+                                    iterator = (CodeMethodInvokeExpression)InternalMethods.Loop;
+                                    break;
+                            }
+
+                            string args = parts[1];
+
+                            if (skip)
+                            {
+                                int z = args.IndexOf(Multicast);
+                                if (z == -1)
+                                    throw new ParseException("Loop type must have an argument");
+                                args = args.Substring(z);
+                            }
+
+                            foreach (string arg in SplitCommandParameters(args))
+                                iterator.Parameters.Add(ParseCommandParameter(arg));
+                        }
+                        else
+                        {
+                            iterator = (CodeMethodInvokeExpression)InternalMethods.Loop;
+                            iterator.Parameters.Add(new CodePrimitiveExpression(int.MaxValue));
+                        }
 
                         string id = "e" + loops.ToString();
                         loops++;
 
-                        // HACK: find real loop type and arguments
-                        var enumerator = (CodeMethodInvokeExpression)InternalMethods.Loop;
-                        enumerator.Parameters.Add(new CodePrimitiveExpression(2));
-
                         var init = new CodeVariableDeclarationStatement();
                         init.Name = id;
                         init.Type = new CodeTypeReference(typeof(System.Collections.IEnumerable));
-                        init.InitExpression = new CodeMethodInvokeExpression(enumerator, "GetEnumerator", new CodeExpression[] { });
+                        init.InitExpression = new CodeMethodInvokeExpression(iterator, "GetEnumerator", new CodeExpression[] { });
 
                         var condition = new CodeMethodInvokeExpression();
                         condition.Method.TargetObject = new CodeVariableReferenceExpression(id);
