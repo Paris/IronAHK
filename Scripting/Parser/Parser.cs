@@ -46,6 +46,7 @@ namespace IronAHK.Scripting
             methods.Add(mainScope, main);
 
             core = typeof(Script);
+            internalID = 0;
         }
 
         public CodeCompileUnit Parse(TextReader codeStream)
