@@ -351,7 +351,13 @@ namespace IronAHK.Rusty
         /// </summary>
         public static int A_Index
         {
-            get { return 0; }
+            get
+            {
+                if (loops.Count > 0)
+                    return loops.Peek().index;
+                else
+                    return default(int);
+            }
         }
 
         /// <summary>
@@ -479,8 +485,21 @@ namespace IronAHK.Rusty
         /// </summary>
         public static string A_LoopField
         {
-            get { return string.Empty; }
-            /*set { Settings.LoopField = value; }*/
+            get
+            {
+                if (loops.Count == 0)
+                    return null;
+
+                var stack = loops.ToArray();
+
+                for (int i = stack.Length - 1; i > 0; i--)
+                {
+                    if (stack[i].type == LoopType.Parse)
+                        return stack[i].result;
+                }
+
+                return null;
+            }
         }
 
         /// <summary>

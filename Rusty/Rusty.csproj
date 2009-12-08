@@ -84,6 +84,7 @@
     <Compile Include="Core\JSON.cs" />
     <Compile Include="Core\Keyboard.cs" />
     <Compile Include="Core\Keywords.cs" />
+    <Compile Include="Core\Loops.cs" />
     <Compile Include="Core\Math.cs" />
     <Compile Include="Core\Misc.cs" />
     <Compile Include="Core\Mouse.cs" />
