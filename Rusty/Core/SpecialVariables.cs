@@ -357,37 +357,45 @@ namespace IronAHK.Rusty
         /// <summary>
         /// The IP address of the first network adapter in the computer.
         /// </summary>
+        [Obsolete]
         public static string A_IPAddress1
         {
-            get { return string.Empty; }
-            /*set { Settings.IPAddress1 = value; }*/
+            get { return A_IPAddress.Length > 0 ? A_IPAddress[0] : null; }
         }
 
         /// <summary>
         /// The IP address of the second network adapter in the computer.
         /// </summary>
+        [Obsolete]
         public static string A_IPAddress2
         {
-            get { return string.Empty; }
-            /*set { Settings.IPAddress2 = value; }*/
+            get { return A_IPAddress.Length > 1 ? A_IPAddress[1] : null; }
         }
 
         /// <summary>
         /// The IP address of the third network adapter in the computer.
         /// </summary>
+        [Obsolete]
         public static string A_IPAddress3
         {
-            get { return string.Empty; }
-            /*set { Settings.IPAddress3 = value; }*/
+            get { return A_IPAddress.Length > 2 ? A_IPAddress[2] : null; }
         }
 
         /// <summary>
         /// The IP address of the fourth network adapter in the computer.
         /// </summary>
+        [Obsolete]
         public static string A_IPAddress4
         {
-            get { return string.Empty; }
-            /*set { Settings.IPAddress4 = value; }*/
+            get { return A_IPAddress.Length > 3 ? A_IPAddress[3] : null; }
+        }
+
+        /// <summary>
+        /// The IP addresses of the network adapter in the computer.
+        /// </summary>
+        public static string[] A_IPAddress
+        {
+            get { return new string[] { string.Empty }; }
         }
 
         /// <summary>
