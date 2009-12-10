@@ -1,7 +1,10 @@
 y = 5
 
 Loop, %y%
+{
 	x = %A_Index%
+}
 
-If x = 5
+If x = 4
 	FileAppend, pass, *
+else Fileappend, fail, *
