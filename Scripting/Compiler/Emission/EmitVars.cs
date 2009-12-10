@@ -8,6 +8,29 @@ namespace IronAHK.Scripting
 {
     internal partial class MethodWriter
     {
+        Type EmitVariableReference(CodeVariableReferenceExpression Expr)
+        {
+            if(!Locals.ContainsKey(Expr.VariableName))
+                throw new CompileException(Expr, "Undefined variable: "+Expr.VariableName);
+
+            LocalBuilder Builder = Locals[Expr.VariableName];
+            Generator.Emit(OpCodes.Ldloc, Builder);
+
+            return Builder.LocalType;
+        }
+
+        void EmitVariableDeclarationStatement(CodeVariableDeclarationStatement Statement)
+        {
+            if(Locals.ContainsKey(Statement.Name))
+                throw new CompileException(Statement, "Attempt to redefine local variable "+Statement.Name);
+
+            Type Top = EmitExpression(Statement.InitExpression);
+            LocalBuilder Local = Generator.DeclareLocal(Top);
+            Locals.Add(Statement.Name, Local);
+
+            Generator.Emit(OpCodes.Stloc, Local);
+        }
+
         void EmitArgumentReference(CodeArgumentReferenceExpression Argument)
         {
             Depth++;

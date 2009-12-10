@@ -47,14 +47,7 @@ namespace IronAHK.Scripting
             }
             else if(Expression is CodeVariableReferenceExpression)
             {
-                var Expr = Expression as CodeVariableReferenceExpression;
-                if(!Locals.ContainsKey(Expr.VariableName))
-                    throw new CompileException(Expr, "Undefined variable: "+Expr.VariableName);
-
-                LocalBuilder Builder = Locals[Expr.VariableName];
-                Generator.Emit(OpCodes.Ldloc, Builder);
-
-                Generated = Builder.LocalType;
+                Generated = EmitVariableReference(Expression as CodeVariableReferenceExpression);
             }
             else if (Expression is CodeFieldReferenceExpression)
             {

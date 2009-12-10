@@ -12,7 +12,7 @@ namespace IronAHK.Scripting
         {
             MethodInfo target = null;
             Type[] types = null;
-            var type = invoke.Method.TargetObject as CodeTypeReferenceExpression;
+            bool staticCall = !(invoke.Method.TargetObject is CodeExpression);
 
             Depth++;
             Debug("Emitting method invoke " + invoke.Method.MethodName);
@@ -22,7 +22,7 @@ namespace IronAHK.Scripting
                 target = Methods[invoke.Method.MethodName].Method;
                 types = ParameterTypes[invoke.Method.MethodName];
             }
-            else if (type == null)
+            else if(staticCall)
             {
                 var args = new ArgType[invoke.Parameters.Count];
 
@@ -34,7 +34,7 @@ namespace IronAHK.Scripting
             else
                 target = GetMethodInfo(invoke.Method);
 
-            if (types == null)
+            if (types == null && target != null)
             {
                 var param = target.GetParameters();
                 types = new Type[param.Length];
@@ -48,7 +48,9 @@ namespace IronAHK.Scripting
             {
                 Debug("Emitting parameter " + i);
                 var generated = EmitExpression(invoke.Parameters[i], true);
-                ForceTopStack(generated, types[i]);
+
+                if (!staticCall)
+                    ForceTopStack(generated, types[i]);
             }
             Depth--;
 
@@ -64,7 +66,18 @@ namespace IronAHK.Scripting
                 return (MethodInfo)reference.UserData[id];
 
             MethodInfo method = null;
-            Type target = Type.GetType(((CodeTypeReferenceExpression)reference.TargetObject).Type.BaseType);
+
+            Type target;
+            if(reference.TargetObject is CodeTypeReferenceExpression)
+                target = Type.GetType(((CodeTypeReferenceExpression)reference.TargetObject).Type.BaseType);
+            else if (reference.TargetObject is CodeExpression)
+            {
+                target = EmitExpression(reference.TargetObject as CodeExpression);
+            }
+            else throw new CompileException(reference.TargetObject, "Non-static method referencing neither type nor expression");
+
+            Console.WriteLine(target);
+
             Type[] parameters = new Type[reference.TypeArguments.Count];
 
             for (int i = 0; i < reference.TypeArguments.Count; i++)
@@ -72,7 +85,8 @@ namespace IronAHK.Scripting
 
             while (target != null)
             {
-                method = parameters.Length == 0 ? target.GetMethod(reference.MethodName) : target.GetMethod(reference.MethodName, parameters);
+                method = parameters.Length == 0 ? target.GetMethod(reference.MethodName, Type.EmptyTypes) :
+                    target.GetMethod(reference.MethodName, parameters);
 
                 if (method != null)
                     return method;

@@ -22,9 +22,13 @@ namespace IronAHK.Scripting
 
         void EmitStatementCollection(CodeStatementCollection Statements)
         {
+            if(Depth != 0) Depth++;
+
             Debug("Emitting statements [Depth: "+Loops.Count+", Length: "+Statements.Count+"]");
             foreach(CodeStatement Statement in Statements)
                 EmitStatement(Statement);
+
+            Depth--;
         }
 
         void EmitStatement(CodeStatement Statement)
@@ -65,6 +69,10 @@ namespace IronAHK.Scripting
             else if(Statement is CodeMethodReturnStatement)
             {
                 EmitReturnStatement(Statement as CodeMethodReturnStatement);
+            }
+            else if(Statement is CodeVariableDeclarationStatement)
+            {
+                EmitVariableDeclarationStatement(Statement as CodeVariableDeclarationStatement);
             }
             else
             {
