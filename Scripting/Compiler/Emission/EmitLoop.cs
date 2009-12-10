@@ -10,6 +10,9 @@ namespace IronAHK.Scripting
     {
         void EmitIterationStatement(CodeIterationStatement Iterate)
         {
+            Depth++;
+            Debug("Emitting iteration statement");
+
             // Used for break and continue later on
             LoopMetadata Meta = new LoopMetadata {
                 Begin = Generator.DefineLabel(),
@@ -36,6 +39,7 @@ namespace IronAHK.Scripting
             Generator.MarkLabel(Meta.End);
 
             Loops.Pop();
+            Depth--;
         }
     }
 }
