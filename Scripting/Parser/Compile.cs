@@ -46,7 +46,7 @@ namespace IronAHK.Scripting
                         case BlockClose:
                             if (blocks.Count == 0)
                                 throw new ParseException(ExUnexpected, lines[i]);
-                            blocks.Pop();
+                            CloseBlock();
                             skip = true;
                             break;
 
@@ -95,7 +95,7 @@ namespace IronAHK.Scripting
                             bool rewind;
                             var result = ParseFlow(lines[i], out rewind);
                             if (result != null)
-                                parent.Add(result);
+                                parent.AddRange(result);
                             if (rewind)
                                 i--;
                             break;
@@ -126,14 +126,22 @@ namespace IronAHK.Scripting
                 finally { }
 
                 if (blockSingle)
-                    blocks.Pop();
+                    CloseBlock();
             }
 
             if (blocks.Count > 0 && lines[lines.Count - 1].LineNumber == blocks.Peek().Line.LineNumber && blocks.Peek().Type == CodeBlock.BlockType.Expect)
-                blocks.Pop();
+                CloseBlock();
 
             if (blocks.Count > 0)
                 throw new ParseException(ExUnclosedBlock, blocks.Peek().Line);
+        }
+
+        void CloseBlock()
+        {
+            var top = blocks.Pop();
+
+            if (top.Loop)
+                top.Statements.Add(new CodeLabeledStatement(breakLabels.Pop().Continue));
         }
 
         string Scope
