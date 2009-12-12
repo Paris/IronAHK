@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.CodeDom;
 using System.Text;
 
@@ -6,7 +7,9 @@ namespace IronAHK.Scripting
 {
     partial class Parser
     {
-        CodeStatement ParseFlow(CodeLine line, out bool rewind)
+        Stack<BreakLabels> breakLabels = new Stack<BreakLabels>();
+
+        CodeStatement[] ParseFlow(CodeLine line, out bool rewind)
         {
             #region Variables
 
@@ -52,7 +55,7 @@ namespace IronAHK.Scripting
                         blocks.Push(block);
 
                         elses.Push(ifelse.FalseStatements);
-                        return ifelse;
+                        return new CodeStatement[] { ifelse };
                     }
 
                 case FlowElse:
@@ -88,7 +91,7 @@ namespace IronAHK.Scripting
                         throw new ParseException("Dynamic label references are not supported"); // TODO: dynamic goto label references
                     else if (!IsIdentifier(parts[1]))
                         throw new ParseException("Illegal character in label name");
-                    return new CodeGotoStatement(parts[1]); // TODO: gosub
+                    return new CodeStatement[] { new CodeGotoStatement(parts[1]) }; // TODO: gosub
 
                 #endregion
 
@@ -100,6 +103,7 @@ namespace IronAHK.Scripting
                         CodeMethodInvokeExpression iterator;
                         bool skip = false;
 
+                        #region Loop types
                         if (parts.Length > 0)
                         {
                             switch (parts[0].ToUpperInvariant())
@@ -152,6 +156,7 @@ namespace IronAHK.Scripting
                             iterator = (CodeMethodInvokeExpression)InternalMethods.Loop;
                             iterator.Parameters.Add(new CodePrimitiveExpression(int.MaxValue));
                         }
+                        #endregion
 
                         string id = InternalID;
 
@@ -169,35 +174,47 @@ namespace IronAHK.Scripting
                         loop.IncrementStatement = new CodeCommentStatement(string.Empty); // for C# display
                         loop.TestExpression = condition;
 
-                        var block = new CodeBlock(line, Scope, loop.Statements);
-
+                        var block = new CodeBlock(line, Scope, loop.Statements, true);
                         block.Type = blockOpen ? CodeBlock.BlockType.Within : CodeBlock.BlockType.Expect;
                         blocks.Push(block);
-                        return loop;
+
+                        var label = new BreakLabels(InternalID, InternalID);
+                        breakLabels.Push(label);
+
+                        return new CodeStatement[] { loop, new CodeLabeledStatement(label.Break) };
                     }
 
                 case FlowWhile:
                     {
                         bool blockOpen = false;
                         CodeExpression condition = parts.Length > 1 ? ParseFlowParameter(parts[1], true, out blockOpen) : new CodePrimitiveExpression(true);
-                        CodeIterationStatement loop = new CodeIterationStatement(); //null, condition, null, statements);
+                        CodeIterationStatement loop = new CodeIterationStatement();
                         loop.TestExpression = condition;
-                        loop.InitStatement = null;
-                        var block = new CodeBlock(line, Scope, loop.Statements);
+                        loop.InitStatement = new CodeCommentStatement(string.Empty);
+
+                        var block = new CodeBlock(line, Scope, loop.Statements, true);
                         block.Type = blockOpen ? CodeBlock.BlockType.Within : CodeBlock.BlockType.Expect;
                         blocks.Push(block);
+
+                        var label = new BreakLabels(InternalID, InternalID);
+                        breakLabels.Push(label);
+
+                        return new CodeStatement[] { loop, new CodeLabeledStatement(label.Break) };
                     }
-                    break;
 
                 case FlowBreak:
                     if (parts.Length > 1)
                         throw new ParseException(ExFlowArgNotReq);
-                    return new CodeGotoStatement(); // TODO: break labels
+                    if (breakLabels.Count == 0)
+                        throw new ParseException("Cannot break outside a loop");
+                    return new CodeStatement[] { new CodeGotoStatement(breakLabels.Peek().Break) };
 
                 case FlowContinue:
                     if (parts.Length > 1)
                         throw new ParseException(ExFlowArgNotReq);
-                    return new CodeGotoStatement(); // TODO: continue labels
+                    if (breakLabels.Count == 0)
+                        throw new ParseException("Cannot continue outside a loop");
+                    return new CodeStatement[] { new CodeGotoStatement(breakLabels.Peek().Continue) };
 
                 #endregion
 
@@ -208,10 +225,10 @@ namespace IronAHK.Scripting
                     {
                         if (parts.Length > 1)
                             throw new ParseException("Cannot have return parameter for entry point method");
-                        return new CodeMethodReturnStatement();
+                        return new CodeStatement[] { new CodeMethodReturnStatement() };
                     }
                     else
-                        return new CodeMethodReturnStatement(parts.Length > 1 ? ParseSingleExpression(parts[1]) : new CodePrimitiveExpression(null));
+                        return new CodeStatement[] { new CodeMethodReturnStatement(parts.Length > 1 ? ParseSingleExpression(parts[1]) : new CodePrimitiveExpression(null)) };
 
                 #endregion
 

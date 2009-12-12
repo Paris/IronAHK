@@ -1,10 +1,14 @@
 y = 5
+x = 0
 
 Loop, %y%
 {
-	x = %A_Index%
+	If A_Index =2
+		Continue
+	x := x + A_Index
+	If A_Index =4
+		Break
 }
 
-If x = 4
+If x =8
 	FileAppend, pass, *
-else Fileappend, fail, *
