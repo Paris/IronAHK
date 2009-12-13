@@ -5,6 +5,8 @@ namespace IronAHK.Rusty
     {
         // UNDONE: use uppercase?
 
+        public static readonly char[] Spaces = { '\r', '\n', ' ', '\t', '\xA0' };
+
         public const string Pixel = "pixel";
         public const string Mouse = "mouse";
         public const string Screen = "screen";
