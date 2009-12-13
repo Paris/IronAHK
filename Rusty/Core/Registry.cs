@@ -17,13 +17,13 @@ namespace IronAHK.Rusty
                 string sub = SubKey;
 
                 if (ValueName == null)
-                    Formats.ToRegKey(RootKey, ref sub, true).DeleteSubKey(sub, true);
+                    ToRegKey(RootKey, ref sub, true).DeleteSubKey(sub, true);
                 else
                 {
                     string val = (ValueName).ToLower();
                     if (val == "(default)" || val == "ahk_default")
                         val = string.Empty;
-                    Formats.ToRegKey(RootKey, ref sub, false).DeleteValue(val, true);
+                    ToRegKey(RootKey, ref sub, false).DeleteValue(val, true);
                 }
             }
             catch (Exception) { error = 1; }
@@ -45,7 +45,7 @@ namespace IronAHK.Rusty
                 if (val == "(default)" || val == "ahk_default")
                     val = string.Empty;
 
-                OutputVar = Formats.ToRegKey(RootKey, ref sub, false).GetValue(val).ToString();
+                OutputVar = ToRegKey(RootKey, ref sub, false).GetValue(val).ToString();
             }
             catch (Exception) { error = 1; }
         }
@@ -66,7 +66,7 @@ namespace IronAHK.Rusty
                 if (val == "(default)" || val == "ahk_default")
                     val = string.Empty;
 
-                Formats.ToRegKey(RootKey, ref sub, false).SetValue(val, Value);
+                ToRegKey(RootKey, ref sub, false).SetValue(val, Value);
             }
             catch (Exception) { error = 1; }
         }

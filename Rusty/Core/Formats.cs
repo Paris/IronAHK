@@ -10,9 +10,9 @@ using Microsoft.Win32;
 
 namespace IronAHK.Rusty
 {
-    class Formats
+    partial class Core
     {
-        internal static bool OnOff(ref bool state, string mode)
+        static bool OnOff(ref bool state, string mode)
         {
             switch (mode.ToLower())
             {
@@ -33,8 +33,7 @@ namespace IronAHK.Rusty
             return true;
         }
 
-
-        internal static FileAttributes ToFileAttribs(string set, FileAttributes attribs)
+        static FileAttributes ToFileAttribs(string set, FileAttributes attribs)
         {
             char state = '+';
 
@@ -120,7 +119,7 @@ namespace IronAHK.Rusty
             return attribs;
         }
 
-        internal static string FromFileAttribs(FileAttributes attribs)
+        static string FromFileAttribs(FileAttributes attribs)
         {
             StringBuilder str = new StringBuilder(9);
 
@@ -146,7 +145,7 @@ namespace IronAHK.Rusty
             return str.ToString();
         }
 
-        internal static string[] ToFiles(string path, bool files, bool dirs, bool recurse)
+        static string[] ToFiles(string path, bool files, bool dirs, bool recurse)
         {
             string[] filelist = Directory.GetFiles(Path.GetDirectoryName(path), Path.GetFileName(path),
                 recurse ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly);
@@ -182,7 +181,7 @@ namespace IronAHK.Rusty
             return new string[] { };
         }
 
-        internal static string ToRGB(Color col)
+        static string ToRGB(Color col)
         {
             StringBuilder hex = new StringBuilder(8);
             const string s = "x";
@@ -201,7 +200,7 @@ namespace IronAHK.Rusty
             return hex.ToString();
         }
 
-        internal static int FromTime(DateTime time)
+        static int FromTime(DateTime time)
         {
             const int len = 2;
             const char pad = '0';
@@ -216,7 +215,7 @@ namespace IronAHK.Rusty
 
         }
 
-        internal static DateTime ToDateTime(string time)
+        static DateTime ToDateTime(string time)
         {
             if (time.Length > 7)
                 return DateTime.Now;
@@ -232,7 +231,7 @@ namespace IronAHK.Rusty
             return new DateTime(t[0] * 1000 + t[1], t[2], t[3], t[4], t[5], t[6]);
         }
 
-        internal static RegistryKey ToRegRootKey(string name)
+        static RegistryKey ToRegRootKey(string name)
         {
             switch (name.ToLowerInvariant())
             {
@@ -261,7 +260,7 @@ namespace IronAHK.Rusty
             }
         }
 
-        internal static RegistryKey ToRegKey(string RootKey, ref string SubKey, bool Parent)
+        static RegistryKey ToRegKey(string RootKey, ref string SubKey, bool Parent)
         {
             RegistryKey reg = ToRegRootKey(RootKey);
             
@@ -275,7 +274,7 @@ namespace IronAHK.Rusty
             return reg;
         }
 
-        internal static RegexOptions ToRegexOptions(string sequence)
+        static RegexOptions ToRegexOptions(string sequence)
         {
             RegexOptions options = RegexOptions.None;
 
@@ -308,7 +307,7 @@ namespace IronAHK.Rusty
             return options;
         }
 
-        internal static Process ToProcess(string id)
+        static Process ToProcess(string id)
         {
             int pid = 0;
             Process Proc = new Process();
@@ -317,21 +316,21 @@ namespace IronAHK.Rusty
             {
                 try
                 {
-                    Proc = Process.GetProcessById(pid);
+                    Proc = System.Diagnostics.Process.GetProcessById(pid);
                 }
                 catch {}
                 return Proc;
             }
             else
             {
-                Process[] localByName = Process.GetProcessesByName(id);
+                Process[] localByName = System.Diagnostics.Process.GetProcessesByName(id);
                 if (localByName.Length > 0)
                     Proc = localByName[0];
                 return Proc;
             }
         }
 
-        internal static Regex ParseRegEx(string exp)
+        static Regex ParseRegEx(string exp)
         {
             Regex mod = new Regex("^[imsxADJUXPS`nra]\\)");
             Match res = mod.Match(exp);
@@ -344,7 +343,7 @@ namespace IronAHK.Rusty
                 return new Regex(exp);
         }
 
-        internal static void LV_RowOptions(ref ListViewItem row, string options)
+        static void LV_RowOptions(ref ListViewItem row, string options)
         {
             string[] opts = options.Split(new char[] { ' ', '\t' });
             for (int i = 0; i < opts.Length; i++)
@@ -368,17 +367,17 @@ namespace IronAHK.Rusty
             }
         }
 
-        internal static void LV_ColOptions(ref ColumnHeader col, string options)
+        static void LV_ColOptions(ref ColumnHeader col, string options)
         {
             
         }
 
-        internal static void TV_NodeOptions(ref TreeNode node, string options)
+        static void TV_NodeOptions(ref TreeNode node, string options)
         {
 
         }
 
-        internal static bool ToggleOption(char mode, bool state)
+        static bool ToggleOption(char mode, bool state)
         {
             switch (mode)
             {
@@ -389,7 +388,7 @@ namespace IronAHK.Rusty
             return state;
         }
 
-        internal static Dictionary<char, string> KeyValues(string Options, bool Lowercase, char[] Exceptions)
+        static Dictionary<char, string> KeyValues(string Options, bool Lowercase, char[] Exceptions)
         {
             var table = new Dictionary<char, string>();
             StringBuilder buf = new StringBuilder();
@@ -460,7 +459,7 @@ namespace IronAHK.Rusty
             return table;
         }
 
-        internal static Dictionary<string, char> ParseStateKeys(string Options)
+        static Dictionary<string, char> ParseStateKeys(string Options)
         {
             char mode = '+';
             string key = string.Empty;
@@ -489,7 +488,7 @@ namespace IronAHK.Rusty
             return table;
         }
 
-        internal static List<string> ParseKeys(string Options)
+        static List<string> ParseKeys(string Options)
         {
             var list = new List<string>();
             for (int i = 0, j = 0; i < Options.Length; i++)
@@ -503,7 +502,7 @@ namespace IronAHK.Rusty
             return list;
         }
 
-        internal static List<string> ParseKeys(string[] Options)
+        static List<string> ParseKeys(string[] Options)
         {
             return ParseKeys(string.Join(" ", Options));
         }

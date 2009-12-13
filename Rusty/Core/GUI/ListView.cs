@@ -18,7 +18,7 @@ namespace IronAHK.Rusty
                 ListViewItem row = new ListViewItem();
                 foreach (string field in FieldN)
                     row.SubItems.Add(field);
-                Formats.LV_RowOptions(ref row, Options);
+                LV_RowOptions(ref row, Options);
 
                 Settings.GUI.ListView.Items.Add(row);
                 return row.Index + 1;
@@ -80,7 +80,7 @@ namespace IronAHK.Rusty
         public static int LV_GetNext(int StartingRowNumber, string Mode)
         {
             ListView lv = Settings.GUI.ListView;
-            var opts = Formats.ParseKeys(Mode);
+            var opts = ParseKeys(Mode);
             bool check = opts.Contains("c") || opts.Contains("checked");
             bool focus = opts.Contains("f") || opts.Contains("focused");
 
@@ -138,7 +138,7 @@ namespace IronAHK.Rusty
         {
             ListView lv = Settings.GUI.ListView;
             ColumnHeader col = new ColumnHeader();
-            Formats.LV_ColOptions(ref col, Options);
+            LV_ColOptions(ref col, Options);
             lv.Columns.Insert(ColumnNumber - 1, col);
             return ColumnNumber;
         }
@@ -171,7 +171,7 @@ namespace IronAHK.Rusty
                 if (ColumnTitle.Length != 0)
                     lv.Columns[ColumnNumber].Text = ColumnTitle;
                 ColumnHeader col = lv.Columns[ColumnNumber];
-                Formats.LV_ColOptions(ref col, Options);
+                LV_ColOptions(ref col, Options);
                 return 1;
             }
             catch (Exception) { return 0; }

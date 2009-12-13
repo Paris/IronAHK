@@ -104,7 +104,7 @@ namespace IronAHK.Rusty
         /// <returns></returns>
         public static string FileExist(string FilePattern)
         {
-            try { return Formats.FromFileAttribs(File.GetAttributes(FilePattern)); }
+            try { return FromFileAttribs(File.GetAttributes(FilePattern)); }
             catch (Exception) { return string.Empty; }
         }
 
@@ -445,7 +445,7 @@ namespace IronAHK.Rusty
         /// <returns>RegExMatch() returns the position of the leftmost occurrence of NeedleRegEx in the string Haystack. Position 1 is the first character. Zero is returned if the pattern is not found. If an error occurs (such as a syntax error inside NeedleRegEx), an empty string is returned and ErrorLevel is set to one of the values below instead of 0.</returns>
         public static int RegExMatch(string Haystack, string NeedleRegEx, out string[] UnquotedOutputVar, int StartingPos)
         {
-            Regex re = Formats.ParseRegEx(NeedleRegEx);
+            Regex re = ParseRegEx(NeedleRegEx);
             Match res = re.Match(Haystack, StartingPos);
 
             string[] matches = new string[res.Groups.Count];
@@ -477,7 +477,7 @@ namespace IronAHK.Rusty
         /// <returns>RegExReplace() returns a version of Haystack whose contents have been replaced by the operation. If no replacements are needed, Haystack is returned unaltered. If an error occurs (such as a syntax error inside NeedleRegEx), Haystack is returned unaltered (except in versions prior to 1.0.46.06, which return "") and ErrorLevel is set to one of the values below instead of 0.</returns>
         public static string RegExReplace(string Haystack, string NeedleRegEx, string Replacement, out int OutputVarCount, int Limit, int StartingPos)
         {
-            Regex re = Formats.ParseRegEx(NeedleRegEx);
+            Regex re = ParseRegEx(NeedleRegEx);
             int total = re.Matches(Haystack, StartingPos).Count;
             OutputVarCount = Math.Min(Limit, total);
             return re.Replace(Haystack, Replacement, Limit, StartingPos);

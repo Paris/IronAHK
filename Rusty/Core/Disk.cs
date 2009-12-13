@@ -229,7 +229,7 @@ namespace IronAHK.Rusty
             OutputVar = string.Empty;
             try
             {
-                OutputVar = Formats.FromFileAttribs(File.GetAttributes(Filename));
+                OutputVar = FromFileAttribs(File.GetAttributes(Filename));
                 error = 0;
             }
             catch (Exception) { error = 1; }
@@ -345,7 +345,7 @@ namespace IronAHK.Rusty
                     break;
             }
 
-            OutputVar = Formats.FromTime(time).ToString();
+            OutputVar = FromTime(time).ToString();
         }
 
         /// <summary>
@@ -642,9 +642,9 @@ namespace IronAHK.Rusty
             try
             {
                 error = 0;
-                foreach (string path in Formats.ToFiles(FilePattern, OperateOnFolders != 2, OperateOnFolders != 0, Recurse != 0))
+                foreach (string path in ToFiles(FilePattern, OperateOnFolders != 2, OperateOnFolders != 0, Recurse != 0))
                 {
-                    FileAttributes set = Formats.ToFileAttribs(Attributes, File.GetAttributes(path));
+                    FileAttributes set = ToFileAttribs(Attributes, File.GetAttributes(path));
                     File.SetAttributes(path, set);
                     if (File.GetAttributes(path) != set)
                         error++;
@@ -684,12 +684,12 @@ namespace IronAHK.Rusty
         /// </param>
         public static void FileSetTime(string YYYYMMDDHH24MISS, string FilePattern, string WhichTime, int OperateOnFolders, int Recurse)
         {
-            DateTime time = Formats.ToDateTime(YYYYMMDDHH24MISS);
+            DateTime time = ToDateTime(YYYYMMDDHH24MISS);
 
             try
             {
                 error = 0;
-                foreach (string path in Formats.ToFiles(FilePattern, OperateOnFolders != 2, OperateOnFolders != 0, Recurse != 0))
+                foreach (string path in ToFiles(FilePattern, OperateOnFolders != 2, OperateOnFolders != 0, Recurse != 0))
                 {
                     DateTime set = new DateTime();
 

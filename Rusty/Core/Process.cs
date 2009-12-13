@@ -38,7 +38,7 @@ namespace IronAHK.Rusty
                     }
                     else
                     {
-                        prc = Formats.ToProcess(PID_or_Name);
+                        prc = ToProcess(PID_or_Name);
                         try
                         {
                             error = prc.Id;
@@ -56,7 +56,7 @@ namespace IronAHK.Rusty
                     }
                     else
                     {
-                        prc = Formats.ToProcess(PID_or_Name);
+                        prc = ToProcess(PID_or_Name);
                     }
                     try
                     {
@@ -69,7 +69,7 @@ namespace IronAHK.Rusty
                     }
                     break;
                 case Keywords.Priority:
-                    prc = PID_or_Name == null ? System.Diagnostics.Process.GetCurrentProcess() : Formats.ToProcess(PID_or_Name);
+                    prc = PID_or_Name == null ? System.Diagnostics.Process.GetCurrentProcess() : ToProcess(PID_or_Name);
                     switch ((Param3).Trim().Substring(0, 1).ToLower().ToCharArray()[0])
                     {
                         case 'l': prc.PriorityClass = ProcessPriorityClass.Idle; break;
@@ -85,7 +85,7 @@ namespace IronAHK.Rusty
                     timeout = (int)(double.Parse(Param3) * 1000);
                     start = Environment.TickCount;
                     if (timeout == 0) timeout = -1;
-                    while (0 == (error = Formats.ToProcess(PID_or_Name).Id))
+                    while (0 == (error = ToProcess(PID_or_Name).Id))
                     {
                         System.Threading.Thread.Sleep(Settings.LoopFrequency);
                         if (timeout != -1 && Environment.TickCount - start > timeout)
@@ -96,7 +96,7 @@ namespace IronAHK.Rusty
                     timeout = (int)(double.Parse(Param3) * 1000);
                     start = Environment.TickCount;
                     if (timeout == 0) timeout = -1;
-                    while (0 != (error = Formats.ToProcess(PID_or_Name).Id))
+                    while (0 != (error = ToProcess(PID_or_Name).Id))
                     {
                         System.Threading.Thread.Sleep(Settings.LoopFrequency);
                         if (timeout != -1 && Environment.TickCount - start > timeout)

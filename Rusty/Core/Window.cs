@@ -198,7 +198,7 @@ namespace IronAHK.Rusty
         [Obsolete, Conditional("LEGACY")]
         public static void DetectHiddenText(string Mode)
         {
-            Formats.OnOff(ref Settings.DetectHiddenText, Mode);
+            OnOff(ref Settings.DetectHiddenText, Mode);
         }
 
         /// <summary>
@@ -211,7 +211,7 @@ namespace IronAHK.Rusty
         [Obsolete, Conditional("LEGACY")]
         public static void DetectHiddenWindows(string Mode)
         {
-            Formats.OnOff(ref Settings.DetectHiddenWindows, Mode);
+            OnOff(ref Settings.DetectHiddenWindows, Mode);
         }
 
         /// <summary>

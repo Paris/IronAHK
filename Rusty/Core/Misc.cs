@@ -17,7 +17,7 @@ namespace IronAHK.Rusty
         [Obsolete, Conditional("LEGACY")]
         public static void AutoTrim(string Mode)
         {
-            Formats.OnOff(ref Settings.AutoTrim, Mode);
+            OnOff(ref Settings.AutoTrim, Mode);
         }
 
         /// <summary>

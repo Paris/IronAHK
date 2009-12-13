@@ -30,7 +30,7 @@ namespace IronAHK.Rusty
             {
                 try
                 {
-                    time = Formats.ToDateTime(TimeStamp);
+                    time = ToDateTime(TimeStamp);
                 }
                 catch (ArgumentOutOfRangeException)
                 {
@@ -120,7 +120,7 @@ namespace IronAHK.Rusty
         [Obsolete, Conditional("LEGACY")]
         public static void Sort(ref string VarName, string Options)
         {
-            var opts = Formats.KeyValues(Options, true, new char[] { 'f' });
+            var opts = KeyValues(Options, true, new char[] { 'f' });
 
             if (opts.ContainsKey('f'))
                 throw new NotSupportedException(); // UNDONE: dynamic function calling for sort
@@ -266,7 +266,7 @@ namespace IronAHK.Rusty
         {
             if (Mode.Equals(Keywords.Locale, StringComparison.OrdinalIgnoreCase))
                 Mode = Keywords.On;
-            Formats.OnOff(ref Settings.StringCaseSense, Mode);
+            OnOff(ref Settings.StringCaseSense, Mode);
         }
 
         /// <summary>
