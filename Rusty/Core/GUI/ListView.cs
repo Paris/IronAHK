@@ -64,9 +64,9 @@ namespace IronAHK.Rusty
         public static int LV_GetCount(string Type)
         {
             Type = Type.ToLower();
-            if (Type == Keywords.Selected || (Type.Length == 1 && Type[0] == Keywords.Selected[0]))
+            if (Type == Keyword_Selected || (Type.Length == 1 && Type[0] == Keyword_Selected[0]))
                 return Settings.GUI.ListView.SelectedItems.Count;
-            else if (Type == Keywords.Column || (Type.Length == 1 && Type[0] == Keywords.Column[0]))
+            else if (Type == Keyword_Column || (Type.Length == 1 && Type[0] == Keyword_Column[0]))
                 return Settings.GUI.ListView.Columns.Count;
             else throw new ArgumentOutOfRangeException(); // graceful error instead?
         }

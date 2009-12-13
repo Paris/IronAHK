@@ -264,8 +264,8 @@ namespace IronAHK.Rusty
         [Obsolete, Conditional("LEGACY")]
         public static void StringCaseSense(string Mode)
         {
-            if (Mode.Equals(Keywords.Locale, StringComparison.OrdinalIgnoreCase))
-                Mode = Keywords.On;
+            if (Mode.Equals(Keyword_Locale, StringComparison.OrdinalIgnoreCase))
+                Mode = Keyword_On;
             OnOff(ref Settings.StringCaseSense, Mode);
         }
 
@@ -410,12 +410,12 @@ namespace IronAHK.Rusty
 
             switch (All.ToLower())
             {
-                case Keywords.UseErrorLevel:
+                case Keyword_UseErrorLevel:
                     getcount = true;
                     all = true;
                     break;
 
-                case Keywords.All:
+                case Keyword_All:
                 case "a":
                 case "1":
                     all = true;

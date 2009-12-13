@@ -126,7 +126,7 @@ namespace IronAHK.Rusty
 
             public static List<object> Handles = new List<object>();
 
-            public static readonly string[] OnOff = new string[] { Keywords.Off, Keywords.On };
+            public static readonly string[] OnOff = new string[] { Keyword_Off, Keyword_On };
             public static readonly char[] Spaces = new char[] { ' ', '\t', '\r', '\n', '\xA0' };
             public static readonly int LoopFrequency = 50;
         }

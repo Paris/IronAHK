@@ -129,7 +129,7 @@ namespace IronAHK.Rusty
 
             switch (Mode.ToLowerInvariant())
             {
-                case Keywords.On:
+                case Keyword_On:
                     if (timers.ContainsKey(name))
                     {
                         timers[name].Start();
@@ -139,7 +139,7 @@ namespace IronAHK.Rusty
                         Mode = "250";
                     break;
 
-                case Keywords.Off:
+                case Keyword_Off:
                     if (timers.ContainsKey(name))
                         timers[name].Stop();
                     else
