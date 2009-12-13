@@ -71,7 +71,8 @@ namespace IronAHK.Scripting
 
             #endregion
 
-            CodeExpression result = VarNameOrBasicString(value, true);
+            CodeExpression result = IsExpressionParameter(value) ?
+                ParseSingleExpression(value.TrimStart(Spaces).Substring(2)) : VarNameOrBasicString(value, true);
             return new CodeComplexAssignStatement(VarId(name), result);
         }
 

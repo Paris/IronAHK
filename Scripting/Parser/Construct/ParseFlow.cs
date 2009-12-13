@@ -247,8 +247,6 @@ namespace IronAHK.Scripting
             code = code.Trim(Spaces);
             if (code.Length == 0)
                 return null;
-            else if (code.Length > 1 && code[0] == Resolve && IsSpace(code[1]))
-                return ParseSingleExpression(code.Substring(2));
             else if (IsExpression(code))
             {
                 int l = code.Length - 1;
@@ -337,8 +335,12 @@ namespace IronAHK.Scripting
 
                 buf.Append(StringBound);
 
+                while (i < code.Length && IsSpace(code[i])) i++;
+
                 if (i < code.Length)
                     buf.Append(code.Substring(i));
+
+                while (i < code.Length && IsSpace(code[i])) i++;
 
                 buf.Append(StringBound);
             }
