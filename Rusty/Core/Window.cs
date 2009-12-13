@@ -434,9 +434,9 @@ namespace IronAHK.Rusty
                 case "1": Settings.TitleMatchMode = 1; break;
                 case "2": Settings.TitleMatchMode = 2; break;
                 case "3": Settings.TitleMatchMode = 3; break;
-                case Keywords.RegEx: Settings.TitleMatchMode = 4; break;
-                case Keywords.Fast: Settings.TitleMatchModeSpeed = true; break;
-                case Keywords.Slow: Settings.TitleMatchModeSpeed = false; break;
+                case Keyword_RegEx: Settings.TitleMatchMode = 4; break;
+                case Keyword_Fast: Settings.TitleMatchModeSpeed = true; break;
+                case Keyword_Slow: Settings.TitleMatchModeSpeed = false; break;
             }
         }
 

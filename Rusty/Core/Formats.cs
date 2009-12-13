@@ -17,12 +17,12 @@ namespace IronAHK.Rusty
             switch (mode.ToLower())
             {
                 case "1":
-                case Keywords.On:
+                case Keyword_On:
                     state = true;
                     break;
 
                 case "0":
-                case Keywords.Off:
+                case Keyword_Off:
                     state = false;
                     break;
 
@@ -235,24 +235,24 @@ namespace IronAHK.Rusty
         {
             switch (name.ToLowerInvariant())
             {
-                case Keywords.HKey_Local_Machine:
-                case Keywords.HKLM:
+                case Keyword_HKey_Local_Machine:
+                case Keyword_HKLM:
                     return Registry.LocalMachine;
 
-                case Keywords.HKey_Users:
-                case Keywords.HKU:
+                case Keyword_HKey_Users:
+                case Keyword_HKU:
                     return Registry.Users;
 
-                case Keywords.HKey_Current_User:
-                case Keywords.HKCU:
+                case Keyword_HKey_Current_User:
+                case Keyword_HKCU:
                     return Registry.CurrentUser;
 
-                case Keywords.HKey_Classes_Root:
-                case Keywords.HKCR:
+                case Keyword_HKey_Classes_Root:
+                case Keyword_HKCR:
                     return Registry.ClassesRoot;
 
-                case Keywords.HKey_Current_Config:
-                case Keywords.HKCC:
+                case Keyword_HKey_Current_Config:
+                case Keyword_HKCC:
                     return Registry.CurrentConfig;
 
                 default:
@@ -358,11 +358,11 @@ namespace IronAHK.Rusty
                 string mode = opts[i].Trim().ToLower();
                 switch (opts[i].Trim().ToLower())
                 {
-                    case Keywords.Check: row.Checked = enable; break;
-                    case Keywords.Focus: row.Focused = enable; break;
-                    case Keywords.Icon: row.ImageIndex = int.Parse(mode.Substring(4)); break;
-                    case Keywords.Select: row.Selected = enable; break;
-                    case Keywords.Vis: row.EnsureVisible(); break;
+                    case Keyword_Check: row.Checked = enable; break;
+                    case Keyword_Focus: row.Focused = enable; break;
+                    case Keyword_Icon: row.ImageIndex = int.Parse(mode.Substring(4)); break;
+                    case Keyword_Select: row.Selected = enable; break;
+                    case Keyword_Vis: row.EnsureVisible(); break;
                 }
             }
         }

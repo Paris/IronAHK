@@ -31,7 +31,7 @@ namespace IronAHK.Rusty
 
             switch (Cmd.ToLower())
             {
-                case Keywords.Exist:
+                case Keyword_Exist:
                     if (PID_or_Name == null)
                     {
                         error = System.Diagnostics.Process.GetCurrentProcess().Id;
@@ -49,7 +49,7 @@ namespace IronAHK.Rusty
                         }
                     }
                     break;
-                case Keywords.Close:
+                case Keyword_Close:
                     if (PID_or_Name == null)
                     {
                         prc = System.Diagnostics.Process.GetCurrentProcess();
@@ -68,7 +68,7 @@ namespace IronAHK.Rusty
                         error = 0;
                     }
                     break;
-                case Keywords.Priority:
+                case Keyword_Priority:
                     prc = PID_or_Name == null ? System.Diagnostics.Process.GetCurrentProcess() : ToProcess(PID_or_Name);
                     switch ((Param3).Trim().Substring(0, 1).ToLower().ToCharArray()[0])
                     {
@@ -81,7 +81,7 @@ namespace IronAHK.Rusty
                     }
                     error = prc.Id;
                     break;
-                case Keywords.Wait:
+                case Keyword_Wait:
                     timeout = (int)(double.Parse(Param3) * 1000);
                     start = Environment.TickCount;
                     if (timeout == 0) timeout = -1;
@@ -92,7 +92,7 @@ namespace IronAHK.Rusty
                             break;
                     }
                     break;
-                case Keywords.WaitClose:
+                case Keyword_WaitClose:
                     timeout = (int)(double.Parse(Param3) * 1000);
                     start = Environment.TickCount;
                     if (timeout == 0) timeout = -1;

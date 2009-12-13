@@ -25,22 +25,22 @@ namespace IronAHK.Rusty
             DateTime x = ToDateTime(Var.ToString());
             switch (TimeUnits.ToLower())
             {
-                case Keywords.Seconds:
+                case Keyword_Seconds:
                 case "s":
                     x.AddSeconds((double)Value);
                     break;
 
-                case Keywords.Minutes:
+                case Keyword_Minutes:
                 case "m":
                     x.AddMinutes((double)Value);
                     break;
 
-                case Keywords.Hours:
+                case Keyword_Hours:
                 case "h":
                     x.AddHours((double)Value);
                     break;
 
-                case Keywords.Days:
+                case Keyword_Days:
                 case "d":
                     x.AddDays((double)Value);
                     break;
@@ -189,11 +189,11 @@ namespace IronAHK.Rusty
         {
             switch (NumberType.ToLower())
             {
-                case Keywords.Integer:
+                case Keyword_Integer:
                     Settings.FormatInteger = Format[0];
                     break;
 
-                case Keywords.Float:
+                case Keyword_Float:
                     Settings.FormatFloat = Format;
                     break;
 
@@ -215,18 +215,18 @@ namespace IronAHK.Rusty
             OutputVar = string.Empty;
             switch (Cmd.Trim().ToLower())
             {
-                case Keywords.Unicode:
+                case Keyword_Unicode:
                     if (Value1 == null)
                         OutputVar = Clipboard.GetText();
                     else OutputVar = Value1;
                     break;
-                case Keywords.Asc:
+                case Keyword_Asc:
                     OutputVar = char.GetNumericValue(Value1, 0).ToString();
                     break;
-                case Keywords.Chr:
+                case Keyword_Chr:
                     OutputVar = char.ConvertFromUtf32(int.Parse(Value1));
                     break;
-                case Keywords.Deref:
+                case Keyword_Deref:
                     // TODO
                     break;
                 case "html":
@@ -237,72 +237,72 @@ namespace IronAHK.Rusty
                         .Replace(">", "&gt;")
                         .Replace("\n", "<br/>\n");
                     break;
-                case Keywords.Mod:
+                case Keyword_Mod:
                     OutputVar = (double.Parse(Value1) % double.Parse(Value2)).ToString();
                     break;
-                case Keywords.Pow:
+                case Keyword_Pow:
                     OutputVar = Math.Pow(double.Parse(Value1), double.Parse(Value2)).ToString();
                     break;
-                case Keywords.Exp:
+                case Keyword_Exp:
                     OutputVar = Math.Pow(double.Parse(Value1), Math.E).ToString();
                     break;
-                case Keywords.Sqrt:
+                case Keyword_Sqrt:
                     OutputVar = Math.Sqrt(double.Parse(Value1)).ToString();
                     break;
-                case Keywords.Log:
+                case Keyword_Log:
                     OutputVar = Math.Log10(double.Parse(Value1)).ToString();
                     break;
-                case Keywords.Ln:
+                case Keyword_Ln:
                     OutputVar = Math.Log(double.Parse(Value1), Math.E).ToString();
                     break;
-                case Keywords.Round:
+                case Keyword_Round:
                     int p = int.Parse(Value2);
                     OutputVar = Math.Round(double.Parse(Value1), p == 0 ? 1 : p).ToString();
                     break;
-                case Keywords.Ceil:
+                case Keyword_Ceil:
                     OutputVar = Math.Ceiling(double.Parse(Value1)).ToString();
                     break;
-                case Keywords.Floor:
+                case Keyword_Floor:
                     OutputVar = Math.Floor(double.Parse(Value1)).ToString();
                     break;
-                case Keywords.Abs:
+                case Keyword_Abs:
                     double d = double.Parse(Value1);
                     OutputVar = (d < 0 ? d * -1 : d).ToString();
                     break;
-                case Keywords.Sin:
+                case Keyword_Sin:
                     OutputVar = Math.Sin(double.Parse(Value1)).ToString();
                     break;
-                case Keywords.Cos:
+                case Keyword_Cos:
                     OutputVar = Math.Cos(double.Parse(Value1)).ToString();
                     break;
-                case Keywords.Tan:
+                case Keyword_Tan:
                     OutputVar = Math.Tan(double.Parse(Value1)).ToString();
                     break;
-                case Keywords.Asin:
+                case Keyword_Asin:
                     OutputVar = Math.Asin(double.Parse(Value1)).ToString();
                     break;
-                case Keywords.Acos:
+                case Keyword_Acos:
                     OutputVar = Math.Acos(double.Parse(Value1)).ToString();
                     break;
-                case Keywords.Atan:
+                case Keyword_Atan:
                     OutputVar = Math.Atan(double.Parse(Value1)).ToString();
                     break;
-                case Keywords.BitNot:
+                case Keyword_BitNot:
                     OutputVar = (~int.Parse(Value1)).ToString();
                     break;
-                case Keywords.BitAnd:
+                case Keyword_BitAnd:
                     OutputVar = (int.Parse(Value1) & int.Parse(Value2)).ToString();
                     break;
-                case Keywords.BitOr:
+                case Keyword_BitOr:
                     OutputVar = (int.Parse(Value1) | int.Parse(Value2)).ToString();
                     break;
-                case Keywords.BitXor:
+                case Keyword_BitXor:
                     OutputVar = (int.Parse(Value1) ^ int.Parse(Value2)).ToString();
                     break;
-                case Keywords.BitShiftLeft:
+                case Keyword_BitShiftLeft:
                     OutputVar = (int.Parse(Value1) << int.Parse(Value2)).ToString();
                     break;
-                case Keywords.BitShiftRight:
+                case Keyword_BitShiftRight:
                     OutputVar = (int.Parse(Value1) >> int.Parse(Value2)).ToString();
                     break;
             }

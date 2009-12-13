@@ -44,19 +44,19 @@ namespace IronAHK.Rusty
             bool rel;
 
             Mode = Mode.ToLower();
-            if (Mode.Length == 0 || Mode == Keywords.Screen)
+            if (Mode.Length == 0 || Mode == Keyword_Screen)
                 rel = false;
-            else if (Mode == Keywords.Relative)
+            else if (Mode == Keyword_Relative)
                 rel = true;
             else throw new ArgumentOutOfRangeException();
 
             switch (Item.ToLower())
             {
-                case Keywords.ToolTip: Settings.CoordMode.ToolTip = rel; break;
-                case Keywords.Pixel: Settings.CoordMode.Pixel = rel; break;
-                case Keywords.Mouse: Settings.CoordMode.Mouse = rel; break;
-                case Keywords.Caret: Settings.CoordMode.Caret = rel; break;
-                case Keywords.Menu: Settings.CoordMode.Menu = rel; break;
+                case Keyword_ToolTip: Settings.CoordMode.ToolTip = rel; break;
+                case Keyword_Pixel: Settings.CoordMode.Pixel = rel; break;
+                case Keyword_Mouse: Settings.CoordMode.Mouse = rel; break;
+                case Keyword_Caret: Settings.CoordMode.Caret = rel; break;
+                case Keyword_Menu: Settings.CoordMode.Menu = rel; break;
             }
         }
 
