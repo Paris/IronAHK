@@ -626,7 +626,18 @@ namespace IronAHK.Scripting
                     return false;
             }
             else
-                return true;
+            {
+                switch (code[0])
+                {
+                    case Greater:
+                    case Less:
+                    case Not:
+                        return false;
+
+                    default:
+                        return true;
+                }
+            }
         }
 
         #endregion

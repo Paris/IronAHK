@@ -4,7 +4,7 @@ functions
 comments
 directive
 command
-!
-assign
-goto
 loop
+assign
+!
+goto

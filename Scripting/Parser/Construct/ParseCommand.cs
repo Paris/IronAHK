@@ -87,14 +87,21 @@ namespace IronAHK.Scripting
             return parts.ToArray();
         }
 
+        bool IsExpressionParameter(string code)
+        {
+            code = code.TrimStart(Spaces);
+            int z = code.IndexOf(Resolve);
+            return z == 0 && (code.Length == 1 || IsSpace(code[1]));
+        }
+
         CodeExpression ParseCommandParameter(string code)
         {
-            code = code.Trim(); // should depend on AutoTrim
+            code = code.Trim(Spaces); // should depend on AutoTrim
 
             if (code.Length == 0)
                 return new CodePrimitiveExpression(null);
 
-            if (code.Length > 2 && code[0] == Resolve && IsSpace(code[1]))
+            if (IsExpressionParameter(code))
                 return ParseSingleExpression(code.Substring(2));
             else
                 return VarNameOrBasicString(StripComment(code), true);
