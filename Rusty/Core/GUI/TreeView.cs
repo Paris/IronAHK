@@ -193,7 +193,7 @@ namespace IronAHK.Rusty
             if (NewName.Length != 0)
                 node.Name = NewName;
 
-            Formats.TV_NodeOptions(ref node, Options);
+            TV_NodeOptions(ref node, Options);
 
             return node.Handle.ToInt32();
         }

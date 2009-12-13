@@ -22,7 +22,7 @@ namespace IronAHK.Rusty
             if (TimeUnits.Length == 0)
                 Var -= Value;
 
-            DateTime x = Formats.ToDateTime(Var.ToString());
+            DateTime x = ToDateTime(Var.ToString());
             switch (TimeUnits.ToLower())
             {
                 case Keywords.Seconds:
@@ -48,7 +48,7 @@ namespace IronAHK.Rusty
                 default:
                     throw new ArgumentOutOfRangeException();
             }
-            Var = Formats.FromTime(x);
+            Var = FromTime(x);
         }
 
         /// <summary>
