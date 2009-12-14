@@ -2,40 +2,22 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace IronAHK.Rusty.Extras.SimpleJSON
+namespace IronAHK.Rusty
 {
-    /// <summary>
-    /// Serialize JSON strings.
-    /// </summary>
-    class Encode
+    partial class SimpleJSON
     {
         /// <summary>
         /// Format a dictionary of string key and object value pairs as a JSON string.
         /// </summary>
         /// <param name="Elements">The table of key and values. Objects other than a string, boolean or numeric type have their <code>ToString()</code> method called for a compatible value.</param>
         /// <returns>A JSON representation.</returns>
-        public static string Parse(Dictionary<string, object> Elements)
+        public static string Encode(Dictionary<string, object> Elements)
         {
-            return ParseObject(Elements);
+            return EncodeObject(Elements);
         }
 
-        static string ParseObject(object node)
+        static string EncodeObject(object node)
         {
-            #region Tokens
-            const char ObjectOpen = '{';
-            const char ObjectClose = '}';
-            const char MemberSeperator = ',';
-            const char MemberAssign = ':';
-            const char ArrayOpen = '[';
-            const char ArrayClose = ']';
-            const char StringBoundary = '"';
-            //const char Escape = '\\';
-            const string True = "true";
-            const string False = "false";
-            const string Null = "null";
-            const char Space = ' ';
-            #endregion
-
             if (node == null)
                 return Null;
 
@@ -56,7 +38,7 @@ namespace IronAHK.Rusty.Extras.SimpleJSON
                     json.Append(Space);
                     json.Append(MemberAssign);
                     json.Append(Space);
-                    json.Append(ParseObject(pairs[key]));
+                    json.Append(EncodeObject(pairs[key]));
                     n--;
                     json.Append(n == 0 ? Space : MemberSeperator);
                 }
@@ -70,7 +52,7 @@ namespace IronAHK.Rusty.Extras.SimpleJSON
                 foreach (object sub in list)
                 {
                     json.Append(Space);
-                    json.Append(ParseObject(sub));
+                    json.Append(EncodeObject(sub));
                     n--;
                     json.Append(n == 0 ? Space : MemberSeperator);
                 }

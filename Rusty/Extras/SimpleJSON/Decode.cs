@@ -2,47 +2,20 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace IronAHK.Rusty.Extras.SimpleJSON
+namespace IronAHK.Rusty
 {
-    /// <summary>
-    /// Deserialize JSON strings.
-    /// </summary>
-    class Decode
+    partial class SimpleJSON
     {
-        #region Tokens
-        const char ObjectOpen = '{';
-        const char ObjectClose = '}';
-        const char MemberSeperator = ',';
-        const char MemberAssign = ':';
-        const char MemberAssignAlt = '=';
-        const char ArrayOpen = '[';
-        const char ArrayClose = ']';
-        const char StringBoundary = '"';
-        const char StringBoundaryAlt = '\'';
-        const char Escape = '\\';
-        const string True = "true";
-        const string False = "false";
-        const string Null = "null";
-        const char Space = ' ';
-        #endregion
-
-        #region Exceptions
-        const string ExUntermField = "Unterminated field";
-        const string ExNoMemberVal = "Expected member value";
-        const string ExNoKeyPair = "Expected key pair";
-        const string ExUnexpectedToken = "Unexpected token";
-        #endregion
-
         /// <summary>
         /// Convert a JSON string to a dictionary of string key and object value pairs.
         /// </summary>
         /// <param name="Source">The JSON string to evaluate.</param>
         /// <returns>A <see cref="System.Collections.Generic.Dictionary&lt;TKey, TValue&gt;"/>.</returns>
-        public static Dictionary<string, object> Parse(string Source)
+        public static Dictionary<string, object> Decode(string Source)
         {
             var data = new Dictionary<string, object>();
             int pointer = 0;
-            ParseObject(ref data, Scan(Source, ref pointer, ObjectClose));
+            DecodeObject(ref data, Scan(Source, ref pointer, ObjectClose));
             return data;
         }
 
@@ -66,7 +39,7 @@ namespace IronAHK.Rusty.Extras.SimpleJSON
                         break;
 
                 if (i == node.Length)
-                    throw new ParseException(ExUntermField, i);
+                    throw new Exception(ErrorMessage(ExUntermField, i));
             }
 
             return node.Substring(start, i - start);
@@ -77,6 +50,7 @@ namespace IronAHK.Rusty.Extras.SimpleJSON
             object value = null;
             Value(ref parent, ref key, ref value);
         }
+
         static void Value(ref Dictionary<string, object> parent, ref string key, ref object value)
         {
             if (key.Length == 0)
@@ -165,7 +139,7 @@ namespace IronAHK.Rusty.Extras.SimpleJSON
 
                     case ObjectOpen:
                         var sub = new Dictionary<string, object>();
-                        ParseObject(ref sub, Scan(node, ref i, ObjectClose));
+                        DecodeObject(ref sub, Scan(node, ref i, ObjectClose));
                         value = sub;
                         break;
 
@@ -182,7 +156,7 @@ namespace IronAHK.Rusty.Extras.SimpleJSON
                         if (IsNumber(token))
                             ExtractNumber(ref node, ref i, out value);
                         else if (!ExtractBoolean(ref node, ref i, ref value))
-                            throw new ParseException(ExNoMemberVal, i);
+                            throw new Exception(ErrorMessage(ExNoMemberVal, i));
                         break;
                 }
             }
@@ -193,7 +167,7 @@ namespace IronAHK.Rusty.Extras.SimpleJSON
             return list.ToArray();
         }
 
-        static void ParseObject(ref Dictionary<string, object> parent, string node)
+        static void DecodeObject(ref Dictionary<string, object> parent, string node)
         {
             string key = string.Empty;
             bool expectVal = false, next = true;
@@ -220,7 +194,7 @@ namespace IronAHK.Rusty.Extras.SimpleJSON
 
                         case ObjectOpen:
                             var sub = new Dictionary<string, object>();
-                            ParseObject(ref sub, Scan(node, ref i, ObjectClose));
+                            DecodeObject(ref sub, Scan(node, ref i, ObjectClose));
                             value = sub;
                             break;
 
@@ -238,7 +212,7 @@ namespace IronAHK.Rusty.Extras.SimpleJSON
                             if (IsNumber(token))
                                 ExtractNumber(ref node, ref i, out value);
                             else if (!ExtractBoolean(ref node, ref i, ref value))
-                                throw new ParseException(ExNoMemberVal, i);
+                                throw new Exception(ErrorMessage(ExNoMemberVal, i));
                             break;
                     }
 
@@ -266,7 +240,7 @@ namespace IronAHK.Rusty.Extras.SimpleJSON
                         }
                         while (i < node.Length);
                         if (keyip.Length == 0)
-                            throw new ParseException(ExNoKeyPair, i);
+                            throw new Exception(ErrorMessage(ExNoKeyPair, i));
                         else
                         {
                             key = keyip.ToString();
@@ -282,7 +256,7 @@ namespace IronAHK.Rusty.Extras.SimpleJSON
                     next = true;
                 }
                 else
-                    throw new ParseException(ExUnexpectedToken, i);
+                    throw new Exception(ErrorMessage(ExUnexpectedToken, i));
             }
 
             Value(ref parent, ref key);
