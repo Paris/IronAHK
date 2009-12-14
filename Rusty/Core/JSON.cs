@@ -15,11 +15,13 @@ namespace IronAHK.Rusty
             try
             {
                 error = 0;
-                return Extras.SimpleJSON.Decode.Parse(Source);
+                return SimpleJSON.Decode(Source);
             }
-            catch (Extras.SimpleJSON.ParseException) { error = 2; }
-            catch (Exception) { error = 1; }
-            return null;
+            catch (Exception)
+            {
+                error = 1;
+                return null;
+            }
         }
 
         /// <summary>
@@ -29,7 +31,7 @@ namespace IronAHK.Rusty
         /// <returns>A JSON encoded string.</returns>
         public static string JsonEncode(Dictionary<string, object> Data)
         {
-            return Extras.SimpleJSON.Encode.Parse(Data);
+            return SimpleJSON.Encode(Data);
         }
     }
 }

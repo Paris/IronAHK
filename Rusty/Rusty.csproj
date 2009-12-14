@@ -96,6 +96,7 @@
     <Compile Include="Core\String.cs" />
     <Compile Include="Core\Variables.cs" />
     <Compile Include="Core\Window.cs" />
+    <Compile Include="Extras\SimpleJSON\SimpleJSON.cs" />
     <Compile Include="Interfaces\IHotkeyRegister.cs" />
     <Compile Include="Linux\KeyCombination.cs" />
     <Compile Include="Linux\KeyModifiers.cs" />
@@ -104,7 +105,6 @@
     <Compile Include="Linux\Structs.cs" />
     <Compile Include="Extras\SimpleJSON\Decode.cs" />
     <Compile Include="Extras\SimpleJSON\Encode.cs" />
-    <Compile Include="Extras\SimpleJSON\ParseException.cs" />
     <Compile Include="Windows\Hotkeys.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Windows\Misc.cs" />
