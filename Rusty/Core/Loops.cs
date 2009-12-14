@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 
 namespace IronAHK.Rusty
 {
@@ -37,20 +38,76 @@ namespace IronAHK.Rusty
             var info = new LoopInfo { type = LoopType.Parse };
             loops.Push(info);
 
-            if (delimiters.ToUpperInvariant() == "CSV") // TODO: keywords
+            if (delimiters.ToLowerInvariant() == Keyword_CSV)
             {
-                // TODO: csv parsing
+                var reader = new StringReader(input);
+                var part = new StringBuilder();
+                bool str = false, next = false;
+                int current;
+
+                while ((current = reader.Read()) != -1)
+                {
+                    char sym = (char)current;
+
+                    switch (sym)
+                    {
+                        case '"':
+                            if (str)
+                            {
+                                if ((char)reader.Peek() == '"')
+                                {
+                                    part.Append('"');
+                                    reader.Read();
+                                }
+                                else
+                                    str = false;
+                            }
+                            else
+                            {
+                                if (next)
+                                    part.Append('"');
+                                else
+                                    str = true;
+                            }
+                            break;
+
+                        case ',':
+                            if (str)
+                                goto default;
+                            goto collect; // sorry
+
+                        default:
+                            next = true;
+                            part.Append(sym);
+                            break;
+                    }
+                }
+
+                goto collect; // is this needed?
+
+            collect:
+                if (next)
+                {
+                    next = false;
+                    string result = part.ToString();
+                    part.Length = 0;
+                    info.result = result;
+                    info.index++;
+                    yield return result;
+                }
             }
-
-            string[] parts = input.Split(delimiters.ToCharArray(), StringSplitOptions.None);
-            char[] remove = omit.ToCharArray();
-
-            foreach (string part in parts)
+            else
             {
-                string result = part.Trim(remove);
-                info.result = result;
-                info.index++;
-                yield return result;
+                string[] parts = input.Split(delimiters.ToCharArray(), StringSplitOptions.None);
+                char[] remove = omit.ToCharArray();
+
+                foreach (string part in parts)
+                {
+                    string result = part.Trim(remove);
+                    info.result = result;
+                    info.index++;
+                    yield return result;
+                }
             }
 
             loops.Pop();
