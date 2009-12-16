@@ -25,10 +25,6 @@ namespace IronAHK.Scripting
             if (parts.Length > 1)
                 parts[1] = parts[1].Trim(Spaces);
 
-            int n;
-
-            bool gosub = false;
-
             rewind = false;
 
             #endregion
@@ -81,7 +77,6 @@ namespace IronAHK.Scripting
                 #region Goto
 
                 case FlowGosub:
-                    gosub = true;
                     goto case FlowGoto;
 
                 case FlowGoto:

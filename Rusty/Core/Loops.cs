@@ -19,6 +19,11 @@ namespace IronAHK.Rusty
             public string result = null;
         }
 
+        /// <summary>
+        /// Perform a series of commands repeatedly: either the specified number of times or until break is encountered.
+        /// </summary>
+        /// <param name="n">How many times (iterations) to perform the loop.</param>
+        /// <returns></returns>
         public static IEnumerable Loop(int n)
         {
             var info = new LoopInfo { type = LoopType.Normal };
@@ -33,6 +38,19 @@ namespace IronAHK.Rusty
             loops.Pop();
         }
 
+        /// <summary>
+        /// Retrieves substrings (fields) from a string, one at a time.
+        /// </summary>
+        /// <param name="input">The string to parse.</param>
+        /// <param name="delimiters">One of the following:
+        /// <list>
+        /// <item>the word <code>CSV</code> to parse in comma seperated value format;</item>
+        /// <item>a sequence of characters to treat as delimiters;</item>
+        /// <item>blank to parse each character of the string.</item>
+        /// </list>
+        /// </param>
+        /// <param name="omit">An optional list of characters (case sensitive) to exclude from the beginning and end of each substring.</param>
+        /// <returns></returns>
         public static IEnumerable LoopParse(string input, string delimiters, string omit)
         {
             var info = new LoopInfo { type = LoopType.Parse };
@@ -100,6 +118,16 @@ namespace IronAHK.Rusty
                         break;
                 }
             }
+            else if (string.IsNullOrEmpty(omit))
+            {
+                for (int i = 0; i < input.Length; i++)
+                {
+                    string result = input.Substring(i, 1);
+                    info.result = result;
+                    info.index++;
+                    yield return result;
+                }
+            }
             else
             {
                 string[] parts = input.Split(delimiters.ToCharArray(), StringSplitOptions.None);
@@ -117,6 +145,12 @@ namespace IronAHK.Rusty
             loops.Pop();
         }
 
+        /// <summary>
+        /// Retrieves the lines in a text file, one at a time.
+        /// </summary>
+        /// <param name="input">The name of the text file whose contents will be read by the loop.</param>
+        /// <param name="output">The optional name of the file to be kept open for the duration of the loop.</param>
+        /// <returns></returns>
         public static IEnumerable LoopRead(string input, string output)
         {
             if (!File.Exists(input))
@@ -164,6 +198,19 @@ namespace IronAHK.Rusty
             loops.Pop();
         }
 
+        /// <summary>
+        /// Retrieves the specified files or folders, one at a time.
+        /// </summary>
+        /// <param name="pattern">The name of a single file or folder, or a wildcard pattern.</param>
+        /// <param name="folders">One of the following digits, or blank to use the default:
+        /// <list>
+        /// <item><code>1</code> (default) folders are not retrieved (only files);</item>
+        /// <item><code>1</code> all files and folders that match the wildcard pattern are retrieved;</item>
+        /// <item><code>2</code> only folders are retrieved (no files).</item>
+        /// </list>
+        /// </param>
+        /// <param name="recurse"><code>1</code> to recurse into subfolders, <code>0</code> otherwise.</param>
+        /// <returns></returns>
         public static IEnumerable LoopFile(string pattern, int folders, bool recurse)
         {
             var info = new LoopInfo { type = LoopType.Directory };
@@ -181,6 +228,20 @@ namespace IronAHK.Rusty
             loops.Pop();
         }
 
+        /// <summary>
+        /// Retrieves the contents of the specified registry subkey, one item at a time.
+        /// </summary>
+        /// <param name="root">Must be either HKEY_LOCAL_MACHINE (or HKLM), HKEY_USERS (or HKU), HKEY_CURRENT_USER (or HKCU), HKEY_CLASSES_ROOT (or HKCR), or HKEY_CURRENT_CONFIG (or HKCC).</param>
+        /// <param name="key">The name of the key (e.g. Software\SomeApplication). If blank or omitted, the contents of RootKey will be retrieved.</param>
+        /// <param name="subkeys">
+        /// <list>
+        /// <item><code>1</code> subkeys contained within Key are not retrieved (only the values);</item>
+        /// <item><code>1</code> all values and subkeys are retrieved;</item>
+        /// <item><code>2</code> only the subkeys are retrieved (not the values).</item>
+        /// </list>
+        /// </param>
+        /// <param name="recurse"><code>1</code> to recurse into subkeys, <code>0</code> otherwise.</param>
+        /// <returns></returns>
         public static IEnumerable LoopRegistry(string root, string key, int subkeys, bool recurse)
         {
             var info = new LoopInfo { type = LoopType.Registry };
