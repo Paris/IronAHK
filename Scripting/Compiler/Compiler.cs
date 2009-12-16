@@ -20,10 +20,18 @@ namespace IronAHK.Scripting
             ABuilder.SetEntryPoint(EntryPoint, PEFileKinds.WindowApplication);
             Save();
 
-            var results = new CompilerResults(null);
+            var results = new CompilerResults(new TempFileCollection());
+            string output = options.OutputAssembly;
 
             if (options.GenerateInMemory)
-                results.CompiledAssembly = Assembly.LoadFile(Path.GetFullPath(options.OutputAssembly));
+            {
+                results.TempFiles.AddFile(output, false);
+                byte[] raw = File.ReadAllBytes(output);
+                results.CompiledAssembly = Assembly.Load(raw);
+                File.Delete(output);
+            }
+            else
+                results.PathToAssembly = Path.GetFullPath(output);
 
             return results;
         }

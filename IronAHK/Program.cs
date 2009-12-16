@@ -127,16 +127,6 @@ namespace IronAHK
             foreach (CompilerError error in results.Errors)
                 Console.Error.WriteLine("{0} ({1}): ==> {2}", error.FileName, error.Line.ToString(), error.ErrorText);
 
-            #endregion
-
-            #region Run
-
-            if (!options.GenerateExecutable)
-            {
-                try { File.Delete(options.OutputAssembly); } // TODO: safe delete temp executable
-                catch (UnauthorizedAccessException) { Console.Error.WriteLine("Unable to delete temporary assembly"); }
-            }
-
             if (reflect)
                 results.CompiledAssembly.EntryPoint.Invoke(null, null);
 
