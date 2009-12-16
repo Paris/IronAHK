@@ -37,26 +37,10 @@ namespace IronAHK.Scripting
         {
             if (string.IsNullOrEmpty(Options.OutputAssembly))
             {
-                if (Options.GenerateExecutable)
-                    throw new ArgumentNullException();
+                if (Options.GenerateInMemory)
+                    Options.OutputAssembly = Path.Combine(Path.GetTempPath(), Path.GetFileNameWithoutExtension(Path.GetRandomFileName()) + ".exe");
                 else
-                {
-                    // HACK: always use temp path and delete safely after loading assembly
-
-                    const string ext = ".exe";
-                    string path = Path.Combine(Path.GetTempPath(), "~ia" + ext);
-
-                    if (File.Exists(path))
-                    {
-                        bool next = false;
-                        try { File.Delete(path); }
-                        catch (Exception) { next = true; }
-                        if (next)
-                            path = Path.Combine(Path.GetTempPath(), Path.GetFileNameWithoutExtension(Path.GetRandomFileName()) + ext);
-                    }
-
-                    Options.OutputAssembly = path;
-                }
+                    throw new ArgumentNullException();
             }
 
             string name = Path.GetFileName(Options.OutputAssembly);
