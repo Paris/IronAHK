@@ -7,22 +7,11 @@ using IronAHK.Scripting;
 
 namespace IronAHK
 {
-    static class Program
+    static partial class Program
     {
         static int Main(string[] args)
         {
-            #region Test run
-
-#if DEBUG
-            const string test = "assign";
-            const string output = ""; // "/out test.exe";
-            const string extra = "";
-            const string cmd = extra + " " + output + " ..{0}..{0}..{0}Tests{0}Scripting{0}Code{0}" + test + ".ia";
-          
-            args = string.Format(cmd, Path.DirectorySeparatorChar.ToString()).Split(new char[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
-#endif
-
-            #endregion
+            Test(ref args);
 
             #region Constants
 
