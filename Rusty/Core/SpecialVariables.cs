@@ -492,7 +492,7 @@ namespace IronAHK.Rusty
 
                 var stack = loops.ToArray();
 
-                for (int i = stack.Length - 1; i > 0; i--)
+                for (int i = stack.Length - 1; i > -1; i--)
                 {
                     if (stack[i].type == LoopType.Parse)
                         return stack[i].result;
