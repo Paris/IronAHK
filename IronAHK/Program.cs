@@ -11,7 +11,7 @@ namespace IronAHK
     {
         static int Main(string[] args)
         {
-            Test(ref args);
+            Start(ref args);
 
             #region Constants
 
@@ -130,11 +130,9 @@ namespace IronAHK
             if (reflect)
                 results.CompiledAssembly.EntryPoint.Invoke(null, null);
 
-#if DEBUG
-            Console.Read();
-#endif
-
             #endregion
+
+            Cleanup();
 
             return ExitSuccess;
         }
