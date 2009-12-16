@@ -43,20 +43,25 @@ namespace IronAHK.Rusty
                 var reader = new StringReader(input);
                 var part = new StringBuilder();
                 bool str = false, next = false;
-                int current;
 
-                while ((current = reader.Read()) != -1)
+                while (true)
                 {
+                    int current = reader.Read();
+                    if (current == -1)
+                        goto collect;
+
+                    const char tokenStr = '"', tokenDelim = ',';
+
                     char sym = (char)current;
 
                     switch (sym)
                     {
-                        case '"':
+                        case tokenStr:
                             if (str)
                             {
-                                if ((char)reader.Peek() == '"')
+                                if ((char)reader.Peek() == tokenStr)
                                 {
-                                    part.Append('"');
+                                    part.Append(tokenStr);
                                     reader.Read();
                                 }
                                 else
@@ -65,13 +70,13 @@ namespace IronAHK.Rusty
                             else
                             {
                                 if (next)
-                                    part.Append('"');
+                                    part.Append(tokenStr);
                                 else
                                     str = true;
                             }
                             break;
 
-                        case ',':
+                        case tokenDelim:
                             if (str)
                                 goto default;
                             goto collect; // sorry
@@ -81,19 +86,18 @@ namespace IronAHK.Rusty
                             part.Append(sym);
                             break;
                     }
-                }
 
-                goto collect; // is this needed?
+                    continue;
 
-            collect:
-                if (next)
-                {
+                collect:
                     next = false;
                     string result = part.ToString();
                     part.Length = 0;
                     info.result = result;
                     info.index++;
                     yield return result;
+                    if (current == -1)
+                        break;
                 }
             }
             else
