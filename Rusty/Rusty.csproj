@@ -68,7 +68,7 @@
   <ItemGroup>
     <Compile Include="Core\Core.cs" />
     <Compile Include="Core\Disk.cs" />
-    <Compile Include="Core\DllCall.cs" />
+    <Compile Include="Core\Call.cs" />
     <Compile Include="Core\Environment.cs" />
     <Compile Include="Core\Exceptions.cs" />
     <Compile Include="Core\Flow.cs" />
