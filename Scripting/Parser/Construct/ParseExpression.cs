@@ -238,7 +238,7 @@ namespace IronAHK.Scripting
                         {
                             int z = -1, x = i - 1, y = i + 1;
 
-                            if (x > 0 && parts[x] is CodeComplexVariableReferenceExpression)
+                            if (x > -1 && parts[x] is CodeComplexVariableReferenceExpression)
                                 z = x;
 
                             if (y < parts.Count && IsIdentifier(parts[y] as string))
