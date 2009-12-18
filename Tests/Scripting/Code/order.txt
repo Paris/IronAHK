@@ -6,5 +6,4 @@ directive
 command
 loop
 assign
-!
 goto
