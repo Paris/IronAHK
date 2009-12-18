@@ -11,12 +11,12 @@ namespace IronAHK
         {
             Sandbox();
 
-            const string test = "assign";
-            const string output = ""; // "/out test.exe";
-            const string extra = "";
-            const string cmd = extra + " " + output + " ..{0}..{0}..{0}Tests{0}Scripting{0}Code{0}" + test + ".ia";
+            const string test = "goto";
+            const string file = "test.exe";
 
-            args = string.Format(cmd, Path.DirectorySeparatorChar.ToString()).Split(new char[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
+            string source = string.Format("..{0}..{0}..{0}Tests{0}Scripting{0}Code{0}" + test + ".ia", Path.DirectorySeparatorChar);
+            File.Delete(file);
+            args = new string[] { "/out", file, source };
         }
 
         [Conditional("DEBUG")]

@@ -46,7 +46,7 @@ namespace IronAHK.Scripting
                         iftest.Parameters.Add(condition);
 
                         ifelse.Condition = iftest;
-                        var block = new CodeBlock(line, Scope, ifelse.TrueStatements);
+                        var block = new CodeBlock(line, Scope, ifelse.TrueStatements, CodeBlock.BlockKind.IfElse);
                         block.Type = blockOpen ? CodeBlock.BlockType.Within : CodeBlock.BlockType.Expect;
                         blocks.Push(block);
 
@@ -60,7 +60,7 @@ namespace IronAHK.Scripting
                             throw new ParseException("Else with no preceeding if block");
 
                         bool blockOpen = parts.Length > 1 && parts[1][0] == BlockOpen;
-                        var block = new CodeBlock(line, Scope, elses.Pop());
+                        var block = new CodeBlock(line, Scope, elses.Pop(), CodeBlock.BlockKind.IfElse);
                         block.Type = blockOpen ? CodeBlock.BlockType.Within : CodeBlock.BlockType.Expect;
 
                         line.Code = line.Code.TrimStart(Spaces).Substring(FlowElse.Length).TrimStart(Spaces);
@@ -77,16 +77,22 @@ namespace IronAHK.Scripting
                 #region Goto
 
                 case FlowGosub:
-                    goto case FlowGoto;
+                    {
+                        if (parts.Length < 1)
+                            throw new ParseException("No label specified");
+                        var invoke = LocalMethodInvoke(parts[1]);
+                        invoke.Parameters.Add(new CodePrimitiveExpression(new object[] { }));
+                        return new CodeStatement[] { new CodeExpressionStatement(invoke) };
+                    }
 
                 case FlowGoto:
-                    if (parts.Length < 1)
-                        throw new ParseException("No label specified");
-                    if (parts[1].IndexOf(Resolve) != 1)
-                        throw new ParseException("Dynamic label references are not supported"); // TODO: dynamic goto label references
-                    else if (!IsIdentifier(parts[1]))
-                        throw new ParseException("Illegal character in label name");
-                    return new CodeStatement[] { new CodeGotoStatement(parts[1]) }; // TODO: gosub
+                    {
+                        if (parts.Length < 1)
+                            throw new ParseException("No label specified");
+                        var invoke = LocalMethodInvoke(parts[1]);
+                        invoke.Parameters.Add(new CodePrimitiveExpression(new object[] { }));
+                        return new CodeStatement[] { new CodeExpressionStatement(invoke), new CodeMethodReturnStatement() };
+                    }
 
                 #endregion
 
@@ -169,7 +175,7 @@ namespace IronAHK.Scripting
                         loop.IncrementStatement = new CodeCommentStatement(string.Empty); // for C# display
                         loop.TestExpression = condition;
 
-                        var block = new CodeBlock(line, Scope, loop.Statements, true);
+                        var block = new CodeBlock(line, Scope, loop.Statements, CodeBlock.BlockKind.Loop);
                         block.Type = blockOpen ? CodeBlock.BlockType.Within : CodeBlock.BlockType.Expect;
                         blocks.Push(block);
 
@@ -187,7 +193,7 @@ namespace IronAHK.Scripting
                         loop.TestExpression = condition;
                         loop.InitStatement = new CodeCommentStatement(string.Empty);
 
-                        var block = new CodeBlock(line, Scope, loop.Statements, true);
+                        var block = new CodeBlock(line, Scope, loop.Statements, CodeBlock.BlockKind.Loop);
                         block.Type = blockOpen ? CodeBlock.BlockType.Within : CodeBlock.BlockType.Expect;
                         blocks.Push(block);
 

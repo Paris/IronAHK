@@ -3,7 +3,8 @@ x++
 
 labelB:
 x++
-Goto, LABELC
+;Goto, LABELC
+Goto, labelc
 x++
 
 labelc:

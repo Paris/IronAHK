@@ -175,9 +175,7 @@ namespace IronAHK.Scripting
                                         for (int n = 0; n < count; n++)
                                             sub[n] = parts[i + 1 + n];
 
-                                        var invoke = new CodeMethodInvokeExpression();
-                                        invoke.Method.MethodName = name;
-                                        invoke.Method.TargetObject = new CodeThisReferenceExpression(); // HACK: static methods so refer to parent type
+                                        var invoke = LocalMethodInvoke(name);
 
                                         if (count == 0)
                                             invoke.Parameters.Add(new CodePrimitiveExpression(new object[] { }));
@@ -638,6 +636,14 @@ namespace IronAHK.Scripting
                         return true;
                 }
             }
+        }
+
+        CodeMethodInvokeExpression LocalMethodInvoke(string name)
+        {
+            var invoke = new CodeMethodInvokeExpression();
+            invoke.Method.MethodName = name;
+            invoke.Method.TargetObject = new CodeThisReferenceExpression(); // HACK: static methods so refer to parent type
+            return invoke;
         }
 
         #endregion
