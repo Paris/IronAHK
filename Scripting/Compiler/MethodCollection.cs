@@ -12,27 +12,28 @@ namespace IronAHK.Scripting
         {
         }
 
-        public MethodInfo BestMatch(string Name, ArgType[] Args)
+        public MethodInfo BestMatch(string name, ArgType[] args)
         {
-            // HACK: need to normalise method name and parameters in lexing stage so compiler can find perfect match
-
             MethodInfo result = null;
-            int resultParams = -1;
+            int length = args.Length, last = -1;
 
             foreach (MethodInfo writer in this)
             {
-                if (!string.Equals(writer.Name, Name, StringComparison.OrdinalIgnoreCase))
+                // find method with same name (case insensitive)
+                if (!name.Equals(writer.Name, StringComparison.OrdinalIgnoreCase))
                     continue;
 
-                ParameterInfo[] parameters = writer.GetParameters();
+                var param = writer.GetParameters().Length;
 
-                if (parameters.Length == Args.Length)
+                if (param == length) // perfect match when parameter count is the same
                     return writer;
-                else if (parameters.Length > resultParams)
+                else if (param < length && param > last) // otherwise find a method with the next highest number of parameters
                 {
                     result = writer;
-                    resultParams = parameters.Length;
+                    last = param;
                 }
+                else if (result == null) // return the first method with excess parameters as a last resort 
+                    result = writer;
             }
 
             return result;
