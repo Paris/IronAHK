@@ -23,10 +23,27 @@ namespace IronAHK.Scripting
             get { return parts; }
         }
 
-        public CodeMethodInvokeExpression QualifiedName
+        public CodeExpression QualifiedName
         {
             get
             {
+                string[] refs = new string[parts.Length];
+                bool simple = true;
+
+                for (int i = 0; i < parts.Length; i++)
+                {
+                    if (parts[i] is CodePrimitiveExpression)
+                        refs[i] = (parts[i] as CodePrimitiveExpression).Value as string;
+                    else
+                    {
+                        simple = false;
+                        break;
+                    }
+                }
+
+                if (simple)
+                    return new CodePrimitiveExpression(string.Concat(refs));
+
                 var concat = (CodeMethodInvokeExpression)Parser.InternalMethods.Concat;
 
                 CodeExpression[] sub = new CodeExpression[parts.Length];
