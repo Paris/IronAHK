@@ -96,6 +96,14 @@ namespace IronAHK.Rusty
         }
 
         /// <summary>
+        /// Replaces the currently running instance of the script with a new one.
+        /// </summary>
+        public static void Reload()
+        {
+            Application.Restart();
+        }
+
+        /// <summary>
         /// Determines how fast a script will run (affects CPU utilization).
         /// </summary>
         /// <param name="LineCount">

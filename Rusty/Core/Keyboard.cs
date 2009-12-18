@@ -63,15 +63,6 @@ namespace IronAHK.Rusty
         }
 
         /// <summary>
-        /// Replaces the currently running instance of the script with a new one.
-        /// </summary>
-        public static void Reload()
-        {
-            // TODO: move to appropriate file, currently in `Keyboard.cs`?!
-            Application.Restart();
-        }
-
-        /// <summary>
         /// Disables or enables the user's ability to interact with the computer via keyboard and mouse.
         /// </summary>
         /// <param name="Mode">

@@ -227,7 +227,7 @@ namespace IronAHK.Rusty
                     OutputVar = char.ConvertFromUtf32(int.Parse(Value1));
                     break;
                 case Keyword_Deref:
-                    // TODO
+                    // TODO: dereference transform
                     break;
                 case "html":
                     OutputVar = Value1
