@@ -128,11 +128,6 @@ namespace IronAHK.Scripting
                     ConditionalBox(Top);
                     Generator.Emit(OpCodes.Call, ForceString);
                 }
-                else if (Wanted == typeof(float))
-                {
-                    ConditionalBox(Top);
-                    Generator.Emit(OpCodes.Call, ForceFloat);
-                }
                 else if (Wanted == typeof(decimal))
                 {
                     ConditionalBox(Top);

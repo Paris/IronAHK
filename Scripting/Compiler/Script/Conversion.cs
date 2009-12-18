@@ -5,28 +5,6 @@ namespace IronAHK.Scripting
     {
         #region Numeric
 
-        public static float ForceFloat(object input)
-        {
-            // TODO: remove float type
-
-            if (input is float)
-                return (float)input;
-            else if (input is decimal)
-                return (float)(decimal)input;
-            else if (input is long)
-                return (float)(long)input;
-            else if (input is int)
-                return (float)(int)input;
-            else if (input is string)
-            {
-                float result;
-                if (float.TryParse((string)input, out result))
-                    return result;
-            }
-
-            return default(float);
-        }
-
         public static decimal ForceDecimal(object input)
         {
             if (input is decimal)
