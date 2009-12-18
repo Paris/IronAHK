@@ -8,4 +8,3 @@ CALL "%VS90COMNTOOLS%\vsvars32.bat"
 
 SET name=IronAHK
 devenv /rebuild "Release|Any CPU" "%name%.sln"
-

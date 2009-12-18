@@ -11,7 +11,7 @@ namespace IronAHK
         {
             Sandbox();
 
-            const string test = "goto";
+            const string test = "pass";
             const string file = "test.exe";
 
             string source = string.Format("..{0}..{0}..{0}Tests{0}Scripting{0}Code{0}" + test + ".ia", Path.DirectorySeparatorChar);
