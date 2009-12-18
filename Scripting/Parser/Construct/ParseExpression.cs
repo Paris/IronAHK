@@ -178,7 +178,7 @@ namespace IronAHK.Scripting
                                         var invoke = LocalMethodInvoke(name);
 
                                         if (count == 0)
-                                            invoke.Parameters.Add(new CodePrimitiveExpression(new object[] { }));
+                                            invoke.Parameters.Add(new CodeArrayCreateExpression(typeof(object), 0));
                                         else
                                         {
                                             var passed = ParseMultiExpression(sub);

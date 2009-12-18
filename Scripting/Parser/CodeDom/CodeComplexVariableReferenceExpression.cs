@@ -59,7 +59,7 @@ namespace IronAHK.Scripting
                         sub[i] = (CodeMethodInvokeExpression)part;
                 }
 
-                concat.Parameters.Add(new CodeArrayCreateExpression(new CodeTypeReference(typeof(string[])), sub));
+                concat.Parameters.Add(new CodeArrayCreateExpression(new CodeTypeReference(typeof(string)), sub));
                 return concat;
             }
         }
