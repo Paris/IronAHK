@@ -1,9 +1,0 @@
-pass
-if
-functions
-comments
-directive
-command
-loop
-assign
-goto
