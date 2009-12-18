@@ -45,6 +45,7 @@
     <Compile Include="Rusty\Math.cs" />
     <Compile Include="Rusty\PInvoke.cs" />
     <Compile Include="Rusty\Rusty.cs" />
+    <Compile Include="Scripting\List.cs" />
     <Compile Include="Scripting\Scripting.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -63,7 +64,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include=".gitignore" />
-    <Content Include="Scripting\Code\order.txt" />
     <None Include="Scripting\Code\comments.ia" />
     <None Include="Scripting\Code\pass.ia" />
     <None Include="Scripting\Code\if.ia" />

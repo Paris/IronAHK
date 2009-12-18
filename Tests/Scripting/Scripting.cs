@@ -7,47 +7,49 @@ using NUnit.Framework;
 
 namespace IronAHK.Tests
 {
-    [TestFixture]
-    public class Scripting
+    [TestFixture, Category("Scripting")]
+    public partial class Scripting
     {
-        [Test]
-        public void RunScripts()
+        string path = string.Format("..{0}..{0}Scripting{0}Code{0}", Path.DirectorySeparatorChar.ToString());
+        const string ext = ".ia";
+
+        bool TestScript(string source)
         {
-            string path = string.Format("..{0}..{0}Scripting{0}Code", Path.DirectorySeparatorChar.ToString());
-            string line;
-            var sources = new StreamReader(Path.Combine(path, "order.txt"));
+            return HasPassed(RunScript(string.Concat(path, source, ext)));
+        }
 
-            while ((line = sources.ReadLine()) != null)
-            {
-                if (line == "!")
-                    break;
+        bool HasPassed(string output)
+        {
+            if (string.IsNullOrEmpty(output))
+                return false;
 
-                string file = Path.Combine(path, line + ".ia");
-                var provider = new IACodeProvider();
-                var options = new CompilerParameters { GenerateExecutable = false, GenerateInMemory = true, };
-                options.ReferencedAssemblies.Add(typeof(IronAHK.Rusty.Core).Namespace + ".dll");
-                var results = provider.CompileAssemblyFromFile(options, file);
+            const string pass = "pass";
+            foreach (string remove in new string[] { pass, " ", "\n" })
+                output = output.Replace(remove, string.Empty);
 
-                var buffer = new StringBuilder();
-                var writer = new StringWriter(buffer);
-                Console.SetOut(writer);
+            return output.Length == 0;
+        }
 
-                results.CompiledAssembly.EntryPoint.Invoke(null, null);
+        string RunScript(string source)
+        {
+            var provider = new IACodeProvider();
+            var options = new CompilerParameters { GenerateExecutable = false, GenerateInMemory = true, };
+            options.ReferencedAssemblies.Add(typeof(IronAHK.Rusty.Core).Namespace + ".dll");
+            var results = provider.CompileAssemblyFromFile(options, source);
 
-                writer.Flush();
-                string output = buffer.ToString();
-                var stdout = new StreamWriter(Console.OpenStandardOutput());
-                stdout.AutoFlush = true;
-                Console.SetOut(stdout);
+            var buffer = new StringBuilder();
+            var writer = new StringWriter(buffer);
+            Console.SetOut(writer);
 
-                Assert.IsNotEmpty(output, line + " results");
+            results.CompiledAssembly.EntryPoint.Invoke(null, null);
 
-                const string pass = "pass";
-                foreach (string remove in new string[] { pass, " ", "\n" })
-                    output = output.Replace(remove, string.Empty);
+            writer.Flush();
+            string output = buffer.ToString();
+            var stdout = new StreamWriter(Console.OpenStandardOutput());
+            stdout.AutoFlush = true;
+            Console.SetOut(stdout);
 
-                Assert.IsEmpty(output, line + " " + pass);
-            }
+            return output;
         }
     }
 }

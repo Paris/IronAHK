@@ -2,6 +2,6 @@
 
 namespace IronAHK.Tests
 {
-    [TestFixture]
+    [TestFixture, Category("Rusty")]
     public partial class Rusty { }
 }
