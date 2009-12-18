@@ -10,6 +10,7 @@ namespace IronAHK.Scripting
 
         public void ParseFunction(CodeLine line)
         {
+            CheckTopBlock();
             string code = line.Code;
             int i;
             var buf = new StringBuilder();
@@ -38,6 +39,9 @@ namespace IronAHK.Scripting
 
             name = buf.ToString();
             buf.Length = 0;
+
+            if (methods.ContainsKey(name))
+                throw new ParseException("Duplicate function");
 
             #endregion
 
@@ -100,18 +104,10 @@ namespace IronAHK.Scripting
 
             #endregion
 
-            #region Method
-
-            CodeMemberMethod method = new CodeMemberMethod();
-            method.Name = name;
-            method.ReturnType = new CodeTypeReference(typeof(object));
-            method.Parameters.Add(new CodeParameterDeclarationExpression(typeof(object[]), argv));
-
-            #endregion
-
             #region Block
 
-            var block = new CodeBlock(line, method.Name, method.Statements);
+            var method = LocalMethod(name);
+            var block = new CodeBlock(line, method.Name, method.Statements, CodeBlock.BlockKind.Function);
             block.Type = blockType;
             blocks.Push(block);
 
@@ -120,6 +116,13 @@ namespace IronAHK.Scripting
             #endregion
 
             methods.Add(method.Name, method);
+        }
+
+        CodeMemberMethod LocalMethod(string name)
+        {
+            var method = new CodeMemberMethod() { Name = name, ReturnType = new CodeTypeReference(typeof(object)) };
+            method.Parameters.Add(new CodeParameterDeclarationExpression(typeof(object[]), argv));
+            return method;
         }
 
         CodeStatement ParseFunctionParameters(string code)

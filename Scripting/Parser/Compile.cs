@@ -88,7 +88,7 @@ namespace IronAHK.Scripting
                             break;
 
                         case Token.Label:
-                            parent.Add(ParseLabel(code));
+                            parent.Add(ParseLabel(lines[i]));
                             break;
 
                         case Token.Flow:
@@ -129,6 +129,8 @@ namespace IronAHK.Scripting
                     CloseBlock();
             }
 
+            CheckTopBlock();
+
             if (blocks.Count > 0 && lines[lines.Count - 1].LineNumber == blocks.Peek().Line.LineNumber && blocks.Peek().Type == CodeBlock.BlockType.Expect)
                 CloseBlock();
 
@@ -140,13 +142,19 @@ namespace IronAHK.Scripting
         {
             var top = blocks.Pop();
 
-            if (top.Loop)
+            if (top.Kind == CodeBlock.BlockKind.Loop)
                 top.Statements.Add(new CodeLabeledStatement(breakLabels.Pop().Continue));
         }
 
         string Scope
         {
-            get { return blocks.Count > 0 ? blocks.Peek().Method : mainScope; }
+            get
+            {
+                if (blocks.Count == 0)
+                    return mainScope;
+                var block = blocks.Peek();
+                return block.Kind == CodeBlock.BlockKind.Label ? mainScope : block.Method;
+            }
         }
 
         string InternalID

@@ -127,6 +127,10 @@ namespace IronAHK
             foreach (CompilerError error in results.Errors)
                 Console.Error.WriteLine("{0} ({1}): ==> {2}", error.FileName, error.Line.ToString(), error.ErrorText);
 
+#if DEBUG
+            reflect = true;
+#endif
+
             if (reflect)
                 results.CompiledAssembly.EntryPoint.Invoke(null, null);
 

@@ -6,22 +6,21 @@ namespace IronAHK.Scripting
     {
         public enum BlockType { None, Expect, Within };
 
+        public enum BlockKind { Dummy, IfElse, Function, Label, Loop };
+
         CodeLine line;
         string method;
         CodeStatementCollection statements;
         BlockType type;
-        bool loop;
+        BlockKind kind;
 
-        public CodeBlock(CodeLine line, string method, CodeStatementCollection statements)
-            : this(line, method, statements, false) { }
-
-        public CodeBlock(CodeLine line, string method, CodeStatementCollection statements, bool loop)
+        public CodeBlock(CodeLine line, string method, CodeStatementCollection statements, BlockKind kind)
         {
             this.line = line;
             this.method = method;
             this.statements = statements;
             this.type = BlockType.Expect;
-            this.loop = loop;
+            this.kind = kind;
         }
 
         public CodeLine Line
@@ -45,9 +44,9 @@ namespace IronAHK.Scripting
             set { type = value; }
         }
 
-        public bool Loop
+        public BlockKind Kind
         {
-            get { return loop; }
+            get { return kind; }
         }
     }
 }
