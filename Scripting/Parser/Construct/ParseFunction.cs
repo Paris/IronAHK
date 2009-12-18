@@ -1,4 +1,5 @@
-﻿using System.CodeDom;
+﻿using System;
+using System.CodeDom;
 using System.Collections.Generic;
 using System.Text;
 
@@ -107,11 +108,15 @@ namespace IronAHK.Scripting
             #region Block
 
             var method = LocalMethod(name);
+            method.Attributes = MemberAttributes.Static;
+
             var block = new CodeBlock(line, method.Name, method.Statements, CodeBlock.BlockKind.Function);
             block.Type = blockType;
             blocks.Push(block);
 
-            method.Statements.Add(ParseFunctionParameters(param)); // deferred for new scope
+            var fix = ParseFunctionParameters(param);
+            if (fix != null)
+                method.Statements.Add(fix);
 
             #endregion
 
@@ -129,7 +134,7 @@ namespace IronAHK.Scripting
         {
             #region List
 
-            List<string> names = new List<string>(), defaults = new List<string>();
+            List<CodePrimitiveExpression> names = new List<CodePrimitiveExpression>(), defaults = new List<CodePrimitiveExpression>();
             int i = 0;
 
             while (i < code.Length)
@@ -146,7 +151,7 @@ namespace IronAHK.Scripting
                 if (x == i)
                     throw new ParseException(ExUnexpected);
                 else
-                    names.Add(Scope + ScopeVar + code.Substring(x, i - x));
+                    names.Add(new CodePrimitiveExpression(Scope + ScopeVar + code.Substring(x, i - x)));
 
                 while (i < code.Length && IsSpace(code[i])) i++;
 
@@ -162,7 +167,7 @@ namespace IronAHK.Scripting
                     if (i == code.Length)
                         throw new ParseException(ExUnexpected);
                     else if (code[i] == Multicast)
-                        defaults.Add(null);
+                        defaults.Add(new CodePrimitiveExpression(null));
                     else
                     {
                         bool str = false;
@@ -175,16 +180,16 @@ namespace IronAHK.Scripting
                         }
 
                         if (x == i)
-                            defaults.Add(null);
+                            defaults.Add(new CodePrimitiveExpression(null));
                         else
                         {
                             string sub = code.Substring(x, i - x).Trim(Spaces);
-                            defaults.Add(sub.Length == 0 ? null : ValidateParameterLiteral(sub));
+                            defaults.Add(new CodePrimitiveExpression(sub.Length == 0 ? null : ValidateParameterLiteral(sub)));
                         }
                     }
                 }
                 else
-                    defaults.Add(null);
+                    defaults.Add(new CodePrimitiveExpression(null));
 
                 // next
                 if (i < code.Length && code[i] != Multicast)
@@ -197,12 +202,15 @@ namespace IronAHK.Scripting
 
             #region Method
 
-            CodeMethodInvokeExpression fix = new CodeMethodInvokeExpression();
+            if (names.Count == 0)
+                return null;
+
+            var fix = new CodeMethodInvokeExpression();
             fix.Method = (CodeMethodReferenceExpression)InternalMethods.Parameters;
 
-            fix.Parameters.Add(new CodePrimitiveExpression(names.ToArray()));
+            fix.Parameters.Add(new CodeArrayCreateExpression(typeof(string), names.ToArray()));
             fix.Parameters.Add(new CodeArgumentReferenceExpression(argv));
-            fix.Parameters.Add(new CodePrimitiveExpression(defaults.ToArray()));
+            fix.Parameters.Add(new CodeArrayCreateExpression(typeof(string), defaults.ToArray()));
 
             return new CodeExpressionStatement(fix);
 
