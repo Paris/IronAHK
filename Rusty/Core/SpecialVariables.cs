@@ -354,7 +354,7 @@ namespace IronAHK.Rusty
             get
             {
                 if (loops.Count > 0)
-                    return loops.Peek().index;
+                    return loops.Peek().index + 1;
                 else
                     return default(int);
             }

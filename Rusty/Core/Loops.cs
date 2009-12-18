@@ -14,7 +14,7 @@ namespace IronAHK.Rusty
 
         class LoopInfo
         {
-            public int index = 0;
+            public int index = -1;
             public LoopType type = LoopType.Normal;
             public string result = null;
         }
@@ -29,10 +29,10 @@ namespace IronAHK.Rusty
             var info = new LoopInfo { type = LoopType.Normal };
             loops.Push(info);
 
-            for (int i = 0; i < n; i++)
+            for (int i = 0; i < n;)
             {
                 info.index = i;
-                yield return i;
+                yield return ++i;
             }
 
             loops.Pop();
