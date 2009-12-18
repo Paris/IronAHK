@@ -13,7 +13,6 @@ namespace IronAHK.Scripting
         TypeBuilder Parent;
         ILGenerator Generator;
 
-        MethodInfo ForceFloat;
         MethodInfo ForceDecimal;
         MethodInfo ForceLong;
         MethodInfo ForceInt;
@@ -55,7 +54,6 @@ namespace IronAHK.Scripting
             if(IsEntryPoint)
                 GenerateEntryPointHeader();
 
-            ForceFloat = typeof(Script).GetMethod("ForceFloat");
             ForceString = typeof(Script).GetMethod("ForceString");
             ForceDecimal = typeof(Script).GetMethod("ForceDecimal");
             ForceLong = typeof(Script).GetMethod("ForceLong");
