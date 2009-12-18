@@ -17,7 +17,7 @@ namespace IronAHK.Scripting
             Depth++;
             Debug("Emitting method invoke " + invoke.Method.MethodName);
 
-            if (invoke.Method.TargetObject is CodeThisReferenceExpression && Methods.ContainsKey(invoke.Method.MethodName))
+            if (invoke.Method.TargetObject == null && Methods.ContainsKey(invoke.Method.MethodName))
             {
                 target = Methods[invoke.Method.MethodName].Method;
                 types = ParameterTypes[invoke.Method.MethodName];

@@ -642,7 +642,7 @@ namespace IronAHK.Scripting
         {
             var invoke = new CodeMethodInvokeExpression();
             invoke.Method.MethodName = name;
-            invoke.Method.TargetObject = new CodeThisReferenceExpression(); // HACK: static methods so refer to parent type
+            invoke.Method.TargetObject = null;
             return invoke;
         }
 
