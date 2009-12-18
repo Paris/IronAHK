@@ -26,8 +26,7 @@ namespace IronAHK.Scripting
                 unit.Namespaces.Add(space);
 
                 var container = new CodeTypeDeclaration("Program");
-                container.BaseTypes.Add(core.BaseType);
-                //container.BaseTypes.Add(core);
+                container.BaseTypes.Add(typeof(Script));
                 container.Attributes = MemberAttributes.Private;
                 space.Types.Add(container);
 
