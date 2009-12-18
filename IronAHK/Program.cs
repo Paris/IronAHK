@@ -109,6 +109,7 @@ namespace IronAHK
 
             var options = new CompilerParameters();
             options.ReferencedAssemblies.Add(typeof(IronAHK.Rusty.Core).Namespace + ".dll");
+            options.ReferencedAssemblies.Add(typeof(IACodeProvider).Namespace + ".dll");
 
             bool reflect = exe == null;
 
