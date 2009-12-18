@@ -41,6 +41,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Rusty\Loop.cs" />
     <Compile Include="Rusty\Math.cs" />
     <Compile Include="Rusty\PInvoke.cs" />
     <Compile Include="Rusty\Rusty.cs" />
