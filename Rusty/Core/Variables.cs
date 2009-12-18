@@ -6,8 +6,6 @@ namespace IronAHK.Rusty
 {
     partial class Core
     {
-        // TODO: move these methods to a subclass for script instances to extend
-
         const string A_ = "A_";
         static Dictionary<string, object> variables = new Dictionary<string, object>();
 
