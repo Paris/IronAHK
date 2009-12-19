@@ -1,6 +1,7 @@
 using System;
 using System.CodeDom.Compiler;
 using System.IO;
+using System.Reflection;
 using IronAHK.Scripting;
 
 [assembly: CLSCompliant(true)]
@@ -26,6 +27,8 @@ namespace IronAHK
             #endregion
 
             #region Command line
+
+            string self = Assembly.GetExecutingAssembly().Location;
 
             string script = null;
             string exe = null;
@@ -84,8 +87,9 @@ namespace IronAHK
 
                         case "HELP":
                         case "?":
+
                             Console.WriteLine("Usage: {0} [{1}out filename] <source file>",
-                                GetExecutingFile(true), Environment.OSVersion.Platform == PlatformID.Unix ? "--" : "/");
+                                Path.GetFileName(self), Environment.OSVersion.Platform == PlatformID.Unix ? "--" : "/");
                             return ExitSuccess;
 
                         default:
@@ -107,9 +111,12 @@ namespace IronAHK
 
             var ahk = new IACodeProvider { UseCSharpCompiler = csc };
 
+            self = Path.GetDirectoryName(Path.GetFullPath(self));
+            const string ext = ".dll";
+
             var options = new CompilerParameters();
-            options.ReferencedAssemblies.Add(typeof(IronAHK.Rusty.Core).Namespace + ".dll");
-            options.ReferencedAssemblies.Add(typeof(IACodeProvider).Namespace + ".dll");
+            options.ReferencedAssemblies.Add(Path.Combine(self, typeof(IronAHK.Rusty.Core).Namespace + ext));
+            options.ReferencedAssemblies.Add(Path.Combine(self, typeof(IACodeProvider).Namespace + ext));
 
             bool reflect = exe == null;
 
@@ -141,46 +148,5 @@ namespace IronAHK
 
             return ExitSuccess;
         }
-
-        #region Helpers
-
-        static string GetExecutingFile(bool quote)
-        {
-            string cli = Environment.CommandLine;
-            const char str = '"';
-            bool esc = cli[0] == str;
-            int z;
-
-            for (int i = 1; i < cli.Length; i++)
-            {
-                if (cli[i] == str)
-                    esc = !esc;
-                if (!esc && char.IsWhiteSpace(cli, i))
-                {
-                    z = cli[0] == str ? 1 : 0;
-                    cli = cli.Substring(z, i - z * 2);
-                }
-            }
-
-            z = cli.LastIndexOf(Path.DirectorySeparatorChar);
-            if (z != -1 && z + 1 < cli.Length)
-                cli = cli.Substring(z + 1);
-
-            if (quote)
-            {
-                foreach (char letter in cli)
-                {
-                    if (char.IsWhiteSpace(letter))
-                    {
-                        cli = string.Concat(str, cli, str);
-                        break;
-                    }
-                }
-            }
-
-            return cli;
-        }
-
-        #endregion
     }
 }
