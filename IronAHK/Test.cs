@@ -16,7 +16,9 @@ namespace IronAHK
 
             string source = string.Format("..{0}..{0}..{0}Tests{0}Scripting{0}Code{0}" + test + ".ia", Path.DirectorySeparatorChar);
             File.Delete(file);
-            args = new string[] { "/out", file, source };
+
+            if (args == null || args.Length == 0)
+                args = new string[] { "/out", file, source };
         }
 
         [Conditional("DEBUG")]
