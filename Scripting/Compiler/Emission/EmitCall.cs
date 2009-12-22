@@ -49,13 +49,13 @@ namespace IronAHK.Scripting
                 Debug("Emitting parameter " + i);
                 var generated = EmitExpression(invoke.Parameters[i], true);
 
-                if (!staticCall)
-                    ForceTopStack(generated, types[i]);
+                ForceTopStack(generated, types[i]);
             }
             Depth--;
 
             Generator.Emit(OpCodes.Call, target);
             Depth--;
+
             return target.ReturnType;
         }
 
