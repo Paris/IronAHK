@@ -64,18 +64,53 @@ namespace IronAHK.Scripting
             return false;
         }
 
+        #region Labels
+
         bool IsLabel(string code)
         {
-            if (string.IsNullOrEmpty(code))
-                return false;
-
-            if (code[0] == HotkeyBound)
-                return true; // UNDONE: validate hotstring syntax
-
-            code = StripCommentSingle(code);
-
-            return code.Length > 1 && code[code.Length - 1] == HotkeyBound;
+            return IsSimpleLabel(code) || IsHotkeyLabel(code) || IsHotstringLabel(code);
         }
+
+        bool IsSimpleLabel(string code)
+        {
+            for (int i = 0; i < code.Length; i++)
+            {
+                char sym = code[i];
+                if (!IsIdentifier(sym))
+                {
+                    if (sym == HotkeyBound)
+                    {
+                        if (i == 0)
+                            return false;
+                        else if (i == code.Length - 1)
+                            return true;
+                        else
+                        {
+                            string sub = StripCommentSingle(code.Substring(i));
+                            return sub.Length == 0 || IsSpace(sub);
+                        }
+                    }
+                    else
+                        return false;
+                }
+            }
+
+            return false;
+        }
+
+        bool IsHotkeyLabel(string code)
+        {
+            // TODO: hotkey tokens
+            return false;
+        }
+
+        bool IsHotstringLabel(string code)
+        {
+            // TODO: hotstring tokens
+            return false;
+        }
+
+        #endregion
 
         bool IsAssignment(string code)
         {
