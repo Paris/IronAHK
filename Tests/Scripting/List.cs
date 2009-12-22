@@ -57,5 +57,11 @@ namespace IronAHK.Tests
         {
             Assert.IsTrue(TestScript("goto"));
         }
+
+        [Test]
+        public void Hotkey()
+        {
+            Assert.IsTrue(TestScript("hotkey"));
+        }
     }
 }
