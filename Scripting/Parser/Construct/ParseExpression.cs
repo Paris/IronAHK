@@ -334,6 +334,12 @@ namespace IronAHK.Scripting
             }
             #endregion
 
+            #region Variables
+            for (int i = 0; i < parts.Count; i++)
+                if (parts[i] is CodeComplexVariableReferenceExpression)
+                    parts[i] = (CodeMethodInvokeExpression)(CodeComplexVariableReferenceExpression)parts[i];
+            #endregion
+
             if (parts.Count != 1)
                 throw new ArgumentOutOfRangeException();
 
