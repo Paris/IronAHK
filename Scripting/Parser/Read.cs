@@ -229,43 +229,11 @@ namespace IronAHK.Scripting
                 if (codeTrim.Length == 0)
                     continue;
 
-                bool append = false;
-                bool except = true;
-
-                switch (codeTrim[0])
-                {
-                    case Directive:
-                    case Resolve:
-                    case BlockOpen:
-                    case BlockClose:
-                        except = false;
-                        break;
-                }
-
-
-                if (!char.IsLetterOrDigit(codeTrim, 0) && except)
-                {
-#if LEGACY
-                    if (codeTrim.Length >= Comment.Length && codeTrim.Substring(0, Comment.Length) == Comment)
-#endif
-#if !LEGACY
-                    if (codeTrim.Length > 0 && codeTrim[0] == Comment)
-#endif
-                        continue;
-                    else
-                        append = true;
-                }
-                else
-                {
-                    if (codeTrim.Length >= AndTxt.Length && codeTrim.Substring(0, AndTxt.Length).Equals(AndTxt, StringComparison.OrdinalIgnoreCase))
-                        append = true;
-                    else if (codeTrim.Length >= OrTxt.Length && codeTrim.Substring(0, OrTxt.Length).Equals(OrTxt, StringComparison.OrdinalIgnoreCase))
-                        append = true;
-                }
-
                 code = code.Trim(Spaces);
 
-                if (append)
+                if (IsCommentLine(code))
+                    continue;
+                if (IsContinuationLine(code))
                 {
                     if (list.Count == 0)
                         throw new ParseException(ExUnexpected, line);
@@ -283,6 +251,52 @@ namespace IronAHK.Scripting
             }
 
             return list;
+        }
+
+        bool IsCommentLine(string code)
+        {
+#if LEGACY
+            return code.Length >= Comment.Length && code.Substring(0, Comment.Length) == Comment;
+#endif
+#if !LEGACY
+            return code.Length > 0 && code[0] == Comment;
+#endif
+        }
+
+        bool IsContinuationLine(string code)
+        {
+            if (code.Length == 0)
+                return false;
+
+            switch (code[0])
+            {
+                case Add:
+                case Subtract:
+                case Multiply:
+                case Not:
+                case BitNOT:
+                case Address:
+                case Divide:
+                case Less:
+                case Greater:
+                case BitXOR:
+                case BitOR:
+                case Concatenate:
+                case Equal:
+                case TernaryA:
+                case Multicast:
+                    return true;
+
+                case TernaryB:
+                    return !(code.Length > 1 && !IsSpace(code[1]));
+            }
+
+            if (code.Length >= AndTxt.Length && code.Substring(0, AndTxt.Length).Equals(AndTxt, StringComparison.OrdinalIgnoreCase))
+                return true;
+            else if (code.Length >= OrTxt.Length && code.Substring(0, OrTxt.Length).Equals(OrTxt, StringComparison.OrdinalIgnoreCase))
+                return true;
+
+            return false;
         }
     }
 }
