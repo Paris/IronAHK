@@ -51,8 +51,7 @@ namespace IronAHK.Scripting
             }
             else if (Expression is CodeFieldReferenceExpression)
             {
-                EmitCodeFieldReference(Expression as CodeFieldReferenceExpression);
-                Generated = null;
+                Generated = EmitCodeFieldReference(Expression as CodeFieldReferenceExpression);
             }
             else if(Expression is CodeArgumentReferenceExpression)
             {
@@ -136,7 +135,7 @@ namespace IronAHK.Scripting
             return Generated;
         }
 
-        void EmitCodeFieldReference(CodeFieldReferenceExpression field)
+        Type EmitCodeFieldReference(CodeFieldReferenceExpression field)
         {
             Depth++;
             Debug("Emitting field reference: " + field.FieldName);
@@ -154,6 +153,7 @@ namespace IronAHK.Scripting
             }
 
             Depth--;
+            return fi.FieldType;
         }
     }
 }
