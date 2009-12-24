@@ -7,41 +7,35 @@ namespace IronAHK.Scripting
     {
         CodeMethodInvokeExpression ParseLabel(CodeLine line)
         {
-            #region Name
-            
             string code = line.Code;
             int z = code.Length - 1;
-            string name = z > 0 ? code.Substring(0, z) : null;
+            string name = z > 0 ? code.Substring(0, z) : string.Empty;
             if (code.Length < 2 || code[z] != HotkeyBound || !IsIdentifier(name))
                 throw new ParseException("Invalid label name");
 
-            #endregion
+            PushLabel(line, name, true);
 
-            #region Fall through labels
+            return LocalLabelInvoke(name);
+        }
 
+        void PushLabel(CodeLine line, string name, bool fallthrough)
+        {
             var last = CheckTopBlock();
-            if (last != null)
+
+            if (fallthrough && last != null)
                 last.Statements.Add(LocalLabelInvoke(name));
-
-            #endregion
-
-            #region Block
 
             var method = LocalMethod(name);
             var block = new CodeBlock(line, method.Name, method.Statements, CodeBlock.BlockKind.Label) { Type = CodeBlock.BlockType.Within };
             blocks.Push(block);
 
-            #endregion
-
             methods.Add(method.Name, method);
-
-            return LocalLabelInvoke(name);
         }
 
         CodeMethodInvokeExpression LocalLabelInvoke(string name)
         {
-            var invoke = LocalMethodInvoke(name);
-            invoke.Parameters.Add(new CodePrimitiveExpression(null));
+            var invoke = (CodeMethodInvokeExpression)InternalMethods.LabelCall;
+            invoke.Parameters.Add(new CodePrimitiveExpression(name));
             return invoke;
         }
 

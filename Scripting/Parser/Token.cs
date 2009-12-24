@@ -4,7 +4,7 @@ namespace IronAHK.Scripting
 {
     partial class Parser
     {
-        enum Token { Unknown, Assign, Command, Label, Flow, Expression, Directive }
+        enum Token { Unknown, Assign, Command, Label, Hotkey, Flow, Expression, Directive }
 
         Token GetToken(string code)
         {
@@ -19,6 +19,8 @@ namespace IronAHK.Scripting
                 return Token.Flow;
             else if (IsLabel(code))
                 return Token.Label;
+            else if (IsHotkeyLabel(code) || IsHotstringLabel(code))
+                return Token.Hotkey;
             else if (IsAssignment(code))
                 return Token.Assign;
             else if (IsCommand(code))
@@ -64,14 +66,7 @@ namespace IronAHK.Scripting
             return false;
         }
 
-        #region Labels
-
         bool IsLabel(string code)
-        {
-            return IsSimpleLabel(code) || IsHotkeyLabel(code) || IsHotstringLabel(code);
-        }
-
-        bool IsSimpleLabel(string code)
         {
             for (int i = 0; i < code.Length; i++)
             {
@@ -101,16 +96,22 @@ namespace IronAHK.Scripting
         bool IsHotkeyLabel(string code)
         {
             // TODO: hotkey tokens
-            return false;
+
+            if (!code.Contains(HotkeySignal))
+                return false;
+
+            return true;
         }
 
         bool IsHotstringLabel(string code)
         {
-            // TODO: hotstring tokens
-            return false;
-        }
+            if (!code.Contains(HotkeySignal))
+                return false;
 
-        #endregion
+            // TODO: hotstring tokens
+
+            return code.Length > 0 && code[0] == HotkeyBound;
+        }
 
         bool IsAssignment(string code)
         {

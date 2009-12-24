@@ -91,6 +91,10 @@ namespace IronAHK.Scripting
                             parent.Add(ParseLabel(lines[i]));
                             break;
 
+                        case Token.Hotkey:
+                            parent.Add(ParseHotkey(lines, i));
+                            break;
+
                         case Token.Flow:
                             bool rewind;
                             var result = ParseFlow(lines[i], out rewind);

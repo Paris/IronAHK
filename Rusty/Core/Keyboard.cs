@@ -43,12 +43,17 @@ namespace IronAHK.Rusty
         /// <para>If either or both of the B and T option letters are omitted and the hotkey already exists, those options will not be changed. But if the hotkey does not yet exist -- that is, it is about to be created by this command -- the options will default to those most recently in effect. For example, the instance of #MaxThreadsBuffer that occurs closest to the bottom of the script will be used. If #MaxThreadsBuffer does not appear in the script, its default setting (OFF in this case) will be used. This behavior also applies to #IfWin: the bottommost occurrence applies to newly created hotkeys unless "Hotkey IfWin" has executed since the script started.</para>
         /// <para>Note: The current IfWin setting determines the variant of a hotkey upon which the Hotkey command will operate. If the variant does not yet exist, it will be created.</para>
         /// </param>
-        /// <param name="WinTitle">See <paramref name="WinText"/>.</param>
-        /// <param name="WinText">
-        /// <para>Within these parameters, any variable reference such as %var% becomes permanent the moment the command finishes. In other words, subsequent changes to the contents of the variable are not seen by existing IfWin hotkeys.</para>
-        /// <para>Like #IfWinActive/Exist, WinTitle and WinText use the default settings for SetTitleMatchMode and DetectHiddenWindows as set in the auto-execute section. See #IfWinActive/Exist for details.</para>
-        /// </param>
-        public static void Hotkey(string KeyName, string Label, string Options, string WinTitle, string WinText)
+        public static void Hotkey(string KeyName, string Label, string Options)
+        {
+
+        }
+
+        /// <summary>
+        /// Creates a hotstring.
+        /// </summary>
+        /// <param name="Options"></param>
+        /// <param name="Sequence"></param>
+        public static void Hotstring(string Options, string Sequence)
         {
 
         }

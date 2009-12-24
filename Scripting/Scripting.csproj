@@ -44,6 +44,7 @@
     <Compile Include="Compiler\CompilerSetup.cs" />
     <Compile Include="Compiler\Compiler.cs" />
     <Compile Include="Compiler\Script\Conversion.cs" />
+    <Compile Include="Compiler\Script\Labels.cs" />
     <Compile Include="Compiler\Script\Operate.cs" />
     <Compile Include="Compiler\Script\Parameters.cs" />
     <Compile Include="Compiler\Script\Script.cs" />
@@ -61,6 +62,7 @@
     <Compile Include="Parser\CodeDom\CodeComplexAssignStatement.cs" />
     <Compile Include="Parser\CodeDom\CodeComplexVariableReferenceExpression.cs" />
     <Compile Include="Parser\Compile.cs" />
+    <Compile Include="Parser\Construct\ParseHotkey.cs" />
     <Compile Include="Parser\Function.cs" />
     <Compile Include="Parser\CodeDom\CodeLine.cs" />
     <Compile Include="Parser\InternalMethods.cs" />

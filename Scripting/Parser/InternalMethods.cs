@@ -20,6 +20,30 @@ namespace IronAHK.Scripting
 
             #endregion
 
+            #region Hotkeys
+
+            public static MethodReference Hotkey
+            {
+                get { return new MethodReference(typeof(Rusty.Core), "Hotkey", new Type[] { typeof(string), typeof(string), typeof(string) }); }
+            }
+
+            public static MethodReference Hotstring
+            {
+                get { return new MethodReference(typeof(Rusty.Core), "Hotstring", new Type[] { typeof(string), typeof(string) }); }
+            }
+
+            public static MethodReference Send
+            {
+                get { return new MethodReference(typeof(Rusty.Core), "Send", new Type[] { typeof(string) }); }
+            }
+
+            public static MethodReference LabelCall
+            {
+                get { return new MethodReference(typeof(Script), "LabelCall", new Type[] { typeof(string) }); }
+            }
+
+            #endregion
+
             #region Loops
 
             public static MethodReference Loop
