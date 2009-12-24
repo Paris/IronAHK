@@ -47,8 +47,8 @@ namespace IronAHK.Scripting
                 Method = Parent.DefineMethod("Main", MethodAttributes.Private | MethodAttributes.Static, typeof(void), null);
                 IsEntryPoint = true;
             }
-            else Method = Parent.DefineMethod(Member.Name, MethodAttributes.Static, typeof(object), new Type[] { typeof(object[]) });
-
+            else Method = Parent.DefineMethod(Member.Name, MethodAttributes.Public | MethodAttributes.Static, typeof(object), new Type[] { typeof(object[]) });
+            
             Generator = Method.GetILGenerator();
 
             if(IsEntryPoint)
