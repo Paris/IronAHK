@@ -140,6 +140,9 @@ namespace IronAHK.Scripting
 
         void CloseBlock()
         {
+            if (blocks.Count == 0)
+                return;
+
             var top = blocks.Pop();
 
             if (top.Kind == CodeBlock.BlockKind.Loop)
