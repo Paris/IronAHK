@@ -19,6 +19,7 @@ namespace IronAHK.Scripting
         const char TernaryA = '?';
         const char TernaryB = ':';
         const char HotkeyBound = ':';
+        const string HotkeySignal = "::";
         const char Multicast = ',';
         const char Directive = '#';
 
