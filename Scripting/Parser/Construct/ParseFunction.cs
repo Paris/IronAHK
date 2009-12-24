@@ -7,7 +7,7 @@ namespace IronAHK.Scripting
 {
     partial class Parser
     {
-        const string argv = "argv";
+        const string args = "args";
 
         public void ParseFunction(CodeLine line)
         {
@@ -108,7 +108,7 @@ namespace IronAHK.Scripting
             #region Block
 
             var method = LocalMethod(name);
-            method.Attributes = MemberAttributes.Static;
+            method.Attributes = MemberAttributes.Static | MemberAttributes.AccessMask;
 
             var block = new CodeBlock(line, method.Name, method.Statements, CodeBlock.BlockKind.Function);
             block.Type = blockType;
@@ -126,7 +126,7 @@ namespace IronAHK.Scripting
         CodeMemberMethod LocalMethod(string name)
         {
             var method = new CodeMemberMethod() { Name = name, ReturnType = new CodeTypeReference(typeof(object)) };
-            method.Parameters.Add(new CodeParameterDeclarationExpression(typeof(object[]), argv));
+            method.Parameters.Add(new CodeParameterDeclarationExpression(typeof(object[]), args));
             return method;
         }
 
@@ -209,7 +209,7 @@ namespace IronAHK.Scripting
             fix.Method = (CodeMethodReferenceExpression)InternalMethods.Parameters;
 
             fix.Parameters.Add(new CodeArrayCreateExpression(typeof(string), names.ToArray()));
-            fix.Parameters.Add(new CodeArgumentReferenceExpression(argv));
+            fix.Parameters.Add(new CodeArgumentReferenceExpression(args));
             fix.Parameters.Add(new CodeArrayCreateExpression(typeof(string), defaults.ToArray()));
 
             return new CodeExpressionStatement(fix);
