@@ -136,7 +136,7 @@ namespace IronAHK.Rusty
             var stack = new StackTrace(false).GetFrames();
             MethodInfo method = null;
 
-            for (int i = 0; i < 2; i++)
+            for (int i = 0; i < 3; i++)
             {
                 var type = stack[i].GetMethod().DeclaringType;
                 method = FindMethod(name, type.GetMethods(), parameters);
@@ -144,13 +144,13 @@ namespace IronAHK.Rusty
                     break;
             }
 
-            return method == null || !method.IsStatic || !method.IsPublic ? null : method.Invoke(null, parameters);
+            return method == null || !method.IsStatic ? null : method.Invoke(null, new object[] { parameters });
         }
 
         static MethodInfo FindMethod(string name, MethodInfo[] list, object[] parameters)
         {
             for (int i = 0; i < list.Length; i++)
-                if (list[i].Name.Equals(name, StringComparison.OrdinalIgnoreCase) && list[i].GetParameters().Length == parameters.Length)
+                if (list[i].Name.Equals(name, StringComparison.OrdinalIgnoreCase))
                     return list[i];
 
             return null;
