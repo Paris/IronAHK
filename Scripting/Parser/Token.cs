@@ -133,7 +133,7 @@ namespace IronAHK.Scripting
             while (i < code.Length && IsIdentifier(code[i])) i++;
 
             if (i == 0 || i == code.Length)
-                return false;
+                return true;
             else if (code[i] == Multicast)
                 return true;
             else if (IsSpace(code[i]))

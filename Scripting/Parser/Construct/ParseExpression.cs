@@ -177,14 +177,12 @@ namespace IronAHK.Scripting
 
                                         var invoke = LocalMethodInvoke(name);
 
-                                        if (count == 0)
-                                            invoke.Parameters.Add(new CodeArrayCreateExpression(typeof(object), 0));
-                                        else
+                                        if (count != 0)
                                         {
                                             var passed = ParseMultiExpression(sub);
                                             var obj = new CodeArrayCreateExpression();
                                             obj.Size = passed.Length;
-                                            obj.CreateType = new CodeTypeReference(typeof(object[]));
+                                            obj.CreateType = new CodeTypeReference(typeof(object));
                                             obj.Initializers.AddRange(passed);
                                             invoke.Parameters.Add(obj);
                                         }
