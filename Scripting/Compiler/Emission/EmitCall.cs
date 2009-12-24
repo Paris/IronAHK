@@ -53,10 +53,42 @@ namespace IronAHK.Scripting
             }
             Depth--;
 
+            Depth++;
+            for (int i = invoke.Parameters.Count; i < types.Length; i++)
+            {
+                Debug("Emitting default parameter " + i + " type " + types[i].Name);
+
+                EmitLiteral(types[i], GetDefaultValueOfType(types[i]));
+            }
+            Depth--;
+
             Generator.Emit(OpCodes.Call, target);
             Depth--;
 
             return target.ReturnType;
+        }
+
+        object GetDefaultValueOfType(Type t)
+        {
+            bool array = t.IsArray;
+            var rank = t.IsArray ? t.GetArrayRank() : -1;
+
+            if (t == typeof(string))
+                return string.Empty;
+            else if (t == typeof(object[]))
+                return new object[] { };
+            else if (t == typeof(bool))
+                return false;
+            else if (t == typeof(int))
+                return default(int);
+            else if (t == typeof(decimal))
+                return default(decimal);
+            else if (t == typeof(float))
+                return default(float);
+            else if (!t.IsInterface && !t.IsClass)
+                return t.GetConstructor(new Type[] { }).Invoke(new object[] { });
+            else
+                return null;
         }
 
         MethodInfo GetMethodInfo(CodeMethodReferenceExpression reference)
