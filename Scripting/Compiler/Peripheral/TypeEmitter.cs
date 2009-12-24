@@ -40,7 +40,14 @@ namespace IronAHK.Scripting
             var types = new Type[param.Count];
 
             for (int i = 0; i < types.Length; i++)
-                types[i] = Type.GetType(param[i].Type.BaseType);
+            {
+                const string raw = "rawtype";
+
+                if (param[i].UserData.Contains(raw))
+                    types[i] = param[i].UserData[raw] as Type;
+                else
+                    types[i] = Type.GetType(param[i].Type.BaseType);
+            }
 
             return types;
         }

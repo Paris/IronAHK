@@ -126,7 +126,9 @@ namespace IronAHK.Scripting
         CodeMemberMethod LocalMethod(string name)
         {
             var method = new CodeMemberMethod() { Name = name, ReturnType = new CodeTypeReference(typeof(object)) };
-            method.Parameters.Add(new CodeParameterDeclarationExpression(typeof(object[]), args));
+            var param = new CodeParameterDeclarationExpression(typeof(object[]), args);
+            param.UserData.Add("rawtype", typeof(object[]));
+            method.Parameters.Add(param);
             return method;
         }
 
