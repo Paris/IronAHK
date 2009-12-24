@@ -26,20 +26,39 @@ namespace IronAHK.Scripting
 
         string StripCommentSingle(string code)
         {
+            bool spaced = false;
             for (int i = 0; i < code.Length; i++)
             {
-                bool spaced = i > 0 && IsSpace(code[i - 1]);
-
-#if LEGACY
-                if (code.Length - i >= Comment.Length && code.Substring(i, Comment.Length) == Comment && (i == 0 || spaced))
-#endif
-#if !LEGACY
-                if (code[i] == Comment && (i == 0 || spaced))
-#endif
+                if (IsCommentAt(code, i))
                     return code.Substring(0, i - (spaced ? 1 : 0));
+                spaced = IsSpace(code[i]);
             }
 
             return code;
+        }
+
+        bool IsCommentAt(string code, int offset)
+        {
+            bool spaced = offset == 0 || IsSpace(code[offset - 1]);
+#if LEGACY
+            return code.Length - offset >= Comment.Length && code.Substring(offset, Comment.Length) == Comment && spaced;
+#endif
+#if !LEGACY
+            return code[offset] == Comment && spaced;
+#endif
+        }
+
+        bool IsEmptyStatement(string code)
+        {
+            for (int i = 0; i < code.Length; i++)
+            {
+                if (IsCommentAt(code, i))
+                    return true;
+                else if (!IsSpace(code[i]))
+                    return false;
+            }
+
+            return true;
         }
     }
 }
