@@ -140,7 +140,10 @@ namespace IronAHK
 #endif
 
             if (reflect)
-                results.CompiledAssembly.EntryPoint.Invoke(null, null);
+            {
+                try { results.CompiledAssembly.EntryPoint.Invoke(null, null); }
+                catch (Exception e) { Console.Error.WriteLine("Could not execute: {0}", e.Message); }
+            }
 
             #endregion
 
