@@ -80,18 +80,14 @@ namespace IronAHK.Scripting
                     {
                         if (parts.Length < 1)
                             throw new ParseException("No label specified");
-                        var invoke = LocalMethodInvoke(parts[1]);
-                        invoke.Parameters.Add(new CodePrimitiveExpression(new object[] { }));
-                        return new CodeStatement[] { new CodeExpressionStatement(invoke) };
+                        return new CodeStatement[] { new CodeExpressionStatement(LocalLabelInvoke(parts[1])) };
                     }
 
                 case FlowGoto:
                     {
                         if (parts.Length < 1)
                             throw new ParseException("No label specified");
-                        var invoke = LocalMethodInvoke(parts[1]);
-                        invoke.Parameters.Add(new CodePrimitiveExpression(new object[] { }));
-                        return new CodeStatement[] { new CodeExpressionStatement(invoke), new CodeMethodReturnStatement() };
+                        return new CodeStatement[] { new CodeExpressionStatement(LocalLabelInvoke(parts[1])), new CodeMethodReturnStatement() };
                     }
 
                 #endregion
