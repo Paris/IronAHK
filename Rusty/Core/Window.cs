@@ -39,8 +39,8 @@ namespace IronAHK.Rusty
             if (Environment.OSVersion.Platform != PlatformID.Win32NT)
                 return;
 
-            IntPtr hwnd = Settings.Windows.FindWindow(WinTitle, WinText, ExcludeTitle, ExcludeText, Control);
-            Windows.Windows.SetFocus(hwnd);
+            IntPtr hwnd = Win32.FindWindow(WinTitle, WinText, ExcludeTitle, ExcludeText, Control);
+            Win32.SetFocus(hwnd);
         }
 
         /// <summary>
@@ -80,14 +80,14 @@ namespace IronAHK.Rusty
 
             //OutputVarWinTitle = WindowCmd.GetClassName(WindowCmd.GetFocus());
 
-            IntPtr hwnd = Settings.Windows.FindWindow(WinTitle, WinText, ExcludeTitle, ExcludeText);
+            IntPtr hwnd = Win32.FindWindow(WinTitle, WinText, ExcludeTitle, ExcludeText);
             uint thread = 0;
-            Windows.Windows.GetWindowThreadProcessId(hwnd, out thread);
+            Win32.GetWindowThreadProcessId(hwnd, out thread);
 
-            Windows.Windows.GUITHREADINFO info;
-            Windows.Windows.GetGUIThreadInfo(thread, out info);
+            Win32.GUITHREADINFO info;
+            Win32.GetGUIThreadInfo(thread, out info);
 
-            OutputVar = Windows.Windows.GetClassName(info.hwndActive);
+            OutputVar = Win32.GetClassName(info.hwndActive);
         }
 
         /// <summary>
@@ -113,9 +113,9 @@ namespace IronAHK.Rusty
             if (Environment.OSVersion.Platform != PlatformID.Win32NT)
                 throw new Win32Required();
 
-            IntPtr hwnd = Settings.Windows.FindWindow(WinTitle, WinText, ExcludeTitle, ExcludeText, Control);
-            Windows.Windows.RECT pos;
-            Windows.Windows.GetWindowRect(hwnd, out pos);
+            IntPtr hwnd = Win32.FindWindow(WinTitle, WinText, ExcludeTitle, ExcludeText, Control);
+            Win32.RECT pos;
+            Win32.GetWindowRect(hwnd, out pos);
             X = pos.Top;
             Y = pos.Left;
             Width = pos.Right - pos.Left;
@@ -139,8 +139,8 @@ namespace IronAHK.Rusty
             if (Environment.OSVersion.Platform != PlatformID.Win32NT)
                 throw new Win32Required();
 
-            IntPtr hwnd = Settings.Windows.FindWindow(WinTitle, WinText, ExcludeTitle, ExcludeText, Control);
-            OutputVar = Windows.Windows.GetWindowText(hwnd);
+            IntPtr hwnd = Win32.FindWindow(WinTitle, WinText, ExcludeTitle, ExcludeText, Control);
+            OutputVar = Win32.GetWindowText(hwnd);
         }
 
         /// <summary>
@@ -163,8 +163,8 @@ namespace IronAHK.Rusty
             if (Environment.OSVersion.Platform != PlatformID.Win32NT)
                 throw new Win32Required();
 
-            IntPtr hwnd = Settings.Windows.FindWindow(WinTitle, WinText, ExcludeTitle, ExcludeText, Control);
-            Windows.Windows.MoveWindow(hwnd, X, Y, Width, Height, true);
+            IntPtr hwnd = Win32.FindWindow(WinTitle, WinText, ExcludeTitle, ExcludeText, Control);
+            Win32.MoveWindow(hwnd, X, Y, Width, Height, true);
         }
 
         /// <summary>
@@ -184,8 +184,8 @@ namespace IronAHK.Rusty
             if (Environment.OSVersion.Platform != PlatformID.Win32NT)
                 throw new Win32Required();
 
-            IntPtr hwnd = Settings.Windows.FindWindow(WinTitle, WinText, ExcludeTitle, ExcludeText, Control);
-            Windows.Windows.SetWindowText(hwnd, NewText);
+            IntPtr hwnd = Win32.FindWindow(WinTitle, WinText, ExcludeTitle, ExcludeText, Control);
+            Win32.SetWindowText(hwnd, NewText);
         }
 
         /// <summary>
@@ -341,8 +341,8 @@ namespace IronAHK.Rusty
             if (Environment.OSVersion.Platform != PlatformID.Win32NT)
                 return;
 
-            IntPtr hwnd = Settings.Windows.FindWindow(WinTitle, WinText, ExcludeTitle, ExcludeText, Control);
-            error = Windows.Windows.PostMessage(hwnd, (uint)Msg, new IntPtr(wParam), new IntPtr(lParam)) ? 0 : 1;
+            IntPtr hwnd = Win32.FindWindow(WinTitle, WinText, ExcludeTitle, ExcludeText, Control);
+            error = Win32.PostMessage(hwnd, (uint)Msg, new IntPtr(wParam), new IntPtr(lParam)) ? 0 : 1;
         }
 
         /// <summary>
@@ -383,8 +383,8 @@ namespace IronAHK.Rusty
             if (Environment.OSVersion.Platform != PlatformID.Win32NT)
                 return;
 
-            IntPtr hwnd = Settings.Windows.FindWindow(WinTitle, WinText, ExcludeTitle, ExcludeText, Control);
-            error = Windows.Windows.SendMessage(hwnd, (uint)Msg, new IntPtr(wParam), new IntPtr(lParam)).ToInt32();
+            IntPtr hwnd = Win32.FindWindow(WinTitle, WinText, ExcludeTitle, ExcludeText, Control);
+            error = Win32.SendMessage(hwnd, (uint)Msg, new IntPtr(wParam), new IntPtr(lParam)).ToInt32();
         }
 
         /// <summary>
@@ -515,10 +515,10 @@ namespace IronAHK.Rusty
             if (Environment.OSVersion.Platform != PlatformID.Win32NT)
                 throw new Win32Required();
 
-            IntPtr hwnd = Settings.Windows.FindWindow(WinTitle, WinText, ExcludeTitle, ExcludeText);
-            Windows.Windows.ShowWindow(hwnd, Windows.Windows.SW_SHOWNORMAL);
-            Windows.Windows.SetForegroundWindow(hwnd);
-            Windows.Windows.SetActiveWindow(hwnd);
+            IntPtr hwnd = Win32.FindWindow(WinTitle, WinText, ExcludeTitle, ExcludeText);
+            Win32.ShowWindow(hwnd, Win32.SW_SHOWNORMAL);
+            Win32.SetForegroundWindow(hwnd);
+            Win32.SetActiveWindow(hwnd);
             if (Settings.WinDelay>=0)
             Core.Sleep(Settings.WinDelay);
         }
@@ -548,8 +548,8 @@ namespace IronAHK.Rusty
             if (Environment.OSVersion.Platform != PlatformID.Win32NT)
                 throw new Win32Required();
 
-            IntPtr hwnd = Windows.Windows.GetActiveWindow();
-            return (hwnd == Settings.Windows.FindWindow(WinTitle, WinText, ExcludeTitle, ExcludeText)
+            IntPtr hwnd = Win32.GetActiveWindow();
+            return (hwnd == Win32.FindWindow(WinTitle, WinText, ExcludeTitle, ExcludeText)
                 ? hwnd : IntPtr.Zero).ToInt32();
         }
 
@@ -566,13 +566,13 @@ namespace IronAHK.Rusty
             if (Environment.OSVersion.Platform != PlatformID.Win32NT)
                 throw new Win32Required();
 
-            IntPtr hwnd = Settings.Windows.FindWindow(WinTitle, WinText, ExcludeTitle, ExcludeText);
-            Windows.Windows.CloseWindow(hwnd);
+            IntPtr hwnd = Win32.FindWindow(WinTitle, WinText, ExcludeTitle, ExcludeText);
+            Win32.CloseWindow(hwnd);
 
             int start = Environment.TickCount;
             SecondsToWait *= 1000;
 
-            while (Windows.Windows.IsWindowVisible(hwnd))
+            while (Win32.IsWindowVisible(hwnd))
             {
                 System.Threading.Thread.Sleep(Settings.LoopFrequency);
                 if (Environment.TickCount - start > SecondsToWait)
@@ -595,7 +595,7 @@ namespace IronAHK.Rusty
             if (Environment.OSVersion.Platform != PlatformID.Win32NT)
                 throw new Win32Required();
 
-            return Settings.Windows.FindWindow(WinTitle, WinText, ExcludeTitle, ExcludeText).ToInt32();
+            return Win32.FindWindow(WinTitle, WinText, ExcludeTitle, ExcludeText).ToInt32();
         }
 
         /// <summary>
@@ -625,7 +625,7 @@ namespace IronAHK.Rusty
             if (Environment.OSVersion.Platform != PlatformID.Win32NT)
                 throw new Win32Required();
 
-            IntPtr hwnd = Windows.Windows.GetActiveWindow();
+            IntPtr hwnd = Win32.GetActiveWindow();
             if (hwnd == IntPtr.Zero)
             {
                 Title = string.Empty;
@@ -633,10 +633,10 @@ namespace IronAHK.Rusty
                 return;
             }
 
-            Title = Windows.Windows.GetWindowText(hwnd);
+            Title = Win32.GetWindowText(hwnd);
 
-            Windows.Windows.RECT size;
-            Windows.Windows.GetWindowRect(hwnd, out size);
+            Win32.RECT size;
+            Win32.GetWindowRect(hwnd, out size);
 
             Width = size.Left - size.Right;
             Height = size.Bottom - size.Top;
@@ -653,8 +653,8 @@ namespace IronAHK.Rusty
             if (Environment.OSVersion.Platform != PlatformID.Win32NT)
                 throw new Win32Required();
 
-            IntPtr hwnd = Windows.Windows.GetActiveWindow();
-            OutputVar = Windows.Windows.GetWindowText(hwnd);
+            IntPtr hwnd = Win32.GetActiveWindow();
+            OutputVar = Win32.GetWindowText(hwnd);
         }
 
         /// <summary>
@@ -670,8 +670,8 @@ namespace IronAHK.Rusty
             if (Environment.OSVersion.Platform != PlatformID.Win32NT)
                 throw new Win32Required();
 
-            IntPtr hwnd = Settings.Windows.FindWindow(WinTitle, WinText, ExcludeTitle, ExcludeText);
-            OutputVar = Windows.Windows.GetClassName(hwnd);
+            IntPtr hwnd = Win32.FindWindow(WinTitle, WinText, ExcludeTitle, ExcludeText);
+            OutputVar = Win32.GetClassName(hwnd);
         }
 
         /// <summary>
@@ -690,9 +690,9 @@ namespace IronAHK.Rusty
             if (Environment.OSVersion.Platform != PlatformID.Win32NT)
                 throw new Win32Required();
 
-            IntPtr hwnd = Settings.Windows.FindWindow(WinTitle, WinText, ExcludeTitle, ExcludeText);
-            Windows.Windows.RECT pos;
-            Windows.Windows.GetWindowRect(hwnd, out pos);
+            IntPtr hwnd = Win32.FindWindow(WinTitle, WinText, ExcludeTitle, ExcludeText);
+            Win32.RECT pos;
+            Win32.GetWindowRect(hwnd, out pos);
             X = pos.Top;
             Y = pos.Left;
             Width = pos.Right - pos.Left;
@@ -712,9 +712,9 @@ namespace IronAHK.Rusty
             if (Environment.OSVersion.Platform != PlatformID.Win32NT)
                 throw new Win32Required();
 
-            IntPtr hwnd = Settings.Windows.FindWindow(WinTitle, WinText, ExcludeTitle, ExcludeText);
-            hwnd = Windows.Windows.GetWindow(hwnd, Windows.Windows.GW_CHILD);
-            OutputVar = Windows.Windows.GetWindowText(hwnd);
+            IntPtr hwnd = Win32.FindWindow(WinTitle, WinText, ExcludeTitle, ExcludeText);
+            hwnd = Win32.GetWindow(hwnd, Win32.GW_CHILD);
+            OutputVar = Win32.GetWindowText(hwnd);
         }
 
         /// <summary>
@@ -730,8 +730,8 @@ namespace IronAHK.Rusty
             if (Environment.OSVersion.Platform != PlatformID.Win32NT)
                 throw new Win32Required();
 
-            IntPtr hwnd = Settings.Windows.FindWindow(WinTitle, WinText, ExcludeTitle, ExcludeText);
-            OutputVar = Windows.Windows.GetWindowText(hwnd);
+            IntPtr hwnd = Win32.FindWindow(WinTitle, WinText, ExcludeTitle, ExcludeText);
+            OutputVar = Win32.GetWindowText(hwnd);
         }
 
         /// <summary>
@@ -746,8 +746,8 @@ namespace IronAHK.Rusty
             if (Environment.OSVersion.Platform != PlatformID.Win32NT)
                 throw new Win32Required();
 
-            IntPtr hwnd = Settings.Windows.FindWindow(WinTitle, WinText, ExcludeTitle, ExcludeText);
-            Windows.Windows.ShowWindow(hwnd, Windows.Windows.SW_HIDE);
+            IntPtr hwnd = Win32.FindWindow(WinTitle, WinText, ExcludeTitle, ExcludeText);
+            Win32.ShowWindow(hwnd, Win32.SW_HIDE);
         }
 
         /// <summary>
@@ -763,13 +763,13 @@ namespace IronAHK.Rusty
             if (Environment.OSVersion.Platform != PlatformID.Win32NT)
                 throw new Win32Required();
 
-            IntPtr hwnd = Settings.Windows.FindWindow(WinTitle, WinText, ExcludeTitle, ExcludeText);
-            Windows.Windows.SendMessage(hwnd, Windows.Windows.WM_SYSCOMMAND, new IntPtr(Windows.Windows.SC_CLOSE), IntPtr.Zero);
+            IntPtr hwnd = Win32.FindWindow(WinTitle, WinText, ExcludeTitle, ExcludeText);
+            Win32.SendMessage(hwnd, Win32.WM_SYSCOMMAND, new IntPtr(Win32.SC_CLOSE), IntPtr.Zero);
 
             int start = Environment.TickCount;
             SecondsToWait *= 1000;
 
-            while (Windows.Windows.IsWindowVisible(hwnd))
+            while (Win32.IsWindowVisible(hwnd))
             {
                 System.Threading.Thread.Sleep(Settings.LoopFrequency);
                 if (Environment.TickCount - start > SecondsToWait)
@@ -789,8 +789,8 @@ namespace IronAHK.Rusty
             if (Environment.OSVersion.Platform != PlatformID.Win32NT)
                 throw new Win32Required();
 
-            IntPtr hwnd = Settings.Windows.FindWindow(WinTitle, WinText, ExcludeTitle, ExcludeText);
-            Windows.Windows.ShowWindow(hwnd, Windows.Windows.SW_MAXIMIZE);
+            IntPtr hwnd = Win32.FindWindow(WinTitle, WinText, ExcludeTitle, ExcludeText);
+            Win32.ShowWindow(hwnd, Win32.SW_MAXIMIZE);
         }
 
         /// <summary>
@@ -824,8 +824,8 @@ namespace IronAHK.Rusty
             if (Environment.OSVersion.Platform != PlatformID.Win32NT)
                 throw new Win32Required();
 
-            IntPtr hwnd = Settings.Windows.FindWindow(WinTitle, WinText, ExcludeTitle, ExcludeText);
-            Windows.Windows.ShowWindow(hwnd, Windows.Windows.SW_MINIMIZE);
+            IntPtr hwnd = Win32.FindWindow(WinTitle, WinText, ExcludeTitle, ExcludeText);
+            Win32.ShowWindow(hwnd, Win32.SW_MINIMIZE);
         }
 
         /// <summary>
@@ -836,8 +836,8 @@ namespace IronAHK.Rusty
             if (Environment.OSVersion.Platform != PlatformID.Win32NT)
                 throw new Win32Required();
 
-            foreach (IntPtr hwnd in Settings.Windows.FindAllWindows())
-                Windows.Windows.ShowWindow(hwnd, Windows.Windows.SW_MINIMIZE);
+            foreach (IntPtr hwnd in Win32.FindAllWindows())
+                Win32.ShowWindow(hwnd, Win32.SW_MINIMIZE);
         }
 
         /// <summary>
@@ -848,8 +848,8 @@ namespace IronAHK.Rusty
             if (Environment.OSVersion.Platform != PlatformID.Win32NT)
                 throw new Win32Required();
 
-            foreach (IntPtr hwnd in Settings.Windows.FindAllWindows())
-                Windows.Windows.ShowWindow(hwnd, Windows.Windows.SW_RESTORE);
+            foreach (IntPtr hwnd in Win32.FindAllWindows())
+                Win32.ShowWindow(hwnd, Win32.SW_RESTORE);
         }
 
         /// <summary>
@@ -871,8 +871,8 @@ namespace IronAHK.Rusty
             if (Environment.OSVersion.Platform != PlatformID.Win32NT)
                 throw new Win32Required();
 
-            IntPtr hwnd = Settings.Windows.FindWindow(WinTitle, WinText, ExcludeTitle, ExcludeText);
-            Windows.Windows.MoveWindow(hwnd, X, Y, Width, Height, true);
+            IntPtr hwnd = Win32.FindWindow(WinTitle, WinText, ExcludeTitle, ExcludeText);
+            Win32.MoveWindow(hwnd, X, Y, Width, Height, true);
         }
 
         /// <summary>
@@ -887,8 +887,8 @@ namespace IronAHK.Rusty
             if (Environment.OSVersion.Platform != PlatformID.Win32NT)
                 throw new Win32Required();
 
-            IntPtr hwnd = Settings.Windows.FindWindow(WinTitle, WinText, ExcludeTitle, ExcludeText);
-            Windows.Windows.ShowWindow(hwnd, Windows.Windows.SW_RESTORE);
+            IntPtr hwnd = Win32.FindWindow(WinTitle, WinText, ExcludeTitle, ExcludeText);
+            Win32.ShowWindow(hwnd, Win32.SW_RESTORE);
         }
 
         /// <summary>
@@ -918,8 +918,8 @@ namespace IronAHK.Rusty
             if (Environment.OSVersion.Platform != PlatformID.Win32NT)
                 throw new Win32Required();
 
-            IntPtr hwnd = Settings.Windows.FindWindow(WinTitle, WinText, ExcludeTitle, ExcludeText);
-            Windows.Windows.SetWindowText(hwnd, NewTitle);
+            IntPtr hwnd = Win32.FindWindow(WinTitle, WinText, ExcludeTitle, ExcludeText);
+            Win32.SetWindowText(hwnd, NewTitle);
         }
 
         /// <summary>
@@ -934,8 +934,8 @@ namespace IronAHK.Rusty
             if (Environment.OSVersion.Platform != PlatformID.Win32NT)
                 throw new Win32Required();
 
-            IntPtr hwnd = Settings.Windows.FindWindow(WinTitle, WinText, ExcludeTitle, ExcludeText);
-            Windows.Windows.ShowWindow(hwnd, Windows.Windows.SW_SHOW);
+            IntPtr hwnd = Win32.FindWindow(WinTitle, WinText, ExcludeTitle, ExcludeText);
+            Win32.ShowWindow(hwnd, Win32.SW_SHOW);
         }
 
         /// <summary>
@@ -958,7 +958,7 @@ namespace IronAHK.Rusty
             Seconds *= 1000;
             error = 0;
 
-            while (Settings.Windows.FindWindow(WinTitle, WinText, ExcludeTitle, ExcludeText) == IntPtr.Zero)
+            while (Win32.FindWindow(WinTitle, WinText, ExcludeTitle, ExcludeText) == IntPtr.Zero)
             {
                 System.Threading.Thread.Sleep(Settings.LoopFrequency);
                 if (Environment.TickCount - start > Seconds)
@@ -988,8 +988,8 @@ namespace IronAHK.Rusty
             int start = Environment.TickCount;
             Seconds *= 1000;
             error = 0;
-            
-            while (Settings.Windows.FindWindow(WinTitle, WinText, ExcludeTitle, ExcludeText) != Windows.Windows.GetForegroundWindow())
+
+            while (Win32.FindWindow(WinTitle, WinText, ExcludeTitle, ExcludeText) != Win32.GetForegroundWindow())
             {
                 System.Threading.Thread.Sleep(Settings.LoopFrequency);
                 if (Environment.TickCount - start > Seconds)
@@ -1022,7 +1022,7 @@ namespace IronAHK.Rusty
             Seconds *= 1000; 
             error = 0;
 
-            while (Settings.Windows.FindWindow(WinTitle, WinText, ExcludeTitle, ExcludeText) != IntPtr.Zero)
+            while (Win32.FindWindow(WinTitle, WinText, ExcludeTitle, ExcludeText) != IntPtr.Zero)
             {
                 System.Threading.Thread.Sleep(Settings.LoopFrequency);
                 if (Environment.TickCount - start > Seconds)
@@ -1053,7 +1053,7 @@ namespace IronAHK.Rusty
             Seconds *= 1000; 
             error = 0;
 
-            while (Settings.Windows.FindWindow(WinTitle, WinText, ExcludeTitle, ExcludeText) != Windows.Windows.GetActiveWindow())
+            while (Win32.FindWindow(WinTitle, WinText, ExcludeTitle, ExcludeText) != Win32.GetActiveWindow())
             {
                 System.Threading.Thread.Sleep(Settings.LoopFrequency);
                 if (Environment.TickCount - start > Seconds)

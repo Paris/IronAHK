@@ -16,7 +16,7 @@ namespace IronAHK.Rusty
             if (Environment.OSVersion.Platform != PlatformID.Win32NT)
                 throw new Win32Required();
 
-            error = Windows.Misc.WritePrivateProfileString(Section, Key.Length == 0 ? null : Key, null, Filename) ? 0 : 1;
+            error = Win32.WritePrivateProfileString(Section, Key.Length == 0 ? null : Key, null, Filename) ? 0 : 1;
         }
 
         /// <summary>
@@ -33,7 +33,7 @@ namespace IronAHK.Rusty
                 throw new Win32Required();
 
             StringBuilder buf = new StringBuilder(char.MaxValue);
-            Windows.Misc.GetPrivateProfileString(Section, Key, Default, buf, (uint)buf.Capacity, Filename);
+            Win32.GetPrivateProfileString(Section, Key, Default, buf, (uint)buf.Capacity, Filename);
             OutputVar = buf.ToString();
         }
 
@@ -50,7 +50,7 @@ namespace IronAHK.Rusty
             if (Environment.OSVersion.Platform != PlatformID.Win32NT)
                 throw new Win32Required();
 
-            error = Windows.Misc.WritePrivateProfileString(Section, Key, Value, Filename) ? 0 : 1;
+            error = Win32.WritePrivateProfileString(Section, Key, Value, Filename) ? 0 : 1;
         }
     }
 }

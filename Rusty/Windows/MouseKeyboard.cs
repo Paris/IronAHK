@@ -2,9 +2,9 @@
 using System.Drawing;
 using System.Runtime.InteropServices;
 
-namespace IronAHK.Rusty.Windows
+namespace IronAHK.Rusty
 {
-    class MouseKeyboard
+    partial class Win32
     {
         [DllImport("user32.dll", SetLastError = true)]
         public static extern uint SendInput(uint nInputs, INPUT[] pInputs, int cbSize);

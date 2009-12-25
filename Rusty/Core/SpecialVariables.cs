@@ -846,9 +846,9 @@ namespace IronAHK.Rusty
         {
             get
             {
-                IntPtr handle = Windows.Windows.GetDesktopWindow(); /* get the hDC of the target window */
-                Windows.Windows.RECT windowRect; 
-                Windows.Windows.GetWindowRect(handle, out windowRect);
+                IntPtr handle = Win32.GetDesktopWindow(); /* get the hDC of the target window */
+                Win32.RECT windowRect; 
+                Win32.GetWindowRect(handle, out windowRect);
                 return windowRect.Bottom - windowRect.Top;
             }
             /*set { Settings.ScreenHeight = value; }*/
@@ -861,9 +861,9 @@ namespace IronAHK.Rusty
         {
             get
             {
-                IntPtr handle = Windows.Windows.GetDesktopWindow(); /* get the hDC of the target window */
-                Windows.Windows.RECT windowRect; 
-                Windows.Windows.GetWindowRect(handle, out windowRect);
+                IntPtr handle = Win32.GetDesktopWindow(); /* get the hDC of the target window */
+                Win32.RECT windowRect; 
+                Win32.GetWindowRect(handle, out windowRect);
                 return windowRect.Right - windowRect.Left;
             }
                 //return ""; }

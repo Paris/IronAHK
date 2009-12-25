@@ -102,7 +102,6 @@ namespace IronAHK.Rusty
 
             #region GUI
 
-            public static Windows.Windows Windows = new Windows.Windows();
             public static ToolTip[] ToolTips = new ToolTip[20];
             public static GUI[] GUIs = new GUI[99];
             public static NotifyIcon Tray = null;

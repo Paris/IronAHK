@@ -3,37 +3,32 @@ using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace IronAHK.Rusty.Windows
+namespace IronAHK.Rusty
 {
-    class Windows
+    partial class Win32
     {
-        WindowType find, exclude;
-        IntPtr[] matches = new IntPtr[31];
-        int count = 0;
+        #region Find windows
 
-        public IntPtr[] Matches { get { return matches; } }
+        static WindowType find, exclude;
+        static IntPtr[] matches = new IntPtr[31];
+        static int count = 0;
 
-        public IntPtr FindWindow(string WinTitle, string WinText, string ExcludeTitle, string ExcludeText)
+        public static IntPtr FindWindow(string WinTitle, string WinText, string ExcludeTitle, string ExcludeText)
         {
             return FindAllWindows(WinText, WinText, ExcludeText, ExcludeText, string.Empty)[0];
         }
 
-        public IntPtr FindWindow(string WinTitle, string WinText, string ExcludeTitle, string ExcludeText, string Control)
+        public static IntPtr FindWindow(string WinTitle, string WinText, string ExcludeTitle, string ExcludeText, string Control)
         {
             return FindAllWindows(WinTitle, WinText, ExcludeTitle, ExcludeText, Control)[0];
         }
 
-        public IntPtr FindWindow()
-        {
-            return FindWindow(string.Empty, string.Empty, string.Empty, string.Empty, string.Empty);
-        }
-
-        public IntPtr[] FindAllWindows()
+        public static IntPtr[] FindAllWindows()
         {
             return FindAllWindows(string.Empty, string.Empty, string.Empty, string.Empty, string.Empty);
         }
 
-        public IntPtr[] FindAllWindows(string WinTitle, string WinText, string ExcludeTitle, string ExcludeText, string Control)
+        public static IntPtr[] FindAllWindows(string WinTitle, string WinText, string ExcludeTitle, string ExcludeText, string Control)
         {
             if (WinTitle.Length == 0 && WinText.Length == 0 && ExcludeTitle.Length == 0 && ExcludeText.Length == 0)
                 return matches;
@@ -50,7 +45,7 @@ namespace IronAHK.Rusty.Windows
             count = 0;
 
             if (find.Title == "A")
-                matches[0] = Windows.GetActiveWindow();
+                matches[0] = Win32.GetActiveWindow();
             else EnumWindows(new EnumFunc(FilterWindow), 0);
 
             if (find.Control.Length != 0)
@@ -58,8 +53,8 @@ namespace IronAHK.Rusty.Windows
                 for (int i = 0; i < matches.Length; i++)
                 {
                     if (matches[i] != IntPtr.Zero)
-                        matches[i] = Windows.FindWindowEx(matches[i],
-                            Windows.GetWindow(matches[i], Windows.GW_CHILD),
+                        matches[i] = FindWindowEx(matches[i],
+                            GetWindow(matches[i], GW_CHILD),
                             find.Control, string.Empty);
                 }
             }
@@ -67,15 +62,15 @@ namespace IronAHK.Rusty.Windows
             return matches;
         }
 
-        bool FilterWindow(IntPtr hwnd, int lParam)
+        static bool FilterWindow(IntPtr hwnd, int lParam)
         {
-            string title = Windows.GetWindowText(hwnd).ToLower();
+            string title = GetWindowText(hwnd).ToLower();
             StringBuilder sb = new StringBuilder(Math.Max(find.Class.Length, exclude.Class.Length));
-            string classname = Windows.GetClassName(hwnd, sb, sb.Capacity).ToString();
+            string classname = GetClassName(hwnd, sb, sb.Capacity).ToString();
 
             int id = hwnd.ToInt32();
             uint pid;
-            Windows.GetWindowThreadProcessId(hwnd, out pid);
+            GetWindowThreadProcessId(hwnd, out pid);
             bool pass = false;
 
             if (find.Title.Length != 0)
@@ -95,12 +90,12 @@ namespace IronAHK.Rusty.Windows
             if (exclude.Class.Length != 0)
                 pass = exclude.Class != classname;
 
-            IntPtr child = Windows.GetWindow(hwnd, Windows.GW_CHILD);
+            IntPtr child = GetWindow(hwnd, GW_CHILD);
 
             if (find.Text.Length != 0)
-                pass = Windows.FindWindowEx(hwnd, child, string.Empty, find.Text) != IntPtr.Zero;
+                pass = FindWindowEx(hwnd, child, string.Empty, find.Text) != IntPtr.Zero;
             if (exclude.Text.Length != 0)
-                pass = Windows.FindWindowEx(hwnd, child, string.Empty, exclude.Text) == IntPtr.Zero;
+                pass = FindWindowEx(hwnd, child, string.Empty, exclude.Text) == IntPtr.Zero;
 
             if (pass)
             {
@@ -112,15 +107,14 @@ namespace IronAHK.Rusty.Windows
             return true;
         }
 
-        public delegate bool EnumFunc(IntPtr hwnd, int lParam);
+        #endregion
 
-        [DllImport("user32.dll")]
-        public static extern int EnumWindows(EnumFunc lpEnumFunc, int lParam);
+        #region Helper methods
 
         public static string GetWindowText(IntPtr hwnd)
         {
             StringBuilder sb = new StringBuilder(GetWindowTextLength(hwnd) + 1);
-            Windows.GetWindowText(hwnd, sb, sb.Capacity);
+            GetWindowText(hwnd, sb, sb.Capacity);
             return sb.ToString();
         }
 
@@ -130,11 +124,65 @@ namespace IronAHK.Rusty.Windows
             return GetClassName(hwnd, sb, sb.Capacity).ToString();
         }
 
+        public static void DestroyWindow(IntPtr hWnd)
+        {
+            SendMessage(hWnd, 0x0002, IntPtr.Zero, IntPtr.Zero); //WM_DESTROY message
+        }
+
+        public static void GetVirtualDesktopRect(out RECT aRect)
+        {
+            aRect.Right = GetSystemMetrics(78); //SM_CXVIRTUALSCREEN
+            if (aRect.Right != 0) // A non-zero value indicates the OS supports multiple monitors or at least SM_CXVIRTUALSCREEN.
+            {
+                aRect.Left = GetSystemMetrics(76);  // SM_XVIRTUALSCREEN; Might be negative or greater than zero.
+                aRect.Right += aRect.Left;
+                aRect.Top = GetSystemMetrics(77);   //SM_YVIRTUALSCREEN; Might be negative or greater than zero.
+                aRect.Bottom = aRect.Top + GetSystemMetrics(79); //SM_CYVIRTUALSCREEN
+            }
+            else // Win95/NT do not support SM_CXVIRTUALSCREEN and such, so zero was returned.
+                GetWindowRect(GetDesktopWindow(), out aRect);
+        }
+
+        #endregion
+
+        #region Structs & delegates
+
+        public delegate bool EnumFunc(IntPtr hwnd, int lParam);
+
+        [Serializable, StructLayout(LayoutKind.Sequential)]
+        public struct GUITHREADINFO
+        {
+            public uint cbSize;
+            public uint flags;
+            public IntPtr hwndActive;
+            public IntPtr hwndFocus;
+            public IntPtr hwndCapture;
+            public IntPtr hwndMenuOwner;
+            public IntPtr hwndMoveSize;
+            public IntPtr hwndCaret;
+            public RECT rcCaret;
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct RECT
+        {
+            public int Left;
+            public int Top;
+            public int Right;
+            public int Bottom;
+        }
+
+        #endregion
+
+        #region DllImports
+
+        [DllImport("user32.dll")]
+        public static extern int EnumWindows(EnumFunc lpEnumFunc, int lParam);
+
         [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = false)]
         public static extern IntPtr SendMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
 
-        [return: MarshalAs(UnmanagedType.Bool)]
-        [DllImport("user32.dll", SetLastError = true)]
+        [DllImport("user32.dll")]
         public static extern bool PostMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
 
         [DllImport("kernel32.dll")]
@@ -143,7 +191,7 @@ namespace IronAHK.Rusty.Windows
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
         public static extern int GetWindowText(IntPtr hWnd, StringBuilder lpString, int nMaxCount);
 
-        [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
+        [DllImport("user32.dll", CharSet = CharSet.Auto)]
         public static extern int GetWindowTextLength(IntPtr hWnd);
 
         [DllImport("user32.dll")]
@@ -161,18 +209,13 @@ namespace IronAHK.Rusty.Windows
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
         public static extern int GetClassName(IntPtr hWnd, StringBuilder lpClassName, int nMaxCount);
 
-        [DllImport("user32.dll", CharSet = CharSet.Auto, ExactSpelling = true)]
+        [DllImport("user32.dll", CharSet = CharSet.Auto)]
         public static extern IntPtr GetActiveWindow(IntPtr hWnd);
 
-        [DllImport("user32.dll", CharSet = CharSet.Auto, ExactSpelling = true)]
+        [DllImport("user32.dll", CharSet = CharSet.Auto)]
         public static extern IntPtr GetActiveWindow();
 
-        /*
-         * find the handle for a client
-         * classname - should be IntPtr.Zero
-         * windowName - name of the window as found in title bar
-         */
-        [DllImport("user32.dll", EntryPoint = "FindWindow")]
+        [DllImport("user32.dll")]
         public static extern IntPtr FindWindow(IntPtr className, String windowName);
 
         [DllImport("user32.dll")]
@@ -184,16 +227,10 @@ namespace IronAHK.Rusty.Windows
         [DllImport("user32.dll")]
         public static extern int CloseWindow(IntPtr hWnd);
 
-        public static void DestroyWindow(IntPtr hWnd)
-        {
-            SendMessage(hWnd, 0x0002, IntPtr.Zero, IntPtr.Zero); //WM_DESTROY message
-        }
-
         [DllImport("user32.dll")]
         public static extern bool MoveWindow(IntPtr hWnd, int X, int Y, int nWidth, int nHeight, bool bRepaint);
 
         [DllImport("user32.dll")]
-        [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool IsWindowVisible(IntPtr hWnd);
 
         [DllImport("user32.dll")]
@@ -205,68 +242,48 @@ namespace IronAHK.Rusty.Windows
         [DllImport("user32.dll")]
         public static extern IntPtr RealChildWindowFromPoint(IntPtr hwndParent, Point ptParentClientCoords);
 
-        [DllImport("user32.dll", EntryPoint = "GetDesktopWindow")]
+        [DllImport("user32.dll")]
         public static extern IntPtr GetDesktopWindow();
 
-        [DllImport("user32.dll", EntryPoint = "GetForegroundWindow")]
+        [DllImport("user32.dll")]
         public static extern IntPtr GetForegroundWindow();
 
-        [DllImport("user32.dll", EntryPoint = "SetForegroundWindow")]
+        [DllImport("user32.dll")]
         public static extern Int32 SetForegroundWindow(IntPtr handle);
 
-        [DllImport("user32.dll", EntryPoint = "SetActiveWindow")]
+        [DllImport("user32.dll")]
         public static extern int SetActiveWindow(IntPtr handle);
 
-        [DllImport("user32.dll", EntryPoint = "IsWindow")]
+        [DllImport("user32.dll")]
         public static extern bool IsWindow(IntPtr hWnd);
 
-        [Serializable, StructLayout(LayoutKind.Sequential)]
-        public struct GUITHREADINFO
-        {
-            public uint cbSize;
-            public uint flags;
-            public IntPtr hwndActive;
-            public IntPtr hwndFocus;
-            public IntPtr hwndCapture;
-            public IntPtr hwndMenuOwner;
-            public IntPtr hwndMoveSize;
-            public IntPtr hwndCaret;
-            public RECT rcCaret;
-        }
-
-
         [DllImport("user32.dll")]
-        [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool GetWindowRect(IntPtr hWnd, out RECT lpRect);
 
-        [DllImport("user32.dll", EntryPoint = "GetSystemMetrics")]
+        [DllImport("user32.dll")]
         public static extern int GetSystemMetrics(int sysMetric);
 
-        public static void GetVirtualDesktopRect(out RECT aRect)
-        {
-            aRect.Right = GetSystemMetrics(78); //SM_CXVIRTUALSCREEN
-            if (aRect.Right != 0) // A non-zero value indicates the OS supports multiple monitors or at least SM_CXVIRTUALSCREEN.
-            {
-                aRect.Left = GetSystemMetrics(76);  // SM_XVIRTUALSCREEN; Might be negative or greater than zero.
-                aRect.Right += aRect.Left;
-                aRect.Top = GetSystemMetrics(77);   //SM_YVIRTUALSCREEN; Might be negative or greater than zero.
-                aRect.Bottom = aRect.Top + GetSystemMetrics(79); //SM_CYVIRTUALSCREEN
-            }
-            else // Win95/NT do not support SM_CXVIRTUALSCREEN and such, so zero was returned.
-                GetWindowRect(GetDesktopWindow(), out aRect);
-        }
-
-        [StructLayout(LayoutKind.Sequential)]
-        public struct RECT
-        {
-            public int Left;
-            public int Top;
-            public int Right;
-            public int Bottom;
-        }
-
-        [DllImport("user32.dll", SetLastError = false)]
+        [DllImport("user32.dll")]
         public static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
+
+        [DllImport("version.dll")]
+        public static extern bool GetFileVersionInfo(string sFileName, int handle, int size, byte[] infoBuffer);
+
+        [DllImport("version.dll")]
+        public static extern int GetFileVersionInfoSize(string sFileName, out int handle);
+
+        [DllImport("version.dll")]
+        public static extern bool VerQueryValue(byte[] pBlock, string pSubBlock, out string pValue, out uint len);
+
+        [DllImport("shell32.dll")]
+        public static extern int SHEmptyRecycleBin(IntPtr hWnd, string pszRootPath, uint dwFlags);
+
+        [DllImport("user32.dll")]
+        public static extern bool ExitWindowsEx(uint uFlags, uint dwReason);
+
+        #endregion
+
+        #region Constants
 
         public const uint GW_CHILD = 5;
         public const int SW_HIDE = 0;
@@ -285,18 +302,6 @@ namespace IronAHK.Rusty.Windows
         public const int SW_FORCEMINIMIZE = 11;
         public const int SW_MAX = 11;
 
-        [DllImport("version.dll")]
-        public static extern bool GetFileVersionInfo(string sFileName, int handle, int size, byte[] infoBuffer);
-        [DllImport("version.dll")]
-        public static extern int GetFileVersionInfoSize(string sFileName, out int handle);
-
-        // The third parameter - "out string pValue" - is automatically marshaled from ANSI to Unicode:
-        [DllImport("version.dll")]
-        public static extern bool VerQueryValue(byte[] pBlock, string pSubBlock, out string pValue, out uint len);
-
-        [DllImport("shell32.dll")]
-        public static extern int SHEmptyRecycleBin(IntPtr hWnd, string pszRootPath, uint dwFlags);
-
         public const int SHERB_NOCONFIRMATION = 0x1;
         public const int SHERB_NOPROGRESSUI = 0x2;
         public const int SHERB_NOSOUND = 0x4;
@@ -307,58 +312,60 @@ namespace IronAHK.Rusty.Windows
         public const uint WM_SYSCOMMAND = 0x0112;
         public const int SC_CLOSE = 0xF060;
 
-        [DllImport("user32.dll")]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        public static extern bool ExitWindowsEx(uint uFlags, uint dwReason);
-    }
+        #endregion
 
-    class WindowType
-    {
-        string title = string.Empty, classname = string.Empty, group = string.Empty, text = string.Empty, control = string.Empty;
-        int id = 0;
-        uint pid = 0;
-        public string[] Bounds = new string[] { "ahk" };
+        #region Criteria parser
 
-        enum Mode { Title, Class, ID, PID, Group };
-
-        public WindowType(string Criteria)
+        class WindowType
         {
-            foreach (string criterion in Criteria.Trim().Split(Bounds, StringSplitOptions.RemoveEmptyEntries))
+            string title = string.Empty, classname = string.Empty, group = string.Empty, text = string.Empty, control = string.Empty;
+            int id = 0;
+            uint pid = 0;
+            public string[] Bounds = new string[] { "ahk" };
+
+            enum Mode { Title, Class, ID, PID, Group };
+
+            public WindowType(string Criteria)
             {
-                if (criterion.Substring(0, 1) == "_")
+                foreach (string criterion in Criteria.Trim().Split(Bounds, StringSplitOptions.RemoveEmptyEntries))
                 {
-                    int i = 0;
-                    char[] letters = criterion.ToCharArray();
-                    while (!char.IsWhiteSpace(letters[++i])) ;
-                    string phrase = criterion.Substring(i).Trim();
-                    switch (criterion.Substring(1, i - 1).ToLower())
+                    if (criterion.Substring(0, 1) == "_")
                     {
-                        case "class": classname = phrase.ToLower(); break;
-                        case "id": id = int.Parse(phrase); break;
-                        case "pid": pid = uint.Parse(phrase); break;
-                        case "group": group = phrase.ToLower(); break;
+                        int i = 0;
+                        char[] letters = criterion.ToCharArray();
+                        while (!char.IsWhiteSpace(letters[++i])) ;
+                        string phrase = criterion.Substring(i).Trim();
+                        switch (criterion.Substring(1, i - 1).ToLower())
+                        {
+                            case "class": classname = phrase.ToLower(); break;
+                            case "id": id = int.Parse(phrase); break;
+                            case "pid": pid = uint.Parse(phrase); break;
+                            case "group": group = phrase.ToLower(); break;
+                        }
                     }
+                    else title = criterion.ToLower();
                 }
-                else title = criterion.ToLower();
+            }
+
+            public string Title { get { return title; } }
+            public string Class { get { return classname; } }
+            public int ID { get { return id; } }
+            public uint PID { get { return pid; } }
+            public string Group { get { return group; } }
+
+            public string Text
+            {
+                get { return text; }
+                set { text = value; }
+            }
+
+            public string Control
+            {
+                get { return control; }
+                set { control = value; }
             }
         }
 
-        public string Title { get { return title; } }
-        public string Class { get { return classname; } }
-        public int ID { get { return id; } }
-        public uint PID { get { return pid; } }
-        public string Group { get { return group; } }
-
-        public string Text
-        {
-            get { return text; }
-            set { text = value; }
-        }
-
-        public string Control
-        {
-            get { return control; }
-            set { control = value; }
-        }
+        #endregion
     }
 }

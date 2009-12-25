@@ -108,7 +108,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Windows\Misc.cs" />
     <Compile Include="Windows\MouseKeyboard.cs" />
-    <Compile Include="Windows\Sound.cs" />
     <Compile Include="Windows\Windows.cs" />
   </ItemGroup>
   <ItemGroup>
