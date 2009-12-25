@@ -59,10 +59,10 @@ namespace IronAHK.Rusty
         /// <param name="ExcludeText">Windows whose text include this value will not be considered.</param>
         public static void ControlGet(out string OutputVar, string Cmd, string Value, string ControlID, string WinTitle, string WinText, string ExcludeTitle, string ExcludeText)
         {
-            if (Environment.OSVersion.Platform != PlatformID.Win32NT)
-                throw new Win32Required();
-
             OutputVar = null;
+
+            if (Environment.OSVersion.Platform != PlatformID.Win32NT)
+                return;
         }
 
         /// <summary>
@@ -75,8 +75,10 @@ namespace IronAHK.Rusty
         /// <param name="ExcludeText">Windows whose text include this value will not be considered.</param>
         public static void ControlGetFocus(out string OutputVar, string WinTitle, string WinText, string ExcludeTitle, string ExcludeText)
         {
+            OutputVar = null;
+
             if (Environment.OSVersion.Platform != PlatformID.Win32NT)
-                throw new Win32Required();
+                return;
 
             //OutputVarWinTitle = WindowCmd.GetClassName(WindowCmd.GetFocus());
 
@@ -110,8 +112,10 @@ namespace IronAHK.Rusty
         /// <param name="ExcludeText">Windows whose text include this value will not be considered.</param>
         public static void ControlGetPos(out int X, out int Y, out int Width, out int Height, string Control, string WinTitle, string WinText, string ExcludeTitle, string ExcludeText)
         {
+            X = Y = Width = Height = default(int);
+
             if (Environment.OSVersion.Platform != PlatformID.Win32NT)
-                throw new Win32Required();
+                return;
 
             IntPtr hwnd = Win32.FindWindow(WinTitle, WinText, ExcludeTitle, ExcludeText, Control);
             Win32.RECT pos;
@@ -136,8 +140,10 @@ namespace IronAHK.Rusty
         /// <param name="ExcludeText">Windows whose text include this value will not be considered.</param>
         public static void ControlGetText(out string OutputVar, string Control, string WinTitle, string WinText, string ExcludeTitle, string ExcludeText)
         {
+            OutputVar = null;
+
             if (Environment.OSVersion.Platform != PlatformID.Win32NT)
-                throw new Win32Required();
+                return;
 
             IntPtr hwnd = Win32.FindWindow(WinTitle, WinText, ExcludeTitle, ExcludeText, Control);
             OutputVar = Win32.GetWindowText(hwnd);
@@ -161,7 +167,7 @@ namespace IronAHK.Rusty
         public static void ControlMove(string Control, int X, int Y, int Width, int Height, string WinTitle, string WinText, string ExcludeTitle, string ExcludeText)
         {
             if (Environment.OSVersion.Platform != PlatformID.Win32NT)
-                throw new Win32Required();
+                return;
 
             IntPtr hwnd = Win32.FindWindow(WinTitle, WinText, ExcludeTitle, ExcludeText, Control);
             Win32.MoveWindow(hwnd, X, Y, Width, Height, true);
@@ -182,7 +188,7 @@ namespace IronAHK.Rusty
         public static void ControlSetText(string Control, string NewText, string WinTitle, string WinText, string ExcludeTitle, string ExcludeText)
         {
             if (Environment.OSVersion.Platform != PlatformID.Win32NT)
-                throw new Win32Required();
+                return;
 
             IntPtr hwnd = Win32.FindWindow(WinTitle, WinText, ExcludeTitle, ExcludeText, Control);
             Win32.SetWindowText(hwnd, NewText);
@@ -513,7 +519,7 @@ namespace IronAHK.Rusty
         public static void WinActivate(string WinTitle, string WinText, string ExcludeTitle, string ExcludeText)
         {
             if (Environment.OSVersion.Platform != PlatformID.Win32NT)
-                throw new Win32Required();
+                return;
 
             IntPtr hwnd = Win32.FindWindow(WinTitle, WinText, ExcludeTitle, ExcludeText);
             Win32.ShowWindow(hwnd, Win32.SW_SHOWNORMAL);
@@ -546,7 +552,7 @@ namespace IronAHK.Rusty
         public static int WinActive(string WinTitle, string WinText, string ExcludeTitle, string ExcludeText)
         {
             if (Environment.OSVersion.Platform != PlatformID.Win32NT)
-                throw new Win32Required();
+                return 0;
 
             IntPtr hwnd = Win32.GetActiveWindow();
             return (hwnd == Win32.FindWindow(WinTitle, WinText, ExcludeTitle, ExcludeText)
@@ -564,7 +570,7 @@ namespace IronAHK.Rusty
         public static void WinClose(string WinTitle, string WinText, int SecondsToWait, string ExcludeTitle, string ExcludeText)
         {
             if (Environment.OSVersion.Platform != PlatformID.Win32NT)
-                throw new Win32Required();
+                return;
 
             IntPtr hwnd = Win32.FindWindow(WinTitle, WinText, ExcludeTitle, ExcludeText);
             Win32.CloseWindow(hwnd);
@@ -593,7 +599,7 @@ namespace IronAHK.Rusty
         public static int WinExist(string WinTitle, string WinText, string ExcludeTitle, string ExcludeText)
         {
             if (Environment.OSVersion.Platform != PlatformID.Win32NT)
-                throw new Win32Required();
+                return 0;
 
             return Win32.FindWindow(WinTitle, WinText, ExcludeTitle, ExcludeText).ToInt32();
         }
@@ -622,8 +628,11 @@ namespace IronAHK.Rusty
         /// <param name="Y">See <paramref name="X"/>.</param>
         public static void WinGetActiveStats(out string Title, out int Width, out int Height, out int X, out int Y)
         {
+            Title = null;
+            Width = Height = X = Y = default(int);
+
             if (Environment.OSVersion.Platform != PlatformID.Win32NT)
-                throw new Win32Required();
+                return;
 
             IntPtr hwnd = Win32.GetActiveWindow();
             if (hwnd == IntPtr.Zero)
@@ -650,8 +659,10 @@ namespace IronAHK.Rusty
         /// <param name="OutputVar">The name of the variable in which to store the title of the active window.</param>
         public static void WinGetActiveTitle(out string OutputVar)
         {
+            OutputVar = null;
+
             if (Environment.OSVersion.Platform != PlatformID.Win32NT)
-                throw new Win32Required();
+                return;
 
             IntPtr hwnd = Win32.GetActiveWindow();
             OutputVar = Win32.GetWindowText(hwnd);
@@ -667,8 +678,10 @@ namespace IronAHK.Rusty
         /// <param name="ExcludeText">Windows whose text include this value will not be considered.</param>
         public static void WinGetClass(out string OutputVar, string WinTitle, string WinText, string ExcludeTitle, string ExcludeText)
         {
+            OutputVar = null;
+
             if (Environment.OSVersion.Platform != PlatformID.Win32NT)
-                throw new Win32Required();
+                return;
 
             IntPtr hwnd = Win32.FindWindow(WinTitle, WinText, ExcludeTitle, ExcludeText);
             OutputVar = Win32.GetClassName(hwnd);
@@ -687,8 +700,10 @@ namespace IronAHK.Rusty
         /// <param name="ExcludeText">Windows whose text include this value will not be considered.</param>
         public static void WinGetPos(out int X, out int Y, out int Width, out int Height, string WinTitle, string WinText, string ExcludeTitle, string ExcludeText)
         {
+            X = Y = Width = Height = default(int);
+
             if (Environment.OSVersion.Platform != PlatformID.Win32NT)
-                throw new Win32Required();
+                return;
 
             IntPtr hwnd = Win32.FindWindow(WinTitle, WinText, ExcludeTitle, ExcludeText);
             Win32.RECT pos;
@@ -709,8 +724,10 @@ namespace IronAHK.Rusty
         /// <param name="ExcludeText">Windows whose text include this value will not be considered.</param>
         public static void WinGetText(out string OutputVar, string WinTitle, string WinText, string ExcludeTitle, string ExcludeText)
         {
+            OutputVar = null;
+
             if (Environment.OSVersion.Platform != PlatformID.Win32NT)
-                throw new Win32Required();
+                return;
 
             IntPtr hwnd = Win32.FindWindow(WinTitle, WinText, ExcludeTitle, ExcludeText);
             hwnd = Win32.GetWindow(hwnd, Win32.GW_CHILD);
@@ -727,8 +744,10 @@ namespace IronAHK.Rusty
         /// <param name="ExcludeText">Windows whose text include this value will not be considered.</param>
         public static void WinGetTitle(out string OutputVar, string WinTitle, string WinText, string ExcludeTitle, string ExcludeText)
         {
+            OutputVar = null;
+
             if (Environment.OSVersion.Platform != PlatformID.Win32NT)
-                throw new Win32Required();
+                return;
 
             IntPtr hwnd = Win32.FindWindow(WinTitle, WinText, ExcludeTitle, ExcludeText);
             OutputVar = Win32.GetWindowText(hwnd);
@@ -744,7 +763,7 @@ namespace IronAHK.Rusty
         public static void WinHide(string WinTitle, string WinText, string ExcludeTitle, string ExcludeText)
         {
             if (Environment.OSVersion.Platform != PlatformID.Win32NT)
-                throw new Win32Required();
+                return;
 
             IntPtr hwnd = Win32.FindWindow(WinTitle, WinText, ExcludeTitle, ExcludeText);
             Win32.ShowWindow(hwnd, Win32.SW_HIDE);
@@ -761,7 +780,7 @@ namespace IronAHK.Rusty
         public static void WinKill(string WinTitle, string WinText, int SecondsToWait, string ExcludeTitle, string ExcludeText)
         {
             if (Environment.OSVersion.Platform != PlatformID.Win32NT)
-                throw new Win32Required();
+                return;
 
             IntPtr hwnd = Win32.FindWindow(WinTitle, WinText, ExcludeTitle, ExcludeText);
             Win32.SendMessage(hwnd, Win32.WM_SYSCOMMAND, new IntPtr(Win32.SC_CLOSE), IntPtr.Zero);
@@ -787,7 +806,7 @@ namespace IronAHK.Rusty
         public static void WinMaximize(string WinTitle, string WinText, string ExcludeTitle, string ExcludeText)
         {
             if (Environment.OSVersion.Platform != PlatformID.Win32NT)
-                throw new Win32Required();
+                return;
 
             IntPtr hwnd = Win32.FindWindow(WinTitle, WinText, ExcludeTitle, ExcludeText);
             Win32.ShowWindow(hwnd, Win32.SW_MAXIMIZE);
@@ -822,7 +841,7 @@ namespace IronAHK.Rusty
         public static void WinMinimize(string WinTitle, string WinText, string ExcludeTitle, string ExcludeText)
         {
             if (Environment.OSVersion.Platform != PlatformID.Win32NT)
-                throw new Win32Required();
+                return;
 
             IntPtr hwnd = Win32.FindWindow(WinTitle, WinText, ExcludeTitle, ExcludeText);
             Win32.ShowWindow(hwnd, Win32.SW_MINIMIZE);
@@ -834,7 +853,7 @@ namespace IronAHK.Rusty
         public static void WinMinimizeAll()
         {
             if (Environment.OSVersion.Platform != PlatformID.Win32NT)
-                throw new Win32Required();
+                return;
 
             foreach (IntPtr hwnd in Win32.FindAllWindows())
                 Win32.ShowWindow(hwnd, Win32.SW_MINIMIZE);
@@ -846,7 +865,7 @@ namespace IronAHK.Rusty
         public static void WinMinimizeAllUndo()
         {
             if (Environment.OSVersion.Platform != PlatformID.Win32NT)
-                throw new Win32Required();
+                return;
 
             foreach (IntPtr hwnd in Win32.FindAllWindows())
                 Win32.ShowWindow(hwnd, Win32.SW_RESTORE);
@@ -869,7 +888,7 @@ namespace IronAHK.Rusty
         public static void WinMove(string WinTitle, string WinText, int X, int Y, int Width, int Height, string ExcludeTitle, string ExcludeText)
         {
             if (Environment.OSVersion.Platform != PlatformID.Win32NT)
-                throw new Win32Required();
+                return;
 
             IntPtr hwnd = Win32.FindWindow(WinTitle, WinText, ExcludeTitle, ExcludeText);
             Win32.MoveWindow(hwnd, X, Y, Width, Height, true);
@@ -885,7 +904,7 @@ namespace IronAHK.Rusty
         public static void WinRestore(string WinTitle, string WinText, string ExcludeTitle, string ExcludeText)
         {
             if (Environment.OSVersion.Platform != PlatformID.Win32NT)
-                throw new Win32Required();
+                return;
 
             IntPtr hwnd = Win32.FindWindow(WinTitle, WinText, ExcludeTitle, ExcludeText);
             Win32.ShowWindow(hwnd, Win32.SW_RESTORE);
@@ -916,7 +935,7 @@ namespace IronAHK.Rusty
         public static void WinSetTitle(string WinTitle, string WinText, string NewTitle, string ExcludeTitle, string ExcludeText)
         {
             if (Environment.OSVersion.Platform != PlatformID.Win32NT)
-                throw new Win32Required();
+                return;
 
             IntPtr hwnd = Win32.FindWindow(WinTitle, WinText, ExcludeTitle, ExcludeText);
             Win32.SetWindowText(hwnd, NewTitle);
@@ -932,7 +951,7 @@ namespace IronAHK.Rusty
         public static void WinShow(string WinTitle, string WinText, string ExcludeTitle, string ExcludeText)
         {
             if (Environment.OSVersion.Platform != PlatformID.Win32NT)
-                throw new Win32Required();
+                return;
 
             IntPtr hwnd = Win32.FindWindow(WinTitle, WinText, ExcludeTitle, ExcludeText);
             Win32.ShowWindow(hwnd, Win32.SW_SHOW);
@@ -952,7 +971,7 @@ namespace IronAHK.Rusty
         public static void WinWait(string WinTitle, string WinText, int Seconds, string ExcludeTitle, string ExcludeText)
         {
             if (Environment.OSVersion.Platform != PlatformID.Win32NT)
-                throw new Win32Required();
+                return;
 
             int start = Environment.TickCount;
             Seconds *= 1000;
@@ -983,7 +1002,7 @@ namespace IronAHK.Rusty
         public static void WinWaitActive(string WinTitle, string WinText, int Seconds, string ExcludeTitle, string ExcludeText)
         {
             if (Environment.OSVersion.Platform != PlatformID.Win32NT)
-                throw new Win32Required();
+                return;
 
             int start = Environment.TickCount;
             Seconds *= 1000;
@@ -1016,7 +1035,7 @@ namespace IronAHK.Rusty
         public static void WinWaitClose(string WinTitle, string WinText, int Seconds, string ExcludeTitle, string ExcludeText)
         {
             if (Environment.OSVersion.Platform != PlatformID.Win32NT)
-                throw new Win32Required();
+                return;
 
             int start = Environment.TickCount;
             Seconds *= 1000; 
@@ -1047,7 +1066,7 @@ namespace IronAHK.Rusty
         public static void WinWaitNotActive(string WinTitle, string WinText, int Seconds, string ExcludeTitle, string ExcludeText)
         {
             if (Environment.OSVersion.Platform != PlatformID.Win32NT)
-                throw new Win32Required();
+                return;
 
             int start = Environment.TickCount;
             Seconds *= 1000; 

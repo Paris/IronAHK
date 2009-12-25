@@ -222,7 +222,7 @@ namespace IronAHK.Rusty
         public static void Shutdown(int Code)
         {
             if (Environment.OSVersion.Platform != PlatformID.Win32NT)
-                throw new Win32Required();
+                return;
             Win32.ExitWindowsEx((uint)Code, 0);
         }
     }

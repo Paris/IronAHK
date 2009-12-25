@@ -40,8 +40,10 @@ namespace IronAHK.Rusty
         /// <param name="DeviceNumber">If this parameter is omitted, it defaults to 1 (the first sound device), which is usually the system's default device for recording and playback. Specify a number higher than 1 to operate upon a different sound device.</param>
         public static void SoundGetWaveVolume(out int OutputVar, int DeviceNumber)
         {
+            OutputVar = default(int);
+
             if (Environment.OSVersion.Platform != PlatformID.Win32NT)
-                throw new Win32Required();
+                return;
 
             uint vol = 0;
             Win32.waveOutGetVolume(new IntPtr(DeviceNumber), out vol);
@@ -98,7 +100,7 @@ namespace IronAHK.Rusty
         public static void SoundSetWaveVolume(string Percent, int DeviceNumber)
         {
             if (Environment.OSVersion.Platform != PlatformID.Win32NT)
-                throw new Win32Required();
+                return;
 
             IntPtr dev = new IntPtr(DeviceNumber);
             uint vol;

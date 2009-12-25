@@ -14,7 +14,7 @@ namespace IronAHK.Rusty
         public static void IniDelete(string Filename, string Section, string Key)
         {
             if (Environment.OSVersion.Platform != PlatformID.Win32NT)
-                throw new Win32Required();
+                return;
 
             error = Win32.WritePrivateProfileString(Section, Key.Length == 0 ? null : Key, null, Filename) ? 0 : 1;
         }
@@ -29,8 +29,10 @@ namespace IronAHK.Rusty
         /// <param name="Default">The value to store in <paramref name="OutputVar"/> if the requested <paramref name="Key"/> is not found.</param>
         public static void IniRead(out string OutputVar, string Filename, string Section, string Key, string Default)
         {
+            OutputVar = null;
+
             if (Environment.OSVersion.Platform != PlatformID.Win32NT)
-                throw new Win32Required();
+                return;
 
             StringBuilder buf = new StringBuilder(char.MaxValue);
             Win32.GetPrivateProfileString(Section, Key, Default, buf, (uint)buf.Capacity, Filename);
@@ -48,7 +50,7 @@ namespace IronAHK.Rusty
         public static void IniWrite(string Value, string Filename, string Section, string Key)
         {
             if (Environment.OSVersion.Platform != PlatformID.Win32NT)
-                throw new Win32Required();
+                return;
 
             error = Win32.WritePrivateProfileString(Section, Key, Value, Filename) ? 0 : 1;
         }

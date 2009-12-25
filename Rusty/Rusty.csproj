@@ -70,7 +70,6 @@
     <Compile Include="Core\Disk.cs" />
     <Compile Include="Core\Call.cs" />
     <Compile Include="Core\Environment.cs" />
-    <Compile Include="Core\Exceptions.cs" />
     <Compile Include="Core\Flow.cs" />
     <Compile Include="Core\Formats.cs" />
     <Compile Include="Core\Functions.cs" />
