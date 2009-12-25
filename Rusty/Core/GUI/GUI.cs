@@ -221,16 +221,16 @@ namespace IronAHK.Rusty
 
             if (aText == "")
             {
-                if (tip_hwnd != IntPtr.Zero & Windows.Windows.IsWindow(tip_hwnd))
+                if (tip_hwnd != IntPtr.Zero & Win32.IsWindow(tip_hwnd))
                 {
-                    Windows.Windows.SendMessage(tip_hwnd, 0x10, IntPtr.Zero, IntPtr.Zero); //WM_Close
+                    Win32.SendMessage(tip_hwnd, 0x10, IntPtr.Zero, IntPtr.Zero); //WM_Close
                 }
                 g_hWndToolTip[window_index] = IntPtr.Zero;
                 return true;
             }
 
-            Windows.Windows.RECT dtw = new Windows.Windows.RECT();
-            Windows.Windows.GetVirtualDesktopRect(out dtw);
+            Win32.RECT dtw = new Win32.RECT();
+            Win32.GetVirtualDesktopRect(out dtw);
 
             bool one_or_both_coords_unspecified = (!aX.HasValue | !aY.HasValue);
             POINTAPI pt = new POINTAPI();
@@ -242,11 +242,11 @@ namespace IronAHK.Rusty
                 pt.x = pt_cursor.x + 16;  // Set default spot to be near the mouse cursor.
                 pt.y = pt_cursor.y + 16;  // Use 16 to prevent the tooltip from overlapping large cursors.
             }
-            Windows.Windows.RECT rect = new Windows.Windows.RECT();
+            Win32.RECT rect = new Win32.RECT();
 
             if ((aX.HasValue | aY.HasValue) & Settings.CoordMode.ToolTip)
             {
-                if (!Windows.Windows.GetWindowRect(Windows.Windows.GetForegroundWindow(), out rect))
+                if (!Win32.GetWindowRect(Win32.GetForegroundWindow(), out rect))
                     return true;  // Don't bother setting ErrorLevel with this command.
             }
             //else leave all of rect's members initialized to zero.
@@ -269,13 +269,13 @@ namespace IronAHK.Rusty
             ti.lpszText = aText;
             ti.cbSize = Marshal.SizeOf(ti);
 
-            if (tip_hwnd == IntPtr.Zero | !Windows.Windows.IsWindow(tip_hwnd))
+            if (tip_hwnd == IntPtr.Zero | !Win32.IsWindow(tip_hwnd))
             {
                 // create the tooltip window
                 NativeWindow toolTip = new NativeWindow();
                 toolTip.CreateHandle(cp);
                 tip_hwnd = g_hWndToolTip[window_index] = toolTip.Handle;
-                API.SendMessage(tip_hwnd, API.TTM_SETMAXTIPWIDTH, 0, Windows.Windows.GetSystemMetrics(0));
+                API.SendMessage(tip_hwnd, API.TTM_SETMAXTIPWIDTH, 0, Win32.GetSystemMetrics(0));
                 //API.SendMessage(tip_hwnd, API.TTM_ADDTOOL, 0, ref ti);
 
                 if (Marshal.SystemDefaultCharSize == 1)
@@ -291,8 +291,8 @@ namespace IronAHK.Rusty
             else
                 API.SendMessage(tip_hwnd, API.TTM_UPDATETIPTEXTW, 0, ref ti); //WinNT machines
 
-            Windows.Windows.RECT ttw = new Windows.Windows.RECT();
-            Windows.Windows.GetWindowRect(tip_hwnd, out ttw); // Must be called this late to ensure the tooltip has been created by above.
+            Win32.RECT ttw = new Win32.RECT();
+            Win32.GetWindowRect(tip_hwnd, out ttw); // Must be called this late to ensure the tooltip has been created by above.
             int tt_width = ttw.Right - ttw.Left;
             int tt_height = ttw.Bottom - ttw.Top;
 
@@ -404,7 +404,7 @@ namespace IronAHK.Rusty
                 public int uFlags;
                 public IntPtr hwnd;
                 public IntPtr uId;
-                public IronAHK.Rusty.Windows.Windows.RECT rect;
+                public Win32.RECT rect;
                 public IntPtr hinst;
                 [MarshalAs(UnmanagedType.LPTStr)]
                 public string lpszText;

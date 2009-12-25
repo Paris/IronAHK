@@ -79,9 +79,9 @@ namespace IronAHK.Rusty
             MouseMove(X, Y, Speed, R);
             Core.Sleep(Settings.MouseDelay);
 
-            var i = new Windows.MouseKeyboard.INPUT[] { new Windows.MouseKeyboard.INPUT() };
-            i[0].type = Windows.MouseKeyboard.INPUT_MOUSE;
-            i[0].mi = new IronAHK.Rusty.Windows.MouseKeyboard.MOUSEINPUT();
+            var i = new Win32.INPUT[] { new Win32.INPUT() };
+            i[0].type = Win32.INPUT_MOUSE;
+            i[0].mi = new Win32.MOUSEINPUT();
 
             bool pressup = true, pressdown = true;
             string mode = DU.Trim().ToLower();
@@ -93,28 +93,28 @@ namespace IronAHK.Rusty
             {
                 case "l":
                 case "left":
-                    key = Windows.MouseKeyboard.MOUSEEVENTF_LEFTDOWN;
-                    xkey = Windows.MouseKeyboard.MOUSEEVENTF_LEFTUP;
+                    key = Win32.MOUSEEVENTF_LEFTDOWN;
+                    xkey = Win32.MOUSEEVENTF_LEFTUP;
                     break;
                 case "r":
                 case "right":
-                    key = Windows.MouseKeyboard.MOUSEEVENTF_RIGHTDOWN;
-                    xkey = Windows.MouseKeyboard.MOUSEEVENTF_RIGHTUP;
+                    key = Win32.MOUSEEVENTF_RIGHTDOWN;
+                    xkey = Win32.MOUSEEVENTF_RIGHTUP;
                     break;
                 case "m":
                 case "middle":
-                    key = Windows.MouseKeyboard.MOUSEEVENTF_MIDDLEDOWN;
-                    xkey = Windows.MouseKeyboard.MOUSEEVENTF_MIDDLEUP;
+                    key = Win32.MOUSEEVENTF_MIDDLEDOWN;
+                    xkey = Win32.MOUSEEVENTF_MIDDLEUP;
                     break;
                 case "x1":
-                    i[0].mi.mouseData |= (int)Windows.MouseKeyboard.XBUTTON1;
+                    i[0].mi.mouseData |= (int)Win32.XBUTTON1;
                     goto case "x";
                 case "x2":
-                    i[0].mi.mouseData |= (int)Windows.MouseKeyboard.XBUTTON2;
+                    i[0].mi.mouseData |= (int)Win32.XBUTTON2;
                     goto case "x";
                 case "x":
-                    key = Windows.MouseKeyboard.MOUSEEVENTF_XDOWN;
-                    xkey = Windows.MouseKeyboard.MOUSEEVENTF_XUP;
+                    key = Win32.MOUSEEVENTF_XDOWN;
+                    xkey = Win32.MOUSEEVENTF_XUP;
                     break;
                 case "wu":
                 case "wheelup":
@@ -122,7 +122,7 @@ namespace IronAHK.Rusty
                     pressup = false;
                     i[0].mi.mouseData = ClickCount > 0 ? ClickCount : 0;
                     i[0].mi.mouseData = i[0].mi.mouseData * WHEEL_DELTA;
-                    key = Windows.MouseKeyboard.MOUSEEVENTF_WHEEL;
+                    key = Win32.MOUSEEVENTF_WHEEL;
                     break;
                 case "wd":
                 case "wheeldown":
@@ -130,7 +130,7 @@ namespace IronAHK.Rusty
                     pressup = false;
                     i[0].mi.mouseData = ClickCount > 0 ? ClickCount : 0;
                     i[0].mi.mouseData = - i[0].mi.mouseData * WHEEL_DELTA;
-                    key = Windows.MouseKeyboard.MOUSEEVENTF_WHEEL;
+                    key = Win32.MOUSEEVENTF_WHEEL;
                     break;
             }
 
@@ -142,13 +142,13 @@ namespace IronAHK.Rusty
                 if (pressdown)
                 {
                     i[0].mi.dwFlags = key;
-                    Windows.MouseKeyboard.SendInput(l, i, sz);
+                    Win32.SendInput(l, i, sz);
                 }
 
                 if (pressup)
                 {
                     i[0].mi.dwFlags = xkey;
-                    Windows.MouseKeyboard.SendInput(l, i, sz);
+                    Win32.SendInput(l, i, sz);
                 }
             }
         }
@@ -206,15 +206,15 @@ namespace IronAHK.Rusty
 
             if (Environment.OSVersion.Platform == PlatformID.Win32NT)
             {
-                Windows.MouseKeyboard.GetCursorPos(out pos);
-                IntPtr hwnd = Windows.Windows.WindowFromPoint(pos);
+                Win32.GetCursorPos(out pos);
+                IntPtr hwnd = Win32.WindowFromPoint(pos);
 
-                var rect = new Windows.Windows.RECT();
-                Windows.Windows.GetWindowRect(hwnd, out rect);
-                IntPtr chwnd = Windows.Windows.RealChildWindowFromPoint(hwnd, new Point(pos.X - rect.Left, pos.Y - rect.Top));
+                var rect = new Win32.RECT();
+                Win32.GetWindowRect(hwnd, out rect);
+                IntPtr chwnd = Win32.RealChildWindowFromPoint(hwnd, new Point(pos.X - rect.Left, pos.Y - rect.Top));
 
                 OutputVarControl = Mode == 1 ?
-                    Windows.Windows.GetWindowText(chwnd) : chwnd.ToInt32().ToString();
+                    Win32.GetWindowText(chwnd) : chwnd.ToInt32().ToString();
             }
             else pos = System.Windows.Forms.Control.MousePosition;
 
@@ -222,8 +222,8 @@ namespace IronAHK.Rusty
             OutputVarY = pos.Y;
             if (Settings.CoordMode.Mouse)
             {
-                Windows.Windows.RECT rect;
-                Windows.Windows.GetWindowRect(Windows.Windows.GetForegroundWindow(), out rect);
+                Win32.RECT rect;
+                Win32.GetWindowRect(Win32.GetForegroundWindow(), out rect);
                 OutputVarX -= rect.Left;
                 OutputVarY -= rect.Top;
             }
@@ -245,8 +245,8 @@ namespace IronAHK.Rusty
             int ScreenWidth = Core.A_ScreenWidth, ScreenHeight = Core.A_ScreenHeight;
             if (Settings.CoordMode.Mouse && !R)
             {
-                Windows.Windows.RECT rect;
-                Windows.Windows.GetWindowRect(Windows.Windows.GetForegroundWindow(), out rect);
+                Win32.RECT rect;
+                Win32.GetWindowRect(Win32.GetForegroundWindow(), out rect);
                 X += rect.Left;
                 Y += rect.Top;
             }
@@ -257,13 +257,13 @@ namespace IronAHK.Rusty
                     Speed = 100;
             if (Speed == 0)  //Mouse is instant
             {
-                var i = new Windows.MouseKeyboard.INPUT[] { new Windows.MouseKeyboard.INPUT() };
-                i[0].type = Windows.MouseKeyboard.INPUT_MOUSE;
-                i[0].mi = new IronAHK.Rusty.Windows.MouseKeyboard.MOUSEINPUT();
-                i[0].mi.dwFlags = Windows.MouseKeyboard.MOUSEEVENTF_MOVE;
+                var i = new Win32.INPUT[] { new Win32.INPUT() };
+                i[0].type = Win32.INPUT_MOUSE;
+                i[0].mi = new Win32.MOUSEINPUT();
+                i[0].mi.dwFlags = Win32.MOUSEEVENTF_MOVE;
                 if (!R)
                 {
-                    i[0].mi.dwFlags |= Windows.MouseKeyboard.MOUSEEVENTF_ABSOLUTE;
+                    i[0].mi.dwFlags |= Win32.MOUSEEVENTF_ABSOLUTE;
                     i[0].mi.dx = MOUSE_COORD_TO_ABS(X, ScreenWidth);
                     i[0].mi.dy = MOUSE_COORD_TO_ABS(Y, ScreenHeight);
 
@@ -274,7 +274,7 @@ namespace IronAHK.Rusty
                     i[0].mi.dy = Y;
                 }
 
-                Windows.MouseKeyboard.SendInput((uint)i.Length, i, Marshal.SizeOf(i[0]));
+                Win32.SendInput((uint)i.Length, i, Marshal.SizeOf(i[0]));
                 return;
             }
             int mousex, mousey, mousewinid;
@@ -282,8 +282,8 @@ namespace IronAHK.Rusty
             Core.MouseGetPos(out mousex, out mousey, out mousewinid, out control, 0);
             if (Settings.CoordMode.Mouse) //screen coords required for doincrementalmousemove
             {
-                Windows.Windows.RECT rect;
-                Windows.Windows.GetWindowRect(Windows.Windows.GetForegroundWindow(), out rect);
+                Win32.RECT rect;
+                Win32.GetWindowRect(Win32.GetForegroundWindow(), out rect);
                 mousex += rect.Left;
                 mousey += rect.Top;
             }
@@ -353,14 +353,14 @@ namespace IronAHK.Rusty
                             aY1 -= delta;
                     }
 
-                var i = new Windows.MouseKeyboard.INPUT[] { new Windows.MouseKeyboard.INPUT() };
-                i[0].type = Windows.MouseKeyboard.INPUT_MOUSE;
-                i[0].mi = new IronAHK.Rusty.Windows.MouseKeyboard.MOUSEINPUT();
+                var i = new Win32.INPUT[] { new Win32.INPUT() };
+                i[0].type = Win32.INPUT_MOUSE;
+                i[0].mi = new Win32.MOUSEINPUT();
                 i[0].mi.dx = aX1;
                 i[0].mi.dy = aY1;
-                i[0].mi.dwFlags = Windows.MouseKeyboard.MOUSEEVENTF_MOVE;
-                i[0].mi.dwFlags |= Windows.MouseKeyboard.MOUSEEVENTF_ABSOLUTE;
-                Windows.MouseKeyboard.SendInput((uint)i.Length, i, Marshal.SizeOf(i[0]));
+                i[0].mi.dwFlags = Win32.MOUSEEVENTF_MOVE;
+                i[0].mi.dwFlags |= Win32.MOUSEEVENTF_ABSOLUTE;
+                Win32.SendInput((uint)i.Length, i, Marshal.SizeOf(i[0]));
                 Core.Sleep(Settings.MouseDelay);
             }
         }

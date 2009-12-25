@@ -145,7 +145,7 @@ namespace IronAHK.Rusty
         public static void OutputDebug(string Text)
         {
             if (Environment.OSVersion.Platform == PlatformID.Win32NT)
-                Windows.Windows.OutputDebugString(Text);
+                Win32.OutputDebugString(Text);
         }
 
         /// <summary>
@@ -181,8 +181,8 @@ namespace IronAHK.Rusty
             Bitmap bmp = new Bitmap(1, 1, format);
             if (Settings.CoordMode.Pixel) //if coordmode true using relative coords
             {
-                Windows.Windows.RECT rect;
-                Windows.Windows.GetWindowRect(Windows.Windows.GetForegroundWindow(), out rect);
+                Win32.RECT rect;
+                Win32.GetWindowRect(Win32.GetForegroundWindow(), out rect);
                 X += rect.Left;
                 Y += rect.Top;
             }

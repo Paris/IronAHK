@@ -140,7 +140,7 @@ namespace IronAHK.Rusty
             }
             else if (KeyName.Trim().Length == 1)
             {
-                VK = Windows.MouseKeyboard.VkKeyScan(Convert.ToChar(KeyName.Trim().ToLower()));
+                VK = Win32.VkKeyScan(Convert.ToChar(KeyName.Trim().ToLower()));
             }
             else
             {
@@ -280,7 +280,7 @@ namespace IronAHK.Rusty
 
             if (VK == 0) return string.Empty;
 
-            short result = Windows.MouseKeyboard.GetKeyState(VK);
+            short result = Win32.GetKeyState(VK);
 
             switch( result )
             {
