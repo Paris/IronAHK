@@ -8,11 +8,10 @@ namespace IronAHK.Scripting
 {
     partial class Parser : ICodeParser
     {
-        Dictionary<string, CodeMemberMethod> methods;
-        Type core;
         const string mainScope = "";
-        CodeEntryPointMethod main;
-        CodeStatementCollection prepend;
+        CodeEntryPointMethod main = new CodeEntryPointMethod();
+        Dictionary<string, CodeMemberMethod> methods = new Dictionary<string, CodeMemberMethod>();
+        CodeStatementCollection prepend = new CodeStatementCollection();
 
         /// <summary>
         /// Return a DOM representation of a script.
@@ -22,12 +21,13 @@ namespace IronAHK.Scripting
             get
             {
                 var unit = new CodeCompileUnit();
+                var bcl = typeof(Script);
 
-                var space = new CodeNamespace(core.Namespace + ".Instance");
+                var space = new CodeNamespace(bcl.Namespace + ".Instance");
                 unit.Namespaces.Add(space);
 
                 var container = new CodeTypeDeclaration("Program");
-                container.BaseTypes.Add(typeof(Script));
+                container.BaseTypes.Add(bcl);
                 container.Attributes = MemberAttributes.Private;
                 space.Types.Add(container);
 
@@ -44,20 +44,14 @@ namespace IronAHK.Scripting
 
         public Parser()
         {
-            main = new CodeEntryPointMethod();
             main.CustomAttributes.Add(new CodeAttributeDeclaration(new CodeTypeReference(typeof(STAThreadAttribute))));
-            methods = new Dictionary<string, CodeMemberMethod>();
             methods.Add(mainScope, main);
-            prepend = new CodeStatementCollection();
-
-            core = typeof(Script);
-            internalID = 0;
         }
 
         public CodeCompileUnit Parse(TextReader codeStream)
         {
             var lines = Read(codeStream, null);
-            Compile(lines);
+            Statements(lines);
             return CompileUnit;
         }
     }
