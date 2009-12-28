@@ -6,7 +6,7 @@ using System.Reflection.Emit;
 
 namespace IronAHK.Scripting
 {
-    internal partial class Compiler : ICodeCompiler
+    partial class Compiler : ICodeCompiler
     {
         public CompilerResults CompileAssemblyFromDomBatch(CompilerParameters options, CodeCompileUnit[] compilationUnits)
         {

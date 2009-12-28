@@ -4,7 +4,7 @@ using System.Reflection.Emit;
 namespace IronAHK.Scripting
 {
     // Must be reference type for EmitLabel.cs
-    internal class LabelMetadata
+    class LabelMetadata
     {
         public bool Resolved;
         public Label Label;

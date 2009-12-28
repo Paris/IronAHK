@@ -1,12 +1,12 @@
 using System;
-using System.Reflection;
 using System.Collections.Generic;
+using System.Reflection;
 
 namespace IronAHK.Scripting
 {
-    internal enum ArgType { Variable, Literal, Expression }
+    enum ArgType { Variable, Literal, Expression }
     
-    internal class MethodCollection : List<MethodInfo>
+    class MethodCollection : List<MethodInfo>
     {
         public MethodCollection() 
         {

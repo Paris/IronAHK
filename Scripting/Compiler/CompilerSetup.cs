@@ -10,7 +10,7 @@ using System.Reflection.Emit;
 
 namespace IronAHK.Scripting
 {
-    internal partial class Compiler : ICodeCompiler
+    partial class Compiler : ICodeCompiler
     {
         AssemblyName AName;
         AssemblyBuilder ABuilder;
