@@ -1,4 +1,5 @@
 ﻿using System;
+using IronAHK.Rusty;
 
 namespace IronAHK.Scripting
 {
@@ -10,12 +11,12 @@ namespace IronAHK.Scripting
 
             public static MethodReference GetEnv
             {
-                get { return new MethodReference(typeof(Rusty.Core), "GetEnv"); }
+                get { return new MethodReference(typeof(Core), "GetEnv"); }
             }
 
             public static MethodReference SetEnv
             {
-                get { return new MethodReference(typeof(Rusty.Core), "SetEnv"); }
+                get { return new MethodReference(typeof(Core), "SetEnv"); }
             }
 
             #endregion
@@ -24,17 +25,17 @@ namespace IronAHK.Scripting
 
             public static MethodReference Hotkey
             {
-                get { return new MethodReference(typeof(Rusty.Core), "Hotkey", new Type[] { typeof(string), typeof(string), typeof(string) }); }
+                get { return new MethodReference(typeof(Core), "Hotkey", new Type[] { typeof(string), typeof(string), typeof(string) }); }
             }
 
             public static MethodReference Hotstring
             {
-                get { return new MethodReference(typeof(Rusty.Core), "Hotstring", new Type[] { typeof(string), typeof(string) }); }
+                get { return new MethodReference(typeof(Core), "Hotstring", new Type[] { typeof(string), typeof(string) }); }
             }
 
             public static MethodReference Send
             {
-                get { return new MethodReference(typeof(Rusty.Core), "Send", new Type[] { typeof(string) }); }
+                get { return new MethodReference(typeof(Core), "Send", new Type[] { typeof(string) }); }
             }
 
             public static MethodReference LabelCall
@@ -48,27 +49,27 @@ namespace IronAHK.Scripting
 
             public static MethodReference Loop
             {
-                get { return new MethodReference(typeof(Rusty.Core), "Loop"); }
+                get { return new MethodReference(typeof(Core), "Loop"); }
             }
 
             public static MethodReference LoopParse
             {
-                get { return new MethodReference(typeof(Rusty.Core), "LoopParse"); }
+                get { return new MethodReference(typeof(Core), "LoopParse"); }
             }
 
             public static MethodReference LoopRead
             {
-                get { return new MethodReference(typeof(Rusty.Core), "LoopRead"); }
+                get { return new MethodReference(typeof(Core), "LoopRead"); }
             }
 
             public static MethodReference LoopFile
             {
-                get { return new MethodReference(typeof(Rusty.Core), "LoopFile"); }
+                get { return new MethodReference(typeof(Core), "LoopFile"); }
             }
 
             public static MethodReference LoopRegistry
             {
-                get { return new MethodReference(typeof(Rusty.Core), "LoopRegistry"); }
+                get { return new MethodReference(typeof(Core), "LoopRegistry"); }
             }
 
             #endregion

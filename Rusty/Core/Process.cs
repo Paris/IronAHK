@@ -211,7 +211,7 @@ namespace IronAHK.Rusty
         {
             if (Environment.OSVersion.Platform != PlatformID.Win32NT)
                 return;
-            Win32.ExitWindowsEx((uint)Code, 0);
+            Windows.ExitWindowsEx((uint)Code, 0);
         }
     }
 }

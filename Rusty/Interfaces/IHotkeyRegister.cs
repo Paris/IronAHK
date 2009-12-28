@@ -21,7 +21,7 @@ namespace IronAHK.Rusty
     {
         string Platform { get; }
 
-        bool RegisterHotkey(KeyCombination Key);
+        bool RegisterHotkey(Linux.KeyCombination Key);
         bool RegisterHotstring(string Sequence, string Replace);
 
         KeyEvent NextEvent();

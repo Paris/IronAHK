@@ -13,7 +13,7 @@ namespace IronAHK.Rusty
         public static void SoundBeep(int Frequency, int Duration)
         {
             if (Environment.OSVersion.Platform == PlatformID.Win32NT)
-                Win32.Beep((uint)Frequency, (uint)Duration);
+                Windows.Beep((uint)Frequency, (uint)Duration);
             else SystemSounds.Beep.Play();
         }
 
@@ -46,7 +46,7 @@ namespace IronAHK.Rusty
                 return;
 
             uint vol = 0;
-            Win32.waveOutGetVolume(new IntPtr(DeviceNumber), out vol);
+            Windows.waveOutGetVolume(new IntPtr(DeviceNumber), out vol);
             OutputVar = (int)vol;
         }
 
@@ -108,12 +108,12 @@ namespace IronAHK.Rusty
             char p = Percent[0];
             if (p == '+' || p == '-')
             {
-                Win32.waveOutGetVolume(dev, out vol);
+                Windows.waveOutGetVolume(dev, out vol);
                 vol = (uint)(vol * double.Parse(Percent.Substring(1)) / 100);
             }
             else vol = (uint)(0xfffff * (double.Parse(Percent) / 100));
 
-            Win32.waveOutSetVolume(dev, vol);
+            Windows.waveOutSetVolume(dev, vol);
         }
     }
 }
