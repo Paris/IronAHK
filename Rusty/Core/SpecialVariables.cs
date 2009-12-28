@@ -1046,21 +1046,22 @@ namespace IronAHK.Rusty
         /// <summary>
         /// Current 1-digit day of the week (1-7). 1 is Sunday in all locales.
         /// </summary>
-        public static string A_WDay
+        public static int A_WDay
         {
-            get { return null; }
+            get { return (int)DateTime.Now.DayOfWeek + 1; }
         }
 
         /// <summary>
-        /// The current delay set by SetWinDelay (always decimal, not hex).
+        /// The current delay set by <code>SetWinDelay</code>.
         /// </summary>
-        public static string A_WinDelay
+        public static int A_WinDelay
         {
-            get { return null; }
+            get { return _WinDelay ?? 100; }
+            // TODO: SetWinDelay as A_WinDelay
         }
 
         /// <summary>
-        /// The Windows directory. For example: C:\Windows
+        /// The Windows directory. For example: <code>C:\Windows</code>.
         /// </summary>
         public static string A_WinDir
         {
@@ -1068,7 +1069,7 @@ namespace IronAHK.Rusty
         }
 
         /// <summary>
-        /// The script's current working directory, which is where files will be accessed by default. The final backslash is not included unless it is the root directory. Two examples: C:\ and C:\My Documents. Use SetWorkingDir to change the working directory.
+        /// The script's current working directory, which is where files will be accessed by default.
         /// </summary>
         public static string A_WorkingDir
         {
@@ -1077,15 +1078,15 @@ namespace IronAHK.Rusty
         }
 
         /// <summary>
-        /// Current day of the year (1-366). The value is not zero-padded, e.g. 9 is retrieved, not 009. To retrieve a zero-padded value, use the following: FormatTime, OutputVar, , YDay0
+        /// Current day of the year (1-366).
         /// </summary>
-        public static string A_YDay
+        public static int A_YDay
         {
-            get { return string.Empty; }
+            get { return DateTime.Now.DayOfYear; }
         }
 
         /// <summary>
-        /// Current 4-digit year (e.g. 2004). Note: To retrieve a formatted time or date appropriate for your locale and language, use "FormatTime, OutputVar" (time and long date) or "FormatTime, OutputVar,, LongDate" (retrieves long-format date).
+        /// Current 4-digit year (e.g. 2004).
         /// </summary>
         public static int A_Year
         {
@@ -1093,11 +1094,11 @@ namespace IronAHK.Rusty
         }
 
         /// <summary>
-        /// Current year and week number (e.g. 200453) according to ISO 8601. To separate the year from the week, use StringLeft, Year, A_YWeek, 4 and StringRight, Week, A_YWeek, 2. Precise definition of A_YWeek: If the week containing January 1st has four or more days in the new year, it is considered week 1. Otherwise, it is the last week of the previous year, and the next week is week 1.
+        /// Current year and week number (e.g. <code>200453</code>) according to ISO 8601.
         /// </summary>
-        public static int A_YWeek
+        public static string A_YWeek
         {
-            get { return 0; }
+            get { return DateTime.Now.ToString("yyyy") + Math.Floor((double)(DateTime.Now.DayOfYear / 12)).ToString(); }
         }
 
         /// <summary>
