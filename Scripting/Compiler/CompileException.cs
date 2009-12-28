@@ -3,7 +3,7 @@ using System.CodeDom;
 
 namespace IronAHK.Scripting
 {
-    public class CompileException : Exception
+    class CompileException : Exception
     {
         public CodeObject Offending;
 

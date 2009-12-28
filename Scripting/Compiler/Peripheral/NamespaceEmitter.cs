@@ -1,11 +1,9 @@
-using System;
 using System.CodeDom;
-using System.CodeDom.Compiler;
 using System.Reflection.Emit;
 
 namespace IronAHK.Scripting
 {
-    internal partial class Compiler
+    partial class Compiler
     {
         void EmitNamespace(AssemblyBuilder Parent, CodeNamespace Namespace)
         {

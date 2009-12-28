@@ -1,12 +1,10 @@
 using System;
 using System.CodeDom;
-using System.CodeDom.Compiler;
 using System.Reflection.Emit;
-using System.Reflection;
 
 namespace IronAHK.Scripting
 {
-    internal partial class MethodWriter
+    partial class MethodWriter
     {
         Type EmitVariableReference(CodeVariableReferenceExpression Expr)
         {
