@@ -4,7 +4,7 @@ namespace IronAHK.Scripting
 {
     partial class Script
     {
-        public static Type MatchTypes(ref object left, ref object right)
+        static Type MatchTypes(ref object left, ref object right)
         {
             if (left is string || right is string)
             {

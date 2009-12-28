@@ -5,7 +5,7 @@ using System.Text;
 
 namespace IronAHK.Rusty
 {
-    partial class Win32
+    partial class Windows
     {
         #region Find windows
 
@@ -45,7 +45,7 @@ namespace IronAHK.Rusty
             count = 0;
 
             if (find.Title == "A")
-                matches[0] = Win32.GetActiveWindow();
+                matches[0] = Windows.GetActiveWindow();
             else EnumWindows(new EnumFunc(FilterWindow), 0);
 
             if (find.Control.Length != 0)

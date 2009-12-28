@@ -4,7 +4,7 @@ using System.Text;
 
 namespace IronAHK.Rusty
 {
-    partial class Win32
+    partial class Windows
     {
         #region DLL
 

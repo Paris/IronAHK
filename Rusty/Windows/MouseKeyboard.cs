@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 
 namespace IronAHK.Rusty
 {
-    partial class Win32
+    partial class Windows
     {
         [DllImport("user32.dll", SetLastError = true)]
         public static extern uint SendInput(uint nInputs, INPUT[] pInputs, int cbSize);

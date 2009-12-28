@@ -21,9 +21,9 @@ namespace IronAHK.Scripting
         {
             get
             {
-                CodeCompileUnit unit = new CodeCompileUnit();
+                var unit = new CodeCompileUnit();
 
-                CodeNamespace space = new CodeNamespace(core.Namespace + ".Instance");
+                var space = new CodeNamespace(core.Namespace + ".Instance");
                 unit.Namespaces.Add(space);
 
                 var container = new CodeTypeDeclaration("Program");

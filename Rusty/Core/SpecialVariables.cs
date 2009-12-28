@@ -796,9 +796,9 @@ namespace IronAHK.Rusty
         {
             get
             {
-                IntPtr handle = Win32.GetDesktopWindow(); /* get the hDC of the target window */
-                Win32.RECT windowRect; 
-                Win32.GetWindowRect(handle, out windowRect);
+                IntPtr handle = Windows.GetDesktopWindow(); /* get the hDC of the target window */
+                Windows.RECT windowRect; 
+                Windows.GetWindowRect(handle, out windowRect);
                 return windowRect.Bottom - windowRect.Top;
             }
         }
@@ -810,9 +810,9 @@ namespace IronAHK.Rusty
         {
             get
             {
-                IntPtr handle = Win32.GetDesktopWindow(); /* get the hDC of the target window */
-                Win32.RECT windowRect; 
-                Win32.GetWindowRect(handle, out windowRect);
+                IntPtr handle = Windows.GetDesktopWindow(); /* get the hDC of the target window */
+                Windows.RECT windowRect; 
+                Windows.GetWindowRect(handle, out windowRect);
                 return windowRect.Right - windowRect.Left;
             }
         }

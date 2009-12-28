@@ -100,6 +100,7 @@
     <Compile Include="Interfaces\IHotkeyRegister.cs" />
     <Compile Include="Linux\KeyCombination.cs" />
     <Compile Include="Linux\KeyModifiers.cs" />
+    <Compile Include="Linux\Linux.cs" />
     <Compile Include="Linux\PlatformInvokes.cs" />
     <Compile Include="Linux\PoliteRegister.cs" />
     <Compile Include="Linux\Structs.cs" />
