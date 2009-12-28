@@ -1,4 +1,4 @@
-﻿Copyright (c) 2009 http://code.google.com/p/ironahk/
+﻿Copyright (c) 2010 A. <inspiration3@gmail.com>, Tobias Kappé <tobias@ntlabs.org> and other contributers - see http://www.ironahk.net/ 
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
