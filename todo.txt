@@ -1,6 +1,0 @@
-* Fix up Rusty SpecialVariables from A_WDay onwards
-* Rewrite Rusty DllCall to cache method signatures
-* Script parser should correct method case and parameters ("BestMatch")
-* Script parser to handle "out" and "ref" method parameters as well as delegates
-* Make Scripting independant of Rusty
-* Write more comprehensive NUnit tests for Rusty methods
