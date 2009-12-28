@@ -2,13 +2,11 @@
 // Unless stated otherwise, this is licenced under the new BSD license
 
 using System;
-using System.CodeDom;
 using System.CodeDom.Compiler;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Reflection.Emit;
-using IronAHK.Rusty;
 
 namespace IronAHK.Scripting
 {
@@ -65,6 +63,11 @@ namespace IronAHK.Scripting
 
         void MineMethods(Type Typ)
         {
+            if (!Typ.IsPublic || Typ.IsAbstract)
+                return;
+
+            Debug("Adding type " + Typ.Name);
+
             foreach(MethodInfo Method in Typ.GetMethods())
             {
                 // We skip private methods for privacy, abstract/nonstatic/constructor/generic methods for convenience
@@ -75,6 +78,12 @@ namespace IronAHK.Scripting
         
                 Methods.Add(Method);
             }
+        }
+
+        [Conditional("DEBUG")]
+        void Debug(string message)
+        {
+            Console.WriteLine(message);
         }
 
         public void Save()
