@@ -93,6 +93,28 @@ namespace IronAHK.Scripting
             return true;
         }
 
+        bool IsDynamicReference(string code)
+        {
+            bool d = false;
+
+            for (int i = 0; i < code.Length; i++)
+            {
+                char sym = code[i];
+
+                if (sym == Resolve)
+                {
+                    if (d)
+                        if (code[i - 1] == Resolve)
+                            return false;
+                    d = !d;
+                }
+                else if (!IsIdentifier(sym))
+                    return false;
+            }
+
+            return code.Length != 0;
+        }
+
         bool IsPrimativeObject(string code, out object result)
         {
             if (string.IsNullOrEmpty(code))
