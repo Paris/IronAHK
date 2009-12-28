@@ -43,6 +43,7 @@
   <ItemGroup>
     <Compile Include="Compiler\CompilerSetup.cs" />
     <Compile Include="Compiler\Compiler.cs" />
+    <Compile Include="Script\Call.cs" />
     <Compile Include="Script\Conversion.cs" />
     <Compile Include="Script\Labels.cs" />
     <Compile Include="Script\Operate.cs" />

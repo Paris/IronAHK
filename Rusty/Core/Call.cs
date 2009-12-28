@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
@@ -123,37 +122,6 @@ namespace IronAHK.Rusty
                 null,
                 a_args,
                 CultureInfo.InvariantCulture);
-        }
-
-        /// <summary>
-        /// Calls a function dynamically.
-        /// </summary>
-        /// <param name="name">The name of the function to call.</param>
-        /// <param name="parameters">Parameters to pass when calling the function. Types must be the same.</param>
-        /// <returns>The return value of the function.</returns>
-        public static object FunctionCall(string name, params object[] parameters)
-        {
-            var stack = new StackTrace(false).GetFrames();
-            MethodInfo method = null;
-
-            for (int i = 0; i < 3; i++)
-            {
-                var type = stack[i].GetMethod().DeclaringType;
-                method = FindMethod(name, type.GetMethods(), parameters);
-                if (method != null)
-                    break;
-            }
-
-            return method == null || !method.IsStatic ? null : method.Invoke(null, new object[] { parameters });
-        }
-
-        static MethodInfo FindMethod(string name, MethodInfo[] list, object[] parameters)
-        {
-            for (int i = 0; i < list.Length; i++)
-                if (list[i].Name.Equals(name, StringComparison.OrdinalIgnoreCase))
-                    return list[i];
-
-            return null;
         }
     }
 }
