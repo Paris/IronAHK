@@ -5,15 +5,8 @@ namespace IronAHK.Scripting
 {
     partial class Parser
     {
-        Stack<CodeBlock> blocks;
-        Stack<CodeStatementCollection> elses;
-        int internalID;
-
-        void Compile(List<CodeLine> lines)
+        void Statements(List<CodeLine> lines)
         {
-            blocks = new Stack<CodeBlock>();
-            elses = new Stack<CodeStatementCollection>();
-
             for (int i = 0; i < lines.Count; i++)
             {
                 string code = lines[i].Code;
@@ -140,33 +133,6 @@ namespace IronAHK.Scripting
 
             if (blocks.Count > 0)
                 throw new ParseException(ExUnclosedBlock, blocks.Peek().Line);
-        }
-
-        void CloseBlock()
-        {
-            if (blocks.Count == 0)
-                return;
-
-            var top = blocks.Pop();
-
-            if (top.Kind == CodeBlock.BlockKind.Loop)
-                top.Statements.Add(new CodeLabeledStatement(breakLabels.Pop().Continue));
-        }
-
-        string Scope
-        {
-            get
-            {
-                if (blocks.Count == 0)
-                    return mainScope;
-                var block = blocks.Peek();
-                return block.Kind == CodeBlock.BlockKind.Label ? mainScope : block.Method;
-            }
-        }
-
-        string InternalID
-        {
-            get { return "e" + internalID++.ToString(); }
         }
     }
 }

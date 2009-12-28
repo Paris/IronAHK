@@ -48,6 +48,16 @@ namespace IronAHK.Scripting
 #endif
         }
 
+        bool IsCommentLine(string code)
+        {
+#if LEGACY
+            return code.Length >= Comment.Length && code.Substring(0, Comment.Length) == Comment;
+#endif
+#if !LEGACY
+            return code.Length > 0 && code[0] == Comment;
+#endif
+        }
+
         bool IsEmptyStatement(string code)
         {
             for (int i = 0; i < code.Length; i++)

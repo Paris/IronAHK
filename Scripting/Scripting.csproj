@@ -43,6 +43,10 @@
   <ItemGroup>
     <Compile Include="Compiler\CompilerSetup.cs" />
     <Compile Include="Compiler\Compiler.cs" />
+    <Compile Include="Parser\Helpers\Blocks.cs" />
+    <Compile Include="Parser\Helpers\Scope.cs" />
+    <Compile Include="Parser\Helpers\InternalID.cs" />
+    <Compile Include="Parser\Texts\Continuation.cs" />
     <Compile Include="Script\Call.cs" />
     <Compile Include="Script\Conversion.cs" />
     <Compile Include="Script\Labels.cs" />
@@ -58,17 +62,17 @@
     <Compile Include="IACodeProvider.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Parser\BreakLabels.cs" />
+    <Compile Include="Parser\Helpers\BreakLabels.cs" />
     <Compile Include="Parser\CodeDom\CodeBlock.cs" />
     <Compile Include="Parser\CodeDom\CodeComplexAssignStatement.cs" />
     <Compile Include="Parser\CodeDom\CodeComplexVariableReferenceExpression.cs" />
-    <Compile Include="Parser\Compile.cs" />
+    <Compile Include="Parser\Statements.cs" />
     <Compile Include="Parser\Construct\ParseHotkey.cs" />
-    <Compile Include="Parser\Function.cs" />
+    <Compile Include="Parser\Texts\Function.cs" />
     <Compile Include="Parser\CodeDom\CodeLine.cs" />
-    <Compile Include="Parser\InternalMethods.cs" />
-    <Compile Include="Parser\MethodReference.cs" />
-    <Compile Include="Parser\MulitlineString.cs" />
+    <Compile Include="Parser\Helpers\InternalMethods.cs" />
+    <Compile Include="Parser\Helpers\MethodReference.cs" />
+    <Compile Include="Parser\Texts\MulitlineString.cs" />
     <Compile Include="Parser\Construct\ParseAssign.cs" />
     <Compile Include="Parser\Construct\ParseCommand.cs" />
     <Compile Include="Parser\Construct\ParseDirective.cs" />
@@ -79,9 +83,9 @@
     <Compile Include="Parser\Construct\ParseLabel.cs" />
     <Compile Include="Parser\Parser.cs" />
     <Compile Include="Parser\Read.cs" />
-    <Compile Include="Parser\StripComment.cs" />
+    <Compile Include="Parser\Texts\Comments.cs" />
     <Compile Include="Parser\Symbols.cs" />
-    <Compile Include="Parser\Token.cs" />
+    <Compile Include="Parser\Texts\Token.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Compiler\MethodCollection.cs" />
     <Compile Include="Compiler\Emission\MethodWriter.cs" />
