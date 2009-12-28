@@ -215,11 +215,28 @@ namespace IronAHK.Scripting
                 return (CodeMethodInvokeExpression)(new CodeComplexVariableReferenceExpression(all));
         }
 
-        CodeMethodInvokeExpression StringConcat(params CodeExpression[] parts)
+        CodeExpression StringConcat(params CodeExpression[] parts)
         {
+            var list = new List<CodeExpression>(parts.Length);
+
+            foreach (CodeExpression part in parts)
+            {
+                if (part is CodePrimitiveExpression)
+                {
+                    var value = ((CodePrimitiveExpression)part).Value;
+                    if (value is string && ((string)value).Length == 0)
+                        continue;
+                }
+
+                list.Add(part);
+            }
+
+            if (list.Count == 1)
+                return list[0];
+
             Type str = typeof(string);
             var method = (CodeMethodReferenceExpression)InternalMethods.Concat;
-            var all = new CodeArrayCreateExpression(str, parts);
+            var all = new CodeArrayCreateExpression(str, list.ToArray());
             return new CodeMethodInvokeExpression(method, all);
         }
 

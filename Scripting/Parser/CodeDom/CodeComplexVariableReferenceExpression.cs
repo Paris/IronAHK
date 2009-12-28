@@ -1,5 +1,6 @@
 ﻿using System;
 using System.CodeDom;
+using System.Collections.Generic;
 
 namespace IronAHK.Scripting
 {
@@ -9,13 +10,24 @@ namespace IronAHK.Scripting
 
         public CodeComplexVariableReferenceExpression(params CodeExpression[] parts)
         {
+            var list = new List<CodeExpression>(parts.Length);
+
             foreach (CodeExpression part in parts)
             {
                 if (!(part is CodePrimitiveExpression || part is CodeComplexVariableReferenceExpression || part is CodeMethodInvokeExpression))
                     throw new ArgumentException();
+
+                if (part is CodePrimitiveExpression)
+                {
+                    var value = ((CodePrimitiveExpression)part).Value;
+                    if (value is string && ((string)value).Length == 0)
+                        continue;
+                }
+
+                list.Add(part);
             }
 
-            this.parts = parts;
+            this.parts = list.ToArray();
         }
 
         public CodeExpression[] Parts
