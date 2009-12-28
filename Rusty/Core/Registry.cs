@@ -20,7 +20,7 @@ namespace IronAHK.Rusty
                     ToRegKey(RootKey, ref sub, true).DeleteSubKey(sub, true);
                 else
                 {
-                    string val = (ValueName).ToLower();
+                    string val = (ValueName).ToLowerInvariant();
                     if (val == "(default)" || val == "ahk_default")
                         val = string.Empty;
                     ToRegKey(RootKey, ref sub, false).DeleteValue(val, true);
@@ -41,7 +41,7 @@ namespace IronAHK.Rusty
             OutputVar = string.Empty;
             try
             {
-                string sub = SubKey, val = ValueName.ToLower();
+                string sub = SubKey, val = ValueName.ToLowerInvariant();
                 if (val == "(default)" || val == "ahk_default")
                     val = string.Empty;
 
@@ -62,7 +62,7 @@ namespace IronAHK.Rusty
         {
             try
             {
-                string sub = SubKey, val = (ValueName).ToLower();
+                string sub = SubKey, val = (ValueName).ToLowerInvariant();
                 if (val == "(default)" || val == "ahk_default")
                     val = string.Empty;
 

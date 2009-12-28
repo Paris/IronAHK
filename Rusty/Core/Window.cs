@@ -204,7 +204,7 @@ namespace IronAHK.Rusty
         [Obsolete, Conditional("LEGACY")]
         public static void DetectHiddenText(string Mode)
         {
-            OnOff(ref Settings.DetectHiddenText, Mode);
+            OnOff(ref _DetectHiddenText, Mode);
         }
 
         /// <summary>
@@ -217,7 +217,7 @@ namespace IronAHK.Rusty
         [Obsolete, Conditional("LEGACY")]
         public static void DetectHiddenWindows(string Mode)
         {
-            OnOff(ref Settings.DetectHiddenWindows, Mode);
+            OnOff(ref _DetectHiddenWindows, Mode);
         }
 
         /// <summary>
@@ -416,7 +416,7 @@ namespace IronAHK.Rusty
         [Obsolete, Conditional("LEGACY")]
         public static void SetControlDelay(int Delay)
         {
-            Settings.ControlDelay = Delay;
+            _ControlDelay = Delay;
         }
 
         /// <summary>
@@ -435,14 +435,14 @@ namespace IronAHK.Rusty
         [Obsolete, Conditional("LEGACY")]
         public static void SetTitleMatchMode(string Mode)
         {
-            switch (Mode.ToLower())
+            switch (Mode.ToLowerInvariant())
             {
-                case "1": Settings.TitleMatchMode = 1; break;
-                case "2": Settings.TitleMatchMode = 2; break;
-                case "3": Settings.TitleMatchMode = 3; break;
-                case Keyword_RegEx: Settings.TitleMatchMode = 4; break;
-                case Keyword_Fast: Settings.TitleMatchModeSpeed = true; break;
-                case Keyword_Slow: Settings.TitleMatchModeSpeed = false; break;
+                case "1": _TitleMatchMode = 1; break;
+                case "2": _TitleMatchMode = 2; break;
+                case "3": _TitleMatchMode = 3; break;
+                case Keyword_RegEx: _TitleMatchMode = 4; break;
+                case Keyword_Fast: _TitleMatchModeSpeed = true; break;
+                case Keyword_Slow: _TitleMatchModeSpeed = false; break;
             }
         }
 
@@ -453,7 +453,7 @@ namespace IronAHK.Rusty
         [Obsolete, Conditional("LEGACY")]
         public static void SetWinDelay(int Delay)
         {
-            Settings.WinDelay = Delay;
+            _WinDelay = Delay;
         }
 
         /// <summary>
@@ -525,8 +525,8 @@ namespace IronAHK.Rusty
             Win32.ShowWindow(hwnd, Win32.SW_SHOWNORMAL);
             Win32.SetForegroundWindow(hwnd);
             Win32.SetActiveWindow(hwnd);
-            if (Settings.WinDelay>=0)
-            Core.Sleep(Settings.WinDelay);
+            if (_WinDelay >= 0)
+                Core.Sleep(_WinDelay ?? 100);
         }
 
         /// <summary>
@@ -580,12 +580,12 @@ namespace IronAHK.Rusty
 
             while (Win32.IsWindowVisible(hwnd))
             {
-                System.Threading.Thread.Sleep(Settings.LoopFrequency);
+                System.Threading.Thread.Sleep(LoopFrequency);
                 if (Environment.TickCount - start > SecondsToWait)
                     break;
             }
-            if (Settings.WinDelay >= 0)
-                Core.Sleep(Settings.WinDelay);
+            if (_WinDelay >= 0)
+                Core.Sleep(_WinDelay ?? 100);
         }
 
         /// <summary>
@@ -790,7 +790,7 @@ namespace IronAHK.Rusty
 
             while (Win32.IsWindowVisible(hwnd))
             {
-                System.Threading.Thread.Sleep(Settings.LoopFrequency);
+                System.Threading.Thread.Sleep(LoopFrequency);
                 if (Environment.TickCount - start > SecondsToWait)
                     break;
             }
@@ -979,7 +979,7 @@ namespace IronAHK.Rusty
 
             while (Win32.FindWindow(WinTitle, WinText, ExcludeTitle, ExcludeText) == IntPtr.Zero)
             {
-                System.Threading.Thread.Sleep(Settings.LoopFrequency);
+                System.Threading.Thread.Sleep(LoopFrequency);
                 if (Environment.TickCount - start > Seconds)
                 {
                     error = 1;
@@ -1010,15 +1010,15 @@ namespace IronAHK.Rusty
 
             while (Win32.FindWindow(WinTitle, WinText, ExcludeTitle, ExcludeText) != Win32.GetForegroundWindow())
             {
-                System.Threading.Thread.Sleep(Settings.LoopFrequency);
+                System.Threading.Thread.Sleep(LoopFrequency);
                 if (Environment.TickCount - start > Seconds)
                 {
                     error = 1;
                     break;
                 }
             }
-            if (Settings.WinDelay >= 0)
-                Core.Sleep(Settings.WinDelay);
+            if (_WinDelay >= 0)
+                Core.Sleep(_WinDelay ?? 100);
         }
 
         /// <summary>
@@ -1043,7 +1043,7 @@ namespace IronAHK.Rusty
 
             while (Win32.FindWindow(WinTitle, WinText, ExcludeTitle, ExcludeText) != IntPtr.Zero)
             {
-                System.Threading.Thread.Sleep(Settings.LoopFrequency);
+                System.Threading.Thread.Sleep(LoopFrequency);
                 if (Environment.TickCount - start > Seconds)
                 {
                     error = 1;
@@ -1074,7 +1074,7 @@ namespace IronAHK.Rusty
 
             while (Win32.FindWindow(WinTitle, WinText, ExcludeTitle, ExcludeText) != Win32.GetActiveWindow())
             {
-                System.Threading.Thread.Sleep(Settings.LoopFrequency);
+                System.Threading.Thread.Sleep(LoopFrequency);
                 if (Environment.TickCount - start > Seconds)
                 {
                     error = 1;

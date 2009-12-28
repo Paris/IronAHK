@@ -12,9 +12,9 @@ namespace IronAHK.Rusty
 {
     partial class Core
     {
-        static bool OnOff(ref bool state, string mode)
+        static bool OnOff(ref bool? state, string mode)
         {
-            switch (mode.ToLower())
+            switch (mode.ToLowerInvariant())
             {
                 case "1":
                 case Keyword_On:
@@ -31,6 +31,37 @@ namespace IronAHK.Rusty
             }
 
             return true;
+        }
+
+        static string ToYYYYMMDDHH24MISS(DateTime time)
+        {
+            return time.ToString("yyyyMMddHHmmss");
+        }
+
+        static string ToOSType(PlatformID id)
+        {
+            switch (id)
+            {
+                case PlatformID.MacOSX: return "MACOSX";
+                case PlatformID.Unix: return "UNIX";
+                case PlatformID.Win32NT: return "WIN32_NT";
+                case PlatformID.Win32S: return "WIN32_S";
+                case PlatformID.Win32Windows: return "WIN32_WINDOWS";
+                case PlatformID.WinCE: return "WINCE";
+                case PlatformID.Xbox: return "XBOX";
+                default: return "UNKNOWN";
+            }
+        }
+
+        static string ToStringCaseSense(StringComparison type)
+        {
+            switch (type)
+            {
+                case StringComparison.CurrentCultureIgnoreCase: return Keyword_Locale;
+                case StringComparison.Ordinal: return Keyword_On;
+                case StringComparison.OrdinalIgnoreCase: return Keyword_Off;
+                default: return Keyword_Off;
+            }
         }
 
         static FileAttributes ToFileAttribs(string set, FileAttributes attribs)
@@ -355,8 +386,8 @@ namespace IronAHK.Rusty
                 if (!enable || state == '+')
                     opts[i] = opts[i].Substring(1);
 
-                string mode = opts[i].Trim().ToLower();
-                switch (opts[i].Trim().ToLower())
+                string mode = opts[i].Trim().ToLowerInvariant();
+                switch (opts[i].Trim().ToLowerInvariant())
                 {
                     case Keyword_Check: row.Checked = enable; break;
                     case Keyword_Focus: row.Focused = enable; break;
@@ -399,7 +430,7 @@ namespace IronAHK.Rusty
 
             if (Lowercase)
                 for (i = 0; i < Exceptions.Length; i++)
-                    Exceptions[i] = char.ToLower(Exceptions[i]);
+                    Exceptions[i] = char.ToLowerInvariant(Exceptions[i]);
             i = 0;
 
             while (i < Options.Length)
@@ -425,7 +456,7 @@ namespace IronAHK.Rusty
 
                     key = buf[0];
                     if (Lowercase)
-                        key = char.ToLower(key);
+                        key = char.ToLowerInvariant(key);
 
                     foreach (char ex in Exceptions)
                         if (key == ex)
@@ -469,7 +500,7 @@ namespace IronAHK.Rusty
             {
                 if (char.IsWhiteSpace(opt))
                 {
-                    key = key.ToLower();
+                    key = key.ToLowerInvariant();
                     if (table.ContainsKey(key))
                         table[key] = mode;
                     else
@@ -495,7 +526,7 @@ namespace IronAHK.Rusty
             {
                 if (!char.IsLetterOrDigit(Options, i))
                 {
-                    list.Add(Options.Substring(j, i).ToLower());
+                    list.Add(Options.Substring(j, i).ToLowerInvariant());
                     j = i;
                 }
             }

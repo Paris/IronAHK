@@ -20,7 +20,7 @@ namespace IronAHK.Rusty
                     row.SubItems.Add(field);
                 LV_RowOptions(ref row, Options);
 
-                Settings.GUI.ListView.Items.Add(row);
+                DefaultGUI.ListView.Items.Add(row);
                 return row.Index + 1;
             }
             catch (Exception) { return 0; }
@@ -35,7 +35,7 @@ namespace IronAHK.Rusty
         {
             try
             {
-                Settings.GUI.ListView.Items[RowNumber].Remove();
+                DefaultGUI.ListView.Items[RowNumber].Remove();
                 return true;
             }
             catch (Exception) { return false; }
@@ -50,7 +50,7 @@ namespace IronAHK.Rusty
         {
             try
             {
-                Settings.GUI.ListView.Columns.RemoveAt(ColumnNumber);
+                DefaultGUI.ListView.Columns.RemoveAt(ColumnNumber);
                 return true;
             }
             catch (Exception) { return false; }
@@ -63,11 +63,11 @@ namespace IronAHK.Rusty
         /// <returns></returns>
         public static int LV_GetCount(string Type)
         {
-            Type = Type.ToLower();
+            Type = Type.ToLowerInvariant();
             if (Type == Keyword_Selected || (Type.Length == 1 && Type[0] == Keyword_Selected[0]))
-                return Settings.GUI.ListView.SelectedItems.Count;
+                return DefaultGUI.ListView.SelectedItems.Count;
             else if (Type == Keyword_Column || (Type.Length == 1 && Type[0] == Keyword_Column[0]))
-                return Settings.GUI.ListView.Columns.Count;
+                return DefaultGUI.ListView.Columns.Count;
             else throw new ArgumentOutOfRangeException(); // graceful error instead?
         }
 
@@ -79,7 +79,7 @@ namespace IronAHK.Rusty
         /// <returns></returns>
         public static int LV_GetNext(int StartingRowNumber, string Mode)
         {
-            ListView lv = Settings.GUI.ListView;
+            ListView lv = DefaultGUI.ListView;
             var opts = ParseKeys(Mode);
             bool check = opts.Contains("c") || opts.Contains("checked");
             bool focus = opts.Contains("f") || opts.Contains("focused");
@@ -105,7 +105,7 @@ namespace IronAHK.Rusty
         {
             try
             {
-                ListView lv = Settings.GUI.ListView;
+                ListView lv = DefaultGUI.ListView;
                 OutputVar = RowNumber < 1 ? lv.Columns[ColumnNumber].Text : lv.Items[RowNumber].SubItems[ColumnNumber - 1].Text;
                 return true;
             }
@@ -136,7 +136,7 @@ namespace IronAHK.Rusty
         /// <returns></returns>
         public static int LV_InsertCol(int ColumnNumber, string Options, string ColumnTitle)
         {
-            ListView lv = Settings.GUI.ListView;
+            ListView lv = DefaultGUI.ListView;
             ColumnHeader col = new ColumnHeader();
             LV_ColOptions(ref col, Options);
             lv.Columns.Insert(ColumnNumber - 1, col);
@@ -167,7 +167,7 @@ namespace IronAHK.Rusty
         {
             try
             {
-                ListView lv = Settings.GUI.ListView;
+                ListView lv = DefaultGUI.ListView;
                 if (ColumnTitle.Length != 0)
                     lv.Columns[ColumnNumber].Text = ColumnTitle;
                 ColumnHeader col = lv.Columns[ColumnNumber];

@@ -73,6 +73,7 @@
     <Compile Include="Core\Flow.cs" />
     <Compile Include="Core\Formats.cs" />
     <Compile Include="Core\Functions.cs" />
+    <Compile Include="Core\GUI\Sub.cs" />
     <Compile Include="Core\GUI\GUI.cs" />
     <Compile Include="Core\GUI\ImageList.cs" />
     <Compile Include="Core\GUI\ListView.cs" />

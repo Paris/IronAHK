@@ -104,7 +104,7 @@ namespace IronAHK.Rusty
         /// <para>(optional) Timeout in seconds (can contain a decimal point but cannot be an expression).  If this value exceeds 2147483 (24.8 days), it will be set to 2147483.  After the timeout has elapsed the message box will be automatically closed and the IfMsgBox command will see the value TIMEOUT.</para>
         /// <para>Known limitation: If the MsgBox contains only an OK button, IfMsgBox will think that the OK button was pressed if the MsgBox times out while its own thread is interrupted by another.</para>
         /// </param>
-        public static void MsgBox(int Options, string Title, string Text, int Timeout)
+        public static DialogResult MsgBox(int Options, string Title, string Text, int Timeout)
         {
             MessageBoxButtons buttons = MessageBoxButtons.OK;
             switch (Options & 0xf)
@@ -144,7 +144,7 @@ namespace IronAHK.Rusty
                 case 1048576: options = MessageBoxOptions.RtlReading; break;
             }
 
-            Settings.MsgBox = MessageBox.Show(Text, Title, buttons, icon, defaultbutton,
+            return MessageBox.Show(Text, Title, buttons, icon, defaultbutton,
                 options ?? default(MessageBoxOptions),
                 (Options & 0xf000) == 16384);
         }
@@ -200,137 +200,19 @@ namespace IronAHK.Rusty
 
         }
 
-        private static IntPtr[] g_hWndToolTip = new IntPtr[50]; //pointers to 50 tooltips
         /// <summary>
         /// Creates an always-on-top window anywhere on the screen.
         /// </summary>
-        /// <param name="aText">
+        /// <param name="Text">
         /// <para>If blank or omitted, the existing tooltip (if any) will be hidden. Otherwise, this parameter is the text to display in the tooltip. To create a multi-line tooltip, use the linefeed character (`n) in between each line, e.g. Line1`nLine2.</para>
         /// <para>If Text is long, it can be broken up into several shorter lines by means of a continuation section, which might improve readability and maintainability.</para>
         /// </param>
-        /// <param name="aX">The X position of the tooltip relative to the active window (use "CoordMode, ToolTip" to change to screen coordinates). If the coordinates are omitted, the tooltip will be shown near the mouse cursor. X and Y can be expressions.</param>
-        /// <param name="aY">The Y position (see <paramref name="X"/>).</param>
-        /// <param name="aID">Omit this parameter if you don't need multiple tooltips to appear simultaneously. Otherwise, this is a number between 1 and 20 to indicate which tooltip window to operate upon. If unspecified, that number is 1 (the first).</param>
-        public static bool ToolTip(string aText, System.Nullable<int> aX, System.Nullable<int> aY, System.Nullable<int> aID)
+        /// <param name="X">The X position of the tooltip relative to the active window (use "CoordMode, ToolTip" to change to screen coordinates). If the coordinates are omitted, the tooltip will be shown near the mouse cursor. X and Y can be expressions.</param>
+        /// <param name="Y">The Y position (see <paramref name="X"/>).</param>
+        /// <param name="ID">Omit this parameter if you don't need multiple tooltips to appear simultaneously. Otherwise, this is a number between 1 and 20 to indicate which tooltip window to operate upon. If unspecified, that number is 1 (the first).</param>
+        public static void ToolTip(string Text, int X, int Y, int ID)
         {
-            
-            int window_index = 0;
-            if (aID.HasValue) { window_index = (int)(aID) - 1; }
-            if (window_index < 0 | window_index >= 50) return false;
-            IntPtr tip_hwnd = g_hWndToolTip[window_index];
-
-            if (aText == "")
-            {
-                if (tip_hwnd != IntPtr.Zero & Win32.IsWindow(tip_hwnd))
-                {
-                    Win32.SendMessage(tip_hwnd, 0x10, IntPtr.Zero, IntPtr.Zero); //WM_Close
-                }
-                g_hWndToolTip[window_index] = IntPtr.Zero;
-                return true;
-            }
-
-            Win32.RECT dtw = new Win32.RECT();
-            Win32.GetVirtualDesktopRect(out dtw);
-
-            bool one_or_both_coords_unspecified = (!aX.HasValue | !aY.HasValue);
-            POINTAPI pt = new POINTAPI();
-            POINTAPI pt_cursor = new POINTAPI();
-
-            if (one_or_both_coords_unspecified)
-            {
-                GetCursorPos(out pt_cursor);
-                pt.x = pt_cursor.x + 16;  // Set default spot to be near the mouse cursor.
-                pt.y = pt_cursor.y + 16;  // Use 16 to prevent the tooltip from overlapping large cursors.
-            }
-            Win32.RECT rect = new Win32.RECT();
-
-            if ((aX.HasValue | aY.HasValue) & Settings.CoordMode.ToolTip)
-            {
-                if (!Win32.GetWindowRect(Win32.GetForegroundWindow(), out rect))
-                    return true;  // Don't bother setting ErrorLevel with this command.
-            }
-            //else leave all of rect's members initialized to zero.
-
-            // This will also convert from relative to screen coordinates if rect contains non-zero values:
-            if (aX.HasValue)
-                pt.x = (int)aX + (int)rect.Left;
-            if (aY.HasValue)
-                pt.y = (int)aY + (int)rect.Top;
-
-            System.Windows.Forms.CreateParams cp = new System.Windows.Forms.CreateParams();
-            // fill in our create params
-            cp.ClassName = API.TOOLTIPS_CLASS;
-            cp.Style = API.TTS_NOPREFIX | API.TTS_ALWAYSTIP;
-
-            // create and fill in the tool tip info
-            API.TOOLINFO ti = new API.TOOLINFO();
-            
-            ti.uFlags = API.TTF_TRANSPARENT | API.TTF_TRACK | API.TTF_ABSOLUTE;
-            ti.lpszText = aText;
-            ti.cbSize = Marshal.SizeOf(ti);
-
-            if (tip_hwnd == IntPtr.Zero | !Win32.IsWindow(tip_hwnd))
-            {
-                // create the tooltip window
-                NativeWindow toolTip = new NativeWindow();
-                toolTip.CreateHandle(cp);
-                tip_hwnd = g_hWndToolTip[window_index] = toolTip.Handle;
-                API.SendMessage(tip_hwnd, API.TTM_SETMAXTIPWIDTH, 0, Win32.GetSystemMetrics(0));
-                //API.SendMessage(tip_hwnd, API.TTM_ADDTOOL, 0, ref ti);
-
-                if (Marshal.SystemDefaultCharSize == 1)
-                    API.SendMessage(tip_hwnd, API.TTM_ADDTOOLA, 0, ref ti); //Win9x machines
-                else
-                    API.SendMessage(tip_hwnd, API.TTM_ADDTOOLW, 0, ref ti); //WinNT machines
-
-                API.SendMessage(tip_hwnd, API.TTM_TRACKPOSITION, 0, (pt.y << 16) + pt.x);
-                API.SendMessage(tip_hwnd, API.TTM_TRACKACTIVATE, 1, ref ti);
-            }
-            if (Marshal.SystemDefaultCharSize == 1)
-                API.SendMessage(tip_hwnd, API.TTM_UPDATETIPTEXTA, 0, ref ti); //Win9x machines
-            else
-                API.SendMessage(tip_hwnd, API.TTM_UPDATETIPTEXTW, 0, ref ti); //WinNT machines
-
-            Win32.RECT ttw = new Win32.RECT();
-            Win32.GetWindowRect(tip_hwnd, out ttw); // Must be called this late to ensure the tooltip has been created by above.
-            int tt_width = ttw.Right - ttw.Left;
-            int tt_height = ttw.Bottom - ttw.Top;
-
-            // v1.0.21: Revised for multi-monitor support.  I read somewhere that dtw.left can be negative (perhaps
-            // if the secondary monitor is to the left of the primary).  So it seems best to assume it is possible:
-            if (pt.x + tt_width >= dtw.Right)
-                pt.x = dtw.Right - tt_width - 1;
-            if (pt.y + tt_height >= dtw.Bottom)
-                pt.y = dtw.Bottom - tt_height - 1;
-
-            if (one_or_both_coords_unspecified)
-            {
-                // Since Tooltip is being shown at the cursor's coordinates, try to ensure that the above
-                // adjustment doesn't result in the cursor being inside the tooltip's window boundaries,
-                // since that tends to cause problems such as blocking the tray area (which can make a
-                // tootip script impossible to terminate).  Normally, that can only happen in this case
-                // (one_or_both_coords_unspecified == true) when the cursor is near the buttom-right
-                // corner of the screen (unless the mouse is moving more quickly than the script's
-                // ToolTip update-frequency can cope with, but that seems inconsequential since it
-                // will adjust when the cursor slows down):
-                ttw.Left = pt.x;
-                ttw.Top = pt.y;
-                ttw.Right = ttw.Left + tt_width;
-                ttw.Bottom = ttw.Top + tt_height;
-                if ((pt_cursor.x >= ttw.Left) & (pt_cursor.x <= ttw.Right) & (pt_cursor.y >= ttw.Top) & (pt_cursor.y <= ttw.Bottom))
-                {
-                    // Push the tool tip to the upper-left side, since normally the only way the cursor can
-                    // be inside its boundaries (when one_or_both_coords_unspecified == true) is when the
-                    // cursor is near the bottom right corner of the screen.
-                    pt.x = pt_cursor.x - tt_width - 3;    // Use a small offset since it can't overlap the cursor
-                    pt.y = pt_cursor.y - tt_height - 3;   // when pushed to the the upper-left side of it.
-                }
-            }
-            API.SendMessage(tip_hwnd, API.TTM_TRACKPOSITION, 0, (pt.y << 16) + pt.x);
-            //And do a TTM_TRACKACTIVATE even if the tooltip window already existed upon entry to this function,
-            //so that in case it was hidden or dismissed while its HWND still exists, it will be shown again:
-            API.SendMessage(tip_hwnd, API.TTM_TRACKACTIVATE, 1, ref ti);
-            return true;
+            // TODO: ToolTip
         }
 
         /// <summary>
@@ -352,7 +234,7 @@ namespace IronAHK.Rusty
         /// </param>
         /// <param name="Options">
         /// <para>Specify one of the following digits to have a small icon appear to the left of Title:</para>
-        /// <list type="">
+        /// <list>
         /// <item>1: Info icon</item>
         /// <item>2: Warning icon</item>
         /// <item>3: Error icon</item>
@@ -361,80 +243,19 @@ namespace IronAHK.Rusty
         /// </param>
         public static void TrayTip(string Title, string Text, int Seconds, int Options)
         {
-            Settings.Tray.ShowBalloonTip(Seconds * 1000, Title, Text,
-                Options == 1 ? ToolTipIcon.Info : Options == 2 ? ToolTipIcon.Warning :
-                Options == 3 ? ToolTipIcon.Error : ToolTipIcon.None);
-        }
+            if (Tray == null)
+                Tray = new NotifyIcon();
 
-        #region API class
+            ToolTipIcon icon = ToolTipIcon.None;
 
-        internal sealed class API
-        {
-            public const int WM_USER = 0x0400;
-            public const int TTM_SETDELAYTIME = API.WM_USER + 3;
-            public const int TTM_RELAYEVENT = WM_USER + 7;
-            public const int TTM_TRACKACTIVATE = WM_USER + 17;
-            public const int TTM_TRACKPOSITION = WM_USER + 18;
-            public const int TTM_SETMAXTIPWIDTH = 0x418;
-
-            public const string TOOLTIPS_CLASS = "tooltips_class32";
-            public const int TTS_ALWAYSTIP = 0x01;
-            public const int TTS_NOPREFIX = 0x02;
-            public const int TTS_BALLOON = 0x40;
-            public const int WS_POPUP = unchecked((int)0x80000000);
-            public const int TTF_SUBCLASS = 0x0010;
-            public const int TTF_TRANSPARENT = 0x0100;
-            public const int TTF_CENTERTIP = 0x0002;
-            public const int TTF_ABSOLUTE = 0x0080;
-            public const int TTF_TRACK = 0x0020;
-            public const int TTM_ADDTOOLA = 1028;
-            public const int TTM_ADDTOOLW = 1074;
-            public const int TTM_UPDATETIPTEXTA = 0x40C;
-            public const int TTM_UPDATETIPTEXTW = 0x439;
-            public const int ICC_WIN95_CLASSES = 0x000000FF;
-            public const int SWP_NOSIZE = 0x0001;
-            public const int SWP_NOMOVE = 0x0002;
-            public const int SWP_NOACTIVATE = 0x0010;
-            public static readonly IntPtr HWND_TOPMOST = new IntPtr(-1);
-
-            [StructLayout(LayoutKind.Sequential)]
-            public struct TOOLINFO
+            switch (Options)
             {
-                public int cbSize;
-                public int uFlags;
-                public IntPtr hwnd;
-                public IntPtr uId;
-                public Win32.RECT rect;
-                public IntPtr hinst;
-                [MarshalAs(UnmanagedType.LPTStr)]
-                public string lpszText;
-                public uint lParam;
+                case 1: icon = ToolTipIcon.Info; break;
+                case 2: icon = ToolTipIcon.Warning; break;
+                case 3: icon = ToolTipIcon.Error; break;
             }
 
-            [DllImport("User32", SetLastError = true)]
-            public static extern int SendMessage(
-            IntPtr hWnd,
-            int Msg,
-            int wParam,
-            ref TOOLINFO lParam);
-
-            [DllImport("User32", SetLastError = true)]
-            public static extern int SendMessage(
-            IntPtr hWnd,
-            int Msg,
-            int wParam,
-            int lParam);
-
-            [DllImport("User32", SetLastError = true)]
-            public static extern bool SetWindowPos(
-            IntPtr hWnd,
-            IntPtr hWndInsertAfter,
-            int X,
-            int Y,
-            int cx,
-            int cy,
-            int uFlags);
+            Tray.ShowBalloonTip(Seconds * 1000, Title, Text, icon);
         }
-        #endregion
     }
 }

@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Timers;
 using System.Windows.Forms;
@@ -110,12 +109,10 @@ namespace IronAHK.Rusty
         /// <para>(The 20ms is just an example.) If the value ends in ms, it indicates how often the script should sleep (each sleep is 10 ms long). In the following example, the script will sleep for 10ms every time it has run for 20ms: <example>SetBatchLines, 20ms</example></para>
         /// <para>The number of script lines to execute prior to sleeping for 10ms. The value can be as high as 9223372036854775807. Also, this mode is mutually exclusive of the 20ms mode in the previous paragraph; that is, only one of them can be in effect at a time.</para>
         /// </param>
+        [Obsolete, Conditional("LEGACY")]
         public static void SetBatchLines(string LineCount)
         {
-            int pos = LineCount.ToLower().IndexOf("ms");
-            bool line = pos == -1;
-            int n = int.Parse(line ? LineCount : LineCount.Substring(0, pos));
-            Settings.BatchLines = line ? n : -n;
+            throw new NotSupportedException();
         }
 
         /// <summary>
@@ -197,8 +194,6 @@ namespace IronAHK.Rusty
                 }
             });
         }
-
-        static Dictionary<string, System.Timers.Timer> timers = new Dictionary<string, System.Timers.Timer>();
 
         /// <summary>
         /// Waits the specified amount of time before continuing.

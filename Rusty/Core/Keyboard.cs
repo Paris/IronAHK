@@ -264,14 +264,14 @@ namespace IronAHK.Rusty
         public static void SendMode(string Mode)
         {
             char m = 'e';
-            switch (Mode.Trim().ToLower())
+            switch (Mode.Trim().ToLowerInvariant())
             {
                 case "event": m = 'e'; break;
                 case "input": m = 'i'; break;
                 case "inputthenplay": m = 't'; break;
                 case "play": m = 'p'; break;
             }
-            Settings.SendMode = m;
+            _SendMode = m;
         }
 
         /// <summary>
@@ -321,8 +321,8 @@ namespace IronAHK.Rusty
         /// <param name="Play">The word Play applies the above settings to the SendPlay mode rather than the traditional SendEvent mode. If a script never uses this parameter, the delay is always -1/-1 for SendPlay.</param>
         public static void SetKeyDelay(int Delay, int PressDuration, bool Play)
         {
-            Settings.KeyDelay = Delay;
-            Settings.KeyPressDuration = PressDuration;
+            _KeyDelay = Delay;
+            _KeyPressDuration = PressDuration;
         }
 
         /// <summary>
