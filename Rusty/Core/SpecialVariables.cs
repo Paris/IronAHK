@@ -1,37 +1,35 @@
 ﻿using System;
-using System.Diagnostics;
 using System.IO;
+using System.Net;
+using System.Reflection;
+using System.Security.Principal;
 
 namespace IronAHK.Rusty
 {
     partial class Core
     {
         /// <summary>
-        /// <para>For non-compiled scripts: The full path and name of the EXE file that is actually running the current script. For example: C:\Program Files\AutoHotkey\AutoHotkey.exe</para>
-        /// <para>For compiled scripts: The same as the above except the AutoHotkey directory is discovered via the registry entry HKEY_LOCAL_MACHINE\SOFTWARE\AutoHotkey\InstallDir. If there is no such entry, A_AhkPath is blank.</para>
+        /// The full path of the assembly that is currently executing.
         /// </summary>
         public static string A_AhkPath
         {
-            get { return string.Empty; }
-            /*set { Settings.AhkPath = value; }*/
+            get { return Assembly.GetExecutingAssembly().Location; }
         }
 
         /// <summary>
-        /// In versions prior to 1.0.22, this variable is blank. Otherwise, it contains the version of AutoHotkey that is running the script, such as 1.0.22. In the case of a compiled script, the version that was originally used to compile it is reported. The formatting of the version number allows a script to check whether A_AhkVersion is greater than some minimum version number with > or >= as in this example: if A_AhkVersion >= 1.0.25.07
+        /// The version of the assembly that is currently executing.
         /// </summary>
         public static string A_AhkVersion
         {
-            get { return string.Empty; }
-            /*set { Settings.AhkVersion = value; }*/
+            get { return Assembly.GetExecutingAssembly().GetName().Version.ToString(); }
         }
 
         /// <summary>
-        /// The full path and name of the folder containing the current user's application-specific data. For example: C:\Documents and Settings\Username\Application Data
+        /// The full path and name of the folder containing the current user's application-specific data. For example: <code>C:\Documents and Settings\Username\Application Data</code>
         /// </summary>
         public static string A_AppData
         {
-            get { return string.Empty; }
-            /*set { Settings.AppData = value; }*/
+            get { return Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData); }
         }
 
         /// <summary>
@@ -39,26 +37,24 @@ namespace IronAHK.Rusty
         /// </summary>
         public static string A_AppDataCommon
         {
-            get { return string.Empty; }
-            /*set { Settings.AppDataCommon = value; }*/
+            get { return Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData); }
         }
 
         /// <summary>
-        /// The current mode (On or Off) set by AutoTrim.
+        /// The current mode (<code>On</code> or <code>Off</code>) set by <see cref="AutoTrim"/>.
         /// </summary>
         public static string A_AutoTrim
         {
-            get { return string.Empty; }
-            /*set { Settings.AutoTrim = value; }*/
+            get { return _AutoTrim ?? true ? Keyword_On : Keyword_Off; }
         }
 
         /// <summary>
         /// (synonymous with A_NumBatchLines) The current value as set by SetBatchLines. Examples: 200 or 10ms (depending on format).
         /// </summary>
+        [Obsolete]
         public static string A_BatchLines
         {
-            get { return string.Empty; }
-            /*set { Settings.BatchLines = value; }*/
+            get { return null; }
         }
 
         /// <summary>
@@ -67,7 +63,6 @@ namespace IronAHK.Rusty
         public static string A_CaretX
         {
             get { return string.Empty; }
-            /*set { Settings.CaretX = value; }*/
         }
 
         /// <summary>
@@ -76,7 +71,6 @@ namespace IronAHK.Rusty
         public static string A_CaretY
         {
             get { return string.Empty; }
-            /*set { Settings.CaretY = value; }*/
         }
         
         /// <summary>
@@ -84,17 +78,15 @@ namespace IronAHK.Rusty
         /// </summary>
         public static string A_ComputerName
         {
-            get { return string.Empty; }
-            /*set { Settings.ComputerName = value; }*/
+            get { return Environment.MachineName; }
         }
 
         /// <summary>
-        /// The current delay set by SetControlDelay (always decimal, not hex).
+        /// The current delay set by <see cref="SetControlDelay"/>.
         /// </summary>
-        public static string A_ControlDelay
+        public static int A_ControlDelay
         {
-            get { return string.Empty; }
-            /*set { Settings.ControlDelay = value; }*/
+            get { return _ControlDelay ?? 20; }
         }
 
         /// <summary>
@@ -102,40 +94,39 @@ namespace IronAHK.Rusty
         /// </summary>
         public static string A_Cursor
         {
-            get { return string.Empty; }
-            /*set { Settings.Cursor = value; }*/
+            get { return null; }
         }
 
         /// <summary>
         /// See <see cref="A_MDay"/>.
         /// </summary>
-        public static int A_DD { get { return A_MDay; } }
+        public static string A_DD
+        {
+            get { return A_MDay; }
+        }
 
         /// <summary>
-        /// Current day of the week's 3-letter abbreviation in the current user's language, e.g. Sun
+        /// Current day of the week's 3-letter abbreviation in the current user's language, e.g. <code>Sun</code>.
         /// </summary>
         public static string A_DDD
         {
-            get { return string.Empty; }
-            /*set { Settings.DDD = value; }*/
+            get { return DateTime.Now.ToString("ddd"); }
         }
 
         /// <summary>
-        /// Current day of the week's full name in the current user's language, e.g. Sunday
+        /// Current day of the week's full name in the current user's language, e.g. <code>Sunday</code>.
         /// </summary>
         public static string A_DDDD
         {
-            get { return string.Empty; }
-            /*set { Settings.DDDD = value; }*/
+            get { return DateTime.Now.ToString("dddd"); }
         }
 
         /// <summary>
-        /// The current speed set by SetDefaultMouseSpeed (always decimal, not hex).
+        /// The current speed set by <see cref="SetDefaultMouseSpeed"/>.
         /// </summary>
-        public static string A_DefaultMouseSpeed
+        public static int A_DefaultMouseSpeed
         {
-            get { return string.Empty; }
-            /*set { Settings.DefaultMouseSpeed = value; }*/
+            get { return _DefaultMouseSpeed ?? 2; }
         }
 
         /// <summary>
@@ -143,8 +134,7 @@ namespace IronAHK.Rusty
         /// </summary>
         public static string A_Desktop
         {
-            get { return string.Empty; }
-            /*set { Settings.Desktop = value; }*/
+            get { return Environment.GetFolderPath(Environment.SpecialFolder.Desktop); }
         }
 
         /// <summary>
@@ -152,26 +142,23 @@ namespace IronAHK.Rusty
         /// </summary>
         public static string A_DesktopCommon
         {
-            get { return string.Empty; }
-            /*set { Settings.DesktopCommon = value; }*/
+            get { return Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory); }
         }
 
         /// <summary>
-        /// The current mode (On or Off) set by DetectHiddenText.
+        /// The current mode (<code>On</code> or <code>Off</code>) set by <see cref="DetectHiddenText"/>.
         /// </summary>
         public static string A_DetectHiddenText
         {
-            get { return string.Empty; }
-            /*set { Settings.DetectHiddenText = value; }*/
+            get { return _DetectHiddenText ?? true ? Keyword_On : Keyword_Off; }
         }
 
         /// <summary>
-        /// The current mode (On or Off) set by DetectHiddenWindows.
+        /// The current mode (<code>On</code> or <code>Off</code>) set by <see cref="DetectHiddenWindows"/>.
         /// </summary>
         public static string A_DetectHiddenWindows
         {
-            get { return string.Empty; }
-            /*set { Settings.DetectHiddenWindows = value; }*/
+            get { return _DetectHiddenWindows ?? false ? Keyword_On : Keyword_Off; }
         }
 
         /// <summary>
@@ -179,8 +166,7 @@ namespace IronAHK.Rusty
         /// </summary>
         public static string A_EndChar
         {
-            get { return string.Empty; }
-            /*set { Settings.EndChar = value; }*/
+            get { return null; }
         }
 
         /// <summary>
@@ -194,8 +180,7 @@ namespace IronAHK.Rusty
         /// </summary>
         public static string A_EventInfo
         {
-            get { return string.Empty; }
-            /*set { Settings.EventInfo = value; }*/
+            get { return null; }
         }
 
         /// <summary>
@@ -203,26 +188,25 @@ namespace IronAHK.Rusty
         /// </summary>
         public static string A_ExitReason
         {
-            get { return string.Empty; }
-            /*set { Settings.ExitReason = value; }*/
+            get { return null; }
         }
 
         /// <summary>
-        /// The current floating point number format set by SetFormat.
+        /// The current floating point number format set by <see cref="SetFormat"/>.
         /// </summary>
         public static string A_FormatFloat
         {
-            get { return string.Empty; }
-            /*set { Settings.FormatFloat = value; }*/
+            get { return _FormatFloat ?? "0.6"; }
+            // TODO: SetFormat to set_A_FormatFloat
         }
 
         /// <summary>
-        /// The current integer format (H or D) set by SetFormat.
+        /// The current integer format (<code>H</code> or <code>D</code>) set by <see cref="SetFormat"/>.
         /// </summary>
-        public static string A_FormatInteger
+        public static char A_FormatInteger
         {
-            get { return string.Empty; }
-            /*set { Settings.FormatInteger = value; }*/
+            get { return _FormatInteger ?? 'D'; }
+            // TODO: SetFormat to set_A_FormatInteger
         }
 
         /// <summary>
@@ -230,8 +214,7 @@ namespace IronAHK.Rusty
         /// </summary>
         public static string A_Gui
         {
-            get { return string.Empty; }
-            /*set { Settings.Gui = value; }*/
+            get { return null; }
         }
 
         /// <summary>
@@ -243,8 +226,7 @@ namespace IronAHK.Rusty
         /// </summary>
         public static string A_GuiEvent
         {
-            get { return string.Empty; }
-            /*set { Settings.GuiEvent = value; }*/
+            get { return null; }
         }
 
         /// <summary>
@@ -252,8 +234,7 @@ namespace IronAHK.Rusty
         /// </summary>
         public static string A_GuiControl
         {
-            get { return string.Empty; }
-            /*set { Settings.GuiControl = value; }*/
+            get { return null; }
         }
 
         /// <summary>
@@ -261,8 +242,7 @@ namespace IronAHK.Rusty
         /// </summary>
         public static string A_GuiControlEvent
         {
-            get { return string.Empty; }
-            /*set { Settings.GuiControlEvent = value; }*/
+            get { return null; }
         }
 
         /// <summary>
@@ -270,8 +250,7 @@ namespace IronAHK.Rusty
         /// </summary>
         public static string A_GuiHeight
         {
-            get { return string.Empty; }
-            /*set { Settings.GuiHeight = value; }*/
+            get { return null; }
         }
 
         /// <summary>
@@ -279,8 +258,7 @@ namespace IronAHK.Rusty
         /// </summary>
         public static string A_GuiWidth
         {
-            get { return string.Empty; }
-            /*set { Settings.GuiWidth = value; }*/
+            get { return null; }
         }
 
         /// <summary>
@@ -288,8 +266,7 @@ namespace IronAHK.Rusty
         /// </summary>
         public static string A_GuiX
         {
-            get { return string.Empty; }
-            /*set { Settings.GuiX = value; }*/
+            get { return null; }
         }
 
         /// <summary>
@@ -297,17 +274,15 @@ namespace IronAHK.Rusty
         /// </summary>
         public static string A_GuiY
         {
-            get { return string.Empty; }
-            /*set { Settings.GuiY = value; }*/
+            get { return null; }
         }
 
         /// <summary>
-        /// Current 2-digit hour (00-23) in 24-hour time (for example, 17 is 5pm). To retrieve 12-hour time as well as an AM/PM indicator, follow this example: FormatTime, OutputVar, , h:mm:ss tt
+        /// Current 2-digit hour (00-23) in 24-hour time (for example, 17 is 5pm).
         /// </summary>
         public static string A_Hour
         {
-            get { return string.Empty; }
-            /*set { Settings.Hour = value; }*/
+            get { return DateTime.Now.ToString("HH"); }
         }
 
         /// <summary>
@@ -315,8 +290,7 @@ namespace IronAHK.Rusty
         /// </summary>
         public static string A_IconFile
         {
-            get { return string.Empty; }
-            /*set { Settings.IconFile = value; }*/
+            get { return null; }
         }
 
         /// <summary>
@@ -324,8 +298,7 @@ namespace IronAHK.Rusty
         /// </summary>
         public static string A_IconHidden
         {
-            get { return string.Empty; }
-            /*set { Settings.IconHidden = value; }*/
+            get { return null; }
         }
 
         /// <summary>
@@ -333,8 +306,7 @@ namespace IronAHK.Rusty
         /// </summary>
         public static string A_IconNumber
         {
-            get { return string.Empty; }
-            /*set { Settings.IconNumber = value; }*/
+            get { return null; }
         }
 
         /// <summary>
@@ -342,8 +314,7 @@ namespace IronAHK.Rusty
         /// </summary>
         public static string A_IconTip
         {
-            get { return string.Empty; }
-            /*set { Settings.IconTip = value; }*/
+            get { return null; }
         }
 
         /// <summary>
@@ -397,75 +368,78 @@ namespace IronAHK.Rusty
         }
 
         /// <summary>
-        /// The IP addresses of the network adapter in the computer.
+        /// The IP addresses of the network adapters in the computer.
         /// </summary>
         public static string[] A_IPAddress
         {
-            get { return new string[] { string.Empty }; }
+            get
+            {
+                var addr = Dns.GetHostEntry(Dns.GetHostName()).AddressList;
+                string[] ips = new string[addr.Length];
+
+                for (int i = 0; i < addr.Length; i++)
+                    if (addr[i].AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
+                        ips[i] = addr[i].ToString();
+
+                return ips;
+            }
         }
 
         /// <summary>
-        /// <para>If the current user has admin rights, this variable contains 1. Otherwise, it contains 0. Under Windows 95/98/Me, this variable always contains 1.</para>
-        /// <para>On Windows Vista, some scripts might require administrator privileges to function properly (such as a script that interacts with a process or window that is run as administrator).</para>
+        /// <code>true</code> if the current user has administrator rights, <code>false</code> otherwise.
         /// </summary>
-        public static string A_ISAdmin
+        public static bool A_ISAdmin
         {
-            get { return string.Empty; }
-            /*set { Settings.ISAdmin = value; }*/
+            get { return new WindowsPrincipal(WindowsIdentity.GetCurrent()).IsInRole(WindowsBuiltInRole.Administrator); }
         }
 
         /// <summary>
-        /// Contains 1 if the script is running as a compiled EXE and nothing if it is not.
+        /// <code>true</code> if the current executing assembly is a compiled script, <code>false</code> otherwise;
         /// </summary>
-        public static string A_IsCompiled
+        public static bool A_IsCompiled
         {
-            get { return string.Empty; }
-            /*set { Settings.IsCompiled = value; }*/
+            get { return false; }
         }
 
         /// <summary>
-        /// Contains 1 if the script is suspended and 0 otherwise.
+        /// <code>true</code> if the script is suspended, <code>false</code> otherwise;
         /// </summary>
-        public static string A_IsSuspended
+        public static bool A_IsSuspended
         {
-            get { return string.Empty; }
-            /*set { Settings.IsSuspended = value; }*/
+            get { return false; }
         }
 
         /// <summary>
-        /// The current delay set by SetKeyDelay (always decimal, not hex). This delay is for the traditional SendEvent mode, not SendPlay.
+        /// The current delay set by <see cref="SetKeyDelay"/>.
         /// </summary>
-        public static string A_KeyDelay
+        public static int A_KeyDelay
         {
-            get { return string.Empty; }
-            /*set { Settings.KeyDelay = value; }*/
+            get { return _KeyDelay ?? 10; }
         }
 
         /// <summary>
-        /// The system's default language, which is one of these 4-digit codes.
+        /// The system's default language code.
         /// </summary>
-        public static string A_Language
+        public static int A_Language
         {
-            get { return string.Empty; }
-            /*set { Settings.Language = value; }*/
+            get { return System.Threading.Thread.CurrentThread.CurrentCulture.LCID; }
         }
 
         /// <summary>
-        /// The result from the OS's GetLastError() function. For details, see DllCall() and Run/RunWait.
+        /// The result from Windows <code>GetLastError()</code> function.
         /// </summary>
-        public static string A_LastError
+        public static int A_LastError
         {
-            get { return string.Empty; }
-            /*set { Settings.LastError = value; }*/
+            get { return System.Runtime.InteropServices.Marshal.GetLastWin32Error(); }
         }
 
         /// <summary>
         /// The full path and name of the file to which A_LineNumber belongs, which will be the same as A_ScriptFullPath unless the line belongs to one of a non-compiled script's #Include files.
         /// </summary>
+        [Obsolete]
         public static string A_LineFile
         {
-            get { return string.Empty; }
-            /*set { Settings.LineFile = value; }*/
+            get { return null; }
         }
 
         /// <summary>
@@ -474,8 +448,7 @@ namespace IronAHK.Rusty
         /// </summary>
         public static string A_LineNumber
         {
-            get { return string.Empty; }
-            /*set { Settings.LineNumber = value; }*/
+            get { return null; }
         }
 
         #region Loops
@@ -507,8 +480,7 @@ namespace IronAHK.Rusty
         /// </summary>
         public static string A_LoopFileAttrib
         {
-            get { return string.Empty; }
-            /*set { Settings.LoopFileAttrib = value; }*/
+            get { return null; }
         }
 
         /// <summary>
@@ -516,8 +488,7 @@ namespace IronAHK.Rusty
         /// </summary>
         public static string A_LoopFileDir
         {
-            get { return string.Empty; }
-            /*set { Settings.LoopFileDir = value; }*/
+            get { return null; }
         }
 
         /// <summary>
@@ -525,8 +496,7 @@ namespace IronAHK.Rusty
         /// </summary>
         public static string A_LoopFileExt
         {
-            get { return string.Empty; }
-            /*set { Settings.LoopFileExt = value; }*/
+            get { return null; }
         }
 
         /// <summary>
@@ -534,8 +504,7 @@ namespace IronAHK.Rusty
         /// </summary>
         public static string A_LoopFileFullPath
         {
-            get { return string.Empty; }
-            /*set { Settings.LoopFileFullPath = value; }*/
+            get { return null; }
         }
 
         /// <summary>
@@ -543,8 +512,7 @@ namespace IronAHK.Rusty
         /// </summary>
         public static string A_LoopFileLongPath
         {
-            get { return string.Empty; }
-            /*set { Settings.LoopFileLongPath = value; }*/
+            get { return null; }
         }
 
         /// <summary>
@@ -552,8 +520,7 @@ namespace IronAHK.Rusty
         /// </summary>
         public static string A_LoopFileName
         {
-            get { return string.Empty; }
-            /*set { Settings.LoopFileName = value; }*/
+            get { return null; }
         }
 
         /// <summary>
@@ -561,8 +528,7 @@ namespace IronAHK.Rusty
         /// </summary>
         public static string A_LoopFileShortName
         {
-            get { return string.Empty; }
-            /*set { Settings.LoopFileShortName = value; }*/
+            get { return null; }
         }
 
         /// <summary>
@@ -570,8 +536,7 @@ namespace IronAHK.Rusty
         /// </summary>
         public static string A_LoopFileShortPath
         {
-            get { return string.Empty; }
-            /*set { Settings.LoopFileShortPath = value; }*/
+            get { return null; }
         }
 
         /// <summary>
@@ -579,8 +544,7 @@ namespace IronAHK.Rusty
         /// </summary>
         public static string A_LoopFileSize
         {
-            get { return string.Empty; }
-            /*set { Settings.LoopFileSize = value; }*/
+            get { return null; }
         }
 
         /// <summary>
@@ -588,8 +552,7 @@ namespace IronAHK.Rusty
         /// </summary>
         public static string A_LoopFileSizeKB
         {
-            get { return string.Empty; }
-            /*set { Settings.LoopFileSizeKB = value; }*/
+            get { return null; }
         }
 
         /// <summary>
@@ -597,8 +560,7 @@ namespace IronAHK.Rusty
         /// </summary>
         public static string A_LoopFileSizeMB
         {
-            get { return string.Empty; }
-            /*set { Settings.LoopFileSizeMB = value; }*/
+            get { return null; }
         }
 
         /// <summary>
@@ -606,8 +568,7 @@ namespace IronAHK.Rusty
         /// </summary>
         public static string A_LoopFileTimeAccessed
         {
-            get { return string.Empty; }
-            /*set { Settings.LoopFileTimeAccessed = value; }*/
+            get { return null; }
         }
 
         /// <summary>
@@ -615,8 +576,7 @@ namespace IronAHK.Rusty
         /// </summary>
         public static string A_LoopFileTimeCreated
         {
-            get { return string.Empty; }
-            /*set { Settings.LoopFileTimeCreated = value; }*/
+            get { return null; }
         }
 
         /// <summary>
@@ -624,8 +584,7 @@ namespace IronAHK.Rusty
         /// </summary>
         public static string A_LoopFileTimeModified
         {
-            get { return string.Empty; }
-            /*set { Settings.LoopFileTimeModified = value; }*/
+            get { return null; }
         }
 
         /// <summary>
@@ -633,8 +592,7 @@ namespace IronAHK.Rusty
         /// </summary>
         public static string A_LoopReadLine
         {
-            get { return string.Empty; }
-            /*set { Settings.LoopReadLine = value; }*/
+            get { return null; }
         }
 
         /// <summary>
@@ -642,8 +600,7 @@ namespace IronAHK.Rusty
         /// </summary>
         public static string A_LoopRegKey
         {
-            get { return string.Empty; }
-            /*set { Settings.LoopRegKey = value; }*/
+            get { return null; }
         }
 
         /// <summary>
@@ -651,8 +608,7 @@ namespace IronAHK.Rusty
         /// </summary>
         public static string A_LoopRegName
         {
-            get { return string.Empty; }
-            /*set { Settings.LoopRegName = value; }*/
+            get { return null; }
         }
 
         /// <summary>
@@ -660,8 +616,7 @@ namespace IronAHK.Rusty
         /// </summary>
         public static string A_LoopRegSubkey
         {
-            get { return string.Empty; }
-            /*set { Settings.LoopRegSubkey = value; }*/
+            get { return null; }
         }
 
         /// <summary>
@@ -669,8 +624,7 @@ namespace IronAHK.Rusty
         /// </summary>
         public static string A_LoopRegTimeModified
         {
-            get { return string.Empty; }
-            /*set { Settings.LoopRegTimeModified = value; }*/
+            get { return null; }
         }
 
         /// <summary>
@@ -678,8 +632,7 @@ namespace IronAHK.Rusty
         /// </summary>
         public static string A_LoopRegType
         {
-            get { return string.Empty; }
-            /*set { Settings.LoopRegType = value; }*/
+            get { return null; }
         }
 
         #endregion
@@ -687,93 +640,89 @@ namespace IronAHK.Rusty
         /// <summary>
         /// Current 2-digit day of the month (01-31).
         /// </summary>
-        public static int A_MDay { get { return DateTime.Now.Day; } }
+        public static string A_MDay
+        {
+            get { return DateTime.Now.ToString("dd"); }
+        }
 
         /// <summary>
         /// Current 2-digit minute (00-59).
         /// </summary>
-        public static int A_Min { get { return DateTime.Now.Minute; } }
-
-        /// <summary>
-        /// Current 2-digit month (01-12). Synonymous with A_Mon.
-        /// </summary>
-        public static int A_MM { get { return A_Mon; } }
-
-        /// <summary>
-        /// Current month's abbreviation in the current user's language, e.g. Jul
-        /// </summary>
-        public static string A_MMM
+        public static string A_Min
         {
-            get { return string.Empty; }
-            /*set { Settings.MMM = value; }*/
+            get { return DateTime.Now.ToString("mm"); }
         }
 
         /// <summary>
-        /// Current month's full name in the current user's language, e.g. July
+        /// Current 2-digit month (01-12). Synonymous with <see cref="A_Mon"/>.
         /// </summary>
-        public static int A_MMMM { get { return 0; } }
+        public static string A_MM
+        {
+            get { return A_Mon; }
+        }
+
+        /// <summary>
+        /// Current month's abbreviation in the current user's language, e.g. <code>Jul</code>.
+        /// </summary>
+        public static string A_MMM
+        {
+            get { return DateTime.Now.ToString("MMM"); }
+        }
+
+        /// <summary>
+        /// Current month's full name in the current user's language, e.g. <code>July</code>.
+        /// </summary>
+        public static string A_MMMM
+        {
+            get { return DateTime.Now.ToString("MMMM"); }
+        }
 
         /// <summary>
         /// Current 2-digit month (01-12).
         /// </summary>
-        public static int A_Mon { get { return DateTime.Now.Month; } }
-
-        /// <summary>
-        /// The current delay set by SetMouseDelay (always decimal, not hex). This delay is for the traditional SendEvent mode, not SendPlay.
-        /// </summary>
-        public static string A_MouseDelay
+        public static string A_Mon
         {
-            get { return string.Empty; }
-            /*set { Settings.MouseDelay = value; }*/
+            get { return DateTime.Now.ToString("MM"); }
         }
 
         /// <summary>
-        /// Current 3-digit millisecond (000-999). To remove the leading zeros, follow this example: Milliseconds := A_MSec + 0
+        /// The current delay set by <code>SetMouseDelay</code>.
         /// </summary>
-        public static int A_MSec { get { return DateTime.Now.Millisecond; } }
+        public static int A_MouseDelay
+        {
+            get { return _MouseDelay ?? 10; }
+        }
 
         /// <summary>
-        /// The full path and name of the current user's "My Documents" folder. Unlike most of the similar variables, if the folder is the root of a drive, the final backslash is not included. For example, it would contain M: rather than M:\
+        /// Current 3-digit millisecond (000-999).
         /// </summary>
-        public static string A_MyDocuments { get { return Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments); } }
+        public static string A_MSec
+        {
+            get { return DateTime.Now.ToString("fff"); }
+        }
 
         /// <summary>
-        /// The current local time in YYYYMMDDHH24MISS format. Note: Date and time math can be performed with EnvAdd and EnvSub. Also, FormatTime can format the date and/or time according to your locale or preferences.
+        /// The full path and name of the current user's "My Documents" folder.
+        /// </summary>
+        public static string A_MyDocuments
+        {
+            get { return Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments); }
+        }
+
+        /// <summary>
+        /// The current local time in YYYYMMDDHH24MISS format.
         /// </summary>
         public static string A_Now
         {
-            get { return string.Empty; }
-            /* set { Settings.Now = value; } */
+            get { return ToYYYYMMDDHH24MISS(DateTime.Now); }
         }
 
         /// <summary>
-        /// The current Coordinated Universal Time (UTC) in YYYYMMDDHH24MISS format. UTC is essentially the same as Greenwich Mean Time (GMT).
+        /// The current Coordinated Universal Time (UTC) in YYYYMMDDHH24MISS format.
         /// </summary>
         public static string A_NowUTC
         {
-            get
-            {
-                DateTime time = DateTime.UtcNow;
-                string yyyy, MM, dd, HH, MI, SS;
-                yyyy = time.Year.ToString();
-                MM = time.Month.ToString();
-                if (MM.Length==1)
-                    MM = "0" + MM;
-                dd = time.Day.ToString();
-                if (dd.Length==1)
-                    dd = "0" + dd;
-                HH = time.Hour.ToString();
-                if (HH.Length==1)
-                    HH = "0" + HH;
-                MI = time.Minute.ToString();
-                if (MI.Length==1)
-                    MI = "0" + MI;
-                SS = time.Second.ToString();
-                if (SS.Length==1)
-                    SS = "0" + SS;
-                return yyyy + MM + dd + HH + MI + SS;
-            }
-            /*set { Settings.NowUTC = value; }*/
+            get { return ToYYYYMMDDHH24MISS(DateTime.Now.ToUniversalTime()); }
         }
 
         /// <summary>
@@ -783,25 +732,22 @@ namespace IronAHK.Rusty
         public static string A_NumBatchLines
         {
             get { return A_BatchLines; }
-            /*set { Settings.NumBatchLines = value; }*/
         }
 
         /// <summary>
-        /// The type of Operating System being run.  Either WIN32_WINDOWS (i.e. Windows 95/98/ME) or WIN32_NT (i.e. Windows NT4/2000/XP/2003/Vista).
+        /// The type of Operating System being run, e.g. <code>WIN32_WINDOWS</code> for Windows 95/98/ME or <code>WIN32_NT</code> for Windows NT4/2000/XP/2003/Vista.
         /// </summary>
         public static string A_OSType
         {
-            get { return string.Empty; }
-            /*set { Settings.OSType = value; }*/
+            get { return ToOSType(Environment.OSVersion.Platform); }
         }
 
         /// <summary>
-        /// One of the following strings: WIN_VISTA [requires v1.0.44.13+], WIN_2003, WIN_XP, WIN_2000, WIN_NT4, WIN_95, WIN_98, WIN_ME.
+        /// The Operating System version, e.g. <code>WIN_VISTA</code>, <code>WIN_2003</code>, <code>WIN_XP</code>, <code>WIN_2000</code>, <code>WIN_NT4</code>, <code>WIN_95</code>, <code>WIN_98</code>, <code>WIN_ME</code>.
         /// </summary>
         public static string A_OSVersion
         {
-            get { return string.Empty; }
-            /*set { Settings.OSVersion = value; }*/
+            get { return Environment.OSVersion.VersionString; }
         }
 
         /// <summary>
@@ -809,27 +755,31 @@ namespace IronAHK.Rusty
         /// </summary>
         public static string A_PriorHotkey
         {
-            get { return string.Empty; }
-            /*set { Settings.PriorHotkey = value; }*/
+            get { return null; }
         }
 
         /// <summary>
-        /// The Program Files directory (e.g. C:\Program Files). In v1.0.43.08+, the A_ prefix may be omitted, which helps ease the transition to #NoEnv.
+        /// The Program Files directory (e.g. <code>C:\Program Files</code>).
         /// </summary>
-        public static string A_ProgramFiles { get { return Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles); } }
+        public static string A_ProgramFiles
+        {
+            get { return Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles); }
+        }
 
         /// <summary>
         /// The full path and name of the Programs folder in the current user's Start Menu.
         /// </summary>
-        public static string A_Programs { get { return Environment.GetFolderPath(Environment.SpecialFolder.Programs); } }
+        public static string A_Programs
+        {
+            get { return Environment.GetFolderPath(Environment.SpecialFolder.Programs); }
+        }
 
         /// <summary>
         /// The full path and name of the Programs folder in the all-users Start Menu.
         /// </summary>
         public static string A_ProgramsCommon
         {
-            get { return string.Empty; }
-            /*set { Settings.ProgramsCommon = value; }*/
+            get { return Environment.GetFolderPath(Environment.SpecialFolder.Startup); }
         }
 
         /// <summary>
@@ -851,7 +801,6 @@ namespace IronAHK.Rusty
                 Win32.GetWindowRect(handle, out windowRect);
                 return windowRect.Bottom - windowRect.Top;
             }
-            /*set { Settings.ScreenHeight = value; }*/
         }
 
         /// <summary>
@@ -866,54 +815,56 @@ namespace IronAHK.Rusty
                 Win32.GetWindowRect(handle, out windowRect);
                 return windowRect.Right - windowRect.Left;
             }
-                //return ""; }
-            /*set { Settings.ScreenWidth = value; }*/
         }
 
         /// <summary>
-        /// The full path of the directory where the current script is located. For backward compatibility with AutoIt v2, the final backslash is included only for .aut scripts (even for root drives). An example for .aut scripts is C:\My Documents\
+        /// The full path of the directory where the current script is located.
         /// </summary>
+        [Obsolete]
         public static string A_ScriptDir
         {
-            get { return string.Empty; }
-            /*set { Settings.ScriptDir = value; }*/
+            get { return null; }
         }
 
         /// <summary>
-        /// The combination of the above two variables to give the complete file specification of the script, e.g. C:\My Documents\My Script.ahk
+        /// The full path of the running script.
         /// </summary>
         public static string A_ScriptFullPath
         {
-            get { return string.Empty; }
-            /*set { Settings.ScriptFullPath = value; }*/
+            get { return null; }
         }
 
         /// <summary>
-        /// The file name of the current script, without its path, e.g. MyScript.ahk.
+        /// The file name of the current script, without its path, e.g. <code>MyScript.ahk</code>.
         /// </summary>
         public static string A_ScriptName
         {
-            get { return string.Empty; }
-            /*set { Settings.ScriptName = value; }*/
+            get { return null; }
         }
 
         /// <summary>
         /// Current 2-digit second (00-59).
         /// </summary>
-        public static int A_Sec { get { return DateTime.Now.Second; } }
+        public static string A_Sec
+        {
+            get { return DateTime.Now.ToString("ss"); }
+        }
 
         /// <summary>
-        /// This variable contains a single space character. See AutoTrim for details.
+        /// This variable contains a single space character.
         /// </summary>
-        public static string A_Space { get { return " "; } }
+        [Obsolete]
+        public static string A_Space
+        {
+            get { return " "; }
+        }
 
         /// <summary>
         /// The full path and name of the current user's Start Menu folder.
         /// </summary>
         public static string A_StartMenu
         {
-            get { return string.Empty; }
-            /*set { Settings.StartMenu = value; }*/
+            get { return Environment.GetFolderPath(Environment.SpecialFolder.StartMenu); }
         }
 
         /// <summary>
@@ -921,51 +872,64 @@ namespace IronAHK.Rusty
         /// </summary>
         public static string A_StartMenuCommon
         {
-            get { return string.Empty; }
-            /*set { Settings.StartMenuCommon = value; }*/
+            get { return Environment.GetFolderPath(Environment.SpecialFolder.StartMenu); }
         }
 
         /// <summary>
         /// The full path and name of the Startup folder in the current user's Start Menu.
         /// </summary>
-        public static string A_Startup { get { return Environment.GetFolderPath(Environment.SpecialFolder.Startup); } }
+        public static string A_Startup
+        {
+            get { return Environment.GetFolderPath(Environment.SpecialFolder.Startup); }
+        }
 
         /// <summary>
         /// The full path and name of the Startup folder in the all-users Start Menu.
         /// </summary>
-        public static string A_StartupCommon { get { return string.Empty; } }
+        public static string A_StartupCommon
+        {
+            get { return Environment.GetFolderPath(Environment.SpecialFolder.Startup); }
+        }
 
         /// <summary>
         /// The current mode (On, Off, or Locale) set by StringCaseSense.
         /// </summary>
         public static string A_StringCaseSense
         {
-            get { return string.Empty; }
-            /*set { Settings.StringCaseSense = value; }*/
+            get { return ToStringCaseSense(_StringCaseSense ?? StringComparison.OrdinalIgnoreCase); }
         }
 
         /// <summary>
-        /// This variable contains a single tab character. See AutoTrim for details.
+        /// This variable contains a single tab character.
         /// </summary>
-        public static string A_Tab { get { return "\t"; } }
+        [Obsolete]
+        public static string A_Tab
+        {
+            get { return "\t"; }
+        }
 
         /// <summary>
-        /// The full path and name of the folder designated to hold temporary files (e.g. C:\DOCUME~1\UserName\LOCALS~1\Temp). It is retrieved from one of the following locations (in order): 1) the environment variables TMP, TEMP, or USERPROFILE; 2) the Windows directory. On Windows 9x, A_WorkingDir is returned if neither TMP nor TEMP exists.
+        /// The full path and name of the folder designated to hold temporary files.
         /// </summary>
-        public static string A_Temp { get { return Path.GetTempPath(); } }
+        public static string A_Temp
+        {
+            get { return Path.GetTempPath(); }
+        }
 
         /// <summary>
         /// Temporary file name.
         /// </summary>
-        public static string A_TempFile { get { return Path.GetTempFileName(); } }
+        public static string A_TempFile
+        {
+            get { return Path.GetTempFileName(); }
+        }
 
         /// <summary>
-        /// The name of the user-defined function that is currently executing (blank if none); for example: MyFunction
+        /// The name of the user-defined function that is currently executing (blank if none); for example: <code>MyFunction</code>.
         /// </summary>
         public static string A_ThisFunc
         {
-            get { return string.Empty; }
-            /*set { Settings.ThisFunc = value; }*/
+            get { return null; }
         }
 
         /// <summary>
@@ -974,8 +938,7 @@ namespace IronAHK.Rusty
         /// </summary>
         public static string A_ThisHotkey
         {
-            get { return string.Empty; }
-            /*set { Settings.ThisHotkey = value; }*/
+            get { return null; }
         }
 
         /// <summary>
@@ -983,8 +946,7 @@ namespace IronAHK.Rusty
         /// </summary>
         public static string A_ThisLabel
         {
-            get { return string.Empty; }
-            /*set { Settings.ThisLabel = value; }*/
+            get { return null; }
         }
 
         /// <summary>
@@ -992,8 +954,7 @@ namespace IronAHK.Rusty
         /// </summary>
         public static string A_ThisMenu
         {
-            get { return string.Empty; }
-            /*set { Settings.ThisMenu = value; }*/
+            get { return null; }
         }
 
         /// <summary>
@@ -1001,8 +962,7 @@ namespace IronAHK.Rusty
         /// </summary>
         public static string A_ThisMenuItem
         {
-            get { return string.Empty; }
-            /*set { Settings.ThisMenuItem = value; }*/
+            get { return null; }
         }
 
         /// <summary>
@@ -1010,22 +970,23 @@ namespace IronAHK.Rusty
         /// </summary>
         public static string A_ThisMenuItemPos
         {
-            get { return string.Empty; }
-            /*set { Settings.ThisMenuItemPos = value; }*/
+            get { return null; }
         }
 
         /// <summary>
         /// The number of milliseconds since the computer was rebooted.
         /// </summary>
-        public static int A_TickCount { get { return Environment.TickCount; } }
+        public static int A_TickCount
+        {
+            get { return Environment.TickCount; }
+        }
 
         /// <summary>
         /// The number of milliseconds that have elapsed since the system last received keyboard, mouse, or other input. This is useful for determining whether the user is away. This variable will be blank unless the operating system is Windows 2000, XP, or beyond. Physical input from the user as well as artificial input generated by any program or script (such as the Send or MouseMove commands) will reset this value back to zero. Since this value tends to increase by increments of 10, do not check whether it is equal to another value. Instead, check whether it is greater or less than another value. For example: IfGreater, A_TimeIdle, 600000, MsgBox, The last keyboard or mouse activity was at least 10 minutes ago.
         /// </summary>
         public static string A_TimeIdle
         {
-            get { return string.Empty; }
-            /*set { Settings.TimeIdle = value; }*/
+            get { return null; }
         }
 
         /// <summary>
@@ -1033,8 +994,7 @@ namespace IronAHK.Rusty
         /// </summary>
         public static string A_TimeIdlePhysical
         {
-            get { return string.Empty; }
-            /*set { Settings.TimeIdlePhysical = value; }*/
+            get { return null; }
         }
 
         /// <summary>
@@ -1042,8 +1002,7 @@ namespace IronAHK.Rusty
         /// </summary>
         public static string A_TimeSincePriorHotkey
         {
-            get { return string.Empty; }
-            /*set { Settings.TimeSincePriorHotkey = value; }*/
+            get { return null; }
         }
 
         /// <summary>
@@ -1051,26 +1010,29 @@ namespace IronAHK.Rusty
         /// </summary>
         public static string A_TimeSinceThisHotkey
         {
-            get { return string.Empty; }
-            /*set { Settings.TimeSinceThisHotkey = value; }*/
+            get { return null; }
         }
 
         /// <summary>
-        /// The current mode set by SetTitleMatchMode: 1, 2, 3, or RegEx.
+        /// The current mode set by <code>SetTitleMatchMode</code>: <code>1</code>, <code>2</code>, <code>3</code>, or <code>RegEx</code>.
         /// </summary>
         public static string A_TitleMatchMode
         {
-            get { return string.Empty; }
-            /*set { Settings.TitleMatchMode = value; }*/
+            get
+            {
+                int mode = _TitleMatchMode ?? 1;
+                return mode == 4 ? Keyword_RegEx : mode.ToString();
+            }
+            // TODO: SetTitleMatchMode as A_TitleMatchMode
         }
 
         /// <summary>
-        /// The current match speed (fast or slow) set by SetTitleMatchMode.
+        /// The current match speed (<code>fast</code> or <code>slow</code>) set by <code>SetTitleMatchMode</code>.
         /// </summary>
         public static string A_TitleMatchModeSpeed
         {
-            get { return string.Empty; }
-            /*set { Settings.TitleMatchModeSpeed = value; }*/
+            get { return _TitleMatchModeSpeed ?? true ? Keyword_Fast : Keyword_Slow; }
+            // TODO: SetTitleMatchMode as A_TitleMatchModeSpeed
         }
 
         /// <summary>
@@ -1078,8 +1040,7 @@ namespace IronAHK.Rusty
         /// </summary>
         public static string A_UserName
         {
-            get { return string.Empty; }
-            /*set { Settings.UserName = value; }*/
+            get { return Environment.UserName; }
         }
 
         /// <summary>
@@ -1087,8 +1048,7 @@ namespace IronAHK.Rusty
         /// </summary>
         public static string A_WDay
         {
-            get { return string.Empty; }
-            /*set { Settings.WDay = value; }*/
+            get { return null; }
         }
 
         /// <summary>
@@ -1096,14 +1056,16 @@ namespace IronAHK.Rusty
         /// </summary>
         public static string A_WinDelay
         {
-            get { return Settings.WinDelay.ToString(); }
-            /*set { Settings.WinDelay = value; }*/
+            get { return null; }
         }
 
         /// <summary>
         /// The Windows directory. For example: C:\Windows
         /// </summary>
-        public static string A_WinDir { get { return Environment.GetFolderPath(Environment.SpecialFolder.System); } }
+        public static string A_WinDir
+        {
+            get { return Environment.GetFolderPath(Environment.SpecialFolder.System); }
+        }
 
         /// <summary>
         /// The script's current working directory, which is where files will be accessed by default. The final backslash is not included unless it is the root directory. Two examples: C:\ and C:\My Documents. Use SetWorkingDir to change the working directory.
@@ -1117,30 +1079,42 @@ namespace IronAHK.Rusty
         /// <summary>
         /// Current day of the year (1-366). The value is not zero-padded, e.g. 9 is retrieved, not 009. To retrieve a zero-padded value, use the following: FormatTime, OutputVar, , YDay0
         /// </summary>
-        public static string A_YDay { get { return string.Empty; } }
+        public static string A_YDay
+        {
+            get { return string.Empty; }
+        }
 
         /// <summary>
         /// Current 4-digit year (e.g. 2004). Note: To retrieve a formatted time or date appropriate for your locale and language, use "FormatTime, OutputVar" (time and long date) or "FormatTime, OutputVar,, LongDate" (retrieves long-format date).
         /// </summary>
-        public static int A_Year { get { return DateTime.Now.Year; } }
+        public static int A_Year
+        {
+            get { return DateTime.Now.Year; }
+        }
 
         /// <summary>
         /// Current year and week number (e.g. 200453) according to ISO 8601. To separate the year from the week, use StringLeft, Year, A_YWeek, 4 and StringRight, Week, A_YWeek, 2. Precise definition of A_YWeek: If the week containing January 1st has four or more days in the new year, it is considered week 1. Otherwise, it is the last week of the previous year, and the next week is week 1.
         /// </summary>
-        public static int A_YWeek { get { return 0; } }
+        public static int A_YWeek
+        {
+            get { return 0; }
+        }
 
         /// <summary>
         /// See <see cref="A_Year"/>.
         /// </summary>
-        public static int A_YYYY { get { return A_Year; } }
+        public static int A_YYYY
+        {
+            get { return A_Year; }
+        }
 
         /// <summary>
-        /// HTTP User-Agent.
+        /// HTTP user agent for <see cref="URLDownloadToFile"/>.
         /// </summary>
         public static string A_UserAgent
         {
-            get { return Settings.UserAgent; }
-            set { Settings.UserAgent = value; }
+            get { return _UserAgent; }
+            set { _UserAgent = value; }
         }
     }
 }

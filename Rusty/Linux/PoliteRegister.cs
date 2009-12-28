@@ -177,10 +177,10 @@ namespace IronAHK.Rusty.Linux
                     for(int i = 0; i < Hotstrings[Hit].Length; i++)
                     {
                         string Character = Hotstrings[Hit].Substring(i, 1);
-                        if(Character.ToUpper() == Character) TouchKey(Display, (uint) Keys.RightShift, true);
+                        if(Character.ToUpperInvariant() == Character) TouchKey(Display, (uint) Keys.RightShift, true);
                         uint KeyCode = XKeysymToKeycode(Display, XStringToKeysym(Character == " " ? "space" : Character));
                         TapKey(Display, KeyCode);
-                        if(Character.ToUpper() == Character) TouchKey(Display, (uint) Keys.RightShift, false);
+                        if(Character.ToUpperInvariant() == Character) TouchKey(Display, (uint) Keys.RightShift, false);
                     }
                     
                     return new KeyEvent(KeyEventType.Hotstring, Hit);

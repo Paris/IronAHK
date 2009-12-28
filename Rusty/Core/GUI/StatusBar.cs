@@ -16,7 +16,7 @@ namespace IronAHK.Rusty
         public static int SB_SetIcon(string Filename, int IconNumber, int PartNumber)
         {
             Icon ico = Icon.ExtractAssociatedIcon(Filename);
-            Settings.GUI.StatusBar.Panels[PartNumber].Icon = ico;
+            DefaultGUI.StatusBar.Panels[PartNumber].Icon = ico;
             return ico.Handle.ToInt32();
         }
 
@@ -27,7 +27,7 @@ namespace IronAHK.Rusty
         public static void SB_SetParts(int[] WidthN)
         {
             for (int i = 0; i < WidthN.Length; i++)
-                Settings.GUI.StatusBar.Panels[i].Width = WidthN[i];
+                DefaultGUI.StatusBar.Panels[i].Width = WidthN[i];
         }
 
         /// <summary>
@@ -41,7 +41,7 @@ namespace IronAHK.Rusty
         {
             try
             {
-                StatusBarPanel sb = Settings.GUI.StatusBar.Panels[PartNumber - 1];
+                StatusBarPanel sb = DefaultGUI.StatusBar.Panels[PartNumber - 1];
                 sb.Text = NewText;
                 sb.BorderStyle = Style == 1 ? StatusBarPanelBorderStyle.None :
                     Style == 2 ? StatusBarPanelBorderStyle.Raised :

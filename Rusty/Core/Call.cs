@@ -44,7 +44,7 @@ namespace IronAHK.Rusty
             {
                 if (i % 2 == 0) // type
                 {
-                    string p = ((string)Parameters[i]).Trim().ToLower();
+                    string p = ((string)Parameters[i]).Trim().ToLowerInvariant();
 
                     if (i == Parameters.Length)
                     {

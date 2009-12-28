@@ -16,7 +16,7 @@ namespace IronAHK.Rusty
         {
             TreeNode child = new TreeNode(Name);
 
-            TreeNode.FromHandle(Settings.GUI.TreeView, new IntPtr(ParentItemID)).
+            TreeNode.FromHandle(DefaultGUI.TreeView, new IntPtr(ParentItemID)).
                 Nodes.Add(child);
             return child.Handle.ToInt32();
         }
@@ -30,7 +30,7 @@ namespace IronAHK.Rusty
         {
             try
             {
-                TreeView tv = Settings.GUI.TreeView;
+                TreeView tv = DefaultGUI.TreeView;
                 if (ItemID == 0)
                     foreach (TreeNode item in tv.Nodes)
                         item.Remove();
@@ -49,7 +49,7 @@ namespace IronAHK.Rusty
         {
             try
             {
-                TreeView tv = Settings.GUI.TreeView;
+                TreeView tv = DefaultGUI.TreeView;
                 return TreeNode.FromHandle(tv, (IntPtr)ParentItemID).FirstNode.Handle.ToInt32();
             }
             catch (Exception) { return 0; }
@@ -63,7 +63,7 @@ namespace IronAHK.Rusty
         {
             try
             {
-                TreeView tv = Settings.GUI.TreeView;
+                TreeView tv = DefaultGUI.TreeView;
                 return tv.Nodes.Count;
             }
             catch (Exception) { return 0; }
@@ -79,14 +79,14 @@ namespace IronAHK.Rusty
         {
             try
             {
-                TreeView tv = Settings.GUI.TreeView;
+                TreeView tv = DefaultGUI.TreeView;
                 IntPtr handle = IntPtr.Zero;
                 if (ItemID == null)
                     handle = tv.Nodes[0].Handle;
                 else
                 {
                     TreeNode item = TreeNode.FromHandle(tv, (IntPtr)ItemID);
-                    string mode = " " + Checked_Full.ToLower();
+                    string mode = " " + Checked_Full.ToLowerInvariant();
                     bool full = mode.Contains(" f");
                     if (mode.Contains(" c"))
                         while (!item.Checked)
@@ -104,9 +104,9 @@ namespace IronAHK.Rusty
         //{
         //    try
         //    {
-        //        TreeView tv = Settings.GUI.TreeView;
+        //        TreeView tv = GUI.TreeView;
         //        TreeNode item = TreeNode.FromHandle(tv, (IntPtr)ItemID);
-        //        string mode = " " + Mode.ToLower();
+        //        string mode = " " + Mode.ToLowerInvariant();
         //        if ((mode.Contains(" e") && !item.IsExpanded) ||
         //            (mode.Contains(" c") && !item.Checked) ||
         //            (mode.Contains(" b") && !item.NodeFont.Bold))
@@ -125,7 +125,7 @@ namespace IronAHK.Rusty
         {
             try
             {
-                TreeView tv = Settings.GUI.TreeView;
+                TreeView tv = DefaultGUI.TreeView;
                 return TreeNode.FromHandle(tv, (IntPtr)ItemID).Parent.Handle.ToInt32();
             }
             catch (Exception) { return 0; }
@@ -140,7 +140,7 @@ namespace IronAHK.Rusty
         {
             try
             {
-                TreeView tv = Settings.GUI.TreeView;
+                TreeView tv = DefaultGUI.TreeView;
                 return TreeNode.FromHandle(tv, (IntPtr)ItemID).PrevNode.Handle.ToInt32();
             }
             catch (Exception) { return 0; }
@@ -154,7 +154,7 @@ namespace IronAHK.Rusty
         {
             try
             {
-                TreeView tv = Settings.GUI.TreeView;
+                TreeView tv = DefaultGUI.TreeView;
                 return tv.SelectedNode.Handle.ToInt32();
             }
             catch (Exception) { return 0; }
@@ -171,7 +171,7 @@ namespace IronAHK.Rusty
             OutputVar = string.Empty;
             try
             {
-                TreeView tv = Settings.GUI.TreeView;
+                TreeView tv = DefaultGUI.TreeView;
                 TreeNode item = TreeNode.FromHandle(tv, (IntPtr)ItemID);
                 OutputVar = item.Text;
                 return item.Handle.ToInt32();
@@ -188,7 +188,7 @@ namespace IronAHK.Rusty
         /// <returns></returns>
         public static int TV_Modify(int ItemID, string Options, string NewName)
         {
-            TreeNode node = TreeNode.FromHandle(Settings.GUI.TreeView, new IntPtr(ItemID));
+            TreeNode node = TreeNode.FromHandle(DefaultGUI.TreeView, new IntPtr(ItemID));
 
             if (NewName.Length != 0)
                 node.Name = NewName;

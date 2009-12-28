@@ -64,7 +64,7 @@ namespace IronAHK.Rusty
 
         static bool FilterWindow(IntPtr hwnd, int lParam)
         {
-            string title = GetWindowText(hwnd).ToLower();
+            string title = GetWindowText(hwnd).ToLowerInvariant();
             StringBuilder sb = new StringBuilder(Math.Max(find.Class.Length, exclude.Class.Length));
             string classname = GetClassName(hwnd, sb, sb.Capacity).ToString();
 
@@ -335,15 +335,15 @@ namespace IronAHK.Rusty
                         char[] letters = criterion.ToCharArray();
                         while (!char.IsWhiteSpace(letters[++i])) ;
                         string phrase = criterion.Substring(i).Trim();
-                        switch (criterion.Substring(1, i - 1).ToLower())
+                        switch (criterion.Substring(1, i - 1).ToLowerInvariant())
                         {
-                            case "class": classname = phrase.ToLower(); break;
+                            case "class": classname = phrase.ToLowerInvariant(); break;
                             case "id": id = int.Parse(phrase); break;
                             case "pid": pid = uint.Parse(phrase); break;
-                            case "group": group = phrase.ToLower(); break;
+                            case "group": group = phrase.ToLowerInvariant(); break;
                         }
                     }
-                    else title = criterion.ToLower();
+                    else title = criterion.ToLowerInvariant();
                 }
             }
 

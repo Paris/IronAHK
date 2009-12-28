@@ -14,8 +14,8 @@ namespace IronAHK.Rusty
         /// <param name="ResizeNonIcon"></param>
         public static void IL_Add(int ImageListID, string Filename, int IconNumber, bool ResizeNonIcon)
         {
-            if (Settings.Handles[ImageListID].GetType() == typeof(ImageList))
-                ((ImageList)Settings.Handles[ImageListID]).Images.Add(new Icon(Filename));
+            if (Handles[ImageListID].GetType() == typeof(ImageList))
+                ((ImageList)Handles[ImageListID]).Images.Add(new Icon(Filename));
         }
 
         /// <summary>
@@ -31,8 +31,8 @@ namespace IronAHK.Rusty
             if (LargeIcons > 0)
                 il.ImageSize = new Size(48, 48);
 
-            Settings.Handles.Add(il);
-            return Settings.Handles.Count;
+            Handles.Add(il);
+            return Handles.Count;
         }
 
         /// <summary>
@@ -41,10 +41,10 @@ namespace IronAHK.Rusty
         /// <param name="ImageListID"></param>
         public static void IL_Destroy(int ImageListID)
         {
-            if (Settings.Handles[ImageListID].GetType() == typeof(ImageList))
+            if (Handles[ImageListID].GetType() == typeof(ImageList))
             {
-                ((ImageList)Settings.Handles[ImageListID]).Dispose();
-                Settings.Handles.RemoveAt(ImageListID);
+                ((ImageList)Handles[ImageListID]).Dispose();
+                Handles.RemoveAt(ImageListID);
                 error = 1;
             }
         }

@@ -23,7 +23,7 @@ namespace IronAHK.Rusty
                 Var -= Value;
 
             DateTime x = ToDateTime(Var.ToString());
-            switch (TimeUnits.ToLower())
+            switch (TimeUnits.ToLowerInvariant())
             {
                 case Keyword_Seconds:
                 case "s":
@@ -187,14 +187,14 @@ namespace IronAHK.Rusty
         /// </param>
         public static void SetFormat(string NumberType, string Format)
         {
-            switch (NumberType.ToLower())
+            switch (NumberType.ToLowerInvariant())
             {
                 case Keyword_Integer:
-                    Settings.FormatInteger = Format[0];
+                    _FormatInteger = Format[0];
                     break;
 
                 case Keyword_Float:
-                    Settings.FormatFloat = Format;
+                    _FormatFloat = Format;
                     break;
 
                 default:
@@ -213,7 +213,7 @@ namespace IronAHK.Rusty
         public static void Transform(ref string OutputVar, string Cmd, string Value1, string Value2)
         {
             OutputVar = string.Empty;
-            switch (Cmd.Trim().ToLower())
+            switch (Cmd.Trim().ToLowerInvariant())
             {
                 case Keyword_Unicode:
                     if (Value1 == null)

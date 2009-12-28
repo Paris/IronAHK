@@ -17,7 +17,7 @@ namespace IronAHK.Rusty
         [Obsolete, Conditional("LEGACY")]
         public static void AutoTrim(string Mode)
         {
-            OnOff(ref Settings.AutoTrim, Mode);
+            OnOff(ref _AutoTrim, Mode);
         }
 
         /// <summary>
@@ -41,23 +41,7 @@ namespace IronAHK.Rusty
         /// </param>
         public static void CoordMode(string Item, string Mode)
         {
-            bool rel;
-
-            Mode = Mode.ToLower();
-            if (Mode.Length == 0 || Mode == Keyword_Screen)
-                rel = false;
-            else if (Mode == Keyword_Relative)
-                rel = true;
-            else throw new ArgumentOutOfRangeException();
-
-            switch (Item.ToLower())
-            {
-                case Keyword_ToolTip: Settings.CoordMode.ToolTip = rel; break;
-                case Keyword_Pixel: Settings.CoordMode.Pixel = rel; break;
-                case Keyword_Mouse: Settings.CoordMode.Mouse = rel; break;
-                case Keyword_Caret: Settings.CoordMode.Caret = rel; break;
-                case Keyword_Menu: Settings.CoordMode.Menu = rel; break;
-            }
+            // TODO: CoordMode
         }
 
         /// <summary>
@@ -179,7 +163,7 @@ namespace IronAHK.Rusty
                     break;
             }
             Bitmap bmp = new Bitmap(1, 1, format);
-            if (Settings.CoordMode.Pixel) //if coordmode true using relative coords
+            if (/*CoordMode.Pixel*/ true) //if coordmode true using relative coords
             {
                 Win32.RECT rect;
                 Win32.GetWindowRect(Win32.GetForegroundWindow(), out rect);
@@ -187,7 +171,7 @@ namespace IronAHK.Rusty
                 Y += rect.Top;
             }
             Graphics.FromImage(bmp).CopyFromScreen(X, Y, 0, 0, new Size(1, 1));
-            switch (Color.ToLower())
+            switch (Color.ToLowerInvariant())
             {
                 case "r": OutputVar = bmp.GetPixel(0, 0).R; break;
                 case "g": OutputVar = bmp.GetPixel(0, 0).G; break;

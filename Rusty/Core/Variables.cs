@@ -1,13 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Reflection;
 
 namespace IronAHK.Rusty
 {
     partial class Core
     {
         const string A_ = "A_";
-        static Dictionary<string, object> variables = new Dictionary<string, object>();
 
         /// <summary>
         /// Assigns the specified value to a variable.
@@ -34,7 +31,7 @@ namespace IronAHK.Rusty
             }
             else
             {
-                if (Settings.AutoTrim && Value is string)
+                if (_AutoTrim == true && Value is string)
                     Value = ((string)Value).Trim(Keyword_Spaces);
 
                 if (exists)

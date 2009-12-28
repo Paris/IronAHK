@@ -39,7 +39,7 @@ namespace IronAHK.Rusty
                 }
             }
 
-            switch (Format.ToLower())
+            switch (Format.ToLowerInvariant())
             {
                 case "time":
                     Format = "t";
@@ -183,7 +183,7 @@ namespace IronAHK.Rusty
             bool reverse = false, random = false;
             if (opts.ContainsKey('r'))
             {
-                if (opts['r'].ToLower() == "andom") // Random
+                if (opts['r'].ToLowerInvariant() == "andom") // Random
                     random = true;
                 else
                     reverse = true;
@@ -264,9 +264,12 @@ namespace IronAHK.Rusty
         [Obsolete, Conditional("LEGACY")]
         public static void StringCaseSense(string Mode)
         {
-            if (Mode.Equals(Keyword_Locale, StringComparison.OrdinalIgnoreCase))
-                Mode = Keyword_On;
-            OnOff(ref Settings.StringCaseSense, Mode);
+            switch (Mode.ToLowerInvariant())
+            {
+                case Keyword_On: _StringCaseSense = StringComparison.Ordinal; break;
+                case Keyword_Off: _StringCaseSense = StringComparison.OrdinalIgnoreCase; break;
+                case Keyword_Locale: _StringCaseSense = StringComparison.CurrentCultureIgnoreCase; break;
+            }
         }
 
         /// <summary>
@@ -316,7 +319,7 @@ namespace IronAHK.Rusty
             do
             {
                 // HACK: check method of string get pos works
-                StringComparison comp = Settings.StringCaseSense ? StringComparison.CurrentCulture : StringComparison.OrdinalIgnoreCase;
+                StringComparison comp = _StringCaseSense ?? StringComparison.OrdinalIgnoreCase;
                 int count = len - Offset;
                 OutputVar = reverse ? InputVar.LastIndexOf(SearchText, Offset, count, comp) : InputVar.IndexOf(SearchText, Offset, count, comp);
                 Offset = reverse ? len - OutputVar - 1 : OutputVar + 1;
@@ -359,8 +362,8 @@ namespace IronAHK.Rusty
         /// <param name="Title">If this parameter is the letter T, the string will be converted to title case.</param>
         public static void StringLower(out string OutputVar, string InputVar, string Title)
         {
-            OutputVar = Title.Length == 1 && Title.ToLower()[0] == 't' ?
-                CultureInfo.CurrentCulture.TextInfo.ToTitleCase(InputVar) : InputVar.ToUpper();
+            OutputVar = Title.Length == 1 && Title.ToLowerInvariant()[0] == 't' ?
+                CultureInfo.CurrentCulture.TextInfo.ToTitleCase(InputVar) : InputVar.ToUpperInvariant();
         }
 
         /// <summary>
@@ -387,7 +390,7 @@ namespace IronAHK.Rusty
             if (StartChar < 1)
                 StartChar = 1;
             else if (StartChar < InputVar.Length && Count > 0)
-                OutputVar = SubStr(InputVar, Reverse.Length == 1 && Reverse.ToLower()[0] == 'l' ? StartChar : -StartChar, Count);
+                OutputVar = SubStr(InputVar, Reverse.Length == 1 && Reverse.ToLowerInvariant()[0] == 'l' ? StartChar : -StartChar, Count);
         }
 
         /// <summary>
@@ -408,7 +411,7 @@ namespace IronAHK.Rusty
         {
             bool all = false, getcount = false;
 
-            switch (All.ToLower())
+            switch (All.ToLowerInvariant())
             {
                 case Keyword_UseErrorLevel:
                     getcount = true;
@@ -424,7 +427,7 @@ namespace IronAHK.Rusty
 
             int count = 0;
 
-            if (all && Settings.StringCaseSense)
+            if (all && _StringCaseSense == StringComparison.Ordinal)
                 OutputVar = InputVar.Replace(SearchText, ReplaceText); // optimised
             else
             {
@@ -550,8 +553,8 @@ namespace IronAHK.Rusty
         /// <param name="Title">If this parameter is the letter T, the string will be converted to title case.</param>
         public static void StringUpper(out string OutputVar, string InputVar, string Title)
         {
-            OutputVar = Title.Length == 1 && Title.ToLower()[0] == 't' ?
-                CultureInfo.CurrentCulture.TextInfo.ToTitleCase(InputVar) : InputVar.ToUpper();
+            OutputVar = Title.Length == 1 && Title.ToLowerInvariant()[0] == 't' ?
+                CultureInfo.CurrentCulture.TextInfo.ToTitleCase(InputVar) : InputVar.ToUpperInvariant();
         }
     }
 }

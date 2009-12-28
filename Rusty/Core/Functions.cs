@@ -140,11 +140,11 @@ namespace IronAHK.Rusty
             }
             else if (KeyName.Trim().Length == 1)
             {
-                VK = Win32.VkKeyScan(Convert.ToChar(KeyName.Trim().ToLower()));
+                VK = Win32.VkKeyScan(Convert.ToChar(KeyName.Trim().ToLowerInvariant()));
             }
             else
             {
-                switch (KeyName.Trim().ToLower())
+                switch (KeyName.Trim().ToLowerInvariant())
                 {
                     //keyboard
                     case "space": VK = (int)System.Windows.Forms.Keys.Space; break;
@@ -290,12 +290,12 @@ namespace IronAHK.Rusty
 
                 case 1:
                 // Not pressed, but toggled on
-                if (Mode.Trim().ToLower() == "t") return "1";
+                if (Mode.Trim().ToLowerInvariant() == "t") return "1";
                 return "0";
 
                 default:
                 // Pressed (and may be toggled on)
-                if (Mode.Trim().ToLower() == "t")
+                if (Mode.Trim().ToLowerInvariant() == "t")
                 {
                     switch (Convert.ToByte(result))
                     {
@@ -376,7 +376,7 @@ namespace IronAHK.Rusty
         /// <param name="Type"></param>
         public static void NumGet(int VarOrAddress, int Offset, string Type)
         {
-            char[] type = Type.Trim().ToLower().ToCharArray();
+            char[] type = Type.Trim().ToLowerInvariant().ToCharArray();
             IntPtr adr = new IntPtr(VarOrAddress);
 
             switch (type[1])
@@ -400,7 +400,7 @@ namespace IronAHK.Rusty
         /// <param name="Type"></param>
         public static void NumPut(int Number, int VarOrAddress, int Offset, string Type)
         {
-            char[] type = (Type).Trim().ToLower().ToCharArray();
+            char[] type = (Type).Trim().ToLowerInvariant().ToCharArray();
             IntPtr adr = new IntPtr(VarOrAddress);
 
             switch (type[1])

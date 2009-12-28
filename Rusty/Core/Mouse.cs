@@ -77,19 +77,19 @@ namespace IronAHK.Rusty
         {
             int WHEEL_DELTA = 120;
             MouseMove(X, Y, Speed, R);
-            Core.Sleep(Settings.MouseDelay);
+            Core.Sleep(_MouseDelay ?? 10);
 
             var i = new Win32.INPUT[] { new Win32.INPUT() };
             i[0].type = Win32.INPUT_MOUSE;
             i[0].mi = new Win32.MOUSEINPUT();
 
             bool pressup = true, pressdown = true;
-            string mode = DU.Trim().ToLower();
+            string mode = DU.Trim().ToLowerInvariant();
             if (mode == "d") pressup = false;
             else if (mode == "u") pressdown = false;
 
             uint key = 0, xkey = 0;
-            switch (WhichButton.Trim().ToLower())
+            switch (WhichButton.Trim().ToLowerInvariant())
             {
                 case "l":
                 case "left":
@@ -220,7 +220,7 @@ namespace IronAHK.Rusty
 
             OutputVarX = pos.X;
             OutputVarY = pos.Y;
-            if (Settings.CoordMode.Mouse)
+            if (/*_CoordMode.Mouse*/ true)
             {
                 Win32.RECT rect;
                 Win32.GetWindowRect(Win32.GetForegroundWindow(), out rect);
@@ -243,7 +243,7 @@ namespace IronAHK.Rusty
         public static void MouseMove(int X, int Y, int Speed, bool R)
         {
             int ScreenWidth = Core.A_ScreenWidth, ScreenHeight = Core.A_ScreenHeight;
-            if (Settings.CoordMode.Mouse && !R)
+            if (/*CoordMode.Mouse*/ true && !R)
             {
                 Win32.RECT rect;
                 Win32.GetWindowRect(Win32.GetForegroundWindow(), out rect);
@@ -280,7 +280,7 @@ namespace IronAHK.Rusty
             int mousex, mousey, mousewinid;
             string control;
             Core.MouseGetPos(out mousex, out mousey, out mousewinid, out control, 0);
-            if (Settings.CoordMode.Mouse) //screen coords required for doincrementalmousemove
+            if (/*CoordMode.Mouse*/ true) //screen coords required for doincrementalmousemove
             {
                 Win32.RECT rect;
                 Win32.GetWindowRect(Win32.GetForegroundWindow(), out rect);
@@ -361,7 +361,7 @@ namespace IronAHK.Rusty
                 i[0].mi.dwFlags = Win32.MOUSEEVENTF_MOVE;
                 i[0].mi.dwFlags |= Win32.MOUSEEVENTF_ABSOLUTE;
                 Win32.SendInput((uint)i.Length, i, Marshal.SizeOf(i[0]));
-                Core.Sleep(Settings.MouseDelay);
+                Core.Sleep(_MouseDelay ?? 10);
             }
         }
 
@@ -372,7 +372,7 @@ namespace IronAHK.Rusty
         [Obsolete, Conditional("LEGACY")]
         public static void SetDefaultMouseSpeed(int Speed)
         {
-            Settings.DefaultMouseSpeed = Speed;
+            _DefaultMouseSpeed = Speed;
         }
 
         /// <summary>
@@ -383,7 +383,7 @@ namespace IronAHK.Rusty
         [Obsolete, Conditional("LEGACY")]
         public static void SetMouseDelay(int Delay, string Play)
         {
-            Settings.MouseDelay = Delay;
+            _MouseDelay = Delay;
         }
 
         [DllImport("user32.dll", EntryPoint = "GetCursorPos")]

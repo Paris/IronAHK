@@ -29,7 +29,7 @@ namespace IronAHK.Rusty
             System.Diagnostics.Process prc;
             int timeout = 0, start = 0;
 
-            switch (Cmd.ToLower())
+            switch (Cmd.ToLowerInvariant())
             {
                 case Keyword_Exist:
                     if (PID_or_Name == null)
@@ -70,7 +70,7 @@ namespace IronAHK.Rusty
                     break;
                 case Keyword_Priority:
                     prc = PID_or_Name == null ? System.Diagnostics.Process.GetCurrentProcess() : ToProcess(PID_or_Name);
-                    switch ((Param3).Trim().Substring(0, 1).ToLower().ToCharArray()[0])
+                    switch ((Param3).Trim().Substring(0, 1).ToLowerInvariant().ToCharArray()[0])
                     {
                         case 'l': prc.PriorityClass = ProcessPriorityClass.Idle; break;
                         case 'b': prc.PriorityClass = ProcessPriorityClass.BelowNormal; break;
@@ -87,7 +87,7 @@ namespace IronAHK.Rusty
                     if (timeout == 0) timeout = -1;
                     while (0 == (error = ToProcess(PID_or_Name).Id))
                     {
-                        System.Threading.Thread.Sleep(Settings.LoopFrequency);
+                        System.Threading.Thread.Sleep(LoopFrequency);
                         if (timeout != -1 && Environment.TickCount - start > timeout)
                             break;
                     }
@@ -98,7 +98,7 @@ namespace IronAHK.Rusty
                     if (timeout == 0) timeout = -1;
                     while (0 != (error = ToProcess(PID_or_Name).Id))
                     {
-                        System.Threading.Thread.Sleep(Settings.LoopFrequency);
+                        System.Threading.Thread.Sleep(LoopFrequency);
                         if (timeout != -1 && Environment.TickCount - start > timeout)
                             break;
                     }
@@ -138,7 +138,7 @@ namespace IronAHK.Rusty
 
             bool UseErrorLevel = false;
 
-            switch ((ShowMode).Trim().Substring(2, 1).ToLower().ToCharArray()[0])
+            switch ((ShowMode).Trim().Substring(2, 1).ToLowerInvariant().ToCharArray()[0])
             {
                 case 'x': prc.StartInfo.WindowStyle = ProcessWindowStyle.Maximized; break;
                 case 'n': prc.StartInfo.WindowStyle = ProcessWindowStyle.Minimized; break;
@@ -146,12 +146,7 @@ namespace IronAHK.Rusty
                 case 'e': UseErrorLevel = true; break;
             }
 
-            if (Settings.RunAs.Username.Length != 0)
-            {
-                prc.StartInfo.UserName = Settings.RunAs.Username;
-                prc.StartInfo.Password = Settings.RunAs.Password;
-                prc.StartInfo.Domain = Settings.RunAs.Domain;
-            }
+            // TODO: RunAs for Run
 
             error = 0;
             try
@@ -179,14 +174,7 @@ namespace IronAHK.Rusty
         /// <param name="Domain">User's domain. To use a local account, leave this blank. If that fails to work, try using @YourComputerName.</param>
         public static void RunAs(string User, string Password, string Domain)
         {
-            Settings.RunAs.Username = User;
-
-            Settings.RunAs.Password = null;
-            Settings.RunAs.Password.Clear();
-            foreach (char letter in (Password).ToCharArray())
-                Settings.RunAs.Password.AppendChar(letter);
-
-            Settings.RunAs.Domain = Domain;
+            // TODO: RunAs
         }
 
         /// <summary>
