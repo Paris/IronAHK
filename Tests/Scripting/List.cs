@@ -35,6 +35,12 @@ namespace IronAHK.Tests
         }
 
         [Test]
+        public void Expressions()
+        {
+            Assert.IsTrue(TestScript("expressions"));
+        }
+
+        [Test]
         public void Command()
         {
             Assert.IsTrue(TestScript("command"));
