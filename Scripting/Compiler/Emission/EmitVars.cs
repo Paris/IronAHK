@@ -152,6 +152,9 @@ namespace IronAHK.Scripting
                 {
                     ConditionalBox(Top);
                 }
+                else if (Wanted == typeof(object[]) && Top.IsArray)
+                {
+                }
                 else
                 {
                     Debug("WARNING: Can not force " + Wanted);

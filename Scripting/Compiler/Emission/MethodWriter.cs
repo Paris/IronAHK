@@ -140,6 +140,18 @@ namespace IronAHK.Scripting
                 Generator.Emit(OpCodes.Ldc_R4, ((float) ((decimal) Value)));
                 Generated = typeof(float);
             }
+            else if (T == typeof(object[]))
+            {
+                Debug("Pushing object[" + ((object[])Value).Length + "]");
+                var array = new CodeArrayCreateExpression();
+                array.CreateType = new CodeTypeReference(typeof(object));
+
+                foreach (object sub in (object[])Value)
+                    array.Initializers.Add(new CodePrimitiveExpression(sub));
+
+                EmitDynamicName(array);
+                Generated = typeof(object[]);
+            }
             else
             {
                 Debug("Unhandled primitive: " + Value.GetType());
