@@ -43,12 +43,12 @@
   <ItemGroup>
     <Compile Include="Compiler\CompilerSetup.cs" />
     <Compile Include="Compiler\Compiler.cs" />
-    <Compile Include="Compiler\Script\Conversion.cs" />
-    <Compile Include="Compiler\Script\Labels.cs" />
-    <Compile Include="Compiler\Script\Operate.cs" />
-    <Compile Include="Compiler\Script\Parameters.cs" />
-    <Compile Include="Compiler\Script\Script.cs" />
-    <Compile Include="Compiler\Script\Types.cs" />
+    <Compile Include="Script\Conversion.cs" />
+    <Compile Include="Script\Labels.cs" />
+    <Compile Include="Script\Operate.cs" />
+    <Compile Include="Script\Parameters.cs" />
+    <Compile Include="Script\Script.cs" />
+    <Compile Include="Script\Types.cs" />
     <Compile Include="Generator\Generator.cs" />
     <Compile Include="Generator\Supports.cs" />
     <Compile Include="Generator\Type.cs" />
