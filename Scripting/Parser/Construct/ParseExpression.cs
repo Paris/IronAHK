@@ -150,8 +150,15 @@ namespace IronAHK.Scripting
                     else if (part.Length > 1 && part[part.Length - 1] == ParenOpen)
                     {
                         string name = part.Substring(0, part.Length - 1);
+                        bool dynamic = false;
+
                         if (!IsIdentifier(name))
-                            throw new ParseException("Invalid function name");
+                        {
+                            if (IsDynamicReference(name))
+                                dynamic = true;
+                            else 
+                                throw new ParseException("Invalid function name");
+                        }
 
                         int levels = 1;
                         for (int x = i + 1; x < parts.Count; x++)
@@ -175,7 +182,15 @@ namespace IronAHK.Scripting
                                         for (int n = 0; n < count; n++)
                                             sub[n] = parts[i + 1 + n];
 
-                                        var invoke = LocalMethodInvoke(name);
+                                        CodeMethodInvokeExpression invoke;
+
+                                        if (dynamic)
+                                        {
+                                            invoke = (CodeMethodInvokeExpression)InternalMethods.FunctionCall;
+                                            invoke.Parameters.Add(VarNameOrBasicString(name, true));
+                                        }
+                                        else
+                                            invoke = LocalMethodInvoke(name);
 
                                         if (count != 0)
                                         {
@@ -671,7 +686,7 @@ namespace IronAHK.Scripting
                 if (IsSpace(sym))
                     continue;
                 #region Identifiers
-                else if (IsIdentifier(sym))
+                else if (IsIdentifier(sym) || sym == Resolve)
                 {
                     var id = new StringBuilder(code.Length);
                     id.Append(sym);

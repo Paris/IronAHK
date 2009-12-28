@@ -91,6 +91,11 @@ namespace IronAHK.Scripting
                 get { return new MethodReference(typeof(Script), "Parameters"); }
             }
 
+            public static MethodReference FunctionCall
+            {
+                get { return new MethodReference(typeof(Script), "FunctionCall"); }
+            }
+
             #endregion
 
             #region Misc
