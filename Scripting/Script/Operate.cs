@@ -4,6 +4,8 @@ namespace IronAHK.Scripting
 {
     partial class Script
     {
+        #region Binary
+
         public enum Operator
         {
             Add,
@@ -43,7 +45,8 @@ namespace IronAHK.Scripting
 
             LogicalNotEx,
 
-            Ternary,
+            TernaryA,
+            TernaryB,
         };
 
         public static object Operate(Operator op, object left, object right)
@@ -122,6 +125,19 @@ namespace IronAHK.Scripting
                     throw new ArgumentOutOfRangeException();
             }
         }
+
+        #endregion
+
+        #region Ternary
+
+        public delegate object ExpressionDelegate();
+
+        public static object OperateTernary(bool result, ExpressionDelegate x, ExpressionDelegate y)
+        {
+            return result ? x() : y();
+        }
+
+        #endregion
 
         public static bool IfTest(object result)
         {

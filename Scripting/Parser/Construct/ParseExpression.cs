@@ -313,16 +313,82 @@ namespace IronAHK.Scripting
 
                         int x = i - 1, y = i + 1;
                         var invoke = new CodeMethodInvokeExpression();
-                        invoke.Method = calc;
-                        invoke.Parameters.Add(OperatorAsFieldReference(op));
 
-                        foreach (int z in new int[] { x, y }) // I know... I'm lazy
-                            invoke.Parameters.Add(parts[z] is CodeComplexVariableReferenceExpression ?
-                                (CodeMethodInvokeExpression)(CodeComplexVariableReferenceExpression)parts[z] : (CodeExpression)parts[z]);
+                        if (op == Script.Operator.TernaryA)
+                        {
+                            invoke.Method = (CodeMethodReferenceExpression)InternalMethods.OperateTernary;
 
-                        parts[x] = invoke;
-                        parts.RemoveAt(y);
-                        parts.RemoveAt(i);
+                            var eval = (CodeMethodInvokeExpression)InternalMethods.IfElse;
+                            eval.Parameters.Add(ExpressionNode(parts[x]));
+                            invoke.Parameters.Add(eval);
+
+                            const int n = 2;
+                            var r = new CodeMethodReturnStatement[n];
+
+                            for (int z = 0; z < n; z++)
+                            {
+                                string id = InternalID;
+                                var d = new CodeDelegateCreateExpression(new CodeTypeReference(typeof(Script.ExpressionDelegate)), new CodeTypeReferenceExpression(className), id);
+                                invoke.Parameters.Add(d);
+                                var m = new CodeMemberMethod() { Name = id, ReturnType = new CodeTypeReference(typeof(object)), Attributes = MemberAttributes.Static };
+                                r[z] = new CodeMethodReturnStatement();
+                                m.Statements.Add(r[z]);
+                                methods.Add(id, m);
+                            }
+
+                            int depth = 0, max = parts.Count - i, start = i, index = 0;
+                            var branch = new List<object>[] { new List<object>(max), new List<object>(max) };
+
+                            for (i++; i < parts.Count; i++)
+                            {
+                                if (parts[i] is Script.Operator)
+                                {
+                                    var iop = (Script.Operator)parts[i];
+
+                                    switch (iop)
+                                    {
+                                        case Script.Operator.TernaryA:
+                                            depth++;
+                                            break;
+
+                                        case Script.Operator.TernaryB:
+                                            if (--depth == -1)
+                                                index = 1;
+                                            break;
+
+                                        default:
+                                            branch[index].Add(parts[i]);
+                                            break;
+                                    }
+                                }
+                                else
+                                    branch[index].Add(parts[i]);
+                            }
+
+                            if (branch[0].Count == 0)
+                                throw new ParseException("Ternary operator must have at least one branch");
+
+                            if (branch[1].Count == 0)
+                                branch[1].Add(new CodePrimitiveExpression(null));
+
+                            for (int z = 0; z < n; z++)
+                                r[z].Expression = ParseExpression(branch[z]);
+
+                            parts[x] = invoke;
+                            parts.Remove(y);
+                            parts.RemoveRange(start, parts.Count - start);
+                        }
+                        else
+                        {
+                            invoke.Method = calc;
+                            invoke.Parameters.Add(OperatorAsFieldReference(op));
+                            invoke.Parameters.Add(ExpressionNode(parts[x]));
+                            invoke.Parameters.Add(ExpressionNode(parts[y]));
+
+                            parts[x] = invoke;
+                            parts.RemoveAt(y);
+                            parts.RemoveAt(i);
+                        }
                     }
                 }
                 level--;
@@ -357,6 +423,12 @@ namespace IronAHK.Scripting
                 throw new ArgumentOutOfRangeException();
 
             return (CodeExpression)parts[0];
+        }
+
+        CodeExpression ExpressionNode(object part)
+        {
+            return part is CodeComplexVariableReferenceExpression ?
+                (CodeMethodInvokeExpression)(CodeComplexVariableReferenceExpression)part : (CodeExpression)part;
         }
 
         #endregion
@@ -531,10 +603,13 @@ namespace IronAHK.Scripting
                     if (op.Length > 1 && op[1] == Equal)
                         return Script.Operator.Assign;
                     else
-                        throw new ParseException(ExUnexpected);
+                        return Script.Operator.TernaryB;
 
                 case Concatenate:
                     return Script.Operator.Concat;
+
+                case TernaryA:
+                    return Script.Operator.TernaryA;
 
                 default:
                     if (code.Length == AndTxt.Length && code.Equals(AndTxt, StringComparison.OrdinalIgnoreCase))
@@ -601,7 +676,8 @@ namespace IronAHK.Scripting
                 case Script.Operator.BooleanOr:
                     return -11;
 
-                case Script.Operator.Ternary:
+                case Script.Operator.TernaryA:
+                case Script.Operator.TernaryB:
                     return -12;
 
                 default:
@@ -824,6 +900,7 @@ namespace IronAHK.Scripting
                                 case ParenClose:
                                 case Equal:
                                 case Concatenate:
+                                case TernaryB:
                                     op.Append(sym);
                                     break;
 
