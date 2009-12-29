@@ -9,6 +9,7 @@ namespace IronAHK.Scripting
     partial class Parser : ICodeParser
     {
         const string mainScope = "";
+        const string className = "Program";
         CodeEntryPointMethod main = new CodeEntryPointMethod();
         Dictionary<string, CodeMemberMethod> methods = new Dictionary<string, CodeMemberMethod>();
         CodeStatementCollection prepend = new CodeStatementCollection();
@@ -26,7 +27,7 @@ namespace IronAHK.Scripting
                 var space = new CodeNamespace(bcl.Namespace + ".Instance");
                 unit.Namespaces.Add(space);
 
-                var container = new CodeTypeDeclaration("Program");
+                var container = new CodeTypeDeclaration(className);
                 container.BaseTypes.Add(bcl);
                 container.Attributes = MemberAttributes.Private;
                 space.Types.Add(container);

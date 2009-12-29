@@ -86,6 +86,15 @@ namespace IronAHK.Scripting
             if (string.IsNullOrEmpty(token))
                 return false;
 
+            if (token.Length == 1)
+            {
+                switch (token[0])
+                {
+                    case TernaryA:
+                        return false;
+                }
+            }
+
             foreach (char sym in token)
                 if (!IsIdentifier(sym))
                     return false;
