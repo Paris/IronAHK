@@ -44,6 +44,10 @@ namespace IronAHK.Scripting
             {
                 Generated = EmitBinaryOperator(Expression as CodeBinaryOperatorExpression, ForceTypes);
             }
+            else if(Expression is CodeTernaryOperatorExpression)
+            {
+                Generated = EmitTernaryOperator(Expression as CodeTernaryOperatorExpression);
+            }
             else if(Expression is CodeVariableReferenceExpression)
             {
                 Generated = EmitVariableReference(Expression as CodeVariableReferenceExpression);
@@ -132,6 +136,25 @@ namespace IronAHK.Scripting
             Depth--;
 
             return Generated;
+        }
+
+        Type EmitTernaryOperator(CodeTernaryOperatorExpression ternary)
+        {
+            Label FalseLabel = Generator.DefineLabel();
+            Label EndLabel = Generator.DefineLabel();
+            Type Top;
+
+            EmitExpression(ternary.Condition);
+            Generator.Emit(OpCodes.Brfalse, FalseLabel);
+            Top = EmitExpression(ternary.TrueBranch);
+            ForceTopStack(Top, typeof(object));
+            Generator.Emit(OpCodes.Br, EndLabel);
+            Generator.MarkLabel(FalseLabel);
+            Top = EmitExpression(ternary.FalseBranch);
+            ForceTopStack(Top, typeof(object));
+            Generator.MarkLabel(EndLabel);
+
+            return typeof(object);
         }
 
         Type EmitCodeFieldReference(CodeFieldReferenceExpression field)
