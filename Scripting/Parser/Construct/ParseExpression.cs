@@ -292,7 +292,7 @@ namespace IronAHK.Scripting
 
             #endregion
 
-            #region Binary operators
+            #region Operators
 
             var calc = (CodeMethodReferenceExpression)InternalMethods.Operate;
             bool scan = true;
@@ -314,27 +314,38 @@ namespace IronAHK.Scripting
                         int x = i - 1, y = i + 1;
                         var invoke = new CodeMethodInvokeExpression();
 
+                        #region Ternary
                         if (op == Script.Operator.TernaryA)
                         {
-                            invoke.Method = (CodeMethodReferenceExpression)InternalMethods.OperateTernary;
+                            const bool TERNARY_AS_DELEGATES = false;
+#pragma warning disable 0162
 
+                            CodeTernaryOperatorExpression ternary;
                             var eval = (CodeMethodInvokeExpression)InternalMethods.IfElse;
                             eval.Parameters.Add(ExpressionNode(parts[x]));
-                            invoke.Parameters.Add(eval);
 
                             const int n = 2;
-                            var r = new CodeMethodReturnStatement[n];
+                            CodeMethodReturnStatement[] r;
 
-                            for (int z = 0; z < n; z++)
+                            if (TERNARY_AS_DELEGATES)
                             {
-                                string id = InternalID;
-                                var d = new CodeDelegateCreateExpression(new CodeTypeReference(typeof(Script.ExpressionDelegate)), new CodeTypeReferenceExpression(className), id);
-                                invoke.Parameters.Add(d);
-                                var m = new CodeMemberMethod() { Name = id, ReturnType = new CodeTypeReference(typeof(object)), Attributes = MemberAttributes.Static };
-                                r[z] = new CodeMethodReturnStatement();
-                                m.Statements.Add(r[z]);
-                                methods.Add(id, m);
+                                invoke.Method = (CodeMethodReferenceExpression)InternalMethods.OperateTernary;
+                                invoke.Parameters.Add(eval);
+                                r = new CodeMethodReturnStatement[n];
+
+                                for (int z = 0; z < n; z++)
+                                {
+                                    string id = InternalID;
+                                    var d = new CodeDelegateCreateExpression(new CodeTypeReference(typeof(Script.ExpressionDelegate)), new CodeTypeReferenceExpression(className), id);
+                                    invoke.Parameters.Add(d);
+                                    var m = new CodeMemberMethod() { Name = id, ReturnType = new CodeTypeReference(typeof(object)), Attributes = MemberAttributes.Static };
+                                    r[z] = new CodeMethodReturnStatement();
+                                    m.Statements.Add(r[z]);
+                                    methods.Add(id, m);
+                                }
                             }
+                            else
+                                ternary = new CodeTernaryOperatorExpression() { Condition = eval };
 
                             int depth = 0, max = parts.Count - i, start = i, index = 0;
                             var branch = new List<object>[] { new List<object>(max), new List<object>(max) };
@@ -371,13 +382,26 @@ namespace IronAHK.Scripting
                             if (branch[1].Count == 0)
                                 branch[1].Add(new CodePrimitiveExpression(null));
 
-                            for (int z = 0; z < n; z++)
-                                r[z].Expression = ParseExpression(branch[z]);
+                            if (TERNARY_AS_DELEGATES)
+                            {
+                                for (int z = 0; z < n; z++)
+                                    r[z].Expression = ParseExpression(branch[z]);
+                                parts[x] = invoke;
+                            }
+                            else
+                            {
+                                ternary.TrueBranch = ParseExpression(branch[0]);
+                                ternary.FalseBranch = ParseExpression(branch[1]);
+                                parts[x] = ternary;
+                            }
 
-                            parts[x] = invoke;
                             parts.Remove(y);
                             parts.RemoveRange(start, parts.Count - start);
+
+#pragma warning restore 0162
                         }
+                        #endregion
+                        #region Binary
                         else
                         {
                             invoke.Method = calc;
@@ -389,6 +413,7 @@ namespace IronAHK.Scripting
                             parts.RemoveAt(y);
                             parts.RemoveAt(i);
                         }
+                        #endregion
                     }
                 }
                 level--;
