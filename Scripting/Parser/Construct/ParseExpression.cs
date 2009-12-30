@@ -317,35 +317,9 @@ namespace IronAHK.Scripting
                         #region Ternary
                         if (op == Script.Operator.TernaryA)
                         {
-                            const bool TERNARY_AS_DELEGATES = false;
-#pragma warning disable 0162
-
-                            CodeTernaryOperatorExpression ternary;
                             var eval = (CodeMethodInvokeExpression)InternalMethods.IfElse;
                             eval.Parameters.Add(ExpressionNode(parts[x]));
-
-                            const int n = 2;
-                            CodeMethodReturnStatement[] r;
-
-                            if (TERNARY_AS_DELEGATES)
-                            {
-                                invoke.Method = (CodeMethodReferenceExpression)InternalMethods.OperateTernary;
-                                invoke.Parameters.Add(eval);
-                                r = new CodeMethodReturnStatement[n];
-
-                                for (int z = 0; z < n; z++)
-                                {
-                                    string id = InternalID;
-                                    var d = new CodeDelegateCreateExpression(new CodeTypeReference(typeof(Script.ExpressionDelegate)), new CodeTypeReferenceExpression(className), id);
-                                    invoke.Parameters.Add(d);
-                                    var m = new CodeMemberMethod { Name = id, ReturnType = new CodeTypeReference(typeof(object)), Attributes = MemberAttributes.Static };
-                                    r[z] = new CodeMethodReturnStatement();
-                                    m.Statements.Add(r[z]);
-                                    methods.Add(id, m);
-                                }
-                            }
-                            else
-                                ternary = new CodeTernaryOperatorExpression() { Condition = eval };
+                            var ternary = new CodeTernaryOperatorExpression() { Condition = eval };
 
                             int depth = 0, max = parts.Count - i, start = i, index = 0;
                             var branch = new List<object>[] { new List<object>(max), new List<object>(max) };
@@ -382,23 +356,12 @@ namespace IronAHK.Scripting
                             if (branch[1].Count == 0)
                                 branch[1].Add(new CodePrimitiveExpression(null));
 
-                            if (TERNARY_AS_DELEGATES)
-                            {
-                                for (int z = 0; z < n; z++)
-                                    r[z].Expression = ParseExpression(branch[z]);
-                                parts[x] = invoke;
-                            }
-                            else
-                            {
-                                ternary.TrueBranch = ParseExpression(branch[0]);
-                                ternary.FalseBranch = ParseExpression(branch[1]);
-                                parts[x] = ternary;
-                            }
+                            ternary.TrueBranch = ParseExpression(branch[0]);
+                            ternary.FalseBranch = ParseExpression(branch[1]);
+                            parts[x] = ternary;
 
                             parts.Remove(y);
                             parts.RemoveRange(start, parts.Count - start);
-
-#pragma warning restore 0162
                         }
                         #endregion
                         #region Binary
