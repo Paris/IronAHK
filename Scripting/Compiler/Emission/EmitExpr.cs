@@ -81,14 +81,42 @@ namespace IronAHK.Scripting
 
         Type EmitBinaryOperator(CodeBinaryOperatorExpression Binary, bool ForceTypes)
         {
+            bool Shortcut = Binary.Operator == CodeBinaryOperatorType.BooleanAnd || Binary.Operator == CodeBinaryOperatorType.BooleanOr;
+            Label EndLabel = Generator.DefineLabel();
+
             Type Generated;
             Depth++;
             Debug("Emitting binary operator, left hand side");
             Generated = EmitExpression(Binary.Left);
+
+            if(Shortcut && Generated == typeof(bool))
+            {
+                Debug("Short-circuiting expression for "+Binary.Operator);
+                Generator.Emit(OpCodes.Dup);
+
+                if(Binary.Operator == CodeBinaryOperatorType.BooleanAnd)
+                    Generator.Emit(OpCodes.Brfalse, EndLabel); // BooleanAnd jumps if left branch evals false
+                else if(Binary.Operator == CodeBinaryOperatorType.BooleanOr)
+                    Generator.Emit(OpCodes.Brtrue, EndLabel); // BooleanOr jumps if left branch evals true
+            }
+
             if(ForceTypes) ForceTopStack(Generated, typeof(float));
             Debug("Emitting binary operator, right hand side");
             Generated = EmitExpression(Binary.Right);
             if(ForceTypes) ForceTopStack(Generated, typeof(float));
+
+            if(Shortcut)
+            {
+                if(Binary.Operator == CodeBinaryOperatorType.BooleanAnd)
+                    Generator.Emit(OpCodes.And);
+                else if (Binary.Operator == CodeBinaryOperatorType.BooleanOr)
+                    Generator.Emit(OpCodes.Or);
+
+                // Handy side-effect: one bool caused by the "dup" stays on the stack
+                // Resulting in the whole expression evaluating correctly anyway.
+                Generator.MarkLabel(EndLabel);
+                return typeof(bool);
+            }
 
             switch(Binary.Operator)
             {
