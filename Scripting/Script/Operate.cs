@@ -90,10 +90,10 @@ namespace IronAHK.Scripting
                     return ForceDecimal(left) >= ForceDecimal(right);
 
                 case Operator.IdentityEquality:
-                    return left.Equals(right);
+                    return left == null ? right == null : left.Equals(right);
 
                 case Operator.IdentityInequality:
-                    return !left.Equals(right);
+                    return left == null ? right != null : !left.Equals(right);
 
                 case Operator.LessThan:
                     return ForceDecimal(left) < ForceDecimal(right);
@@ -115,11 +115,11 @@ namespace IronAHK.Scripting
 
                 case Operator.ValueEquality:
                     MatchTypes(ref left, ref right);
-                    return left.Equals(right);
+                    return left == null ? right == null : left.Equals(right);
 
                 case Operator.ValueInequality:
                     MatchTypes(ref left, ref right);
-                    return !left.Equals(right);
+                    return left == null ? right != null : !left.Equals(right);
 
                 default:
                     throw new ArgumentOutOfRangeException();
