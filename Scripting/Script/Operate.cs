@@ -143,8 +143,10 @@ namespace IronAHK.Scripting
         {
             if (result is bool)
                 return (bool)result;
-            else if (result is decimal || result is long || result is int || result is float)
+            else if (result is decimal || result is long || result is int)
                 return ((decimal)result) != 0;
+            else if(result is float)
+                return ((float)result) != 0;
             else if (result is string)
                 return !string.IsNullOrEmpty((string)result);
             else
