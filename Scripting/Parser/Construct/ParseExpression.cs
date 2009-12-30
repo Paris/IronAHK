@@ -818,6 +818,7 @@ namespace IronAHK.Scripting
                     var op = new StringBuilder(3);
                     int next = stream.Peek();
                     char symNext = (char)next;
+                    bool tri = false;
 
                     #region 3x
                     if (sym == symNext)
@@ -836,9 +837,11 @@ namespace IronAHK.Scripting
                             case Minus:
                             case Multiply:
                             case BitOR:
+                            case BitAND:
                                 op.Append(sym);
                                 op.Append(symNext);
                                 stream.Read();
+                                tri = true;
                                 if (peekAssign)
                                 {
                                     next = stream.Peek();
@@ -856,7 +859,8 @@ namespace IronAHK.Scripting
                         }
                     }
                     #endregion
-                    else
+                    
+                    if (!tri)
                     {
                         #region 2x
                         if (symNext == Equal)
@@ -872,6 +876,7 @@ namespace IronAHK.Scripting
                                 case BitOR:
                                 case BitAND:
                                 case BitXOR:
+                                case Equal:
                                     op.Append(sym);
                                     op.Append(symNext);
                                     stream.Read();
