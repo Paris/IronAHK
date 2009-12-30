@@ -40,12 +40,8 @@ namespace IronAHK.Scripting
 
                         bool blockOpen = false;
                         CodeExpression condition = ParseFlowParameter(parts[1], true, out blockOpen);
-                        CodeConditionStatement ifelse = new CodeConditionStatement();
+                        CodeConditionStatement ifelse = new CodeConditionStatement { Condition = condition };
 
-                        var iftest = (CodeMethodInvokeExpression)InternalMethods.IfElse;
-                        iftest.Parameters.Add(condition);
-
-                        ifelse.Condition = iftest;
                         var block = new CodeBlock(line, Scope, ifelse.TrueStatements, CodeBlock.BlockKind.IfElse);
                         block.Type = blockOpen ? CodeBlock.BlockType.Within : CodeBlock.BlockType.Expect;
                         blocks.Push(block);
@@ -243,7 +239,7 @@ namespace IronAHK.Scripting
             blockOpen = false;
             code = code.Trim(Spaces);
             if (code.Length == 0)
-                return null;
+                return new CodePrimitiveExpression(false);
             else if (IsExpression(code))
             {
                 int l = code.Length - 1;
@@ -342,7 +338,10 @@ namespace IronAHK.Scripting
                 buf.Append(StringBound);
             }
 
-            return ParseSingleExpression(buf.ToString());
+            var iftest = (CodeMethodInvokeExpression)InternalMethods.IfElse;
+            var expr = ParseSingleExpression(buf.ToString());
+            iftest.Parameters.Add(expr);
+            return iftest;
         }
 
         #endregion
