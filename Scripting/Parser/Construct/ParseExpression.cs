@@ -338,7 +338,7 @@ namespace IronAHK.Scripting
                                     string id = InternalID;
                                     var d = new CodeDelegateCreateExpression(new CodeTypeReference(typeof(Script.ExpressionDelegate)), new CodeTypeReferenceExpression(className), id);
                                     invoke.Parameters.Add(d);
-                                    var m = new CodeMemberMethod() { Name = id, ReturnType = new CodeTypeReference(typeof(object)), Attributes = MemberAttributes.Static };
+                                    var m = new CodeMemberMethod { Name = id, ReturnType = new CodeTypeReference(typeof(object)), Attributes = MemberAttributes.Static };
                                     r[z] = new CodeMethodReturnStatement();
                                     m.Statements.Add(r[z]);
                                     methods.Add(id, m);
@@ -404,12 +404,30 @@ namespace IronAHK.Scripting
                         #region Binary
                         else
                         {
-                            invoke.Method = calc;
-                            invoke.Parameters.Add(OperatorAsFieldReference(op));
-                            invoke.Parameters.Add(ExpressionNode(parts[x]));
-                            invoke.Parameters.Add(ExpressionNode(parts[y]));
+                            if (op == Script.Operator.BooleanAnd || op == Script.Operator.BooleanOr)
+                            {
+                                var boolean = new CodeBinaryOperatorExpression();
+                                boolean.Operator = op == Script.Operator.BooleanAnd ? CodeBinaryOperatorType.BooleanAnd : CodeBinaryOperatorType.BooleanOr;
 
-                            parts[x] = invoke;
+                                var iftest = (CodeMethodInvokeExpression)InternalMethods.IfElse;
+                                iftest.Parameters.Add(ExpressionNode(parts[x]));
+                                boolean.Left = iftest;
+
+                                iftest = (CodeMethodInvokeExpression)InternalMethods.IfElse;
+                                iftest.Parameters.Add(ExpressionNode(parts[y]));
+                                boolean.Right = iftest;
+
+                                parts[x] = boolean;
+                            }
+                            else
+                            {
+                                invoke.Method = calc;
+                                invoke.Parameters.Add(OperatorAsFieldReference(op));
+                                invoke.Parameters.Add(ExpressionNode(parts[x]));
+                                invoke.Parameters.Add(ExpressionNode(parts[y]));
+                                parts[x] = invoke;
+                            }
+
                             parts.RemoveAt(y);
                             parts.RemoveAt(i);
                         }

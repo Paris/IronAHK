@@ -1,3 +1,6 @@
+if (a == 1 && v != 2)
+	FileAppend, fail, *
+
 x := "a" . (1 ? "" : "b")
 v := 1 + %x%()
 
