@@ -18,7 +18,7 @@ namespace IronAHK
             File.Delete(file);
 
             if (args == null || args.Length == 0)
-                args = new string[] { "/out", file, source };
+                args = new string[] { "--out", file, source };
         }
 
         [Conditional("DEBUG")]
