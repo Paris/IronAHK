@@ -11,7 +11,6 @@ namespace IronAHK.Scripting
 
             switch (code[0])
             {
-                case Subtract:
                 case Divide:
                 case BitOR:
                 case Concatenate:
@@ -23,12 +22,19 @@ namespace IronAHK.Scripting
                 case Not:
                 case BitNOT:
                 case BitXOR:
-                case Add:
                 case Address:
                 case Less:
                 case Greater:
                 case Multiply:
                     return !(IsHotstringLabel(code) || IsHotkeyLabel(code));
+
+                case Add:
+                case Subtract:
+                    if (1 < code.Length && code[1] == code[0])
+                        return false;
+                    if (code[0] == Add)
+                        goto case Not;
+                    return true;
 
                 case TernaryB:
                     return !(code.Length > 1 && !IsSpace(code[1]));

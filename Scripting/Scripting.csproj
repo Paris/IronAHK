@@ -45,6 +45,7 @@
     <Compile Include="Compiler\Compiler.cs" />
     <Compile Include="Parser\CodeDom\CodeTernaryOperatorExpression.cs" />
     <Compile Include="Parser\Helpers\Blocks.cs" />
+    <Compile Include="Parser\Helpers\Types.cs" />
     <Compile Include="Parser\Helpers\Scope.cs" />
     <Compile Include="Parser\Helpers\InternalID.cs" />
     <Compile Include="Parser\Texts\Continuation.cs" />

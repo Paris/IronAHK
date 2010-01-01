@@ -9,10 +9,11 @@ namespace IronAHK.Scripting
     {
         Stack<BreakLabels> breakLabels = new Stack<BreakLabels>();
 
-        CodeStatement[] ParseFlow(CodeLine line, out bool rewind)
+        CodeStatement[] ParseFlow(List<CodeLine> lines, int index, out bool rewind)
         {
             #region Variables
 
+            var line = lines[index];
             string code = line.Code;
 
             char[] delimiters = new char[Spaces.Length + 2];
@@ -216,12 +217,25 @@ namespace IronAHK.Scripting
                 case FlowReturn:
                     if (Scope == mainScope)
                     {
-                        if (parts.Length > 1)
+                        if (parts.Length > 1 && !IsEmptyStatement(parts[1]))
                             throw new ParseException("Cannot have return parameter for entry point method");
                         return new CodeStatement[] { new CodeMethodReturnStatement() };
                     }
                     else
-                        return new CodeStatement[] { new CodeMethodReturnStatement(parts.Length > 1 ? ParseSingleExpression(parts[1]) : new CodePrimitiveExpression(null)) };
+                    {
+                        var result = parts.Length > 1 && !IsEmptyStatement(parts[1]) ? ParseSingleExpression(parts[1]) : new CodePrimitiveExpression(null);
+                        return new CodeStatement[] { new CodeMethodReturnStatement(result) };
+                    }
+
+                #endregion
+
+                #region Function
+
+                case FunctionLocal:
+                case FunctionGlobal:
+                case FunctionStatic:
+                    // TODO: function local/global/static scoping modifiers
+                    break;
 
                 #endregion
 
@@ -275,7 +289,7 @@ namespace IronAHK.Scripting
             if (!IsIdentifier(sym) && !char.IsLetterOrDigit(sym))
                 return true;
 
-            string word = code.Split(Spaces, 1)[0];
+            string word = code.Split(Spaces, 2)[0];
             switch (word.ToLowerInvariant())
             {
                 case AndTxt:

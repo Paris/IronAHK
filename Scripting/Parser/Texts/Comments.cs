@@ -8,6 +8,9 @@ namespace IronAHK.Scripting
     {
         string StripComment(string code)
         {
+            if (string.IsNullOrEmpty(code))
+                return code;
+
             var reader = new StringReader(code);
             var buf = new StringBuilder(code.Length);
             string line;

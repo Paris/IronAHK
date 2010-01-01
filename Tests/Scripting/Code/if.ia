@@ -8,6 +8,15 @@ ELSE if x    =1
 	FileAppend, pass, *
 else FileAppend, fail, *
 
+if x = 0
+{
+	FileAppend, fail, *
+}
+else
+{
+	FileAppend, pass, *
+}
+
 if x = 1 {
 {
 	FileAppend, fail, *

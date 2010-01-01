@@ -7,6 +7,7 @@ namespace IronAHK.Scripting
         const char CR = '\r';
         const char LF = '\n';
         const char SingleSpace = ' ';
+        const char Reserved = '\0';
         readonly char[] Spaces = { CR, LF, SingleSpace, '\t', '\xA0' };
 
         const char StringBound = '"';
@@ -110,6 +111,12 @@ namespace IronAHK.Scripting
         const string FlowLoop = "loop";
         const string FlowReturn = "return";
         const string FlowWhile = "while";
+        #endregion
+
+        #region Functions
+        const string FunctionLocal = "local";
+        const string FunctionGlobal = "global";
+        const string FunctionStatic = "static";
         #endregion
 
         #region Directives

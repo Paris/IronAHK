@@ -83,6 +83,11 @@ namespace IronAHK.Scripting
 
         bool IsIdentifier(string token)
         {
+            return IsIdentifier(token, false);
+        }
+
+        bool IsIdentifier(string token, bool dynamic)
+        {
             if (string.IsNullOrEmpty(token))
                 return false;
 
@@ -96,8 +101,14 @@ namespace IronAHK.Scripting
             }
 
             foreach (char sym in token)
+            {
                 if (!IsIdentifier(sym))
+                {
+                    if (dynamic && sym == Resolve)
+                        continue;
                     return false;
+                }
+            }
 
             return true;
         }

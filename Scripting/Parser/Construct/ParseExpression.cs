@@ -14,29 +14,39 @@ namespace IronAHK.Scripting
         {
             var tokens = SplitTokens(code);
             var list = new List<CodeExpressionStatement>();
-            var sub = new List<object>(tokens.Count);
+            var parts = new List<object>(tokens.Count);
+            int level = 0;
 
-            for (int i = 0; i <= tokens.Count; i++)
+            for (int i = 0; i < tokens.Count; i++)
             {
-                if (i == tokens.Count)
-                    goto collect; // ffffff
-
-                string check = tokens[i] as string;
-                if (!(check != null && check.Length == 1 && check[0] == Multicast))
-                {
-                    sub.Add(tokens[i]);
+                if (!(tokens[i] is string))
                     continue;
-                }
 
-            collect:
-                if (sub.Count > 0)
-                {
-                    list.Add(new CodeExpressionStatement(ParseExpression(sub)));
-                    sub = new List<object>(tokens.Count);
-                }
+                string check = (string)tokens[i];
+
+                if ((check.Length == 1 && check[0] == ParenOpen) || (check.Length > 0 && check[check.Length - 1] == ParenOpen))
+                    level++;
+                else if (check.Length == 1 && check[0] == ParenClose)
+                    level--;
+
+                if (level == 0 && check.Length == 1 && check[0] == Multicast)
+                    CollectMultiExpression(list, parts);
+                else
+                    parts.Add(tokens[i]);
             }
 
+            CollectMultiExpression(list, parts);
+
             return list.ToArray();
+        }
+
+        void CollectMultiExpression(List<CodeExpressionStatement> list, List<object> parts)
+        {
+            if (parts.Count == 0)
+                return;
+
+            list.Add(new CodeExpressionStatement(ParseExpression(parts)));
+            parts.Clear();
         }
 
         CodeExpression ParseSingleExpression(string code)
@@ -99,13 +109,23 @@ namespace IronAHK.Scripting
                         int levels = 1;
                         for (int x = i + 1; x < parts.Count; x++)
                         {
-                            string current = parts[x] as string;
-                            if (string.IsNullOrEmpty(current))
+                            if (!(parts[x] is string))
                                 continue;
+
+                            string current = (string)parts[x];
+
+                            if (current.Length == 0)
+                                continue;
+
                             switch (current[0])
                             {
                                 case ParenOpen:
                                     levels++;
+                                    break;
+
+                                default:
+                                    if (current[current.Length - 1] == ParenOpen)
+                                        goto case ParenOpen;
                                     break;
 
                                 case ParenClose:
@@ -143,7 +163,7 @@ namespace IronAHK.Scripting
                         parts[i] = new CodePrimitiveExpression(result);
                     #endregion
                     #region Variables
-                    else if (IsIdentifier(part))
+                    else if (IsIdentifier(part, true) && !IsKeyword(part))
                         parts[i] = VarId(part);
                     #endregion
                     #region Invokes
@@ -163,13 +183,20 @@ namespace IronAHK.Scripting
                         int levels = 1;
                         for (int x = i + 1; x < parts.Count; x++)
                         {
-                            string current = parts[x] as string;
-                            if (string.IsNullOrEmpty(current))
+                            if (!(parts[x] is string))
                                 continue;
+
+                            string current = (string)parts[x];
+
                             switch (current[0])
                             {
                                 case ParenOpen:
                                     levels++;
+                                    break;
+
+                                default:
+                                    if (current[current.Length - 1] == ParenOpen)
+                                        goto case ParenOpen;
                                     break;
 
                                 case ParenClose:
@@ -294,7 +321,47 @@ namespace IronAHK.Scripting
 
             #region Operators
 
-            var calc = (CodeMethodReferenceExpression)InternalMethods.Operate;
+            #region Unary
+
+            for (int i = 1; i < parts.Count; i++)
+            {
+                if (parts[i] is Script.Operator && parts[i - 1] is Script.Operator && IsUnaryOperator((Script.Operator)parts[i]))
+                {
+                    int n = i + 1;
+
+                    if (n + 1 > parts.Count)
+                        throw new ParseException("Unary operator without operand");
+
+                    var op = (Script.Operator)parts[i];
+
+                    if (parts[n] is CodePrimitiveExpression && op == Script.Operator.Subtract)
+                    {
+                        var parent = ((CodePrimitiveExpression)parts[n]);
+
+                        if (parent.Value is int)
+                            parent.Value = -(int)parent.Value;
+                        else if (parent.Value is decimal)
+                            parent.Value = -(decimal)parent.Value;
+                        else if (parent.Value is string)
+                            parent.Value = string.Concat(Minus.ToString(), (string)parent.Value);
+                        else
+                            throw new ArgumentOutOfRangeException();
+
+                        parts.RemoveAt(i);
+                    }
+                    else
+                    {
+                        var invoke = (CodeMethodInvokeExpression)InternalMethods.OperateUnary;
+                        invoke.Parameters.Add(OperatorAsFieldReference(op));
+                        invoke.Parameters.Add(ExpressionNode(parts[n]));
+                        parts[i] = invoke;
+                        parts.RemoveAt(n);
+                    }
+                }
+            }
+
+            #endregion
+
             bool scan = true;
             int level = -1;
 
@@ -364,6 +431,16 @@ namespace IronAHK.Scripting
                             parts.RemoveRange(start, parts.Count - start);
                         }
                         #endregion
+                        #region Unary
+                        else if (x == -1)
+                        {
+                            invoke.Method = (CodeMethodReferenceExpression)InternalMethods.OperateUnary;
+                            invoke.Parameters.Add(OperatorAsFieldReference(op));
+                            invoke.Parameters.Add(ExpressionNode(parts[y]));
+                            parts[i] = invoke;
+                            parts.RemoveAt(y);
+                        }
+                        #endregion
                         #region Binary
                         else
                         {
@@ -384,7 +461,7 @@ namespace IronAHK.Scripting
                             }
                             else
                             {
-                                invoke.Method = calc;
+                                invoke.Method = (CodeMethodReferenceExpression)InternalMethods.Operate;
                                 invoke.Parameters.Add(OperatorAsFieldReference(op));
                                 invoke.Parameters.Add(ExpressionNode(parts[x]));
                                 invoke.Parameters.Add(ExpressionNode(parts[y]));
@@ -528,6 +605,8 @@ namespace IronAHK.Scripting
                                 return Script.Operator.BitShiftLeft;
                             else if (op[1] == Equal)
                                 return Script.Operator.LessThanOrEqual;
+                            else if (op[1] == Greater)
+                                return Script.Operator.ValueInequality;
                             else
                                 throw new ParseException(ExUnexpected);
 
@@ -618,14 +697,19 @@ namespace IronAHK.Scripting
                     return Script.Operator.TernaryA;
 
                 default:
-                    if (code.Length == AndTxt.Length && code.Equals(AndTxt, StringComparison.OrdinalIgnoreCase))
-                        return Script.Operator.BooleanAnd;
-                    else if (code.Length == OrTxt.Length && code.Equals(OrTxt, StringComparison.OrdinalIgnoreCase))
-                        return Script.Operator.BooleanOr;
-                    break;
-            }
+                    switch (code)
+                    {
+                        case NotTxt:
+                            return Script.Operator.LogicalNotEx;
 
-            throw new ArgumentOutOfRangeException();
+                        case AndTxt:
+                            return Script.Operator.BooleanAnd;
+
+                        case OrTxt:
+                            return Script.Operator.BooleanOr;
+                    }
+                    throw new ArgumentOutOfRangeException();
+            }
         }
 
         int OperatorPrecedence(Script.Operator op)
@@ -691,6 +775,22 @@ namespace IronAHK.Scripting
             }
         }
 
+        bool IsUnaryOperator(Script.Operator op)
+        {
+            switch (op)
+            {
+                case Script.Operator.Subtract:
+                case Script.Operator.LogicalNot:
+                case Script.Operator.LogicalNotEx:
+                case Script.Operator.BitwiseNot:
+                case Script.Operator.Dereference:
+                    return true;
+
+                default:
+                    return false;
+            }
+        }
+
         CodeFieldReferenceExpression OperatorAsFieldReference(Script.Operator op)
         {
             var field = new CodeFieldReferenceExpression();
@@ -753,44 +853,42 @@ namespace IronAHK.Scripting
 
         List<object> SplitTokens(string code)
         {
-            var stream = new StringReader(code);
             var list = new List<object>();
-            char sym;
 
-            while (true)
+            for (int i = 0; i < code.Length; i++)
             {
-                int ch = stream.Read();
-                if (ch == -1)
-                    break;
+                char sym = code[i];
 
-                sym = (char)ch;
-
+                #region Spaces
                 if (IsSpace(sym))
                     continue;
+                #endregion
+                #region Comments
+                else if (IsCommentAt(code, i))
+                    break;
+                #endregion
                 #region Identifiers
                 else if (IsIdentifier(sym) || sym == Resolve)
                 {
                     var id = new StringBuilder(code.Length);
                     id.Append(sym);
-                    while (true)
+                    i++;
+
+                    for (; i < code.Length; i++)
                     {
-                        int next = stream.Peek();
-                        if (next == -1)
-                            break;
-                        char symNext = (char)next;
-                        if (IsIdentifier(symNext) || symNext == Resolve)
-                        {
-                            id.Append(symNext);
-                            stream.Read();
-                        }
+                        sym = code[i];
+                        if (IsIdentifier(sym) || sym == Resolve)
+                            id.Append(sym);
                         else
+                        {
+                            if (i < code.Length && code[i] == ParenOpen)
+                                id.Append(ParenOpen);
+                            else
+                                i--;
                             break;
+                        }
                     }
-                    if ((char)stream.Peek() == ParenOpen)
-                    {
-                        id.Append(ParenOpen);
-                        stream.Read();
-                    }
+
                     list.Add(id.ToString());
                 }
                 #endregion
@@ -799,22 +897,26 @@ namespace IronAHK.Scripting
                 {
                     var str = new StringBuilder(code.Length);
                     str.Append(StringBound);
-                    while (true)
+                    i++;
+
+                    for (int max = code.Length + 1; i < max; i++)
                     {
-                        int next = stream.Peek();
-                        if (next == -1)
-                            throw new ParseException("Unterminated string");
-                        sym = (char)next;
-                        stream.Read();
+                        if (i == code.Length)
+                            throw new ParseException(ExUntermStr);
+
+                        sym = code[i];
                         str.Append(sym);
+
                         if (sym == StringBound)
                         {
-                            if ((char)stream.Peek() == StringBound)
-                                stream.Read();
+                            int n = i + 1;
+                            if (n < code.Length && code[n] == StringBound)
+                                i = n;
                             else
                                 break;
                         }
                     }
+
                     list.Add(str.ToString());
                 }
                 #endregion
@@ -822,8 +924,8 @@ namespace IronAHK.Scripting
                 else
                 {
                     var op = new StringBuilder(3);
-                    int next = stream.Peek();
-                    char symNext = (char)next;
+                    int n = i + 1;
+                    char symNext = n < code.Length ? code[n] : Reserved;
                     bool tri = false;
 
                     #region 3x
@@ -846,26 +948,22 @@ namespace IronAHK.Scripting
                             case BitAND:
                                 op.Append(sym);
                                 op.Append(symNext);
-                                stream.Read();
+                                i++;
                                 tri = true;
                                 if (peekAssign)
                                 {
-                                    next = stream.Peek();
-                                    if (next != -1)
+                                    n = i + 1;
+                                    if (n < code.Length && code[n] == Equal)
                                     {
-                                        symNext = (char)next;
-                                        if (symNext == Equal)
-                                        {
-                                            op.Append(symNext);
-                                            stream.Read();
-                                        }
+                                        op.Append(code[n]);
+                                        i = n;
                                     }
                                 }
                                 break;
                         }
                     }
                     #endregion
-                    
+
                     if (!tri)
                     {
                         #region 2x
@@ -885,9 +983,15 @@ namespace IronAHK.Scripting
                                 case Equal:
                                     op.Append(sym);
                                     op.Append(symNext);
-                                    stream.Read();
+                                    i++;
                                     break;
                             }
+                        }
+                        else if (sym == Less && symNext == Greater)
+                        {
+                            op.Append(sym);
+                            op.Append(symNext);
+                            i++;
                         }
                         #endregion
                         #region 1x

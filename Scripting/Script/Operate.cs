@@ -139,6 +139,34 @@ namespace IronAHK.Scripting
 
         #endregion
 
+        #region Unary
+
+        public static object OperateUnary(Operator op, object right)
+        {
+            switch (op)
+            {
+                case Operator.Minus:
+                    {
+                        decimal value = ForceDecimal(right);
+                        return value == default(decimal) ? right : -value;
+                    }
+
+                case Operator.LogicalNot:
+                case Operator.LogicalNotEx:
+                    return !IfTest(right);
+
+                case Operator.BitwiseNot:
+                    return IsNumeric(right) ? right : ~ForceInt(right);
+
+                case Operator.Dereference:
+                    // TODO: dereference operator
+                    return null;
+
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
+
         public static bool IfTest(object result)
         {
             if (result is bool)
@@ -152,5 +180,16 @@ namespace IronAHK.Scripting
             else
                 return result != null;
         }
+
+        #endregion
+
+        #region Helpers
+
+        static bool IsNumeric(object value)
+        {
+            return value is int || value is float || value is decimal;
+        }
+
+        #endregion
     }
 }
