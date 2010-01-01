@@ -11,14 +11,34 @@ namespace IronAHK
         {
             Sandbox();
 
-            const string test = "expressions";
-            const string file = "test.exe";
+            /* 
+             * Note: to change the default test script do not edit any variables here, instead
+             * create a file called select.txt in the tests directory with the file name (including extension)
+             * of the script to launch (i.e. "expressions.ia" or "vanilla-MAIN.ahk").
+             */
 
-            string source = string.Format("..{0}..{0}..{0}Tests{0}Scripting{0}Code{0}" + test + ".ia", Path.DirectorySeparatorChar);
-            File.Delete(file);
+            const string output = "test.exe";
+            const string test = "pass.ia";
+
+            string directory = string.Format("..{0}..{0}..{0}Tests{0}Scripting{0}Code", Path.DirectorySeparatorChar);
+            string select = Path.Combine(directory, "select.txt");
+            string source = null;
+
+            if (File.Exists(select))
+            {
+                string name = Path.Combine(directory, File.ReadAllText(select).Trim());
+
+                if (File.Exists(name))
+                    source = name;
+            }
+
+            if (source == null)
+                source = Path.Combine(directory, test);
+
+            File.Delete(output);
 
             if (args == null || args.Length == 0)
-                args = new string[] { "--out", file, source };
+                args = new string[] { "--out", output, source };
         }
 
         [Conditional("DEBUG")]

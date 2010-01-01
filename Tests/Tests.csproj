@@ -64,7 +64,10 @@
   </ItemGroup>
   <ItemGroup>
     <None Include=".gitignore" />
+    <None Include="Scripting\Code\.gitignore" />
     <None Include="Scripting\Code\comments.ia" />
+    <Content Include="Scripting\Code\select.txt" />
+    <None Include="Scripting\Code\isolated.ia" />
     <None Include="Scripting\Code\expressions.ia" />
     <None Include="Scripting\Code\pass.ia" />
     <None Include="Scripting\Code\if.ia" />
