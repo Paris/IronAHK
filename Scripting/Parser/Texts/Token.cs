@@ -60,6 +60,9 @@ namespace IronAHK.Scripting
                 case FlowLoop:
                 case FlowReturn:
                 case FlowWhile:
+                case FunctionLocal:
+                case FunctionGlobal:
+                case FunctionStatic:
                     return true;
             }
 
@@ -134,7 +137,7 @@ namespace IronAHK.Scripting
             while (i < code.Length && IsIdentifier(code[i])) i++;
 
             if (i == 0 || i == code.Length)
-                return true;
+                return false;
             else if (code[i] == Multicast)
                 return true;
             else if (IsSpace(code[i]))

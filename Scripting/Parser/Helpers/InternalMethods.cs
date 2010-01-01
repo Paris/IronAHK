@@ -86,6 +86,11 @@ namespace IronAHK.Scripting
                 get { return new MethodReference(typeof(Script), "OperateTernary"); }
             }
 
+            public static MethodReference OperateUnary
+            {
+                get { return new MethodReference(typeof(Script), "OperateUnary"); }
+            }
+
             public static MethodReference IfElse
             {
                 get { return new MethodReference(typeof(Script), "IfTest"); }

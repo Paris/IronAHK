@@ -90,7 +90,7 @@ namespace IronAHK.Scripting
 
                         case Token.Flow:
                             bool rewind;
-                            var result = ParseFlow(lines[i], out rewind);
+                            var result = ParseFlow(lines, i, out rewind);
                             if (result != null)
                                 parent.AddRange(result);
                             if (rewind)
