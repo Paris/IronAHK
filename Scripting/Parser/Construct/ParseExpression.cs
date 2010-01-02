@@ -278,7 +278,7 @@ namespace IronAHK.Scripting
                             if (x > -1 && parts[x] is CodeComplexVariableReferenceExpression)
                                 z = x;
 
-                            if (y < parts.Count && IsIdentifier(parts[y] as string))
+                            if (y < parts.Count && parts[y] is string && IsDynamicReference((string)parts[y]))
                             {
                                 if (z != -1)
                                     throw new ParseException("Cannot use both prefix and postfix operators on the same variable");
