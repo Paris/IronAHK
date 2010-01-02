@@ -31,6 +31,11 @@ namespace IronAHK.Scripting
                     switch (sym)
                     {
                         case BlockOpen:
+                            if (blocks.Count == 0)
+                            {
+                                block = new CodeBlock(lines[i], Scope, new CodeStatementCollection(), CodeBlock.BlockKind.Dummy);
+                                blocks.Push(block);
+                            }
                             block = blocks.Peek();
                             if (block.Type == CodeBlock.BlockType.Expect)
                                 block.Type = CodeBlock.BlockType.Within;
