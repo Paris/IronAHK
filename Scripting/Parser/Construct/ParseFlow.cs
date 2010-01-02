@@ -127,18 +127,21 @@ namespace IronAHK.Scripting
                                     break;
                             }
 
-                            string args = parts[1];
-
-                            if (skip)
+                            if (parts.Length > 1)
                             {
-                                int z = args.IndexOf(Multicast);
-                                if (z == -1)
-                                    throw new ParseException("Loop type must have an argument");
-                                args = args.Substring(z);
-                            }
+                                string args = parts[1];
 
-                            foreach (string arg in SplitCommandParameters(args))
-                                iterator.Parameters.Add(ParseCommandParameter(arg));
+                                if (skip)
+                                {
+                                    int z = args.IndexOf(Multicast);
+                                    if (z == -1)
+                                        throw new ParseException("Loop type must have an argument");
+                                    args = args.Substring(z);
+                                }
+
+                                foreach (string arg in SplitCommandParameters(args))
+                                    iterator.Parameters.Add(ParseCommandParameter(arg));
+                            }
                         }
                         else
                         {
