@@ -12,6 +12,24 @@ namespace IronAHK.Scripting
         CodeExpressionStatement[] ParseMultiExpression(string code)
         {
             var tokens = SplitTokens(code);
+
+            int n = tokens.Count - 2;
+            if (tokens.Count > 1 && ((string)tokens[n]).Length > 0 && ((string)tokens[n])[0] == Multicast)
+            {
+                switch (((string)tokens[n + 1]).ToUpperInvariant().TrimEnd('S'))
+                {
+                    case "S":
+                    case "SECOND":
+                    case "M":
+                    case "MINUTE":
+                    case "H":
+                    case "HOUR":
+                    case "D":
+                    case "DAY":
+                        return new CodeExpressionStatement[] { new CodeExpressionStatement(ParseDateExpression(code)) };
+                }
+            }
+
             var list = new List<CodeExpressionStatement>();
             var parts = new List<object>(tokens.Count);
             int level = 0;
@@ -515,6 +533,16 @@ namespace IronAHK.Scripting
         {
             return part is CodeComplexVariableReferenceExpression ?
                 (CodeMethodInvokeExpression)(CodeComplexVariableReferenceExpression)part : (CodeExpression)part;
+        }
+
+        #endregion
+
+        #region Date/time
+
+        CodeExpression ParseDateExpression(string code)
+        {
+            // TODO: date/time arithmetic expressions
+            return null;
         }
 
         #endregion
