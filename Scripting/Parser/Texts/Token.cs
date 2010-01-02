@@ -98,10 +98,35 @@ namespace IronAHK.Scripting
 
         bool IsHotkeyLabel(string code)
         {
-            // TODO: hotkey tokens
+            int z = code.IndexOf(HotkeySignal);
 
-            if (!code.Contains(HotkeySignal))
+            if (z == -1)
                 return false;
+
+            for (int i = 0; i < z; i++)
+            {
+                char sym = code[i];
+
+                switch (sym)
+                {
+                    case '#':
+                    case '!':
+                    case '^':
+                    case '+':
+                    case '&':
+                    case '<':
+                    case '>':
+                    case '*':
+                    case '~':
+                    case '$':
+                        break;
+
+                    default:
+                        if (!IsSpace(sym) && !char.IsLetterOrDigit(sym))
+                            return false;
+                        break;
+                }
+            }
 
             return true;
         }
