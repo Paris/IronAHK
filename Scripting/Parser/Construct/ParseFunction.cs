@@ -149,11 +149,30 @@ namespace IronAHK.Scripting
                 // name
                 x = i;
                 while (i < code.Length && IsIdentifier(code[i])) i++;
-                
+
                 if (x == i)
                     throw new ParseException(ExUnexpected);
                 else
-                    names.Add(new CodePrimitiveExpression(Scope + ScopeVar + code.Substring(x, i - x)));
+                {
+                    string part = code.Substring(x, i - x);
+                    bool byref = false;
+
+                    if (part.Equals(FunctionParamRef, StringComparison.OrdinalIgnoreCase))
+                    {
+                        byref = true; // TODO: handle byref variables in SetEnv/GetEnv
+
+                        do { i++; } while (i < code.Length && IsSpace(code[i]));
+                        x = i;
+                        while (i < code.Length && IsIdentifier(code[i])) i++;
+
+                        if (x == i)
+                            throw new ParseException("Unspecified parameter name");
+
+                        part = code.Substring(x, i - x);
+                    }
+
+                    names.Add(new CodePrimitiveExpression((byref ? mainScope : Scope) + ScopeVar + part));
+                }
 
                 while (i < code.Length && IsSpace(code[i])) i++;
 
