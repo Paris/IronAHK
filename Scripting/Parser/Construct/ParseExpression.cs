@@ -265,7 +265,15 @@ namespace IronAHK.Scripting
                     {
                         int n = i - 1;
                         if (n < 0 || !(parts[n] is CodeComplexVariableReferenceExpression))
+                        {
+#if LEGACY
+                            if (parts[n] is CodePrimitiveExpression &&
+                                ((CodePrimitiveExpression)parts[n]).Value is decimal)
+                                parts[n] = VarId(((decimal)((CodePrimitiveExpression)parts[n]).Value).ToString());
+                            else
+#endif
                             throw new ParseException("Can only assign to a variable");
+                        }
 
                         // (x += y) => (x = x + y)
                         parts[i] = new CodeComplexAssignStatement();
