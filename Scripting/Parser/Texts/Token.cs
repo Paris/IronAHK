@@ -147,7 +147,9 @@ namespace IronAHK.Scripting
                 i++;
                 while (i < code.Length && IsSpace(code[i])) i++;
 
-                if (i < code.Length && code[i] == Equal)
+                int n = i + 1;
+
+                if ((i < code.Length && code[i] == Equal) || (n < code.Length && !IsIdentifier(code[i]) && code[n] == Equal))
                     return false;
 
                 return true;
