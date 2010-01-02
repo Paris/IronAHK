@@ -925,7 +925,7 @@ namespace IronAHK.Scripting
                     break;
                 #endregion
                 #region Identifiers
-                else if (IsIdentifier(sym) || sym == Resolve)
+                else if (IsIdentifier(sym) || sym == Resolve || (sym == Concatenate && i + 1 < code.Length && IsIdentifier(code[i + 1])))
                 {
                     var id = new StringBuilder(code.Length);
                     id.Append(sym);
@@ -934,7 +934,7 @@ namespace IronAHK.Scripting
                     for (; i < code.Length; i++)
                     {
                         sym = code[i];
-                        if (IsIdentifier(sym) || sym == Resolve)
+                        if (IsIdentifier(sym) || sym == Resolve || (sym == Concatenate && (i + 1 < code.Length ? code[i + 1] != Equal : true)))
                             id.Append(sym);
                         else
                         {
