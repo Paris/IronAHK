@@ -971,15 +971,16 @@ namespace IronAHK.Scripting
                         {
                             switch (sym)
                             {
-                                case Not:
                                 case AssignPre:
+                                case Add:
                                 case Minus:
                                 case Multiply:
                                 case Divide:
                                 case Concatenate:
-                                case BitOR:
                                 case BitAND:
                                 case BitXOR:
+                                case BitOR:
+                                case Not:
                                 case Equal:
                                     op.Append(sym);
                                     op.Append(symNext);
