@@ -514,12 +514,16 @@ namespace IronAHK.Scripting
                 if (parts[i] is CodeComplexAssignStatement)
                 {
                     int x = i - 1, y = i + 1;
+                    bool right = y < parts.Count;
+
                     var assign = (CodeComplexAssignStatement)parts[i];
                     assign.Left = (CodeComplexVariableReferenceExpression)parts[x];
-                    assign.Right = parts[y] is CodeComplexVariableReferenceExpression ? 
-                        (CodeMethodInvokeExpression)(CodeComplexVariableReferenceExpression)parts[y] : (CodeExpression)parts[y];
-                    parts[i] = (CodeMethodInvokeExpression)assign;
-                    parts.RemoveAt(x);
+                    assign.Right = right ? parts[y] is CodeComplexVariableReferenceExpression ?
+                        (CodeMethodInvokeExpression)(CodeComplexVariableReferenceExpression)parts[y] : (CodeExpression)parts[y] : new CodePrimitiveExpression(null);
+                    parts[x] = (CodeMethodInvokeExpression)assign;
+                    
+                    if (right)
+                        parts.RemoveAt(y);
                     parts.RemoveAt(i);
                 }
             }
