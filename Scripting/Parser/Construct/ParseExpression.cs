@@ -1,7 +1,6 @@
 ﻿using System;
 using System.CodeDom;
 using System.Collections.Generic;
-using System.IO;
 using System.Text;
 
 namespace IronAHK.Scripting
@@ -325,7 +324,7 @@ namespace IronAHK.Scripting
 
             for (int i = 1; i < parts.Count; i++)
             {
-                if (parts[i] is Script.Operator && parts[i - 1] is Script.Operator && IsUnaryOperator((Script.Operator)parts[i]))
+                if (parts[i] is Script.Operator && (parts[i - 1] is Script.Operator || parts[i - 1] is CodeComplexAssignStatement) && IsUnaryOperator((Script.Operator)parts[i]))
                 {
                     int n = i + 1;
 
@@ -347,6 +346,10 @@ namespace IronAHK.Scripting
                         else
                             throw new ArgumentOutOfRangeException();
 
+                        parts.RemoveAt(i);
+                    }
+                    else if (op == Script.Operator.Add)
+                    {
                         parts.RemoveAt(i);
                     }
                     else
@@ -794,6 +797,9 @@ namespace IronAHK.Scripting
                 case Script.Operator.LogicalNotEx:
                 case Script.Operator.BitwiseNot:
                 case Script.Operator.Dereference:
+                    return true;
+
+                case Script.Operator.Add:
                     return true;
 
                 default:
