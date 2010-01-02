@@ -7,6 +7,7 @@ namespace IronAHK.Scripting
     {
         Stack<CodeBlock> blocks = new Stack<CodeBlock>();
         Stack<CodeStatementCollection> elses = new Stack<CodeStatementCollection>();
+        Stack<BreakLabels> breakLabels = new Stack<BreakLabels>();
 
         void CloseBlock()
         {

@@ -7,9 +7,8 @@ namespace IronAHK.Scripting
 {
     partial class Parser
     {
-        Stack<BreakLabels> breakLabels = new Stack<BreakLabels>();
 
-        CodeStatement[] ParseFlow(List<CodeLine> lines, int index, out bool rewind)
+        CodeStatement[] ParseFlow(List<CodeLine> lines, int index)
         {
             #region Variables
 
@@ -25,8 +24,6 @@ namespace IronAHK.Scripting
 
             if (parts.Length > 1)
                 parts[1] = parts[1].Trim(Spaces);
-
-            rewind = false;
 
             #endregion
 
@@ -56,16 +53,14 @@ namespace IronAHK.Scripting
                         if (elses.Count == 0)
                             throw new ParseException("Else with no preceeding if block");
 
-                        bool blockOpen = parts.Length > 1 && parts[1][0] == BlockOpen;
-                        var block = new CodeBlock(line, Scope, elses.Pop(), CodeBlock.BlockKind.IfElse);
-                        block.Type = blockOpen ? CodeBlock.BlockType.Within : CodeBlock.BlockType.Expect;
+                        string next = line.Code.TrimStart(Spaces).Substring(FlowElse.Length).TrimStart(Spaces);
 
-                        line.Code = line.Code.TrimStart(Spaces).Substring(FlowElse.Length).TrimStart(Spaces);
-                        rewind = line.Code.Length != 0;
+                        if (!IsEmptyStatement(next))
+                            lines.Insert(index + 1, new CodeLine(lines[index].FileName, lines[index].LineNumber, next));
 
-                        // don't push block for if/else chains (unless braces are used)
-                        if (rewind && !line.Code.Split(Spaces)[0].Equals(FlowIf, StringComparison.OrdinalIgnoreCase))
-                            blocks.Push(block);
+                        var type = parts.Length > 1 && parts[1][0] == BlockOpen ? CodeBlock.BlockType.Within : CodeBlock.BlockType.Expect;
+                        var block = new CodeBlock(lines[index], Scope, elses.Pop(), CodeBlock.BlockKind.IfElse) { Type = type };
+                        blocks.Push(block);
                     }
                     break;
 

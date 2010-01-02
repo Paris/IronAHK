@@ -20,6 +20,7 @@ namespace IronAHK.Scripting
 
                 string codeTrim = code.TrimStart(Spaces);
                 bool blockSingle = false;
+                int blocksCount = -1;
 
                 if (codeTrim.Length > 0)
                 {
@@ -44,9 +45,10 @@ namespace IronAHK.Scripting
                             break;
 
                         default:
-                            if (blocks.Count > 0 && lines[i].LineNumber - 1 >= blocks.Peek().Line.LineNumber && blocks.Peek().Type == CodeBlock.BlockType.Expect)
+                            if (blocks.Count > 0 && blocks.Peek().Type == CodeBlock.BlockType.Expect)
                             {
                                 blockSingle = true;
+                                blocksCount = blocks.Count;
                                 block = blocks.Peek();
                                 block.Type = CodeBlock.BlockType.Within;
                             }
@@ -89,12 +91,9 @@ namespace IronAHK.Scripting
                             break;
 
                         case Token.Flow:
-                            bool rewind;
-                            var result = ParseFlow(lines, i, out rewind);
+                            var result = ParseFlow(lines, i);
                             if (result != null)
                                 parent.AddRange(result);
-                            if (rewind)
-                                i--;
                             break;
 
                         case Token.Expression:
@@ -123,7 +122,16 @@ namespace IronAHK.Scripting
                 finally { }
 
                 if (blockSingle)
-                    CloseBlock();
+                {
+                    if (blocks.Count > blocksCount && blocksCount != -1)
+                    {
+                        var old = blocks.Pop();
+                        CloseBlock();
+                        blocks.Push(old);
+                    }
+                    else 
+                        CloseBlock();
+                }
             }
 
             CheckTopBlock();
