@@ -281,7 +281,7 @@ namespace IronAHK.Scripting
             if (sym == ParenOpen)
                 return true;
 
-            if (!IsIdentifier(sym) && !char.IsLetterOrDigit(sym))
+            if (!IsIdentifier(sym))
                 return true;
 
             string word = code.Split(Spaces, 2)[0];
@@ -297,7 +297,7 @@ namespace IronAHK.Scripting
             {
                 if (token == ParenOpen)
                     return true;
-                else if (!IsIdentifier(token))
+                else if (!IsIdentifier(token) && token != Resolve)
                     return false;
             }
 
