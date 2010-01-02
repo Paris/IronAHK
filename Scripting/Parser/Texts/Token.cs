@@ -136,8 +136,10 @@ namespace IronAHK.Scripting
 
             while (i < code.Length && IsIdentifier(code[i])) i++;
 
-            if (i == 0 || i == code.Length)
+            if (i == 0)
                 return false;
+            else if (i == code.Length)
+                return true;
             else if (code[i] == Multicast)
                 return true;
             else if (IsSpace(code[i]))
@@ -145,8 +147,7 @@ namespace IronAHK.Scripting
                 i++;
                 while (i < code.Length && IsSpace(code[i])) i++;
 
-                int n = i + 1;
-                if (n < code.Length && code[n] == Equal)
+                if (i < code.Length && code[i] == Equal)
                     return false;
 
                 return true;
