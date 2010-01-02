@@ -836,6 +836,7 @@ namespace IronAHK.Scripting
                 case Script.Operator.LogicalNot:
                 case Script.Operator.LogicalNotEx:
                 case Script.Operator.BitwiseNot:
+                case Script.Operator.BitwiseAnd:
                 case Script.Operator.Dereference:
                     return true;
 
