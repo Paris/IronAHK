@@ -117,6 +117,7 @@ namespace IronAHK.Scripting
         const string FunctionLocal = "local";
         const string FunctionGlobal = "global";
         const string FunctionStatic = "static";
+        const string FunctionParamRef = "byref";
         #endregion
 
         #region Directives
