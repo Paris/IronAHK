@@ -66,13 +66,13 @@ namespace IronAHK.Scripting
 
             if (value.Length == 0)
                 value = null;
-
-            value = StripCommentSingle(value);
+            else
+                value = StripCommentSingle(value);
 
             #endregion
 
-            CodeExpression result = IsExpressionParameter(value) ?
-                ParseSingleExpression(value.TrimStart(Spaces).Substring(2)) : VarNameOrBasicString(value, true);
+            CodeExpression result = value == null ? new CodePrimitiveExpression(null) :
+                IsExpressionParameter(value) ? ParseSingleExpression(value.TrimStart(Spaces).Substring(2)) : VarNameOrBasicString(value, true);
             return new CodeComplexAssignStatement(VarId(name), result);
         }
 
