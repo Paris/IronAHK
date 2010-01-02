@@ -646,6 +646,16 @@ namespace IronAHK.Scripting
                             throw new ParseException(ExUnexpected);
                     }
 
+                case BitXOR:
+                    switch (op.Length)
+                    {
+                        case 1:
+                            return Script.Operator.BitwiseXor;
+
+                        default:
+                            throw new ParseException(ExUnexpected);
+                    }
+
                 case Equal:
                     switch (op.Length)
                     {
