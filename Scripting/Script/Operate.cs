@@ -183,6 +183,15 @@ namespace IronAHK.Scripting
 
         #endregion
 
+        #region Misc
+
+        public static bool OperateBoolean(object expression, bool result)
+        {
+            return result;
+        }
+
+        #endregion
+
         #region Helpers
 
         static bool IsNumeric(object value)
