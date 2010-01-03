@@ -76,6 +76,18 @@ namespace IronAHK.Scripting
             var expr = new List<CodeExpression>();
             var sub = new List<object>();
 
+            int last = parts.Length - 1;
+
+            if (last > 0 && parts[0] is string && parts[last] is string &&
+                ((string)parts[0]).Length > 0 && ((string)parts[0])[0] == ParenOpen &&
+                ((string)parts[last]).Length > 0 && ((string)parts[last])[0] == ParenClose)
+            {
+                object[] trimmed = new object[last - 1];
+                Array.Copy(parts, 1, trimmed, 0, trimmed.Length);
+                parts = trimmed;
+            }
+
+
             for (int i = 0; i < parts.Length; i++)
             {
                 if (parts[i] is string)
