@@ -123,15 +123,6 @@ namespace IronAHK.Scripting
             methods.Add(method.Name, method);
         }
 
-        CodeMemberMethod LocalMethod(string name)
-        {
-            var method = new CodeMemberMethod() { Name = name, ReturnType = new CodeTypeReference(typeof(object)) };
-            var param = new CodeParameterDeclarationExpression(typeof(object[]), args);
-            param.UserData.Add("rawtype", typeof(object[]));
-            method.Parameters.Add(param);
-            return method;
-        }
-
         CodeStatement ParseFunctionParameters(string code)
         {
             #region List
