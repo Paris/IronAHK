@@ -193,7 +193,7 @@ namespace IronAHK.Scripting
                         {
                             if (IsDynamicReference(name))
                                 dynamic = true;
-                            else 
+                            else
                                 throw new ParseException("Invalid function name");
                         }
 
@@ -272,7 +272,7 @@ namespace IronAHK.Scripting
                                 parts[n] = VarId(((decimal)((CodePrimitiveExpression)parts[n]).Value).ToString());
                             else
 #endif
-                            throw new ParseException("Can only assign to a variable");
+                                throw new ParseException("Can only assign to a variable");
                         }
 
                         // (x += y) => (x = x + y)
@@ -346,7 +346,7 @@ namespace IronAHK.Scripting
 
             #region Operators
 
-            #region Unary
+            #region Unary (precedent)
 
             for (int i = 1; i < parts.Count; i++)
             {
@@ -390,6 +390,8 @@ namespace IronAHK.Scripting
             }
 
             #endregion
+
+            #region Generic
 
             bool scan = true;
             int level = -1;
@@ -463,6 +465,12 @@ namespace IronAHK.Scripting
                         #region Unary
                         else if (x == -1)
                         {
+                            int z = y + 1;
+                            if (op == Script.Operator.LogicalNotEx && parts[y] is CodeComplexVariableReferenceExpression && z < parts.Count)
+                                MergeAssignmentAt(parts, z);
+
+                            // TODO: raise precedence of assignments for other cases (e.g. ++var)
+
                             invoke.Method = (CodeMethodReferenceExpression)InternalMethods.OperateUnary;
                             invoke.Parameters.Add(OperatorAsFieldReference(op));
                             invoke.Parameters.Add(ExpressionNode(parts[y]));
@@ -508,25 +516,11 @@ namespace IronAHK.Scripting
 
             #endregion
 
+            #endregion
+
             #region Assignments
             for (int i = parts.Count - 1; i > 0; i--)
-            {
-                if (parts[i] is CodeComplexAssignStatement)
-                {
-                    int x = i - 1, y = i + 1;
-                    bool right = y < parts.Count;
-
-                    var assign = (CodeComplexAssignStatement)parts[i];
-                    assign.Left = (CodeComplexVariableReferenceExpression)parts[x];
-                    assign.Right = right ? parts[y] is CodeComplexVariableReferenceExpression ?
-                        (CodeMethodInvokeExpression)(CodeComplexVariableReferenceExpression)parts[y] : (CodeExpression)parts[y] : new CodePrimitiveExpression(null);
-                    parts[x] = (CodeMethodInvokeExpression)assign;
-                    
-                    if (right)
-                        parts.RemoveAt(y);
-                    parts.RemoveAt(i);
-                }
-            }
+                MergeAssignmentAt(parts, i);
             #endregion
 
             #region Variables
@@ -539,6 +533,25 @@ namespace IronAHK.Scripting
                 throw new ArgumentOutOfRangeException();
 
             return (CodeExpression)parts[0];
+        }
+
+        void MergeAssignmentAt(List<object> parts, int i)
+        {
+            if (!(parts[i] is CodeComplexAssignStatement))
+                return;
+
+            int x = i - 1, y = i + 1;
+            bool right = y < parts.Count;
+
+            var assign = (CodeComplexAssignStatement)parts[i];
+            assign.Left = (CodeComplexVariableReferenceExpression)parts[x];
+            assign.Right = right ? parts[y] is CodeComplexVariableReferenceExpression ?
+                (CodeMethodInvokeExpression)(CodeComplexVariableReferenceExpression)parts[y] : (CodeExpression)parts[y] : new CodePrimitiveExpression(null);
+            parts[x] = (CodeMethodInvokeExpression)assign;
+
+            if (right)
+                parts.RemoveAt(y);
+            parts.RemoveAt(i);
         }
 
         CodeExpression ExpressionNode(object part)
