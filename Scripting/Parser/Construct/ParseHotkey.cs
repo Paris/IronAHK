@@ -68,26 +68,5 @@ namespace IronAHK.Scripting
 
             return new CodeMethodReturnStatement();
         }
-
-        bool IsRemap(string code)
-        {
-            code = code.Trim(Spaces);
-
-            if (code.Length == 0)
-                return false;
-
-            if (IsSpace(code[0]))
-                return false;
-
-            for (int i = 1; i < code.Length; i++)
-            {
-                if (IsCommentAt(code, i))
-                    return true;
-                else if (!IsSpace(code[i]))
-                    return false;
-            }
-
-            return true;
-        }
     }
 }

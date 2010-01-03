@@ -72,6 +72,8 @@ namespace IronAHK.Scripting
 
                 #endregion
 
+                #region Tokens
+
                 var token = GetToken(code);
 
                 try
@@ -125,15 +127,21 @@ namespace IronAHK.Scripting
 #endif
                 finally { }
 
+                #endregion
+
                 if (blocks.Count == blocksCount)
                     CloseBlock(blocksCount, blocks.Count > blocksCount && blocksCount != -1);
             }
+
+            #region Blocks
 
             CloseTopSingleBlocks();
             CloseTopLabelBlock();
 
             if (blocks.Count > 0)
                 throw new ParseException(ExUnclosedBlock, blocks.Peek().Line);
+
+            #endregion
         }
     }
 }

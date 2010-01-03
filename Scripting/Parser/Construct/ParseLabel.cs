@@ -1,5 +1,4 @@
 ﻿using System.CodeDom;
-using System.Collections.Generic;
 
 namespace IronAHK.Scripting
 {
@@ -30,13 +29,6 @@ namespace IronAHK.Scripting
             blocks.Push(block);
 
             methods.Add(method.Name, method);
-        }
-
-        CodeMethodInvokeExpression LocalLabelInvoke(string name)
-        {
-            var invoke = (CodeMethodInvokeExpression)InternalMethods.LabelCall;
-            invoke.Parameters.Add(new CodePrimitiveExpression(name));
-            return invoke;
         }
     }
 }
