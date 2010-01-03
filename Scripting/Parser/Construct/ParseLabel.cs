@@ -20,7 +20,7 @@ namespace IronAHK.Scripting
 
         void PushLabel(CodeLine line, string name, bool fallthrough)
         {
-            var last = CheckTopBlock();
+            var last = CloseTopLabelBlock();
 
             if (fallthrough && last != null)
                 last.Statements.Add(LocalLabelInvoke(name));
@@ -37,13 +37,6 @@ namespace IronAHK.Scripting
             var invoke = (CodeMethodInvokeExpression)InternalMethods.LabelCall;
             invoke.Parameters.Add(new CodePrimitiveExpression(name));
             return invoke;
-        }
-
-        CodeBlock CheckTopBlock()
-        {
-            if (blocks.Count != 0 && blocks.Peek().Kind == CodeBlock.BlockKind.Label)
-                return blocks.Pop();
-            return null;
         }
     }
 }

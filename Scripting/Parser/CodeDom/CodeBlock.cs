@@ -13,6 +13,7 @@ namespace IronAHK.Scripting
         CodeStatementCollection statements;
         BlockType type;
         BlockKind kind;
+        int level;
 
         public CodeBlock(CodeLine line, string method, CodeStatementCollection statements, BlockKind kind)
         {
@@ -21,6 +22,7 @@ namespace IronAHK.Scripting
             this.statements = statements;
             this.type = BlockType.Expect;
             this.kind = kind;
+            this.level = int.MaxValue;
         }
 
         public CodeLine Line
@@ -47,6 +49,17 @@ namespace IronAHK.Scripting
         public BlockKind Kind
         {
             get { return kind; }
+        }
+
+        public int Level
+        {
+            get { return level; }
+            set { level = value; }
+        }
+
+        public bool IsSingle
+        {
+            get { return level != int.MaxValue; }
         }
     }
 }
