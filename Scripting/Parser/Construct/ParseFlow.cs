@@ -22,7 +22,12 @@ namespace IronAHK.Scripting
             string[] parts = code.TrimStart(Spaces).Split(delimiters, 2);
 
             if (parts.Length > 1)
+            {
                 parts[1] = parts[1].Trim(Spaces);
+
+                if (IsEmptyStatement(parts[1]))
+                    parts = new string[] { parts[0] };
+            }
 
             #endregion
 
@@ -36,7 +41,7 @@ namespace IronAHK.Scripting
                             throw new ParseException("If requires a parameter");
 
                         bool blockOpen = false;
-                        CodeExpression condition = ParseFlowParameter(parts[1], true, out blockOpen);
+                        CodeExpression condition = ParseFlowParameter(parts[1], true, out blockOpen, false);
                         CodeConditionStatement ifelse = new CodeConditionStatement { Condition = condition };
 
                         var block = new CodeBlock(line, Scope, ifelse.TrueStatements, CodeBlock.BlockKind.IfElse);
@@ -178,7 +183,7 @@ namespace IronAHK.Scripting
                 case FlowWhile:
                     {
                         bool blockOpen = false;
-                        CodeExpression condition = parts.Length > 1 ? ParseFlowParameter(parts[1], true, out blockOpen) : new CodePrimitiveExpression(true);
+                        CodeExpression condition = parts.Length > 1 ? ParseFlowParameter(parts[1], true, out blockOpen, true) : new CodePrimitiveExpression(true);
                         CodeIterationStatement loop = new CodeIterationStatement();
                         loop.TestExpression = condition;
                         loop.InitStatement = new CodeCommentStatement(string.Empty);
@@ -214,13 +219,13 @@ namespace IronAHK.Scripting
                 case FlowReturn:
                     if (Scope == mainScope)
                     {
-                        if (parts.Length > 1 && !IsEmptyStatement(parts[1]))
+                        if (parts.Length > 1)
                             throw new ParseException("Cannot have return parameter for entry point method");
                         return new CodeStatement[] { new CodeMethodReturnStatement() };
                     }
                     else
                     {
-                        var result = parts.Length > 1 && !IsEmptyStatement(parts[1]) ? ParseSingleExpression(parts[1]) : new CodePrimitiveExpression(null);
+                        var result = parts.Length > 1 ? ParseSingleExpression(parts[1]) : new CodePrimitiveExpression(null);
                         return new CodeStatement[] { new CodeMethodReturnStatement(result) };
                     }
 
@@ -245,14 +250,15 @@ namespace IronAHK.Scripting
 
         #region Flow argument
 
-        CodeExpression ParseFlowParameter(string code, bool inequality, out bool blockOpen)
+        CodeExpression ParseFlowParameter(string code, bool inequality, out bool blockOpen, bool expr)
         {
             blockOpen = false;
             code = code.Trim(Spaces);
             if (code.Length == 0)
                 return new CodePrimitiveExpression(false);
-            else if (IsExpression(code))
+            else if (expr || IsExpression(code))
             {
+                // TODO: check for opening brace before comments (i.e "while true { ; something")
                 int l = code.Length - 1;
                 if (code.Length > 0 && code[l] == BlockOpen)
                 {
