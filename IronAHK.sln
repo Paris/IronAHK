@@ -15,7 +15,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Scripting", "Scripting\Scri
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{51290663-19A1-4ADA-8D9E-351EF396A8FB}"
 	ProjectSection(SolutionItems) = preProject
-		clean.bat = clean.bat
 		license.txt = license.txt
 		make.bat = make.bat
 		Makefile = Makefile
