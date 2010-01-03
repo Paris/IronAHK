@@ -19,7 +19,6 @@ namespace IronAHK.Scripting
                 #region Blocks
 
                 string codeTrim = code.TrimStart(Spaces);
-                bool blockSingle = false;
                 int blocksCount = -1;
 
                 if (codeTrim.Length > 0)
@@ -52,10 +51,10 @@ namespace IronAHK.Scripting
                         default:
                             if (blocks.Count > 0 && blocks.Peek().Type == CodeBlock.BlockType.Expect)
                             {
-                                blockSingle = true;
                                 blocksCount = blocks.Count;
                                 block = blocks.Peek();
                                 block.Type = CodeBlock.BlockType.Within;
+                                block.Level = blocksCount;
                             }
                             break;
                     }
@@ -126,23 +125,12 @@ namespace IronAHK.Scripting
 #endif
                 finally { }
 
-                if (blockSingle)
-                {
-                    if (blocks.Count > blocksCount && blocksCount != -1)
-                    {
-                        var old = blocks.Pop();
-                        CloseBlock();
-                        blocks.Push(old);
-                    }
-                    else 
-                        CloseBlock();
-                }
+                if (blocks.Count == blocksCount)
+                    CloseBlock(blocksCount, blocks.Count > blocksCount && blocksCount != -1);
             }
 
-            CheckTopBlock();
-
-            if (blocks.Count > 0 && lines[lines.Count - 1].LineNumber == blocks.Peek().Line.LineNumber && blocks.Peek().Type == CodeBlock.BlockType.Expect)
-                CloseBlock();
+            CloseTopSingleBlocks();
+            CloseTopLabelBlock();
 
             if (blocks.Count > 0)
                 throw new ParseException(ExUnclosedBlock, blocks.Peek().Line);

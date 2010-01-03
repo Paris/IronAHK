@@ -11,7 +11,7 @@ namespace IronAHK.Scripting
 
         public void ParseFunction(CodeLine line)
         {
-            CheckTopBlock();
+            CloseTopLabelBlock();
             string code = line.Code;
             int i;
             var buf = new StringBuilder();
