@@ -26,10 +26,28 @@ namespace IronAHK
 
             if (File.Exists(select))
             {
-                string name = Path.Combine(directory, File.ReadAllText(select).Trim());
+                var reader = new StreamReader(select);
+                const char comment = '#';
+                string line;
 
-                if (File.Exists(name))
-                    source = name;
+                while ((line = reader.ReadLine()) != null)
+                {
+                    line = line.Trim();
+                    int z = line.IndexOf(comment);
+
+                    if (line.Length == 0 || z == 0)
+                        continue;
+
+                    if (z != -1)
+                        line = line.Substring(0, z).Trim();
+                    
+                    string name = Path.Combine(directory, line.Trim());
+
+                    if (File.Exists(name))
+                        source = name;
+
+                    break;
+                }
             }
 
             if (source == null)
