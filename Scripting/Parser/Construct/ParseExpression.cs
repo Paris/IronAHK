@@ -289,7 +289,22 @@ namespace IronAHK.Scripting
                     #region Multiple statements
                     else if (part.Length == 1 && part[0] == Multicast)
                     {
-                        throw new ParseException("Multiple expression statements not allowed here");
+                        // implement as: || Dummy(expr..)
+
+                        int z = i + 1, l = parts.Count - z;
+                        var sub = new List<object>(l);
+
+                        for (; z < parts.Count; z++)
+                            sub.Add(parts[z]);
+
+                        parts.RemoveRange(i, parts.Count - i);
+
+                        var invoke = (CodeMethodInvokeExpression)InternalMethods.OperateBoolean;
+                        invoke.Parameters.Add(ParseExpression(sub));
+                        invoke.Parameters.Add(new CodePrimitiveExpression(false));
+
+                        parts.Add(Script.Operator.BooleanOr);
+                        parts.Add(invoke);
                     }
                     #endregion
                     #region Binary operators
