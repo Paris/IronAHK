@@ -1,11 +1,10 @@
 ﻿using System;
+using System.Reflection;
 
 namespace IronAHK.Rusty
 {
     partial class Core
     {
-        const string A_ = "A_";
-
         /// <summary>
         /// Assigns the specified value to a variable.
         /// </summary>
@@ -14,14 +13,20 @@ namespace IronAHK.Rusty
         /// <returns>The value set.</returns>
         public static object SetEnv(string Name, object Value)
         {
-            int z = Name.LastIndexOf('.') + 1;
-            if (z > 0 && z + A_.Length < Name.Length && Name.Substring(z, A_.Length).Equals(A_, StringComparison.OrdinalIgnoreCase))
+            var method = GetReservedVariableReference(Name, true);
+
+            if (method != null)
             {
-                string name = Name.Substring(z);
-                if (typeof(Core).GetMethod("get_" + name) != null)
+                try { method.Invoke(null, new object[] { Value }); }
+                catch (ArgumentException)
+                {
+                    error = 1;
                     return null;
+                }
+                return GetReservedVariableReference(Name, false).Invoke(null, new object[] { });
             }
 
+            Name = NormaliseVariableName(Name);
             bool exists = variables.ContainsKey(Name);
 
             if (Value == null)
@@ -50,29 +55,48 @@ namespace IronAHK.Rusty
         /// <returns>Corresponding value.</returns>
         public static object GetEnv(string Name)
         {
+            Name = NormaliseVariableName(Name);
+
             if (variables.ContainsKey(Name))
                 return variables[Name];
             else
             {
-                int z = Name.LastIndexOf('.') + 1;
-                if (z == 0 || z + A_.Length > Name.Length)
-                    return null;
-
-                string name = Name.Substring(z);
-                if (!name.Substring(0, A_.Length).Equals(A_, StringComparison.OrdinalIgnoreCase))
-                    return null;
-
-                string match = "get_" + name;
-
-                try
-                {
-                    return typeof(Core).GetMethod(match).Invoke(null, null);
-                }
-                catch (Exception)
-                {
-                    return null;
-                }
+                var method = GetReservedVariableReference(Name, false);
+                return method == null ? null : method.Invoke(null, new object[] { });
             }
+        }
+
+        static string NormaliseVariableName(string name)
+        {
+            return name.ToLowerInvariant();
+        }
+
+        static MethodInfo GetReservedVariableReference(string name, bool set)
+        {
+            const string A_ = "A_";
+            int z = name.LastIndexOf('.');
+            
+            if (z != -1)
+            {
+                z++;
+                if (z + A_.Length > name.Length)
+                    return null;
+                name = name.Substring(z);
+            }
+
+            if (!name.Substring(0, A_.Length).Equals(A_, StringComparison.OrdinalIgnoreCase))
+                return null;
+
+            name = (set ? "set_" : "get_") + name;
+            var list = typeof(Core).GetMethods();
+
+            foreach (MethodInfo method in list)
+            {
+                if (method.Name.Equals(name, StringComparison.OrdinalIgnoreCase) && method.IsStatic)
+                    return method;
+            }
+
+            return null;
         }
     }
 }
