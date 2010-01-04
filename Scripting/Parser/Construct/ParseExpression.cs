@@ -16,7 +16,10 @@ namespace IronAHK.Scripting
             int n = tokens.Count - 2;
             if (tokens.Count > 1 && ((string)tokens[n]).Length > 0 && ((string)tokens[n])[0] == Multicast)
             {
-                switch (((string)tokens[n + 1]).ToUpperInvariant().TrimEnd('S'))
+                string arg = ((string)tokens[n + 1]).ToUpperInvariant().Trim();
+                arg = arg.Length == 1 ? arg : arg.TrimEnd('S');
+
+                switch (arg)
                 {
                     case "S":
                     case "SECOND":
