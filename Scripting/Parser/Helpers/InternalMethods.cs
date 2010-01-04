@@ -91,9 +91,9 @@ namespace IronAHK.Scripting
                 get { return new MethodReference(typeof(Script), "OperateUnary"); }
             }
 
-            public static MethodReference OperateBoolean
+            public static MethodReference OperateZero
             {
-                get { return new MethodReference(typeof(Script), "OperateBoolean"); }
+                get { return new MethodReference(typeof(Script), "OperateZero"); }
             }
 
             public static MethodReference IfElse
