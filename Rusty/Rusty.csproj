@@ -92,7 +92,7 @@
     <Compile Include="Core\Properties.cs" />
     <Compile Include="Core\Registry.cs" />
     <Compile Include="Core\Sound.cs" />
-    <Compile Include="Core\SpecialVariables.cs" />
+    <Compile Include="Core\ReservedVariables.cs" />
     <Compile Include="Core\String.cs" />
     <Compile Include="Core\Variables.cs" />
     <Compile Include="Core\Window.cs" />
