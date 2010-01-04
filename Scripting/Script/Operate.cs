@@ -185,9 +185,9 @@ namespace IronAHK.Scripting
 
         #region Misc
 
-        public static bool OperateBoolean(object expression, bool result)
+        public static int OperateZero(object expression)
         {
-            return result;
+            return 0;
         }
 
         #endregion

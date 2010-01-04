@@ -301,7 +301,7 @@ namespace IronAHK.Scripting
                     #region Multiple statements
                     else if (part.Length == 1 && part[0] == Multicast)
                     {
-                        // implement as: || Dummy(expr..)
+                        // implement as: + Dummy(expr..)
 
                         int z = i + 1, l = parts.Count - z;
                         var sub = new List<object>(l);
@@ -311,11 +311,11 @@ namespace IronAHK.Scripting
 
                         parts.RemoveRange(i, parts.Count - i);
 
-                        var invoke = (CodeMethodInvokeExpression)InternalMethods.OperateBoolean;
+                        var invoke = (CodeMethodInvokeExpression)InternalMethods.OperateZero;
                         invoke.Parameters.Add(ParseExpression(sub));
                         invoke.Parameters.Add(new CodePrimitiveExpression(false));
 
-                        parts.Add(Script.Operator.BooleanOr);
+                        parts.Add(Script.Operator.Add);
                         parts.Add(invoke);
                     }
                     #endregion
