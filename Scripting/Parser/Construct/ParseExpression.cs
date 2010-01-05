@@ -127,6 +127,9 @@ namespace IronAHK.Scripting
         {
             #region Scanner
 
+        start:
+            bool rescan = false;
+
             for (int i = 0; i < parts.Count; i++)
             {
                 if (parts[i] is string)
@@ -185,6 +188,8 @@ namespace IronAHK.Scripting
                         if (levels != 0)
                             throw new ParseException(ExUnbalancedParens);
                     }
+                    else if (part[0] == ParenClose)
+                        rescan = true;
                     #endregion
                     #region Strings
                     else if (part.Length > 1 && part[0] == StringBound && part[part.Length - 1] == StringBound)
@@ -276,7 +281,7 @@ namespace IronAHK.Scripting
                     }
                     #endregion
                     #region Assignments
-                    else if (IsAssignOp(part))
+                    else if (IsAssignOp(part) || IsImplicitAssignment(parts, i))
                     {
                         int n = i - 1;
                         if (n < 0 || !(parts[n] is CodeComplexVariableReferenceExpression))
@@ -292,12 +297,17 @@ namespace IronAHK.Scripting
 
                         // (x += y) => (x = x + y)
                         parts[i] = new CodeComplexAssignStatement();
-                        if (part[0] != AssignPre)
+                        if (part[0] != AssignPre && part.Length != 1)
                         {
-                            i++;
-                            parts.Insert(i, parts[i - 2]);
-                            i++;
-                            parts.Insert(i, OperatorFromString(part.Substring(0, part.Length - 1)));
+                            parts.Insert(++i, ParenOpen.ToString());
+                            parts.Insert(++i, parts[i - 3]);
+                            if (part.Length > 1)
+                            {
+                                parts.Insert(++i, OperatorFromString(part.Substring(0, part.Length - 1)));
+                                parts.Insert(++i, ParenOpen.ToString());
+                                parts.Add(ParenClose.ToString());
+                            }
+                            parts.Add(ParenClose.ToString());
                         }
                     }
                     #endregion
@@ -371,6 +381,9 @@ namespace IronAHK.Scripting
                     #endregion
                 }
             }
+
+            if (rescan)
+                goto start;
 
             #endregion
 
@@ -565,6 +578,36 @@ namespace IronAHK.Scripting
             return (CodeExpression)parts[0];
         }
 
+        #region Helpers
+
+        bool IsImplicitAssignment(List<object> parts, int i)
+        {
+            int x = i - 1, y = i + 1;
+
+            if (x < 0 || !(parts[x] is CodeComplexVariableReferenceExpression))
+                return false;
+
+            if (!(y < parts.Count && parts[y] is string && IsVariable((string)parts[y])))
+                return false;
+
+            if (!(parts[i] is string))
+                return false;
+
+            try
+            {
+                if (OperatorFromString((string)parts[i]) == Script.Operator.ValueEquality)
+                    return true;
+            }
+            catch (ArgumentException) { }
+
+            return false;
+        }
+
+        bool IsVariable(string code)
+        {
+            return IsIdentifier(code, true) && !IsKeyword(code);
+        }
+
         void MergeAssignmentAt(List<object> parts, int i)
         {
             if (!(parts[i] is CodeComplexAssignStatement))
@@ -589,6 +632,8 @@ namespace IronAHK.Scripting
             return part is CodeComplexVariableReferenceExpression ?
                 (CodeMethodInvokeExpression)(CodeComplexVariableReferenceExpression)part : (CodeExpression)part;
         }
+
+        #endregion
 
         #endregion
 
