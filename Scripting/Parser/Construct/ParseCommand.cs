@@ -29,6 +29,7 @@ namespace IronAHK.Scripting
                         invoke.Parameters.Add(ParseCommandParameter(param));
             }
 
+            invokes.Add(invoke);
             return invoke;
         }
 

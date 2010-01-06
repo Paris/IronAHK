@@ -41,7 +41,7 @@ namespace IronAHK.Scripting
             name = buf.ToString();
             buf.Length = 0;
 
-            if (methods.ContainsKey(name))
+            if (LocalMethodName(name) != null)
                 throw new ParseException("Duplicate function");
 
             #endregion
