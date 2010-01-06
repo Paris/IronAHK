@@ -259,11 +259,8 @@ namespace IronAHK.Scripting
                                         if (count != 0)
                                         {
                                             var passed = ParseMultiExpression(sub);
-                                            var obj = new CodeArrayCreateExpression();
-                                            obj.Size = passed.Length;
-                                            obj.CreateType = new CodeTypeReference(typeof(object));
-                                            obj.Initializers.AddRange(passed);
-                                            invoke.Parameters.Add(obj);
+                                            invoke.Parameters.AddRange(passed);
+                                            invokes.Add(invoke);
                                         }
 
                                         parts.RemoveRange(i, count + 2);

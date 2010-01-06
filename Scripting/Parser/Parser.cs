@@ -36,6 +36,7 @@ namespace IronAHK.Scripting
                     main.Statements.Insert(0, statement);
                 prepend = new CodeStatementCollection();
 
+                ResolveLocalInvokes();
                 foreach (CodeMemberMethod method in methods.Values)
                     container.Members.Add(method);
 
