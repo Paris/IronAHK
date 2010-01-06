@@ -81,7 +81,13 @@ namespace IronAHK.Scripting
                     switch (token)
                     {
                         case Token.Assign:
-                            parent.Add((CodeMethodInvokeExpression)ParseAssign(code));
+                            var assign = ParseAssign(code);
+#pragma warning disable 0162
+                            if (UseComplexVar)
+                                parent.Add(assign);
+                            else
+                                parent.Add((CodeMethodInvokeExpression)assign);
+#pragma warning restore 0162
                             break;
 
                         case Token.Command:

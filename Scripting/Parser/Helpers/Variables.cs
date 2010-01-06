@@ -61,7 +61,7 @@ namespace IronAHK.Scripting
             if (asValue)
                 return StringConcat(all);
             else
-                return (CodeMethodInvokeExpression)(new CodeComplexVariableReferenceExpression(all));
+                return ComplexVarRef(new CodeComplexVariableReferenceExpression(all));
         }
 
         CodeComplexVariableReferenceExpression VarId(string name)

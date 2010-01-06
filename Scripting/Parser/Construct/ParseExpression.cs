@@ -564,9 +564,14 @@ namespace IronAHK.Scripting
             #endregion
 
             #region Variables
-            for (int i = 0; i < parts.Count; i++)
-                if (parts[i] is CodeComplexVariableReferenceExpression)
-                    parts[i] = (CodeMethodInvokeExpression)(CodeComplexVariableReferenceExpression)parts[i];
+#pragma warning disable 0162
+            if (!UseComplexVar)
+            {
+                for (int i = 0; i < parts.Count; i++)
+                    if (parts[i] is CodeComplexVariableReferenceExpression)
+                        parts[i] = (CodeMethodInvokeExpression)(CodeComplexVariableReferenceExpression)parts[i];
+            }
+#pragma warning restore 0162
             #endregion
 
             if (parts.Count != 1)
@@ -616,8 +621,15 @@ namespace IronAHK.Scripting
             var assign = (CodeComplexAssignStatement)parts[i];
             assign.Left = (CodeComplexVariableReferenceExpression)parts[x];
             assign.Right = right ? parts[y] is CodeComplexVariableReferenceExpression ?
-                (CodeMethodInvokeExpression)(CodeComplexVariableReferenceExpression)parts[y] : (CodeExpression)parts[y] : new CodePrimitiveExpression(null);
-            parts[x] = (CodeMethodInvokeExpression)assign;
+                ComplexVarRef(parts[y]) : (CodeExpression)parts[y] : new CodePrimitiveExpression(null);
+
+
+#pragma warning disable 0162
+            if (UseComplexVar)
+                parts[x] = assign;
+            else
+                parts[x] = (CodeMethodInvokeExpression)assign;
+#pragma warning restore 0162
 
             if (right)
                 parts.RemoveAt(y);
@@ -626,8 +638,7 @@ namespace IronAHK.Scripting
 
         CodeExpression ExpressionNode(object part)
         {
-            return part is CodeComplexVariableReferenceExpression ?
-                (CodeMethodInvokeExpression)(CodeComplexVariableReferenceExpression)part : (CodeExpression)part;
+            return part is CodeComplexVariableReferenceExpression ? ComplexVarRef(part) : (CodeExpression)part;
         }
 
         #endregion
