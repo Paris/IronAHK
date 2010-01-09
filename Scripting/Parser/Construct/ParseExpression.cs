@@ -72,17 +72,15 @@ namespace IronAHK.Scripting
             for (int i = 0; i < parts.Length; i++)
             {
                 if (string.IsNullOrEmpty(parts[i] as string))
-                {
-                    sub.Add(parts[i]);
-                    continue;
-                }
+                    goto end;
 
                 string check = (string)parts[i];
 
-                if (check.Length > 0)
+                if (check.Length > 1)
                 {
-                    sub.Add(parts[i]);
-                    continue;
+                    if (check[check.Length - 1] == ParenOpen)
+                        level++;
+                    goto end;
                 }
 
                 switch (check[0])
@@ -92,8 +90,7 @@ namespace IronAHK.Scripting
                         break;
 
                     case ParenClose:
-                        if (--level < 0)
-                            throw new ParseException(ExUnbalancedParens);
+                        level--;
                         break;
 
                     case Multicast:
@@ -107,14 +104,11 @@ namespace IronAHK.Scripting
                                 sub = new List<object>();
                             }
                         }
-                        else
-                            goto default;
-                        break;
-
-                    default:
-                        sub.Add(parts[i]);
                         break;
                 }
+
+            end:
+                sub.Add(parts[i]);
             }
 
             if (sub.Count != 0)
@@ -224,9 +218,10 @@ namespace IronAHK.Scripting
                         }
 
                         int levels = 1;
+
                         for (int x = i + 1; x < parts.Count; x++)
                         {
-                            if (!(parts[x] is string))
+                            if (string.IsNullOrEmpty(parts[x] as string))
                                 continue;
 
                             string current = (string)parts[x];
@@ -276,9 +271,11 @@ namespace IronAHK.Scripting
                                     }
                                     break;
                             }
+
                             if (next)
                                 break;
                         }
+
                         if (levels != 0)
                             throw new ParseException(ExUnbalancedParens);
                     }
