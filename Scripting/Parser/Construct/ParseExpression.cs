@@ -333,7 +333,6 @@ namespace IronAHK.Scripting
 
                         var invoke = (CodeMethodInvokeExpression)InternalMethods.OperateZero;
                         invoke.Parameters.Add(ParseExpression(sub));
-                        invoke.Parameters.Add(new CodePrimitiveExpression(false));
 
                         parts.Add(Script.Operator.Add);
                         parts.Add(invoke);
