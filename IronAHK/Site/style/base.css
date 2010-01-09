@@ -1,22 +1,3 @@
-html {
-	color: #333;
-	background: #fff;
-	font: .9em Calibri, Arial, Helvetica, sans-serif;
-}
-body { margin: 0; }
-h1 {
-	margin: 0;
-	color: #fff;
-	background: #333;
-	padding: .2em .5em;
-	border-bottom: 1px solid #000;
-}
-h1 a {
-	color: #fff !important;
-	background: inherit;
-	text-decoration: none;
-}
-h2 { border-bottom: 1px solid #ddd; }
 h3.command {
 	background: #09c;
 	padding: .7em;
@@ -25,9 +6,6 @@ h3.command {
 	letter-spacing: .1em;
 	font: bold 1.2em "Courier New", Courier, monospace;
 }
-a { color: #06c; }
-a:hover { color: #936; }
-table { font-size: 1em; }
 p.descr {
 	margin: 1.5em;
 	line-height: 1.5;
@@ -56,10 +34,7 @@ div#contents ul {
 	padding-left: 1em;
 }
 div#contents *:first-child { margin-top: 0; }
-div#page {
-	width: 80%;
-	margin: 1.5%;
-}
+div#page { width: 80%; }
 div#page > div:not(:target) { display: none; }
 div#page > div:target { display: block; }
 div.method {
@@ -70,15 +45,6 @@ div.method {
 	padding: 1em;
 }
 div.method *:first-child { margin-top: 0; }
-div#end {
-	font-size: .9em;
-	margin-top: 1em;
-	border-top: 1px solid #000;
-	padding: 1em;
-	color: #fff;
-	background: #666;
-}
-div#end a { color: #fff; }
 span.vers {
 	font-size: .6em;
 	color: #ccc;
@@ -112,37 +78,6 @@ table.dataset td {
 	vertical-align: top;
 	padding: .2em 1em .2em .5em;
 }
-pre.code {
-	padding: 1em;
-	font-size: 1em;
-	border: 1px dotted #999;
-	background: #fff;
-	margin-left: 2em;
-	overflow: auto;
-}
-kbd { font: 1em "Courier New", Courier, monospace; }
-code, pre.code { font: .9em "Courier New", Courier, monospace; }
-pre.code em, code em {
-	color: #060;
-	font-style: normal;
-	font-weight: bold;
-}
-pre.code kbd, code kbd {
-	color: #c00;
-	font-weight: normal;
-}
-pre.code var, code var {
-	font-style: normal;
-	font-weight: bold;
-	color: #f80;
-}
-pre.code var.prc, code var.prc {
-	font-weight: normal;
-	color: #f00;
-	font-style: italic;
-}
-pre.code strong, code strong { color: #039; }
-pre.code strong.res, code strong.res { color: #800000; }
 @media print {
 	* {
 		background: none !important;
@@ -157,5 +92,4 @@ pre.code strong.res, code strong.res { color: #800000; }
 		margin: 1em 0;
 		padding: 0;
 	}
-	pre.code { overflow: visible; }
 }
