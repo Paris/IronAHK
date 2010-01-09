@@ -317,6 +317,10 @@ namespace IronAHK.Scripting
                     #region Multiple statements
                     else if (part.Length == 1 && part[0] == Multicast)
                     {
+#pragma warning disable 0162
+                        if (!AllowNestedMultipartExpressions)
+                            throw new ParseException("Nested multipart expression not allowed.");
+
                         // implement as: + Dummy(expr..)
 
                         int z = i + 1, l = parts.Count - z;
@@ -333,6 +337,7 @@ namespace IronAHK.Scripting
 
                         parts.Add(Script.Operator.Add);
                         parts.Add(invoke);
+#pragma warning restore 0162
                     }
                     #endregion
                     #region Binary operators
