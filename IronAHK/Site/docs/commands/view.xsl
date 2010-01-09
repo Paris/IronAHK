@@ -12,10 +12,11 @@
     <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <title><xsl:value-of select="$title"/> Documentation</title>
-    <link href="base.css" rel="stylesheet" type="text/css" />
+    <link href="../../style/primary.css" rel="stylesheet" type="text/css" />
+    <link href="../../style/base.css" rel="stylesheet" type="text/css" />
     </head>
     <body>
-    <h1><a href="#"><xsl:value-of select="$title"/> Method Reference</a></h1>
+    <h1><a href="#"><xsl:value-of select="$title"/></a></h1>
     <div id="contents">
       <div>
         <ul>
@@ -74,7 +75,6 @@
       </xsl:for-each>
     </div>
     <div style="clear: both;"></div>
-    <div id="end">Copyright &copy; <a href="license.txt">see license terms</a>.</div>
     </body>
     </html>
   </xsl:template>
