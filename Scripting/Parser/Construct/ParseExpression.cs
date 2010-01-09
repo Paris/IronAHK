@@ -13,6 +13,8 @@ namespace IronAHK.Scripting
         {
             var tokens = SplitTokens(code);
 
+            #region Date/time
+
             int n = tokens.Count - 2;
             if (tokens.Count > 1 && ((string)tokens[n]).Length > 0 && ((string)tokens[n])[0] == Multicast)
             {
@@ -33,40 +35,15 @@ namespace IronAHK.Scripting
                 }
             }
 
-            var list = new List<CodeExpressionStatement>();
-            var parts = new List<object>(tokens.Count);
-            int level = 0;
+            #endregion
 
-            for (int i = 0; i < tokens.Count; i++)
-            {
-                if (!(tokens[i] is string))
-                    continue;
+            var result = ParseMultiExpression(tokens.ToArray());
+            var statements = new CodeExpressionStatement[result.Length];
 
-                string check = (string)tokens[i];
+            for (int i = 0; i < result.Length; i++)
+                statements[i] = new CodeExpressionStatement(result[i]);
 
-                if ((check.Length == 1 && check[0] == ParenOpen) || (check.Length > 0 && check[check.Length - 1] == ParenOpen))
-                    level++;
-                else if (check.Length == 1 && check[0] == ParenClose)
-                    level--;
-
-                if (level == 0 && check.Length == 1 && check[0] == Multicast)
-                    CollectMultiExpression(list, parts);
-                else
-                    parts.Add(tokens[i]);
-            }
-
-            CollectMultiExpression(list, parts);
-
-            return list.ToArray();
-        }
-
-        void CollectMultiExpression(List<CodeExpressionStatement> list, List<object> parts)
-        {
-            if (parts.Count == 0)
-                return;
-
-            list.Add(new CodeExpressionStatement(ParseExpression(parts)));
-            parts.Clear();
+            return statements;
         }
 
         CodeExpression ParseSingleExpression(string code)
@@ -90,27 +67,54 @@ namespace IronAHK.Scripting
                 parts = trimmed;
             }
 
+            int level = 0;
 
             for (int i = 0; i < parts.Length; i++)
             {
-                if (parts[i] is string)
+                if (string.IsNullOrEmpty(parts[i] as string))
                 {
-                    string part = (string)parts[i];
-                    if (part.Length == 1 && part[0] == Multicast)
-                    {
-                        if (sub.Count == 0)
-                            expr.Add(new CodePrimitiveExpression(null));
-                        else
-                        {
-                            expr.Add(ParseExpression(sub));
-                            sub = new List<object>();
-                        }
-                    }
-                    else
-                        sub.Add(parts[i]);
-                }
-                else
                     sub.Add(parts[i]);
+                    continue;
+                }
+
+                string check = (string)parts[i];
+
+                if (check.Length > 0)
+                {
+                    sub.Add(parts[i]);
+                    continue;
+                }
+
+                switch (check[0])
+                {
+                    case ParenOpen:
+                        level++;
+                        break;
+
+                    case ParenClose:
+                        if (--level < 0)
+                            throw new ParseException(ExUnbalancedParens);
+                        break;
+
+                    case Multicast:
+                        if (level == 0)
+                        {
+                            if (sub.Count == 0)
+                                expr.Add(new CodePrimitiveExpression(null));
+                            else
+                            {
+                                expr.Add(ParseExpression(sub));
+                                sub = new List<object>();
+                            }
+                        }
+                        else
+                            goto default;
+                        break;
+
+                    default:
+                        sub.Add(parts[i]);
+                        break;
+                }
             }
 
             if (sub.Count != 0)
@@ -142,29 +146,29 @@ namespace IronAHK.Scripting
                     if (part[0] == ParenOpen)
                     {
                         int levels = 1;
+
                         for (int x = i + 1; x < parts.Count; x++)
                         {
-                            if (!(parts[x] is string))
+                            if (string.IsNullOrEmpty(parts[x] as string))
                                 continue;
 
-                            string current = (string)parts[x];
+                            string check = (string)parts[x];
 
-                            if (current.Length == 0)
-                                continue;
-
-                            switch (current[0])
+                            switch (check[check.Length - 1])
                             {
                                 case ParenOpen:
                                     levels++;
                                     break;
 
-                                default:
-                                    if (current[current.Length - 1] == ParenOpen)
-                                        goto case ParenOpen;
-                                    break;
-
                                 case ParenClose:
-                                    if (--levels == 0)
+                                    if (check.Length != 1)
+                                        break;
+
+                                    levels--;
+
+                                    if (levels < 0)
+                                        throw new ParseException(ExUnbalancedParens);
+                                    else if (levels == 0)
                                     {
                                         int count = x - i;
 
@@ -182,9 +186,11 @@ namespace IronAHK.Scripting
                                     }
                                     break;
                             }
+
                             if (next)
                                 break;
                         }
+
                         if (levels != 0)
                             throw new ParseException(ExUnbalancedParens);
                     }
