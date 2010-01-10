@@ -429,7 +429,7 @@ namespace IronAHK.Scripting
                     {
                         var invoke = (CodeMethodInvokeExpression)InternalMethods.OperateUnary;
                         invoke.Parameters.Add(OperatorAsFieldReference(op));
-                        invoke.Parameters.Add(ExpressionNode(parts[n]));
+                        invoke.Parameters.Add(WrappedComplexVar(parts[n]));
                         parts[i] = invoke;
                         parts.RemoveAt(n);
                     }
@@ -463,7 +463,7 @@ namespace IronAHK.Scripting
                         if (op == Script.Operator.TernaryA)
                         {
                             var eval = (CodeMethodInvokeExpression)InternalMethods.IfElse;
-                            eval.Parameters.Add(ExpressionNode(parts[x]));
+                            eval.Parameters.Add(WrappedComplexVar(parts[x]));
                             var ternary = new CodeTernaryOperatorExpression() { Condition = eval };
 
                             int depth = 0, max = parts.Count - i, start = i, index = 0;
@@ -520,7 +520,7 @@ namespace IronAHK.Scripting
 
                             invoke.Method = (CodeMethodReferenceExpression)InternalMethods.OperateUnary;
                             invoke.Parameters.Add(OperatorAsFieldReference(op));
-                            invoke.Parameters.Add(ExpressionNode(parts[y]));
+                            invoke.Parameters.Add(WrappedComplexVar(parts[y]));
                             parts[i] = invoke;
                             parts.RemoveAt(y);
                         }
@@ -534,11 +534,11 @@ namespace IronAHK.Scripting
                                 boolean.Operator = op == Script.Operator.BooleanAnd ? CodeBinaryOperatorType.BooleanAnd : CodeBinaryOperatorType.BooleanOr;
 
                                 var iftest = (CodeMethodInvokeExpression)InternalMethods.IfElse;
-                                iftest.Parameters.Add(ExpressionNode(parts[x]));
+                                iftest.Parameters.Add(WrappedComplexVar(parts[x]));
                                 boolean.Left = iftest;
 
                                 iftest = (CodeMethodInvokeExpression)InternalMethods.IfElse;
-                                iftest.Parameters.Add(ExpressionNode(parts[y]));
+                                iftest.Parameters.Add(WrappedComplexVar(parts[y]));
                                 boolean.Right = iftest;
 
                                 parts[x] = boolean;
@@ -547,8 +547,8 @@ namespace IronAHK.Scripting
                             {
                                 invoke.Method = (CodeMethodReferenceExpression)InternalMethods.Operate;
                                 invoke.Parameters.Add(OperatorAsFieldReference(op));
-                                invoke.Parameters.Add(ExpressionNode(parts[x]));
-                                invoke.Parameters.Add(ExpressionNode(parts[y]));
+                                invoke.Parameters.Add(WrappedComplexVar(parts[x]));
+                                invoke.Parameters.Add(WrappedComplexVar(parts[y]));
                                 parts[x] = invoke;
                             }
 
@@ -581,10 +581,24 @@ namespace IronAHK.Scripting
 #pragma warning restore 0162
             #endregion
 
+            #region Result
+
             if (parts.Count != 1)
                 throw new ArgumentOutOfRangeException();
 
-            return (CodeExpression)parts[0];
+#pragma warning disable 0162
+            if (UseComplexVar)
+            {
+                if (parts[0] is CodeComplexAssignStatement)
+                    return (CodeBinaryOperatorExpression)(CodeComplexAssignStatement)parts[0];
+                else
+                    return (CodeExpression)parts[0];
+            }
+            else
+                return (CodeExpression)parts[0];
+#pragma warning restore 0162
+
+            #endregion
         }
 
         #region Helpers
@@ -626,10 +640,14 @@ namespace IronAHK.Scripting
             bool right = y < parts.Count;
 
             var assign = (CodeComplexAssignStatement)parts[i];
-            assign.Left = (CodeComplexVariableReferenceExpression)parts[x];
-            assign.Right = right ? parts[y] is CodeComplexVariableReferenceExpression ?
-                ComplexVarRef(parts[y]) : (CodeExpression)parts[y] : new CodePrimitiveExpression(null);
 
+#pragma warning disable 0162
+            if (UseComplexVar && assign.Left != null)
+                return;
+#pragma warning restore 0162
+
+            assign.Left = (CodeComplexVariableReferenceExpression)parts[x];
+            assign.Right = right ? WrappedComplexVar(parts[y]) : new CodePrimitiveExpression(null);
 
 #pragma warning disable 0162
             if (UseComplexVar)
@@ -641,11 +659,6 @@ namespace IronAHK.Scripting
             if (right)
                 parts.RemoveAt(y);
             parts.RemoveAt(i);
-        }
-
-        CodeExpression ExpressionNode(object part)
-        {
-            return part is CodeComplexVariableReferenceExpression ? ComplexVarRef(part) : (CodeExpression)part;
         }
 
         #endregion
