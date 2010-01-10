@@ -95,7 +95,18 @@
     <Content Include="Resources\_file.png" />
     <Content Include="Resources\_icon.png" />
     <Content Include="Site\copyright\index.html" />
+    <Content Include="Site\docs\autohotkey\index.html" />
+    <Content Include="Site\docs\changes\index.html" />
+    <Content Include="Site\docs\commands\index.html" />
     <Content Include="Site\docs\commands\view.xsl" />
+    <Content Include="Site\docs\developing\index.html" />
+    <Content Include="Site\docs\faq\index.html" />
+    <Content Include="Site\docs\overview\gui\index.html" />
+    <Content Include="Site\docs\overview\hotkeys\index.html" />
+    <Content Include="Site\docs\installing\index.html" />
+    <Content Include="Site\docs\overview\index.html" />
+    <Content Include="Site\docs\syntax\index.html" />
+    <Content Include="Site\docs\tutorial\index.html" />
     <Content Include="Site\favicon.ico" />
     <Content Include="Site\images\computer.png" />
     <Content Include="Site\images\package.png" />
@@ -126,13 +137,4 @@
   <ProjectExtensions>
     <VisualStudio />
   </ProjectExtensions>
-  <ItemGroup>
-    <Folder Include="Site\docs\changes\" />
-    <Folder Include="Site\docs\developing\" />
-    <Folder Include="Site\docs\faq\" />
-    <Folder Include="Site\docs\hotkeys\" />
-    <Folder Include="Site\docs\installing\" />
-    <Folder Include="Site\docs\syntax\" />
-    <Folder Include="Site\docs\tutorial\" />
-  </ItemGroup>
 </Project>
