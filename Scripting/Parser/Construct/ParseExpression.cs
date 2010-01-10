@@ -1190,6 +1190,7 @@ namespace IronAHK.Scripting
                                 case Equal:
                                 case Concatenate:
                                 case TernaryB:
+                                case Divide:
                                     op.Append(sym);
                                     break;
 
