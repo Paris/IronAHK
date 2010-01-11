@@ -94,15 +94,11 @@ namespace IronAHK.Scripting
                         break;
 
                     case Multicast:
-                        if (level == 0)
+                        if (level == 0 && sub.Count != 0)
                         {
-                            if (sub.Count == 0)
-                                expr.Add(new CodePrimitiveExpression(null));
-                            else
-                            {
-                                expr.Add(ParseExpression(sub));
-                                sub = new List<object>();
-                            }
+                            expr.Add(ParseExpression(sub));
+                            sub.Clear();
+                            continue;
                         }
                         break;
                 }
