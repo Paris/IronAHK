@@ -637,11 +637,6 @@ namespace IronAHK.Scripting
             return true;
         }
 
-        bool IsVariable(string code)
-        {
-            return IsIdentifier(code, true) && !IsKeyword(code);
-        }
-
         void MergeAssignmentAt(List<object> parts, int i)
         {
             if (!(parts[i] is CodeComplexAssignStatement))
