@@ -618,12 +618,23 @@ namespace IronAHK.Scripting
 
             try
             {
-                if (OperatorFromString((string)parts[i]) == Script.Operator.ValueEquality)
-                    return true;
+                if (OperatorFromString((string)parts[i]) != Script.Operator.ValueEquality)
+                    return false;
             }
             catch (ArgumentException) { }
 
-            return false;
+            int z = x - 1;
+            
+            if (z < 0)
+                return true;
+
+            if (parts[z] is CodeComplexAssignStatement)
+                return true;
+
+            if (!(parts[z] is Script.Operator) || (Script.Operator)parts[z] == Script.Operator.IdentityEquality)
+                return false;
+
+            return true;
         }
 
         bool IsVariable(string code)
@@ -938,6 +949,9 @@ namespace IronAHK.Scripting
                 case Script.Operator.TernaryA:
                 case Script.Operator.TernaryB:
                     return -12;
+
+                case Script.Operator.Assign:
+                    return -13;
 
                 default:
                     throw new ArgumentOutOfRangeException();
