@@ -56,17 +56,6 @@ namespace IronAHK.Scripting
             var expr = new List<CodeExpression>();
             var sub = new List<object>();
 
-            int last = parts.Length - 1;
-
-            if (last > 0 && parts[0] is string && parts[last] is string &&
-                ((string)parts[0]).Length > 0 && ((string)parts[0])[0] == ParenOpen &&
-                ((string)parts[last]).Length > 0 && ((string)parts[last])[0] == ParenClose)
-            {
-                object[] trimmed = new object[last - 1];
-                Array.Copy(parts, 1, trimmed, 0, trimmed.Length);
-                parts = trimmed;
-            }
-
             int level = 0;
 
             for (int i = 0; i < parts.Length; i++)
@@ -119,6 +108,8 @@ namespace IronAHK.Scripting
 
         CodeExpression ParseExpression(List<object> parts)
         {
+            RemoveExcessParentheses(parts);
+
             #region Scanner
 
         start:
@@ -1214,6 +1205,48 @@ namespace IronAHK.Scripting
             }
 
             return list;
+        }
+
+        void RemoveExcessParentheses(List<object> parts)
+        {
+            while (parts.Count > 1)
+            {
+                int level = 0;
+                int last = parts.Count - 1;
+
+                if (!(--last > 1 &&
+                    parts[0] is string && ((string)parts[0]).Length == 1 && ((string)parts[0])[0] == ParenOpen &&
+                    parts[last] is string && ((string)parts[last]).Length == 1 && ((string)parts[last])[0] == ParenClose))
+                    return;
+
+                for (int i = 1; i < last; i++)
+                {
+                    string check = parts[i] as string;
+
+                    if (string.IsNullOrEmpty(check))
+                        continue;
+
+                    switch (check[check.Length - 1])
+                    {
+                        case ParenOpen:
+                            level++;
+                            break;
+
+                        case ParenClose:
+                            if (check.Length != 1)
+                                break;
+                            else if (--level < 0)
+                                throw new ParseException(ExUnbalancedParens);
+                            break;
+                    }
+                }
+
+                if (level != 0)
+                    return;
+
+                parts.RemoveAt(last);
+                parts.RemoveAt(0);
+            }
         }
 
         #endregion
