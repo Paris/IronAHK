@@ -8,8 +8,6 @@ namespace IronAHK.Scripting
 
         public static bool IsIdentifier(char symbol)
         {
-            if (symbol == Concatenate)
-                return false;
             return char.IsLetterOrDigit(symbol) || VarExt.IndexOf(symbol) != -1;
         }
 
