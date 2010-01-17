@@ -12,8 +12,8 @@
     <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <title><xsl:value-of select="$title"/> Documentation</title>
-    <link href="../../style/primary.css" rel="stylesheet" type="text/css" />
-    <link href="../../style/base.css" rel="stylesheet" type="text/css" />
+    <link href="../primary.css" rel="stylesheet" type="text/css" />
+    <link href="../api.css" rel="stylesheet" type="text/css" />
     </head>
     <body>
     <h1><a href="#"><xsl:value-of select="$title"/></a></h1>
