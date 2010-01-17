@@ -76,6 +76,7 @@
     <None Include="setup.sh">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="Site\.htaccess" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Program.cs" />
@@ -90,13 +91,31 @@
       <Link>license.txt</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Documentation\base.css">
-    </Content>
-    <Content Include="Documentation\view.xsl">
-    </Content>
     <Content Include="Resources\favicon.ico" />
     <Content Include="Resources\_file.png" />
     <Content Include="Resources\_icon.png" />
+    <Content Include="Site\copyright\index.html" />
+    <Content Include="Site\docs\autohotkey\index.html" />
+    <Content Include="Site\docs\changes\index.html" />
+    <Content Include="Site\docs\commands\index.html" />
+    <Content Include="Site\docs\commands\view.xsl" />
+    <Content Include="Site\docs\developing\index.html" />
+    <Content Include="Site\docs\faq\index.html" />
+    <Content Include="Site\docs\overview\gui\index.html" />
+    <Content Include="Site\docs\overview\hotkeys\index.html" />
+    <Content Include="Site\docs\installing\index.html" />
+    <Content Include="Site\docs\overview\index.html" />
+    <Content Include="Site\docs\syntax\index.html" />
+    <Content Include="Site\docs\tutorial\index.html" />
+    <Content Include="Site\favicon.ico" />
+    <Content Include="Site\images\computer.png" />
+    <Content Include="Site\images\package.png" />
+    <Content Include="Site\images\page_white_csharp.png" />
+    <Content Include="Site\index.html" />
+    <Content Include="Site\index2.html" />
+    <Content Include="Site\robots.txt" />
+    <Content Include="Site\style\base.css" />
+    <Content Include="Site\style\primary.css" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">

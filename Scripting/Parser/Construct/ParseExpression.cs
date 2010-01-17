@@ -13,6 +13,8 @@ namespace IronAHK.Scripting
         {
             var tokens = SplitTokens(code);
 
+            #region Date/time
+
             int n = tokens.Count - 2;
             if (tokens.Count > 1 && ((string)tokens[n]).Length > 0 && ((string)tokens[n])[0] == Multicast)
             {
@@ -33,40 +35,15 @@ namespace IronAHK.Scripting
                 }
             }
 
-            var list = new List<CodeExpressionStatement>();
-            var parts = new List<object>(tokens.Count);
-            int level = 0;
+            #endregion
 
-            for (int i = 0; i < tokens.Count; i++)
-            {
-                if (!(tokens[i] is string))
-                    continue;
+            var result = ParseMultiExpression(tokens.ToArray());
+            var statements = new CodeExpressionStatement[result.Length];
 
-                string check = (string)tokens[i];
+            for (int i = 0; i < result.Length; i++)
+                statements[i] = new CodeExpressionStatement(result[i]);
 
-                if ((check.Length == 1 && check[0] == ParenOpen) || (check.Length > 0 && check[check.Length - 1] == ParenOpen))
-                    level++;
-                else if (check.Length == 1 && check[0] == ParenClose)
-                    level--;
-
-                if (level == 0 && check.Length == 1 && check[0] == Multicast)
-                    CollectMultiExpression(list, parts);
-                else
-                    parts.Add(tokens[i]);
-            }
-
-            CollectMultiExpression(list, parts);
-
-            return list.ToArray();
-        }
-
-        void CollectMultiExpression(List<CodeExpressionStatement> list, List<object> parts)
-        {
-            if (parts.Count == 0)
-                return;
-
-            list.Add(new CodeExpressionStatement(ParseExpression(parts)));
-            parts.Clear();
+            return statements;
         }
 
         CodeExpression ParseSingleExpression(string code)
@@ -79,38 +56,44 @@ namespace IronAHK.Scripting
             var expr = new List<CodeExpression>();
             var sub = new List<object>();
 
-            int last = parts.Length - 1;
-
-            if (last > 0 && parts[0] is string && parts[last] is string &&
-                ((string)parts[0]).Length > 0 && ((string)parts[0])[0] == ParenOpen &&
-                ((string)parts[last]).Length > 0 && ((string)parts[last])[0] == ParenClose)
-            {
-                object[] trimmed = new object[last - 1];
-                Array.Copy(parts, 1, trimmed, 0, trimmed.Length);
-                parts = trimmed;
-            }
-
+            int level = 0;
 
             for (int i = 0; i < parts.Length; i++)
             {
-                if (parts[i] is string)
+                if (string.IsNullOrEmpty(parts[i] as string))
+                    goto end;
+
+                string check = (string)parts[i];
+
+                if (check.Length > 1)
                 {
-                    string part = (string)parts[i];
-                    if (part.Length == 1 && part[0] == Multicast)
-                    {
-                        if (sub.Count == 0)
-                            expr.Add(new CodePrimitiveExpression(null));
-                        else
+                    if (check[check.Length - 1] == ParenOpen)
+                        level++;
+                    goto end;
+                }
+
+                switch (check[0])
+                {
+                    case ParenOpen:
+                        level++;
+                        break;
+
+                    case ParenClose:
+                        level--;
+                        break;
+
+                    case Multicast:
+                        if (level == 0 && sub.Count != 0)
                         {
                             expr.Add(ParseExpression(sub));
-                            sub = new List<object>();
+                            sub.Clear();
+                            continue;
                         }
-                    }
-                    else
-                        sub.Add(parts[i]);
+                        break;
                 }
-                else
-                    sub.Add(parts[i]);
+
+            end:
+                sub.Add(parts[i]);
             }
 
             if (sub.Count != 0)
@@ -125,6 +108,8 @@ namespace IronAHK.Scripting
 
         CodeExpression ParseExpression(List<object> parts)
         {
+            RemoveExcessParentheses(parts);
+
             #region Scanner
 
         start:
@@ -142,29 +127,29 @@ namespace IronAHK.Scripting
                     if (part[0] == ParenOpen)
                     {
                         int levels = 1;
+
                         for (int x = i + 1; x < parts.Count; x++)
                         {
-                            if (!(parts[x] is string))
+                            if (string.IsNullOrEmpty(parts[x] as string))
                                 continue;
 
-                            string current = (string)parts[x];
+                            string check = (string)parts[x];
 
-                            if (current.Length == 0)
-                                continue;
-
-                            switch (current[0])
+                            switch (check[check.Length - 1])
                             {
                                 case ParenOpen:
                                     levels++;
                                     break;
 
-                                default:
-                                    if (current[current.Length - 1] == ParenOpen)
-                                        goto case ParenOpen;
-                                    break;
-
                                 case ParenClose:
-                                    if (--levels == 0)
+                                    if (check.Length != 1)
+                                        break;
+
+                                    levels--;
+
+                                    if (levels < 0)
+                                        throw new ParseException(ExUnbalancedParens);
+                                    else if (levels == 0)
                                     {
                                         int count = x - i;
 
@@ -182,9 +167,11 @@ namespace IronAHK.Scripting
                                     }
                                     break;
                             }
+
                             if (next)
                                 break;
                         }
+
                         if (levels != 0)
                             throw new ParseException(ExUnbalancedParens);
                     }
@@ -218,9 +205,10 @@ namespace IronAHK.Scripting
                         }
 
                         int levels = 1;
+
                         for (int x = i + 1; x < parts.Count; x++)
                         {
-                            if (!(parts[x] is string))
+                            if (string.IsNullOrEmpty(parts[x] as string))
                                 continue;
 
                             string current = (string)parts[x];
@@ -270,9 +258,11 @@ namespace IronAHK.Scripting
                                     }
                                     break;
                             }
+
                             if (next)
                                 break;
                         }
+
                         if (levels != 0)
                             throw new ParseException(ExUnbalancedParens);
                     }
@@ -311,6 +301,10 @@ namespace IronAHK.Scripting
                     #region Multiple statements
                     else if (part.Length == 1 && part[0] == Multicast)
                     {
+#pragma warning disable 0162
+                        if (!AllowNestedMultipartExpressions)
+                            throw new ParseException("Nested multipart expression not allowed.");
+
                         // implement as: + Dummy(expr..)
 
                         int z = i + 1, l = parts.Count - z;
@@ -323,10 +317,10 @@ namespace IronAHK.Scripting
 
                         var invoke = (CodeMethodInvokeExpression)InternalMethods.OperateZero;
                         invoke.Parameters.Add(ParseExpression(sub));
-                        invoke.Parameters.Add(new CodePrimitiveExpression(false));
 
                         parts.Add(Script.Operator.Add);
                         parts.Add(invoke);
+#pragma warning restore 0162
                     }
                     #endregion
                     #region Binary operators
@@ -422,7 +416,7 @@ namespace IronAHK.Scripting
                     {
                         var invoke = (CodeMethodInvokeExpression)InternalMethods.OperateUnary;
                         invoke.Parameters.Add(OperatorAsFieldReference(op));
-                        invoke.Parameters.Add(ExpressionNode(parts[n]));
+                        invoke.Parameters.Add(WrappedComplexVar(parts[n]));
                         parts[i] = invoke;
                         parts.RemoveAt(n);
                     }
@@ -456,7 +450,7 @@ namespace IronAHK.Scripting
                         if (op == Script.Operator.TernaryA)
                         {
                             var eval = (CodeMethodInvokeExpression)InternalMethods.IfElse;
-                            eval.Parameters.Add(ExpressionNode(parts[x]));
+                            eval.Parameters.Add(WrappedComplexVar(parts[x]));
                             var ternary = new CodeTernaryOperatorExpression() { Condition = eval };
 
                             int depth = 0, max = parts.Count - i, start = i, index = 0;
@@ -513,7 +507,7 @@ namespace IronAHK.Scripting
 
                             invoke.Method = (CodeMethodReferenceExpression)InternalMethods.OperateUnary;
                             invoke.Parameters.Add(OperatorAsFieldReference(op));
-                            invoke.Parameters.Add(ExpressionNode(parts[y]));
+                            invoke.Parameters.Add(WrappedComplexVar(parts[y]));
                             parts[i] = invoke;
                             parts.RemoveAt(y);
                         }
@@ -527,11 +521,11 @@ namespace IronAHK.Scripting
                                 boolean.Operator = op == Script.Operator.BooleanAnd ? CodeBinaryOperatorType.BooleanAnd : CodeBinaryOperatorType.BooleanOr;
 
                                 var iftest = (CodeMethodInvokeExpression)InternalMethods.IfElse;
-                                iftest.Parameters.Add(ExpressionNode(parts[x]));
+                                iftest.Parameters.Add(WrappedComplexVar(parts[x]));
                                 boolean.Left = iftest;
 
                                 iftest = (CodeMethodInvokeExpression)InternalMethods.IfElse;
-                                iftest.Parameters.Add(ExpressionNode(parts[y]));
+                                iftest.Parameters.Add(WrappedComplexVar(parts[y]));
                                 boolean.Right = iftest;
 
                                 parts[x] = boolean;
@@ -540,8 +534,8 @@ namespace IronAHK.Scripting
                             {
                                 invoke.Method = (CodeMethodReferenceExpression)InternalMethods.Operate;
                                 invoke.Parameters.Add(OperatorAsFieldReference(op));
-                                invoke.Parameters.Add(ExpressionNode(parts[x]));
-                                invoke.Parameters.Add(ExpressionNode(parts[y]));
+                                invoke.Parameters.Add(WrappedComplexVar(parts[x]));
+                                invoke.Parameters.Add(WrappedComplexVar(parts[y]));
                                 parts[x] = invoke;
                             }
 
@@ -574,10 +568,24 @@ namespace IronAHK.Scripting
 #pragma warning restore 0162
             #endregion
 
+            #region Result
+
             if (parts.Count != 1)
                 throw new ArgumentOutOfRangeException();
 
-            return (CodeExpression)parts[0];
+#pragma warning disable 0162
+            if (UseComplexVar)
+            {
+                if (parts[0] is CodeComplexAssignStatement)
+                    return (CodeBinaryOperatorExpression)(CodeComplexAssignStatement)parts[0];
+                else
+                    return (CodeExpression)parts[0];
+            }
+            else
+                return (CodeExpression)parts[0];
+#pragma warning restore 0162
+
+            #endregion
         }
 
         #region Helpers
@@ -597,17 +605,23 @@ namespace IronAHK.Scripting
 
             try
             {
-                if (OperatorFromString((string)parts[i]) == Script.Operator.ValueEquality)
-                    return true;
+                if (OperatorFromString((string)parts[i]) != Script.Operator.ValueEquality)
+                    return false;
             }
             catch (ArgumentException) { }
 
-            return false;
-        }
+            int z = x - 1;
+            
+            if (z < 0)
+                return true;
 
-        bool IsVariable(string code)
-        {
-            return IsIdentifier(code, true) && !IsKeyword(code);
+            if (parts[z] is CodeComplexAssignStatement)
+                return true;
+
+            if (!(parts[z] is Script.Operator) || (Script.Operator)parts[z] == Script.Operator.IdentityEquality)
+                return false;
+
+            return true;
         }
 
         void MergeAssignmentAt(List<object> parts, int i)
@@ -619,10 +633,14 @@ namespace IronAHK.Scripting
             bool right = y < parts.Count;
 
             var assign = (CodeComplexAssignStatement)parts[i];
-            assign.Left = (CodeComplexVariableReferenceExpression)parts[x];
-            assign.Right = right ? parts[y] is CodeComplexVariableReferenceExpression ?
-                ComplexVarRef(parts[y]) : (CodeExpression)parts[y] : new CodePrimitiveExpression(null);
 
+#pragma warning disable 0162
+            if (UseComplexVar && assign.Left != null)
+                return;
+#pragma warning restore 0162
+
+            assign.Left = (CodeComplexVariableReferenceExpression)parts[x];
+            assign.Right = right ? WrappedComplexVar(parts[y]) : new CodePrimitiveExpression(null);
 
 #pragma warning disable 0162
             if (UseComplexVar)
@@ -634,11 +652,6 @@ namespace IronAHK.Scripting
             if (right)
                 parts.RemoveAt(y);
             parts.RemoveAt(i);
-        }
-
-        CodeExpression ExpressionNode(object part)
-        {
-            return part is CodeComplexVariableReferenceExpression ? ComplexVarRef(part) : (CodeExpression)part;
         }
 
         #endregion
@@ -919,6 +932,9 @@ namespace IronAHK.Scripting
                 case Script.Operator.TernaryB:
                     return -12;
 
+                case Script.Operator.Assign:
+                    return -13;
+
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -1170,6 +1186,7 @@ namespace IronAHK.Scripting
                                 case Equal:
                                 case Concatenate:
                                 case TernaryB:
+                                case Divide:
                                     op.Append(sym);
                                     break;
 
@@ -1188,6 +1205,48 @@ namespace IronAHK.Scripting
             }
 
             return list;
+        }
+
+        void RemoveExcessParentheses(List<object> parts)
+        {
+            while (parts.Count > 1)
+            {
+                int level = 0;
+                int last = parts.Count - 1;
+
+                if (!(--last > 1 &&
+                    parts[0] is string && ((string)parts[0]).Length == 1 && ((string)parts[0])[0] == ParenOpen &&
+                    parts[last] is string && ((string)parts[last]).Length == 1 && ((string)parts[last])[0] == ParenClose))
+                    return;
+
+                for (int i = 1; i < last; i++)
+                {
+                    string check = parts[i] as string;
+
+                    if (string.IsNullOrEmpty(check))
+                        continue;
+
+                    switch (check[check.Length - 1])
+                    {
+                        case ParenOpen:
+                            level++;
+                            break;
+
+                        case ParenClose:
+                            if (check.Length != 1)
+                                break;
+                            else if (--level < 0)
+                                throw new ParseException(ExUnbalancedParens);
+                            break;
+                    }
+                }
+
+                if (level != 0)
+                    return;
+
+                parts.RemoveAt(last);
+                parts.RemoveAt(0);
+            }
         }
 
         #endregion
