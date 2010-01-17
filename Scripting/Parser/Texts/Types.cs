@@ -65,6 +65,11 @@ namespace IronAHK.Scripting
             return code.Length != 0;
         }
 
+        bool IsVariable(string code)
+        {
+            return IsIdentifier(code, true) && !IsKeyword(code);
+        }
+
         #endregion
 
         #region Primatives

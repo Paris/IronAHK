@@ -1,5 +1,4 @@
-﻿using System;
-using System.CodeDom;
+﻿using System.CodeDom;
 
 namespace IronAHK.Scripting
 {
@@ -24,6 +23,11 @@ namespace IronAHK.Scripting
             set.Parameters.Add(assignment.Right);
 
             return set;
+        }
+
+        public static explicit operator CodeBinaryOperatorExpression(CodeComplexAssignStatement assignment)
+        {
+            return new CodeBinaryOperatorExpression(assignment.Left, CodeBinaryOperatorType.Assign, assignment.Right);
         }
     }
 }
