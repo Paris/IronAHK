@@ -8,21 +8,25 @@ h1 {
 	margin: 0 0 1em;
 	color: #fff;
 	background: #333;
-	padding: 0.2em 0.5em;
-	border-bottom: 1px solid #000;
+	line-height: 1.5;
+	text-indent: .5em;
 }
 h1 a {
 	color: #fff !important;
 	background: inherit;
 	text-decoration: none;
 }
-h2 { border-bottom: 1px solid #ddd; }
+h2 {
+	border-bottom: 1px solid #ddd;
+	margin-top: 2em;
+}
+h2:first-child { margin-top: 0; }
 a { color: #06c; }
 a:hover { color: #936; }
 table { font-size: 1em; }
 img { border-style: none; }
 div#page { margin: 1.5%; }
-div#clear { clear: both; }
+div.clear { clear: both; }
 pre.code {
 	padding: 1em;
 	font-size: 1em;
@@ -59,5 +63,6 @@ pre.code strong.res, code strong.res { color: #800000; }
 		background: none !important;
 		color: #000 !important;
 	}
+	.printhide { display: none; }
 	pre.code { overflow: visible; }
 }

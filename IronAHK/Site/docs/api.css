@@ -1,0 +1,24 @@
+h3.command {
+	background: #09c;
+	padding: .7em;
+	color: #fff;
+	cursor: help;
+	letter-spacing: .1em;
+	font: bold 1.2em "Courier New", Courier, monospace;
+}
+p.descr {
+	margin: 1.5em;
+	line-height: 1.5;
+}
+table.params {
+	font-size: 1em;
+	margin-left: 3em;
+}
+table.params td {
+	vertical-align: top;
+	padding: .2em 1em .2em .5em;
+	background: #fff;
+	border: 1px solid #f3f3f3;
+}
+table.params td:first-child { background: #f3f3f3 !important; }
+@media print { table.params { margin-left: 0; } }

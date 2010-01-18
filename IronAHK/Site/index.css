@@ -1,0 +1,142 @@
+#top {
+	position: fixed;
+	width: 100%;
+	top: 0;
+}
+#page { padding-top: 6em; }
+h1 {
+	background: #444;
+	margin: 0;
+}
+#nav {
+	margin: 0;
+	padding: 0;
+	text-align: center;
+	background: #333;
+	color: #eee;
+	font-size: larger;
+}
+#nav li {
+	display: inline;
+	line-height: 2;
+}
+#nav li:hover {
+	background: #222;
+	-moz-border-radius: .5em;
+	-webkit-border-radius: .5em;
+}
+#nav a {
+	color: #eee;
+	text-decoration: none;
+	text-shadow: .1em .1em .1em #222;
+	padding: 0 .5em;
+}
+#nav a:hover { color: #fff; }
+.box {
+	-moz-border-radius: .5em;
+	-webkit-border-radius: .5em;
+}
+#info {
+	background: #eef;
+	padding: 1em;
+	margin-bottom: 2em;
+}
+p#intro {
+	font-size: larger;
+	margin-top: .5em;
+}
+ul#features {
+	line-height: 1.5;
+	color: #666;
+}
+ul#features a {
+	color: #903;
+	text-decoration: none;
+}
+ul#features li.additional { display: none; }
+#download {
+	width: 20em;
+	float: right;
+	background: #903;
+	padding: .5em 1em;
+}
+#download h2 {
+	color: #fff;
+	margin-bottom: .5em;
+	border-style: none;
+	text-align: center;
+	margin-top: 0;
+}
+#links {
+	background: #fee;
+	padding: .5em;
+	margin-bottom: .5em;
+	text-align: center;
+	line-height: 1.5;
+}
+#links ul {
+	margin: 0;
+	padding: 0;
+}
+#links a { color: #903; }
+#links a:hover { color: #000; }
+#links #select {
+	line-height: 2;
+	font-size: larger;
+}
+#links #version {
+	font-size: larger;
+	font-weight: bold;
+}
+#wrap {
+	margin: auto;
+	width: 80%;
+	min-width: 950px;
+}
+#extra h2{
+	text-indent: .2em;
+	border: thin outset #999;
+	background: #f8f8f8;
+}
+#extra pre.code { margin-left: 0; }
+pre.code img { float: right; }
+.right {
+	float: right;
+	margin-left: 1em;
+}
+.left {
+	float: left;
+	margin-right: 1em;
+}
+.c1 {
+	background-color: #ffe !important;
+	border: medium double #bba !important;
+}
+.c2 {
+	background-color: #fef !important;
+	border: medium double #bab !important;
+}
+.c3 {
+	background-color: #eff !important;
+	border: medium double #abb !important;
+}
+#end {
+	font-size: .9em;
+	border-top: 1px solid #999;
+	line-height: 1.5;
+	margin-top: 4em;
+	color: #666;
+	text-align: center;
+	padding-top: .5em;
+	margin-bottom: 1em;
+}
+#end a { color: #666; }
+@media print {
+	#top, #end, #download { display: none; }
+	#page { padding-top: 0; }
+	#extra h2, pre.code {
+		border: none !important;
+		background: none !important;
+		padding: 0;
+	}
+}
