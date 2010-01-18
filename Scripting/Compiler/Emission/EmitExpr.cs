@@ -87,6 +87,12 @@ namespace IronAHK.Scripting
         {
             bool Shortcut = Binary.Operator == CodeBinaryOperatorType.BooleanAnd || Binary.Operator == CodeBinaryOperatorType.BooleanOr;
             Label EndLabel = Generator.DefineLabel();
+            
+            if(Binary.Operator == CodeBinaryOperatorType.Assign)
+            {
+                EmitAssignment(Binary.Left, Binary.Right, ForceTypes);
+                return typeof(object);
+            }
 
             Type Generated;
             Depth++;
