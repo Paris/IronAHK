@@ -76,11 +76,14 @@ namespace IronAHK.Scripting
 
         bool IsPrimativeObject(string code, out object result)
         {
+            result = null;
+
             if (string.IsNullOrEmpty(code))
-            {
-                result = null;
                 return true;
-            }
+
+            // Mono incorrectly determines "." as a numeric value
+            if (code.Length == 1 && code[0] == Concatenate)
+                return false;
 
             string codeTrim = code.Trim(Spaces);
             var info = CultureInfo.CreateSpecificCulture("en-GB");

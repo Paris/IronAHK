@@ -13,7 +13,7 @@
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkSubset>
     </TargetFrameworkSubset>
-    <ApplicationIcon>Resources\favicon.ico</ApplicationIcon>
+    <ApplicationIcon>Site\favicon.ico</ApplicationIcon>
     <RunPostBuildEvent>OnOutputUpdated</RunPostBuildEvent>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
@@ -77,6 +77,8 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Site\.htaccess" />
+    <None Include="Site\docs\commands\.gitignore" />
+    <None Include="Site\transform.php" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Program.cs" />
@@ -91,19 +93,19 @@
       <Link>license.txt</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Resources\favicon.ico" />
-    <Content Include="Resources\_file.png" />
-    <Content Include="Resources\_icon.png" />
-    <Content Include="Site\copyright\index.html" />
+    <Content Include="Site\images\_file.png" />
+    <Content Include="Site\images\_icon.png" />
+    <Content Include="Site\docs\copyright\index.html" />
     <Content Include="Site\docs\autohotkey\index.html" />
     <Content Include="Site\docs\changes\index.html" />
     <Content Include="Site\docs\commands\index.html" />
     <Content Include="Site\docs\commands\view.xsl" />
     <Content Include="Site\docs\developing\index.html" />
     <Content Include="Site\docs\faq\index.html" />
+    <Content Include="Site\docs\index.html" />
+    <Content Include="Site\docs\overview\compiling\index.html" />
     <Content Include="Site\docs\overview\gui\index.html" />
     <Content Include="Site\docs\overview\hotkeys\index.html" />
-    <Content Include="Site\docs\installing\index.html" />
     <Content Include="Site\docs\overview\index.html" />
     <Content Include="Site\docs\syntax\index.html" />
     <Content Include="Site\docs\tutorial\index.html" />
@@ -114,8 +116,9 @@
     <Content Include="Site\index.html" />
     <Content Include="Site\index2.html" />
     <Content Include="Site\robots.txt" />
-    <Content Include="Site\style\base.css" />
-    <Content Include="Site\style\primary.css" />
+    <Content Include="Site\docs\api.css" />
+    <Content Include="Site\docs\primary.css" />
+    <Content Include="version.txt" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
