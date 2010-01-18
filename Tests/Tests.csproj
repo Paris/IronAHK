@@ -67,6 +67,7 @@
     <None Include=".gitignore" />
     <None Include="Scripting\Code\.gitignore" />
     <None Include="Scripting\Code\comments.ia" />
+    <Content Include="Scripting\Code\copyright.txt" />
     <Content Include="Scripting\Code\select.txt" />
     <None Include="Scripting\Code\isolated.ia" />
     <None Include="Scripting\Code\expressions.ia" />
@@ -79,6 +80,11 @@
     <None Include="Scripting\Code\hotkey.ia" />
     <None Include="Scripting\Code\functions.ia" />
     <None Include="Scripting\Code\goto.ia" />
+    <None Include="Scripting\Code\vanilla-Expressions.ahk" />
+    <None Include="Scripting\Code\vanilla-Line Continuation Include.ahk" />
+    <None Include="Scripting\Code\vanilla-Line Continuation.ahk" />
+    <None Include="Scripting\Code\vanilla-MAIN.ahk" />
+    <None Include="Scripting\Code\vanilla-RegExMatch &amp; RegExReplace.ahk" />
     <None Include="Tests.nunit" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
