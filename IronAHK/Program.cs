@@ -144,7 +144,17 @@ namespace IronAHK
             if (reflect)
             {
                 try { results.CompiledAssembly.EntryPoint.Invoke(null, null); }
+#if DEBUG
+                catch (TargetInvocationException e)
+                {
+                    Console.Error.WriteLine(e.ToString());
+                    throw;
+                }
+#endif
+#if !DEBUG
                 catch (Exception e) { Console.Error.WriteLine("Could not execute: {0}", e.Message); }
+#endif
+                finally { }
             }
 
             #endregion
