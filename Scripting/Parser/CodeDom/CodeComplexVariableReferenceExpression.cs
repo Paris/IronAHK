@@ -30,11 +30,6 @@ namespace IronAHK.Scripting
             this.parts = list.ToArray();
         }
 
-        public CodeExpression[] Parts
-        {
-            get { return parts; }
-        }
-
         public CodeExpression QualifiedName
         {
             get
