@@ -1,0 +1,7 @@
+﻿The following files were generously provided by Chris Mallett <support@autohotkey.com> for testing compatibility with the official version of AutoHotkey:
+
+vanilla-Expressions.ahk
+vanilla-Line Continuation Include.ahk
+vanilla-Line Continuation.ahk
+vanilla-MAIN.ahk
+vanilla-RegExMatch & RegExReplace.ahk
