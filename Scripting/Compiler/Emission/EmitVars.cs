@@ -90,12 +90,7 @@ namespace IronAHK.Scripting
             Depth++;
             Debug("Emitting complex variable reference");
 
-            EmitArrayCreation(typeof(string), Ref.Parts.Length);
-
-            for(int i = 0; i < Ref.Parts.Length; i++)
-                EmitArrayInitializer(typeof(string), Ref.Parts[i], i);
-
-            Generator.Emit(OpCodes.Call, typeof(string).GetMethod("Concat", new Type[] { typeof(string[]) }));
+            EmitExpression(Ref.QualifiedName);
 
             Depth--;
 
