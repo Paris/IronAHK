@@ -32,7 +32,7 @@ GOTO :eof
 SET dir=%name%\%outdir%\%config%
 SET id=%name%.%libname%
 IF NOT EXIST "%dir%" MD "%dir%"
-csc "/doc:%dir%\%id%.xml" /reference:System.Windows.Forms.dll,System.Drawing.dll "/out:%dir%\%id%.dll" /target:library "/recurse:%libname%\*.cs" -unsafe
+csc "/doc:%dir%\%id%.xml" /reference:System.Windows.Forms.dll,System.Drawing.dll "/out:%dir%\%id%.dll" /target:library "/recurse:%libname%\*.cs" /unsafe /warn:0
 php-cgi -f "%name%\%site%\transform.php"
 GOTO :eof
 
