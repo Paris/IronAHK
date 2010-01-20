@@ -1,26 +1,44 @@
 @ECHO OFF
 
+CALL :setvars
 SET cmd=%1
 IF "%cmd%"=="" SET cmd=all
 GOTO %cmd%
 
 :all
-CALL :setvars
-devenv /rebuild "Release|Any CPU" "%name%.sln"
+devenv /rebuild "%config%|Any CPU" "%name%.sln"
 GOTO :eof
 
 :setvars
+CALL :vs
+SET name=IronAHK
+SET libname=Rusty
+SET config=Release
+SET outdir=bin
+SET site=Site
+GOTO :eof
+
+:vs
+csc 2>NUL > NUL
+IF "%ERRORLEVEL%" NEQ 9009 GOTO :eof
 IF NOT DEFINED VS90COMNTOOLS (
 	ECHO Visual Studio 9.0 is not installed.
 	EXIT 1
 )
 CALL "%VS90COMNTOOLS%\vsvars32.bat"
-SET name=IronAHK
+GOTO :eof
+
+:docs
+SET dir=%name%\%outdir%\%config%
+SET id=%name%.%libname%
+IF NOT EXIST "%dir%" MD "%dir%"
+csc "/doc:%dir%\%id%.xml" /reference:System.Windows.Forms.dll,System.Drawing.dll "/out:%dir%\%id%.dll" /target:library "/recurse:%libname%\*.cs" -unsafe
+php-cgi -f "%name%\%site%\transform.php"
 GOTO :eof
 
 :clean
 FOR /D %%G IN ("*") DO (
-	RMDIR /Q /S "%%G\bin" 2>NUL
+	RMDIR /Q /S "%%G\%outdir%" 2>NUL
 	RMDIR /Q /S "%%G\obj" 2>NUL
 )
 GOTO :eof
