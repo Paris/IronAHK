@@ -8,9 +8,8 @@ config=Release
 outdir=bin
 setup=setup.sh
 site=Site
-version=$(cat version.txt)
 
-.PHONY=all install uninstall dist clean
+.PHONY=all docs install uninstall clean
 
 all: clean
 	$(CC) build "--configuration:$(config)" "$(name).sln"
@@ -25,8 +24,6 @@ install: all
 
 uninstall:
 	(cd "$(outdir)/$(config)"; "./$(setup)" uninstall)
-
-dist:
 
 clean:
 	for dir in $(shell ls -d */ | xargs -l basename); do \
