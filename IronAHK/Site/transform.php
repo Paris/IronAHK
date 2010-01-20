@@ -3,12 +3,14 @@
 define('NAME', 'IronAHK');
 define('RUSTY', NAME . '.Rusty');
 define('THIS_DIR', dirname(__FILE__));
-define('SOURCE_XML', realpath(THIS_DIR . '/../../' . NAME . '/bin/Debug/' . RUSTY . '.xml'));
+
+define('BUILD_DIR', realpath(THIS_DIR . '/../../' . NAME . '/bin'));
+define('SOURCE_XML', realpath(BUILD_DIR . (is_dir(BUILD_DIR . '/Release') ? '/Release/' : '/Debug/') . RUSTY . '.xml'));
+
 define('OUTPUT_DIR', realpath(THIS_DIR . '/docs/commands'));
 define('SOURCE_XSL', realpath(OUTPUT_DIR . '/view.xsl'));
 define('RUSTY_PREFIX', RUSTY . '.Core');
 define('TAG_HEAD', 'doc');
-define('TAG_ASSEMBLY', 'assembly');
 define('TAG_PARENT', 'members');
 
 header('Content-Type: text/plain');
@@ -45,18 +47,10 @@ while ($i < 2)
 		$xml->read();
 		$i++;
 	}
-	else if ($i == 1)
-	{
-		if ($name == TAG_ASSEMBLY)
-			$assembly = $xml->readOuterXML();
-		else if ($name == TAG_PARENT)
-			$i++;
-	}
+	else if ($i == 1 and $name == TAG_PARENT)
+		$i++;
 }
 unset($i);
-
-if (!isset($assembly))
-	exit('Could not find "' . TAG_ASSEMBLY . '" tag.');
 
 $xsl = new DOMDocument;
 if (!$xsl->load(SOURCE_XSL))
@@ -81,8 +75,10 @@ while ($xml->read())
 		continue;
 	$name = $name[1];
 	
-	$src = '<?xml version="1.0"?><?xml-stylesheet type="text/xsl" href="../' . basename(SOURCE_XSL) . '"?><' . TAG_HEAD . '>' .
-		$assembly . '<' . TAG_PARENT . '>' . $src . '</' . TAG_PARENT . '></' . TAG_HEAD . '>';
+	$src = "<?xml version=\"1.0\"?>\n<?xml-stylesheet type=\"text/xsl\" href=\"../" . basename(SOURCE_XSL) . "\"?>\n<" .
+		TAG_HEAD . ">\n    <assembly>\n        <name>" . RUSTY . "</name>\n    </assembly>\n    <" .
+		TAG_PARENT . ">\n        " . $src . "\n    </" . TAG_PARENT . ">\n</" . TAG_HEAD . ">\n";
+	
 	$node = new DOMDocument;
 	$node->loadXML($src);
 	$html = $xslt->transformToXML($node);

@@ -1,15 +1,24 @@
 CC=mdtool
+PHP=php-cgi
+CSC=gmcs
 name=IronAHK
+libname=Rusty
 config=Release
 
 outdir=bin
 setup=setup.sh
+site=Site
 version=$(cat version.txt)
 
 .PHONY=all install uninstall dist clean
 
 all: clean
 	$(CC) build "--configuration:$(config)" "$(name).sln"
+
+docs:
+	if [ ! -d "$(name)/$(outdir)/$(config)" ]; then mkdir -p "$(name)/$(outdir)/$(config)"; fi
+	$(CSC) "-doc:$(name)/$(outdir)/$(config)/$(name).$(libname).xml" "-out:$(name)/$(outdir)/$(config)/$(name).$(libname).dll" -reference:System.Windows.Forms,System.Drawing "-recurse:$(libname)/*.cs" -target:library -unsafe
+	$(PHP) -f "$(name)/$(site)/transform.php"
 
 install: all
 	(cd "$(outdir)/$(config)"; "./$(setup)" install)
