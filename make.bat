@@ -19,13 +19,13 @@ SET site=Site
 GOTO :eof
 
 :vs
-csc 2>NUL > NUL
-IF "%ERRORLEVEL%" NEQ 9009 GOTO :eof
+IF DEFINED VSSETVARS GOTO :eof
 IF NOT DEFINED VS90COMNTOOLS (
 	ECHO Visual Studio 9.0 is not installed.
 	EXIT 1
 )
 CALL "%VS90COMNTOOLS%\vsvars32.bat"
+SET VSSETVARS=1
 GOTO :eof
 
 :docs
