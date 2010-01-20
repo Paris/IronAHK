@@ -25,6 +25,9 @@ install: all
 uninstall:
 	(cd "$(outdir)/$(config)"; "./$(setup)" uninstall)
 
+mostlyclean: clean
+		$(PHP) -f "$(name)/$(site)/clean.php" > /dev/null
+
 clean:
 	for dir in $(shell ls -d */ | xargs -l basename); do \
 		for sub in "$(outdir)" obj; do \

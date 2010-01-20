@@ -36,6 +36,11 @@ csc "/doc:%dir%\%id%.xml" /reference:System.Windows.Forms.dll,System.Drawing.dll
 php-cgi -f "%name%\%site%\transform.php"
 GOTO :eof
 
+:mostlyclean
+CALL :clean
+php-cgi -f "%name%\%site%\clean.php" > NUL
+GOTO :eof
+
 :clean
 FOR /D %%G IN ("*") DO (
 	RMDIR /Q /S "%%G\%outdir%" 2>NUL
