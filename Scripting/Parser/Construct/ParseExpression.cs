@@ -331,6 +331,35 @@ namespace IronAHK.Scripting
                         if (ops == Script.Operator.Increment || ops == Script.Operator.Decrement)
                         {
                             int z = -1, x = i - 1, y = i + 1;
+                            int d = ops == Script.Operator.Increment ? 1 : -1;
+
+                            #region Compounding increment/decrement operators
+#if LEGACY
+                            while (y < parts.Count)
+                            {
+                                Script.Operator nextOps = Script.Operator.ValueEquality;
+
+                                if (parts[y] is Script.Operator)
+                                    nextOps = (Script.Operator)parts[y];
+                                else if (parts[y] is string)
+                                {
+                                    try { nextOps = OperatorFromString((string)parts[y]); }
+                                    catch { break; }
+                                }
+                                else
+                                    break;
+
+                                if (nextOps == Script.Operator.Increment)
+                                    d++;
+                                else if (nextOps == Script.Operator.Decrement)
+                                    d--;
+                                else
+                                    break;
+
+                                parts.RemoveAt(y);
+                            }
+#endif
+                            #endregion
 
                             if (x > -1 && parts[x] is CodeComplexVariableReferenceExpression)
                                 z = x;
@@ -343,19 +372,28 @@ namespace IronAHK.Scripting
                             }
 
                             if (z == -1)
+                            {
+#if LEGACY
+                                if (x > 0 && (parts[x] is CodeBinaryOperatorExpression || parts[x] is CodeMethodInvokeExpression))
+                                {
+                                    parts.RemoveAt(i);
+                                    i--;
+                                    continue;
+                                }
+#endif
                                 throw new ParseException("Neither left or right hand side of operator is a variable");
+                            }
 
                             var list = new List<object>(7);
                             list.Add(parts[z]);
-                            list.Add(new string(new char[] { ops == Script.Operator.Increment ? Add : Minus, Equal }));
-                            const string d = "1";
-                            list.Add(d);
+                            list.Add(new string(new char[] { Add, Equal }));
+                            list.Add(d.ToString());
                             if (z < i) // postfix, so adjust
                             {
                                 list.Insert(0, ParenOpen.ToString());
                                 list.Add(ParenClose.ToString());
-                                list.Add((((string)list[2])[0] == Add ? Minus : Add).ToString());
-                                list.Add(d);
+                                list.Add(Add.ToString());
+                                list.Add((-d).ToString());
                             }
 
                             x = Math.Min(i, z);
