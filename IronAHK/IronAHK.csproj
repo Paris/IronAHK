@@ -94,6 +94,10 @@
       <Link>license.txt</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Site\images\countdown.png" />
+    <Content Include="Site\images\editor.png" />
+    <Content Include="Site\images\helloworld.png" />
+    <Content Include="Site\images\helloworld_gtk.png" />
     <Content Include="Site\images\_file.png" />
     <Content Include="Site\images\_icon.png" />
     <Content Include="Site\docs\copyright\index.html" />
