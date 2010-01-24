@@ -185,20 +185,18 @@ namespace IronAHK.Rusty
         /// <para>DecimalPlaces is the number of decimal places to display (rounding will occur). If blank or zero, neither a decimal portion nor a decimal point will be displayed, that is, the number will be stored as an integer rather than a floating point number.</para>
         /// <para>Padding: If TotalWidth is high enough to cause padding, spaces will be added on the left side; that is, each number will be right-justified. To use left-justification instead, precede TotalWidth with a minus sign. To pad with zeroes instead of spaces, precede TotalWidth with a zero (e.g. 06.2).</para>
         /// </param>
+        [Obsolete, Conditional("LEGACY")]
         public static void SetFormat(string NumberType, string Format)
         {
             switch (NumberType.ToLowerInvariant())
             {
                 case Keyword_Integer:
-                    _FormatInteger = Format[0];
+                    A_FormatInteger = Format[0];
                     break;
 
                 case Keyword_Float:
-                    _FormatFloat = Format;
+                    A_FormatFloat = Format;
                     break;
-
-                default:
-                    throw new ArgumentOutOfRangeException();
             }
         }
 

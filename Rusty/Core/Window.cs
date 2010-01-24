@@ -437,12 +437,17 @@ namespace IronAHK.Rusty
         {
             switch (Mode.ToLowerInvariant())
             {
-                case "1": _TitleMatchMode = 1; break;
-                case "2": _TitleMatchMode = 2; break;
-                case "3": _TitleMatchMode = 3; break;
-                case Keyword_RegEx: _TitleMatchMode = 4; break;
-                case Keyword_Fast: _TitleMatchModeSpeed = true; break;
-                case Keyword_Slow: _TitleMatchModeSpeed = false; break;
+                case "1":
+                case "2":
+                case "3":
+                case Keyword_RegEx:
+                    A_TitleMatchMode = Mode;
+                    break;
+
+                case Keyword_Fast:
+                case Keyword_Slow:
+                    A_TitleMatchModeSpeed = Mode;
+                    break;
             }
         }
 
@@ -453,7 +458,7 @@ namespace IronAHK.Rusty
         [Obsolete, Conditional("LEGACY")]
         public static void SetWinDelay(int Delay)
         {
-            _WinDelay = Delay;
+            A_WinDelay = Delay;
         }
 
         /// <summary>
