@@ -1,7 +1,7 @@
-using System.Diagnostics;
-using System.Windows.Forms;
 using System;
-using System.Runtime.InteropServices;
+using System.Diagnostics;
+using System.Reflection;
+using System.Windows.Forms;
 
 namespace IronAHK.Rusty
 {
@@ -84,7 +84,23 @@ namespace IronAHK.Rusty
         /// <param name="Text">The text to show in the prompt.</param>
         public static void MsgBox(string Text)
         {
-            MessageBox.Show(Text);
+            Assembly gtk = null;
+
+            try { gtk = Assembly.Load("gtk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f"); }
+            catch (Exception) { }
+
+            if (gtk != null)
+            {
+                gtk.GetType("Gtk.Application").InvokeMember("Init", BindingFlags.InvokeMethod, null, null, new object[] { });
+
+                var md_ctor = gtk.GetType("Gtk.MessageDialog").GetConstructor(new Type[] {
+				gtk.GetType("Gtk.Window"), typeof(int), typeof(int), typeof(int), typeof(string), typeof(object[]) });
+
+                var md = md_ctor.Invoke(new object[] { null, 1, 4, 1, Text, new object[] { } });
+                md.GetType().InvokeMember("Run", BindingFlags.InvokeMethod, null, md, new object[] { });
+            }
+            else
+                MessageBox.Show(Text);
         }
 
         /// <summary>
