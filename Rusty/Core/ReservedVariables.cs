@@ -197,7 +197,7 @@ namespace IronAHK.Rusty
         public static string A_FormatFloat
         {
             get { return _FormatFloat ?? "0.6"; }
-            // TODO: SetFormat to set_A_FormatFloat
+            set { _FormatFloat = value; }
         }
 
         /// <summary>
@@ -206,7 +206,7 @@ namespace IronAHK.Rusty
         public static char A_FormatInteger
         {
             get { return _FormatInteger ?? 'D'; }
-            // TODO: SetFormat to set_A_FormatInteger
+            set { _FormatInteger = value; }
         }
 
         /// <summary>
@@ -1023,7 +1023,16 @@ namespace IronAHK.Rusty
                 int mode = _TitleMatchMode ?? 1;
                 return mode == 4 ? Keyword_RegEx : mode.ToString();
             }
-            // TODO: SetTitleMatchMode as A_TitleMatchMode
+            set
+            {
+                switch (value.ToLowerInvariant())
+                {
+                    case "1": _TitleMatchMode = 1; break;
+                    case "2": _TitleMatchMode = 1; break;
+                    case "3": _TitleMatchMode = 1; break;
+                    case Keyword_RegEx: _TitleMatchMode = 4; break;
+                }
+            }
         }
 
         /// <summary>
@@ -1032,7 +1041,14 @@ namespace IronAHK.Rusty
         public static string A_TitleMatchModeSpeed
         {
             get { return _TitleMatchModeSpeed ?? true ? Keyword_Fast : Keyword_Slow; }
-            // TODO: SetTitleMatchMode as A_TitleMatchModeSpeed
+            set
+            {
+                switch (value.ToLowerInvariant())
+                {
+                    case Keyword_Fast: _TitleMatchModeSpeed = true; break;
+                    case Keyword_Slow: _TitleMatchModeSpeed = false; break;
+                }
+            }
         }
 
         /// <summary>
@@ -1057,7 +1073,7 @@ namespace IronAHK.Rusty
         public static int A_WinDelay
         {
             get { return _WinDelay ?? 100; }
-            // TODO: SetWinDelay as A_WinDelay
+            set { _WinDelay = value; }
         }
 
         /// <summary>

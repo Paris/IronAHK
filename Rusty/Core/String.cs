@@ -121,7 +121,7 @@ namespace IronAHK.Rusty
         public static void Sort(ref string VarName, string Options)
         {
             var opts = KeyValues(Options, true, new char[] { 'f' });
-
+            
             if (opts.ContainsKey('f'))
                 throw new NotSupportedException(); // UNDONE: dynamic function calling for sort
 
