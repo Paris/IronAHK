@@ -14,11 +14,6 @@ namespace IronAHK.Scripting
 
         bool csc = false;
 
-        public IACodeProvider()
-        {
-
-        }
-
         public bool UseCSharpCompiler
         {
             get { return csc; }
