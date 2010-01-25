@@ -14,11 +14,11 @@ namespace IronAHK
             /* 
              * Note: to change the default test script do not edit any variables here, instead
              * create a file called select.txt in the tests directory with the file name (including extension)
-             * of the script to launch (i.e. "expressions.ia" or "vanilla-MAIN.ahk").
+             * of the script to launch (i.e. "expressions.ahk" or "vanilla-MAIN.ahk").
              */
 
             const string output = "test.exe";
-            const string test = "pass.ia";
+            const string test = "pass.ahk";
 
             string directory = string.Format("..{0}..{0}..{0}Tests{0}Scripting{0}Code", Path.DirectorySeparatorChar);
             string select = Path.Combine(directory, "select.txt");
