@@ -273,12 +273,13 @@ namespace IronAHK.Scripting
                         int n = i - 1;
                         if (n < 0 || !(parts[n] is CodeComplexVariableReferenceExpression))
                         {
-#if LEGACY
-                            if (parts[n] is CodePrimitiveExpression &&
-                                ((CodePrimitiveExpression)parts[n]).Value is decimal)
-                                parts[n] = VarId(((decimal)((CodePrimitiveExpression)parts[n]).Value).ToString());
+                            if (LaxExpressions)
+                            {
+                                if (parts[n] is CodePrimitiveExpression &&
+                                    ((CodePrimitiveExpression)parts[n]).Value is decimal)
+                                    parts[n] = VarId(((decimal)((CodePrimitiveExpression)parts[n]).Value).ToString());
+                            }
                             else
-#endif
                                 throw new ParseException("Can only assign to a variable");
                         }
 
@@ -334,31 +335,34 @@ namespace IronAHK.Scripting
                             int d = ops == Script.Operator.Increment ? 1 : -1;
 
                             #region Compounding increment/decrement operators
-#if LEGACY
-                            while (y < parts.Count)
+
+                            if (LaxExpressions)
                             {
-                                Script.Operator nextOps = Script.Operator.ValueEquality;
-
-                                if (parts[y] is Script.Operator)
-                                    nextOps = (Script.Operator)parts[y];
-                                else if (parts[y] is string)
+                                while (y < parts.Count)
                                 {
-                                    try { nextOps = OperatorFromString((string)parts[y]); }
-                                    catch { break; }
+                                    Script.Operator nextOps = Script.Operator.ValueEquality;
+
+                                    if (parts[y] is Script.Operator)
+                                        nextOps = (Script.Operator)parts[y];
+                                    else if (parts[y] is string)
+                                    {
+                                        try { nextOps = OperatorFromString((string)parts[y]); }
+                                        catch { break; }
+                                    }
+                                    else
+                                        break;
+
+                                    if (nextOps == Script.Operator.Increment)
+                                        d++;
+                                    else if (nextOps == Script.Operator.Decrement)
+                                        d--;
+                                    else
+                                        break;
+
+                                    parts.RemoveAt(y);
                                 }
-                                else
-                                    break;
-
-                                if (nextOps == Script.Operator.Increment)
-                                    d++;
-                                else if (nextOps == Script.Operator.Decrement)
-                                    d--;
-                                else
-                                    break;
-
-                                parts.RemoveAt(y);
                             }
-#endif
+
                             #endregion
 
                             if (x > -1 && parts[x] is CodeComplexVariableReferenceExpression)
@@ -373,15 +377,17 @@ namespace IronAHK.Scripting
 
                             if (z == -1)
                             {
-#if LEGACY
-                                if (x > 0 && (parts[x] is CodeBinaryOperatorExpression || parts[x] is CodeMethodInvokeExpression))
+                                if (LaxExpressions)
                                 {
-                                    parts.RemoveAt(i);
-                                    i--;
-                                    continue;
+                                    if (x > 0 && (parts[x] is CodeBinaryOperatorExpression || parts[x] is CodeMethodInvokeExpression))
+                                    {
+                                        parts.RemoveAt(i);
+                                        i--;
+                                        continue;
+                                    }
                                 }
-#endif
-                                throw new ParseException("Neither left or right hand side of operator is a variable");
+                                else
+                                    throw new ParseException("Neither left or right hand side of operator is a variable");
                             }
 
                             var list = new List<object>(7);
