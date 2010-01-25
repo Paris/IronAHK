@@ -11,7 +11,7 @@ namespace IronAHK.Tests
     public partial class Scripting
     {
         string path = string.Format("..{0}..{0}Scripting{0}Code{0}", Path.DirectorySeparatorChar.ToString());
-        const string ext = ".ia";
+        const string ext = ".ahk";
 
         bool TestScript(string source)
         {

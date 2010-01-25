@@ -27,15 +27,7 @@ namespace IronAHK.Scripting
 
         public override string FileExtension
         {
-            get
-            {
-#if LEGACY
-                return "ahk";
-#endif
-#if !LEGACY
-                return "ia";
-#endif
-            }
+            get { return "ahk"; }
         }
 
         #endregion
