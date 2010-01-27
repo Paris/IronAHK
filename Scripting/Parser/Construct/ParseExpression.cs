@@ -679,8 +679,9 @@ namespace IronAHK.Scripting
             var assign = (CodeComplexAssignStatement)parts[i];
 
 #pragma warning disable 0162
-            if (UseComplexVar && assign.Left != null)
-                return;
+            if (UseComplexVar)
+                if (assign.Left != null)
+                    return;
 #pragma warning restore 0162
 
             assign.Left = (CodeComplexVariableReferenceExpression)parts[x];
