@@ -395,7 +395,8 @@ namespace IronAHK.Scripting
                             {
                                 if (LaxExpressions)
                                 {
-                                    if (x > 0 && (parts[x] is CodeBinaryOperatorExpression || parts[x] is CodeMethodInvokeExpression))
+                                    if ((x > 0 && (parts[x] is CodeBinaryOperatorExpression || parts[x] is CodeMethodInvokeExpression || parts[x] is CodePrimitiveExpression)) ||
+                                        (y < parts.Count && (parts[y] is string && !IsOperator(parts[y] as string) || parts[y] is Script.Operator)))
                                     {
                                         parts.RemoveAt(i);
                                         i--;
@@ -943,6 +944,13 @@ namespace IronAHK.Scripting
                     }
                     throw new ArgumentOutOfRangeException();
             }
+        }
+
+        bool IsOperator(string code)
+        {
+            try { OperatorFromString(code); }
+            catch (ArgumentOutOfRangeException) { return false; }
+            return true;
         }
 
         int OperatorPrecedence(Script.Operator op)
