@@ -384,11 +384,21 @@ namespace IronAHK.Scripting
                             if (x > -1 && parts[x] is CodeComplexVariableReferenceExpression)
                                 z = x;
 
-                            if (y < parts.Count && parts[y] is string && IsDynamicReference((string)parts[y]))
+                            if (y < parts.Count && parts[y] is string && !IsOperator((string)parts[y]))
                             {
                                 if (z != -1)
-                                    throw new ParseException("Cannot use both prefix and postfix operators on the same variable");
-                                z = y;
+                                {
+                                    if (LaxExpressions)
+                                    {
+                                        parts.Insert(y, Script.Operator.Concat);
+                                        z = x;
+                                    }
+                                    else
+                                        throw new ParseException("Cannot use both prefix and postfix operators on the same variable");
+                                }
+
+                                if (z == -1)
+                                    z = y;
                             }
 
                             if (z == -1)
