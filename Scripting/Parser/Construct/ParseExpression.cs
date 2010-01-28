@@ -333,6 +333,7 @@ namespace IronAHK.Scripting
                         {
                             int z = -1, x = i - 1, y = i + 1;
                             int d = ops == Script.Operator.Increment ? 1 : -1;
+                            CodeMethodInvokeExpression shadow = null;
 
                             #region Compounding increment/decrement operators
 
@@ -360,6 +361,21 @@ namespace IronAHK.Scripting
                                         break;
 
                                     parts.RemoveAt(y);
+                                }
+
+                                int w = y + 1;
+                                if (w < parts.Count && ((parts[w] is string && IsAssignOp((string)parts[w]) && ((string)parts[w])[0] == AssignPre) || parts[w] is CodeComplexAssignStatement))
+                                {
+                                    int l = parts.Count - w;
+                                    var sub = new List<object>(l);
+
+                                    for (int wx = y; wx < parts.Count; wx++)
+                                        sub.Add(parts[wx]);
+
+                                    shadow = (CodeMethodInvokeExpression)InternalMethods.OperateZero;
+                                    shadow.Parameters.Add(ParseExpression(sub));
+
+                                    parts.RemoveRange(w, l);
                                 }
                             }
 
@@ -390,10 +406,15 @@ namespace IronAHK.Scripting
                                     throw new ParseException("Neither left or right hand side of operator is a variable");
                             }
 
-                            var list = new List<object>(7);
+                            var list = new List<object>(9);
                             list.Add(parts[z]);
                             list.Add(new string(new char[] { Add, Equal }));
                             list.Add(d.ToString());
+                            if (shadow != null)
+                            {
+                                list.Add(Add.ToString());
+                                list.Add(shadow);
+                            }
                             if (z < i) // postfix, so adjust
                             {
                                 list.Insert(0, ParenOpen.ToString());
@@ -684,6 +705,11 @@ namespace IronAHK.Scripting
                     return;
 #pragma warning restore 0162
 
+            if (parts[x] is CodeMethodInvokeExpression)
+            {
+                var invoke = (CodeMethodInvokeExpression)parts[x];
+                throw new ArgumentOutOfRangeException();
+            }
             assign.Left = (CodeComplexVariableReferenceExpression)parts[x];
             assign.Right = right ? WrappedComplexVar(parts[y]) : new CodePrimitiveExpression(null);
 
