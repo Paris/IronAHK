@@ -399,6 +399,27 @@ namespace IronAHK.Scripting
 
                                 if (z == -1)
                                     z = y;
+
+                                if (LaxExpressions)
+                                {
+                                    if (parts[z] is string && ((string)parts[z]).Length == 1 && ((string)parts[z])[0] == ParenOpen)
+                                    {
+                                        int[] zx = new int[] { z + 1, z + 2 };
+                                        if (zx[1] < parts.Count &&
+                                            parts[zx[1]] is string && ((string)parts[zx[1]]).Length == 1 && ((string)parts[zx[1]])[0] == ParenClose &&
+                                            (parts[zx[0]] is string && IsDynamicReference((string)parts[zx[0]]) || parts[zx[0]] is CodeComplexVariableReferenceExpression))
+                                        {
+                                            parts.RemoveAt(zx[1]);
+                                            parts.RemoveAt(z);
+                                        }
+                                        else
+                                        {
+                                            parts.RemoveAt(i);
+                                            i--;
+                                            continue;
+                                        }
+                                    }
+                                }
                             }
 
                             if (z == -1)
@@ -415,6 +436,13 @@ namespace IronAHK.Scripting
                                 }
                                 else
                                     throw new ParseException("Neither left or right hand side of operator is a variable");
+                            }
+
+                            if (parts[z] is string && ((string)parts[z]).Length > 0 && ((string)parts[z])[0] == StringBound)
+                            {
+                                parts.RemoveAt(Math.Max(i, z));
+                                parts.RemoveAt(Math.Min(i, z));
+                                continue;
                             }
 
                             var list = new List<object>(9);
