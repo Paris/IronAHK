@@ -1101,6 +1101,7 @@ namespace IronAHK.Scripting
                     {
                         case Greater:
                         case Less:
+                        case Divide:
                             return true;
 
                         default:
