@@ -744,11 +744,6 @@ namespace IronAHK.Scripting
                     return;
 #pragma warning restore 0162
 
-            if (parts[x] is CodeMethodInvokeExpression)
-            {
-                var invoke = (CodeMethodInvokeExpression)parts[x];
-                throw new ArgumentOutOfRangeException();
-            }
             assign.Left = (CodeComplexVariableReferenceExpression)parts[x];
             assign.Right = right ? WrappedComplexVar(parts[y]) : new CodePrimitiveExpression(null);
 
