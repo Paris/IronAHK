@@ -1,12 +1,13 @@
 @ECHO OFF
 
+SETLOCAL
 CALL :setvars
 SET cmd=%1
 IF "%cmd%"=="" SET cmd=all
 GOTO %cmd%
 
 :all
-devenv /rebuild "%config%|Any CPU" "%name%.sln"
+devenv /rebuild %devargs%
 GOTO :eof
 
 :setvars
@@ -16,6 +17,7 @@ SET libname=Rusty
 SET config=Release
 SET outdir=bin
 SET site=Site
+SET devargs="%config%" "%name%.sln"
 GOTO :eof
 
 :vs
@@ -24,15 +26,12 @@ IF NOT DEFINED VS90COMNTOOLS (
 	ECHO Visual Studio 9.0 is not installed.
 	EXIT 1
 )
-CALL "%VS90COMNTOOLS%\vsvars32.bat"
+CALL "%VS90COMNTOOLS%\vsvars32.bat" >NUL
 SET VSSETVARS=1
 GOTO :eof
 
 :docs
-SET dir=%name%\%outdir%\%config%
-SET id=%name%.%libname%
-IF NOT EXIST "%dir%" MD "%dir%"
-csc "/doc:%dir%\%id%.xml" /reference:System.Windows.Forms.dll,System.Drawing.dll "/out:%dir%\%id%.dll" /target:library "/recurse:%libname%\*.cs" /unsafe /warn:0
+devenv /rebuild %devargs% /project "%libname%\%libname%.csproj"
 php-cgi -f "%name%\%site%\transform.php"
 GOTO :eof
 

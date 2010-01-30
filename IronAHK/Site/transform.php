@@ -1,11 +1,12 @@
 <?php
 
 define('NAME', 'IronAHK');
-define('RUSTY', NAME . '.Rusty');
+define('RUSTY_NAME', 'Rusty');
+define('RUSTY', NAME . '.' . RUSTY_NAME);
 define('THIS_DIR', dirname(__FILE__));
 
 define('BUILD_DIR', realpath(THIS_DIR . '/../../' . NAME . '/bin'));
-define('SOURCE_XML', realpath(BUILD_DIR . (is_dir(BUILD_DIR . '/Release') ? '/Release/' : '/Debug/') . RUSTY . '.xml'));
+define('SOURCE_XML', realpath(THIS_DIR . '/../../' . RUSTY_NAME . '/bin/' . RUSTY . '.xml'));
 
 define('OUTPUT_DIR', realpath(THIS_DIR . '/docs/commands'));
 define('SOURCE_XSL', realpath(OUTPUT_DIR . '/view.xsl'));
