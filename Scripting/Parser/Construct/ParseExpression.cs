@@ -362,21 +362,6 @@ namespace IronAHK.Scripting
 
                                     parts.RemoveAt(y);
                                 }
-
-                                int w = y + 1;
-                                if (w < parts.Count && ((parts[w] is string && IsAssignOp((string)parts[w]) && ((string)parts[w])[0] == AssignPre) || parts[w] is CodeComplexAssignStatement))
-                                {
-                                    int l = parts.Count - w;
-                                    var sub = new List<object>(l);
-
-                                    for (int wx = y; wx < parts.Count; wx++)
-                                        sub.Add(parts[wx]);
-
-                                    shadow = (CodeMethodInvokeExpression)InternalMethods.OperateZero;
-                                    shadow.Parameters.Add(ParseExpression(sub));
-
-                                    parts.RemoveRange(w, l);
-                                }
                             }
 
                             #endregion
@@ -443,6 +428,25 @@ namespace IronAHK.Scripting
                                 parts.RemoveAt(Math.Max(i, z));
                                 parts.RemoveAt(Math.Min(i, z));
                                 continue;
+                            }
+
+                            if (LaxExpressions)
+                            {
+                                int w = z + (z == x ? 2 : 1);
+                                if (w < parts.Count && (parts[w] is string && IsAssignOp((string)parts[w]) || parts[w] is CodeComplexAssignStatement))
+                                {
+                                    int l = parts.Count - w;
+                                    var sub = new List<object>(l + 1);
+
+                                    sub.Add(parts[z]);
+                                    for (int wx = w; wx < parts.Count; wx++)
+                                        sub.Add(parts[wx]);
+
+                                    shadow = (CodeMethodInvokeExpression)InternalMethods.OperateZero;
+                                    shadow.Parameters.Add(ParseExpression(sub));
+
+                                    parts.RemoveRange(w, l);
+                                }
                             }
 
                             var list = new List<object>(9);
