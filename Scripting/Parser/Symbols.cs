@@ -156,6 +156,7 @@ namespace IronAHK.Scripting
         const string ExFileNotFound = "File or directory not found";
         const string ExCommand = "Invalid command name";
         const string ExUnclosedBlock = "Unclosed block";
+        const string ExInvalidExpression = "Invalid expression term";
 
         #region Internal
         const string ExIntlLineMismatch = "Line and index counts mismatched";

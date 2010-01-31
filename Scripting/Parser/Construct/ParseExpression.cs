@@ -633,7 +633,19 @@ namespace IronAHK.Scripting
                                 boolean.Left = iftest;
 
                                 iftest = (CodeMethodInvokeExpression)InternalMethods.IfElse;
-                                iftest.Parameters.Add(WrappedComplexVar(parts[y]));
+                                var next = parts[y] as Script.Operator?;
+                                if (next == Script.Operator.BooleanAnd || next == Script.Operator.BooleanOr)
+                                {
+                                    if (LaxExpressions)
+                                        iftest.Parameters.Add(new CodePrimitiveExpression(false));
+                                    else
+                                        throw new ParseException(ExInvalidExpression);
+                                }
+                                else
+                                {
+                                    iftest.Parameters.Add(WrappedComplexVar(parts[y]));
+                                    parts.RemoveAt(y);
+                                }
                                 boolean.Right = iftest;
 
                                 parts[x] = boolean;
@@ -645,9 +657,9 @@ namespace IronAHK.Scripting
                                 invoke.Parameters.Add(WrappedComplexVar(parts[x]));
                                 invoke.Parameters.Add(WrappedComplexVar(parts[y]));
                                 parts[x] = invoke;
+                                parts.RemoveAt(y);
                             }
 
-                            parts.RemoveAt(y);
                             parts.RemoveAt(i);
                         }
                         #endregion
