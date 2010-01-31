@@ -981,7 +981,11 @@ namespace IronAHK.Scripting
 
         bool IsOperator(string code)
         {
-            try { OperatorFromString(code); }
+            try
+            {
+                if (!IsAssignOp(code))
+                    OperatorFromString(code);
+            }
             catch (ArgumentOutOfRangeException) { return false; }
             return true;
         }
