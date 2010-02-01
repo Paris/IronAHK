@@ -938,7 +938,8 @@ namespace IronAHK.Rusty
         /// </summary>
         public static string A_ThisHotkey
         {
-            get { return null; }
+            // TODO: A_ThisHotkey
+            get { return _ThisHotkey; }
         }
 
         /// <summary>
