@@ -45,7 +45,19 @@ namespace IronAHK.Rusty
         /// </param>
         public static void Hotkey(string KeyName, string Label, string Options)
         {
-
+            if (Environment.OSVersion.Platform == PlatformID.Win32NT)
+            {
+                if (keyboardHook == null)
+                {
+                    keyboardHook = new Windows.KeyboardHook();
+                    Application.Run();
+                }
+            }
+            else
+            {
+                // TODO: Linux hotkeys
+                throw new NotImplementedException();
+            }
         }
 
         /// <summary>

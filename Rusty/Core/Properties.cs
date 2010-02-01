@@ -29,6 +29,8 @@ namespace IronAHK.Rusty
 
         static Dictionary<string, System.Timers.Timer> timers = new Dictionary<string, System.Timers.Timer>();
 
+        static KeyboardHook keyboardHook = null;
+
         #region Statics
 
         [ThreadStatic]
@@ -66,6 +68,9 @@ namespace IronAHK.Rusty
 
         [ThreadStatic]
         static int? _DefaultMouseSpeed;
+
+        [ThreadStatic]
+        static string _ThisHotkey;
 
         [ThreadStatic]
         static int? _TitleMatchMode;
