@@ -494,9 +494,12 @@ namespace IronAHK.Scripting
             {
                 if (parts[i] is Script.Operator && (parts[i - 1] is Script.Operator || parts[i - 1] is CodeComplexAssignStatement) && IsUnaryOperator((Script.Operator)parts[i]))
                 {
-                    int n = i + 1;
+                    int n = i + 1, m = n + 1;
 
-                    if (n + 1 > parts.Count)
+                    if (m + 1 < parts.Count && parts[n] is CodeComplexVariableReferenceExpression && parts[m] is CodeComplexAssignStatement)
+                        MergeAssignmentAt(parts, i + 2);
+
+                    if (m > parts.Count)
                         throw new ParseException("Unary operator without operand");
 
                     var op = (Script.Operator)parts[i];
@@ -553,6 +556,9 @@ namespace IronAHK.Scripting
 
                         int x = i - 1, y = i + 1;
                         var invoke = new CodeMethodInvokeExpression();
+
+                        if (i + 3 < parts.Count && parts[i + 1] is CodeComplexVariableReferenceExpression && parts[i + 2] is CodeComplexAssignStatement)
+                            MergeAssignmentAt(parts, i + 2);
 
                         #region Ternary
                         if (op == Script.Operator.TernaryA)
