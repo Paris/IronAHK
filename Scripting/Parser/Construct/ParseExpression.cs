@@ -671,6 +671,13 @@ namespace IronAHK.Scripting
                         }
                         #endregion
                     }
+                    else
+                    {
+                        int x = i - 1, y = i + 1;
+
+                        if (x > 0 && y < parts.Count && !(parts[x] is Script.Operator) && !(parts[y] is Script.Operator) && !(parts[i] is CodeComplexAssignStatement))
+                            parts.Insert(y, Script.Operator.Concat);
+                    }
                 }
                 level--;
             }
