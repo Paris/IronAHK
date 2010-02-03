@@ -572,6 +572,8 @@ namespace IronAHK.Scripting
 
                             for (i++; i < parts.Count; i++)
                             {
+                                bool append = true;
+
                                 if (parts[i] is Script.Operator)
                                 {
                                     var iop = (Script.Operator)parts[i];
@@ -580,19 +582,18 @@ namespace IronAHK.Scripting
                                     {
                                         case Script.Operator.TernaryA:
                                             depth++;
+                                            append = depth > 0;
                                             break;
 
                                         case Script.Operator.TernaryB:
+                                            append = depth > 0;
                                             if (--depth == -1)
                                                 index = 1;
                                             break;
-
-                                        default:
-                                            branch[index].Add(parts[i]);
-                                            break;
                                     }
                                 }
-                                else
+
+                                if (append)
                                     branch[index].Add(parts[i]);
                             }
 
