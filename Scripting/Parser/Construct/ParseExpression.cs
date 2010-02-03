@@ -563,6 +563,14 @@ namespace IronAHK.Scripting
                         #region Ternary
                         if (op == Script.Operator.TernaryA)
                         {
+                            if (x < 0)
+                            {
+                                if (LaxExpressions)
+                                    return new CodePrimitiveExpression(null);
+                                else
+                                    throw new ParseException("Ternary with no condition.");
+                            }
+
                             var eval = (CodeMethodInvokeExpression)InternalMethods.IfElse;
                             eval.Parameters.Add(WrappedComplexVar(parts[x]));
                             var ternary = new CodeTernaryOperatorExpression() { Condition = eval };
