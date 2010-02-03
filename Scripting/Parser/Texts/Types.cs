@@ -131,36 +131,6 @@ namespace IronAHK.Scripting
             return z == 0 && (code.Length == 1 || IsSpace(code[1]));
         }
 
-        bool IsExpression(string code)
-        {
-            char sym = code[0];
-
-            if (sym == ParenOpen)
-                return true;
-
-            if (!IsIdentifier(sym))
-                return true;
-
-            string word = code.Split(Spaces, 2)[0];
-            switch (word.ToLowerInvariant())
-            {
-                case AndTxt:
-                case OrTxt:
-                case NotTxt:
-                    return true;
-            }
-
-            foreach (char token in code)
-            {
-                if (token == ParenOpen)
-                    return true;
-                else if (!IsIdentifier(token) && token != Resolve)
-                    return false;
-            }
-
-            return false;
-        }
-
         #endregion
 
         #region Misc
