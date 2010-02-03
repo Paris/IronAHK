@@ -708,6 +708,26 @@ namespace IronAHK.Scripting
 
             #region Result
 
+            if (parts.Count > 1)
+            {
+                for (int i = 0; i < parts.Count; i++)
+                {
+                    bool typed = false;
+
+                    if (LaxExpressions)
+                        typed = parts[i] is CodeComplexAssignStatement || parts[i] is CodeComplexVariableReferenceExpression;
+
+                    if (!(typed || parts[i] is CodeMethodInvokeExpression || parts[i] is CodePrimitiveExpression))
+                        throw new ArgumentOutOfRangeException();
+
+                    if (i % 2 == 1)
+                        parts.Insert(i, Script.Operator.Concat);
+                }
+                var concat = ParseExpression(parts);
+                parts.Clear();
+                parts.Add(concat);
+            }
+
             if (parts.Count != 1)
                 throw new ArgumentOutOfRangeException();
 
