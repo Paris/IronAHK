@@ -256,7 +256,7 @@ namespace IronAHK.Scripting
             code = code.Trim(Spaces);
             if (code.Length == 0)
                 return new CodePrimitiveExpression(false);
-            else if (expr || IsExpression(code))
+            else if (expr || !IsIdentifier(code.Split(Not, Equal, Greater, Less)[0].Trim(Spaces)))
             {
                 // TODO: check for opening brace before comments (i.e "while true { ; something")
                 int l = code.Length - 1;
