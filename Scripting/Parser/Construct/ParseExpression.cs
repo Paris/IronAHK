@@ -575,34 +575,30 @@ namespace IronAHK.Scripting
                             eval.Parameters.Add(WrappedComplexVar(parts[x]));
                             var ternary = new CodeTernaryOperatorExpression() { Condition = eval };
 
-                            int depth = 0, max = parts.Count - i, start = i, index = 0;
+                            int depth = 1, max = parts.Count - i, start = i;
                             var branch = new List<object>[] { new List<object>(max), new List<object>(max) };
 
                             for (i++; i < parts.Count; i++)
                             {
-                                bool append = true;
-
-                                if (parts[i] is Script.Operator)
+                                switch (parts[i] as Script.Operator?)
                                 {
-                                    var iop = (Script.Operator)parts[i];
+                                    case Script.Operator.TernaryA:
+                                        depth++;
+                                        break;
 
-                                    switch (iop)
-                                    {
-                                        case Script.Operator.TernaryA:
-                                            depth++;
-                                            append = depth > 0;
-                                            break;
-
-                                        case Script.Operator.TernaryB:
-                                            append = depth > 0;
-                                            if (--depth == -1)
-                                                index = 1;
-                                            break;
-                                    }
+                                    case Script.Operator.TernaryB:
+                                        depth--;
+                                        break;
                                 }
 
-                                if (append)
-                                    branch[index].Add(parts[i]);
+                                if (depth == 0)
+                                {
+                                    for (int n = i + 1; n < parts.Count; n++)
+                                        branch[1].Add(parts[n]);
+                                    break;
+                                }
+                                else
+                                    branch[0].Add(parts[i]);
                             }
 
                             if (branch[0].Count == 0)
