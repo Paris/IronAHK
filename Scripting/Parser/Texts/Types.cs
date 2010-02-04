@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+﻿using System;
+using System.Globalization;
 
 namespace IronAHK.Scripting
 {
@@ -131,6 +132,23 @@ namespace IronAHK.Scripting
             return z == 0 && (code.Length == 1 || IsSpace(code[1]));
         }
 
+        bool IsExpressionIf(string code)
+        {
+            char[] bound = new char[Spaces.Length + 4];
+            bound[0] = Not;
+            bound[1] = Equal;
+            bound[2] = Greater;
+            bound[3] = Less;
+            Spaces.CopyTo(bound, 4);
+
+            string part = code.TrimStart(Spaces).Split(bound, 2)[0].Trim(Spaces);
+
+            if (part.Equals(NotTxt, StringComparison.OrdinalIgnoreCase))
+                return true;
+
+            return !IsIdentifier(part);
+        }
+
         #endregion
 
         #region Misc
@@ -168,6 +186,28 @@ namespace IronAHK.Scripting
             }
 
             return true;
+        }
+
+        bool IsLegacyIf(string code)
+        {
+            // UNDONE: mark legacy if methods with compiler conditional
+
+            string[] part = code.TrimStart(Spaces).Split(Spaces, 3);
+
+            if (part.Length < 2 || !IsIdentifier(part[0]))
+                return false;
+
+            switch (part[1].ToLowerInvariant())
+            {
+                case NotTxt:
+                case BetweenTxt:
+                case InTxt:
+                case ContainsTxt:
+                case IsTxt:
+                    return true;
+            }
+
+            return false;
         }
 
         #endregion
