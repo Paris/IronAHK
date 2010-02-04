@@ -256,7 +256,7 @@ namespace IronAHK.Scripting
             code = code.Trim(Spaces);
             if (code.Length == 0)
                 return new CodePrimitiveExpression(false);
-            else if (expr || !IsIdentifier(code.Split(Not, Equal, Greater, Less)[0].Trim(Spaces)))
+            else if (expr || IsExpressionIf(code))
             {
                 // TODO: check for opening brace before comments (i.e "while true { ; something")
                 int l = code.Length - 1;
@@ -267,9 +267,13 @@ namespace IronAHK.Scripting
                 }
                 return ParseSingleExpression(code);
             }
-            else
+#pragma warning disable 0162
+            else if (LegacyIf)
             {
                 code = StripCommentSingle(code);
+
+                if (IsLegacyIf(code))
+                    return ParseLegacyIf(code);
 
                 if (inequality)
                     return ParseInequality(code);
@@ -280,6 +284,9 @@ namespace IronAHK.Scripting
                 else
                     throw new ParseException(ExUnexpected);
             }
+            else
+                throw new ParseException("Invalid arguments for if statement");
+#pragma warning disable 0162
         }
 
         CodeExpression ParseInequality(string code)
@@ -329,6 +336,54 @@ namespace IronAHK.Scripting
             var expr = ParseSingleExpression(buf.ToString());
             iftest.Parameters.Add(expr);
             return iftest;
+        }
+
+        CodeExpression ParseLegacyIf(string code)
+        {
+            string[] parts = code.TrimStart(Spaces).Split(Spaces, 3);
+
+            if (parts.Length != 3)
+                throw new ArgumentOutOfRangeException();
+
+            if (!IsIdentifier(parts[0]))
+                throw new ArgumentException();
+
+            bool not = false;
+
+            if (parts[1].Equals(NotTxt, StringComparison.OrdinalIgnoreCase))
+            {
+                not = false;
+                string[] sub = parts[2].Split(Spaces, 2);
+                parts[1] = sub[0];
+                parts[2] = sub[1];
+            }
+
+            // TODO: script methods for IfBetween, IfInOrContains and IfIs
+            var invoke = (CodeMethodInvokeExpression)InternalMethods.IfElse;
+            invoke.Parameters.Add(new CodePrimitiveExpression(parts[0]));
+
+            switch (parts[1].ToLowerInvariant())
+            {
+                case BetweenTxt:
+                case InTxt:
+                case ContainsTxt:
+                case IsTxt:
+                    invoke.Parameters.Add(ParseCommandParameter(parts[2]));
+                    break;
+
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+
+            if (not)
+            {
+                var flip = (CodeMethodInvokeExpression)InternalMethods.OperateUnary;
+                flip.Parameters.Add(OperatorAsFieldReference(Script.Operator.BitwiseNot));
+                flip.Parameters.Add(invoke);
+                invoke = flip;
+            }
+
+            return invoke;
         }
 
         #endregion

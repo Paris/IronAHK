@@ -78,6 +78,11 @@ namespace IronAHK.Scripting
         const string FalseTxt = "false";
         const string NullTxt = "null";
 
+        const string BetweenTxt = "between";
+        const string InTxt = "in";
+        const string ContainsTxt = "contains";
+        const string IsTxt = "is";
+
         const char Resolve = '%';
         const char Minus = '-';
         const char Not = '!';
