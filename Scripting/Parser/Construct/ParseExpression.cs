@@ -663,11 +663,24 @@ namespace IronAHK.Scripting
                             }
                             else
                             {
+                                if (LaxExpressions)
+                                {
+                                    if (parts[x] is Script.Operator && (Script.Operator)parts[x] == Script.Operator.TernaryA)
+                                    {
+                                        parts[x] = new CodePrimitiveExpression(null);
+                                        goto next;
+                                    }
+                                }
+                                else
+                                    throw new ParseException(ExInvalidExpression);
+
                                 invoke.Method = (CodeMethodReferenceExpression)InternalMethods.Operate;
                                 invoke.Parameters.Add(OperatorAsFieldReference(op));
                                 invoke.Parameters.Add(WrappedComplexVar(parts[x]));
                                 invoke.Parameters.Add(WrappedComplexVar(parts[y]));
                                 parts[x] = invoke;
+
+                            next:
                                 parts.RemoveAt(y);
                             }
 
