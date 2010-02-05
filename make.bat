@@ -31,7 +31,7 @@ SET VSSETVARS=1
 GOTO :eof
 
 :docs
-devenv /rebuild %devargs% /project "%libname%\%libname%.csproj"
+CALL :all
 php-cgi -f "%name%\%site%\transform.php"
 GOTO :eof
 
