@@ -1,12 +1,24 @@
 <?php
 
-define('NAME', 'IronAHK');
-define('RUSTY_NAME', 'Rusty');
-define('RUSTY', NAME . '.' . RUSTY_NAME);
 define('THIS_DIR', dirname(__FILE__));
+define('MAKEFILE', THIS_DIR . '/../../Makefile');
 
-define('BUILD_DIR', realpath(THIS_DIR . '/../../' . NAME . '/bin'));
-define('SOURCE_XML', realpath(THIS_DIR . '/../../' . RUSTY_NAME . '/bin/' . RUSTY . '.xml'));
+if (!file_exists(MAKEFILE))
+	exit('Makefile does not exist');
+	
+$makefile = file_get_contents(MAKEFILE);
+preg_match('/^name=(.+)/m', $makefile, $out);
+define('NAME', trim($out[1]));
+preg_match('/^libname=(.+)/m', $makefile, $out);
+define('RUSTY', NAME . '.' . trim($out[1]));
+preg_match('/^config=(.+)/m', $makefile, $out);
+define('CONFIG', trim($out[1]));
+
+define('BUILD_DIR', realpath(THIS_DIR . '/../bin/' . CONFIG));
+
+define('SOURCE_XML_1', realpath(BUILD_DIR . '/' . RUSTY . '.xml'));
+define('SOURCE_XML_2', realpath(BUILD_DIR . '/../' . RUSTY . '.xml'));
+define('SOURCE_XML', file_exists(SOURCE_XML_1) ? SOURCE_XML_1 : SOURCE_XML_2);
 
 define('OUTPUT_DIR', realpath(THIS_DIR . '/docs/commands'));
 define('SOURCE_XSL', realpath(OUTPUT_DIR . '/view.xsl'));

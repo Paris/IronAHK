@@ -14,9 +14,7 @@ site=Site
 all: clean
 	$(CC) build "--configuration:$(config)" "$(name).sln"
 
-docs:
-	if [ ! -d "$(name)/$(outdir)/$(config)" ]; then mkdir -p "$(name)/$(outdir)/$(config)"; fi
-	$(CSC) "-doc:$(name)/$(outdir)/$(config)/$(name).$(libname).xml" "-out:$(name)/$(outdir)/$(config)/$(name).$(libname).dll" -reference:System.Windows.Forms,System.Drawing "-recurse:$(libname)/*.cs" -target:library -unsafe -warn:0
+docs: all
 	$(PHP) -f "$(name)/$(site)/transform.php"
 
 install: all
