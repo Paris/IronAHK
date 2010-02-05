@@ -1354,6 +1354,7 @@ namespace IronAHK.Scripting
                                 case BitOR:
                                 case Not:
                                 case Equal:
+                                case Greater:
                                     op.Append(sym);
                                     op.Append(symNext);
                                     i++;
