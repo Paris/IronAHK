@@ -496,6 +496,19 @@ namespace IronAHK.Scripting
                 {
                     int n = i + 1, m = n + 1;
 
+                    int u = n;
+                    while (u < parts.Count && parts[u] is Script.Operator && IsUnaryOperator((Script.Operator)parts[u])) u++;
+                    if (u >= parts.Count)
+                        throw new ParseException("Compounding unary operator with no operand");
+                    if (u > n)
+                    {
+                        var sub = new List<object>(++u - n);
+                        for (int x = n; x < u; x++)
+                            sub.Add(parts[x]);
+                        parts.RemoveRange(n, u - n);
+                        parts.Insert(n, ParseExpression(sub));
+                    }
+
                     if (m + 1 < parts.Count && parts[n] is CodeComplexVariableReferenceExpression && parts[m] is CodeComplexAssignStatement)
                         MergeAssignmentAt(parts, i + 2);
 
