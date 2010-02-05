@@ -999,6 +999,16 @@ namespace IronAHK.Scripting
                             throw new ParseException(ExUnexpected);
                     }
 
+                case BitNOT:
+                    switch (op.Length)
+                    {
+                        case 1:
+                            return Script.Operator.BitwiseNot;
+
+                        default:
+                            throw new ParseException(ExUnexpected);
+                    }
+
                 case Equal:
                     switch (op.Length)
                     {
