@@ -72,7 +72,7 @@ namespace IronAHK.Scripting
                     }
                 }
 
-                if (sym == Multicast && code[i - 1] != Escape && (!str && parens == 0))
+                if (sym == Multicast && (i == 0 || code[i - 1] != Escape) && (!str && parens == 0))
                 {
                     parts.Add(code.Substring(last, i - last));
                     last = i + 1;
