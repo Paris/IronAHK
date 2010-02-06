@@ -26,7 +26,7 @@ namespace IronAHK.Scripting
 
                 #region Multiline comments
 
-                if (codeTrim.Length > 2 && codeTrim[0] == MultiComA && codeTrim[1] == MultiComB)
+                if (codeTrim.Length > 1 && codeTrim[0] == MultiComA && codeTrim[1] == MultiComB)
                 {
                     while ((code = source.ReadLine()) != null)
                     {
