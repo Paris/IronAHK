@@ -1459,7 +1459,7 @@ namespace IronAHK.Scripting
                     parts[last] is string && ((string)parts[last]).Length == 1 && ((string)parts[last])[0] == ParenClose))
                     return;
 
-                for (int i = 1; i < last; i++)
+                for (int i = 0; i < last; i++)
                 {
                     string check = parts[i] as string;
 
