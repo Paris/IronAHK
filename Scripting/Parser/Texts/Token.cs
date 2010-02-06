@@ -13,8 +13,6 @@ namespace IronAHK.Scripting
             if (code.Length == 0)
                 return Token.Unknown;
 
-            if (code[0] == Directive)
-                return Token.Directive;
             if (IsFlowOperator(code))
                 return Token.Flow;
             else if (IsLabel(code))
@@ -25,6 +23,8 @@ namespace IronAHK.Scripting
                 return Token.Assign;
             else if (IsCommand(code))
                 return Token.Command;
+            else if (IsDirective(code))
+                return Token.Directive;
             else
                 return Token.Expression;
         }
@@ -181,6 +181,11 @@ namespace IronAHK.Scripting
             }
             else
                 return false;
+        }
+
+        bool IsDirective(string code)
+        {
+            return code.Length > 2 && code[0] == Directive;
         }
     }
 }
