@@ -329,6 +329,7 @@ namespace IronAHK.Scripting
                     {
                         var ops = OperatorFromString(part);
 
+                        #region Increment/decrement
                         if (ops == Script.Operator.Increment || ops == Script.Operator.Decrement)
                         {
                             int z = -1, x = i - 1, y = i + 1;
@@ -472,8 +473,33 @@ namespace IronAHK.Scripting
                             parts.RemoveAt(y);
                             i = x;
                         }
+                        #endregion
                         else
                         {
+                            #region Dereference
+                            if (part.Length == 1 && part[0] == Dereference)
+                            {
+                                bool deref = false;
+
+                                if (i == 0)
+                                    deref = true;
+                                else
+                                {
+                                    int x = i - 1;
+                                    deref = parts[x] is Script.Operator || parts[x] is CodeComplexAssignStatement ||
+                                        (parts[x] is string && ((string)parts[x]).Length == 1 && ((string)parts[x])[0] == '(');
+                                }
+
+                                if (deref)
+                                {
+                                    int y = i + 1;
+                                    if (y < parts.Count && (parts[y] is CodeComplexVariableReferenceExpression ||
+                                        (parts[y] is string && IsIdentifier((string)parts[y]) && !IsKeyword((string)parts[y]))))
+                                        ops = Script.Operator.Dereference;
+                                }
+                            }
+                            #endregion
+
                             parts[i] = ops;
                         }
                     }
