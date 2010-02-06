@@ -886,8 +886,10 @@ namespace IronAHK.Scripting
                 var binary = (CodeBinaryOperatorExpression)parts[x];
                 assign.Left = (CodeComplexVariableReferenceExpression)binary.Left;
             }
-            else
+            else if (parts[x] is CodeComplexVariableReferenceExpression)
                 assign.Left = (CodeComplexVariableReferenceExpression)parts[x];
+            else
+                assign.Left = VarId((CodeExpression)parts[x]);
             assign.Right = right ? WrappedComplexVar(parts[y]) : new CodePrimitiveExpression(null);
 
 #pragma warning disable 0162
