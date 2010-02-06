@@ -66,7 +66,12 @@ namespace IronAHK.Scripting
 
         CodeComplexVariableReferenceExpression VarId(string name)
         {
-            return new CodeComplexVariableReferenceExpression(new CodePrimitiveExpression(Scope + ScopeVar), VarNameOrBasicString(name, true));
+            return VarId(VarNameOrBasicString(name, true));
+        }
+
+        CodeComplexVariableReferenceExpression VarId(CodeExpression name)
+        {
+            return new CodeComplexVariableReferenceExpression(new CodePrimitiveExpression(Scope + ScopeVar), name);
         }
 
         CodeExpression StringConcat(params CodeExpression[] parts)
