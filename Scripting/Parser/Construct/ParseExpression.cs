@@ -524,8 +524,24 @@ namespace IronAHK.Scripting
 
                     int u = n;
                     while (u < parts.Count && parts[u] is Script.Operator && IsUnaryOperator((Script.Operator)parts[u])) u++;
-                    if (u >= parts.Count)
+                    if (u == parts.Count)
+                    {
+                        if (LaxExpressions)
+                        {
+                            u--;
+                            while (parts[u] is Script.Operator && ((Script.Operator)parts[u] == Script.Operator.Add || (Script.Operator)parts[u] == Script.Operator.Subtract))
+                                parts.RemoveAt(u--);
+
+                            if (u + 1 < n)
+                            {
+                                i = u;
+                                continue;
+                            }
+                        }
+
                         throw new ParseException("Compounding unary operator with no operand");
+                    }
+
                     if (u > n)
                     {
                         var sub = new List<object>(++u - n);
@@ -566,7 +582,18 @@ namespace IronAHK.Scripting
                     {
                         var invoke = (CodeMethodInvokeExpression)InternalMethods.OperateUnary;
                         invoke.Parameters.Add(OperatorAsFieldReference(op));
+
+                        if (LaxExpressions)
+                        {
+                            if (!(parts[n] is CodeComplexVariableReferenceExpression || parts[n] is CodeComplexAssignStatement))
+                            {
+                                invoke.Parameters.Add(new CodePrimitiveExpression(null));
+                                goto next;
+                            }
+                        }
                         invoke.Parameters.Add(WrappedComplexVar(parts[n]));
+
+                    next:
                         parts[i] = invoke;
                         parts.RemoveAt(n);
                     }
@@ -663,6 +690,12 @@ namespace IronAHK.Scripting
 
                             // TODO: raise precedence of assignments for other cases (e.g. ++var)
 
+                            if (LaxExpressions)
+                            {
+                                if (y > parts.Count - 1)
+                                    return new CodePrimitiveExpression(null);
+                            }
+
                             invoke.Method = (CodeMethodReferenceExpression)InternalMethods.OperateUnary;
                             invoke.Parameters.Add(OperatorAsFieldReference(op));
                             invoke.Parameters.Add(WrappedComplexVar(parts[y]));
@@ -709,6 +742,9 @@ namespace IronAHK.Scripting
                                         parts[x] = new CodePrimitiveExpression(null);
                                         goto next;
                                     }
+
+                                    if (y > parts.Count - 1)
+                                        return new CodePrimitiveExpression(null);
                                 }
                                 else
                                     throw new ParseException(ExInvalidExpression);
