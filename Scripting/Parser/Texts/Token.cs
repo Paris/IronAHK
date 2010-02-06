@@ -74,10 +74,13 @@ namespace IronAHK.Scripting
             for (int i = 0; i < code.Length; i++)
             {
                 char sym = code[i];
-                if (!IsIdentifier(sym))
+
+                if (IsIdentifier(sym))
+                    continue;
+
+                switch (sym)
                 {
-                    if (sym == HotkeyBound)
-                    {
+                    case HotkeyBound:
                         if (i == 0)
                             return false;
                         else if (i == code.Length - 1)
@@ -87,8 +90,13 @@ namespace IronAHK.Scripting
                             string sub = StripCommentSingle(code.Substring(i));
                             return sub.Length == 0 || IsSpace(sub);
                         }
-                    }
-                    else
+                        break;
+
+                    case ParenOpen:
+                    case ParenClose:
+                        break;
+
+                    default:
                         return false;
                 }
             }
