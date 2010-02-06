@@ -21,10 +21,10 @@ namespace IronAHK.Scripting
                 return Token.Hotkey;
             else if (IsAssignment(code))
                 return Token.Assign;
-            else if (IsCommand(code))
-                return Token.Command;
             else if (IsDirective(code))
                 return Token.Directive;
+            else if (IsCommand(code))
+                return Token.Command;
             else
                 return Token.Expression;
         }
