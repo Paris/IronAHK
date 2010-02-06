@@ -15,7 +15,13 @@ namespace IronAHK.Tests
 
         bool TestScript(string source)
         {
-            return HasPassed(RunScript(string.Concat(path, source, ext)));
+            return HasPassed(RunScript(string.Concat(path, source, ext), true));
+        }
+
+        bool ValidateScript(string source)
+        {
+            RunScript(string.Concat(path, source, ext), false);
+            return true;
         }
 
         bool HasPassed(string output)
@@ -30,7 +36,7 @@ namespace IronAHK.Tests
             return output.Length == 0;
         }
 
-        string RunScript(string source)
+        string RunScript(string source, bool execute)
         {
             var provider = new IACodeProvider();
             var options = new CompilerParameters { GenerateExecutable = false, GenerateInMemory = true, };
@@ -41,7 +47,8 @@ namespace IronAHK.Tests
             var writer = new StringWriter(buffer);
             Console.SetOut(writer);
 
-            results.CompiledAssembly.EntryPoint.Invoke(null, null);
+            if (execute)
+                results.CompiledAssembly.EntryPoint.Invoke(null, null);
 
             writer.Flush();
             string output = buffer.ToString();
