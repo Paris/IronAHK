@@ -325,7 +325,11 @@ namespace IronAHK.Scripting
                 while (i < code.Length && IsSpace(code[i])) i++;
 
                 if (i < code.Length)
-                    buf.Append(code.Substring(i));
+                {
+                    string str = code.Substring(i);
+                    str = str.Replace(StringBound.ToString(), new string(StringBound, 2));
+                    buf.Append(str);
+                }
 
                 while (i < code.Length && IsSpace(code[i])) i++;
 
