@@ -134,19 +134,35 @@ namespace IronAHK.Scripting
 
         bool IsExpressionIf(string code)
         {
-            char[] bound = new char[Spaces.Length + 4];
-            bound[0] = Not;
-            bound[1] = Equal;
-            bound[2] = Greater;
-            bound[3] = Less;
-            Spaces.CopyTo(bound, 4);
+            code = code.TrimStart(Spaces);
+            int i = 0;
 
-            string part = code.TrimStart(Spaces).Split(bound, 2)[0].Trim(Spaces);
-
-            if (part.Equals(NotTxt, StringComparison.OrdinalIgnoreCase))
+            if (code.Length == 0)
                 return true;
 
-            return !IsIdentifier(part);
+            if (code[0] == ParenOpen)
+                return true;
+            
+            while (i < code.Length && IsIdentifier(code[i])) i++;
+
+            if (i == 0 || IsKeyword(code.Substring(0, i)))
+                return true;
+
+            while (i < code.Length && IsSpace(code[i])) i++;
+
+            if (i == 0 || i == code.Length)
+                return false;
+
+            switch (code[i])
+            {
+                case Equal:
+                case Not:
+                case Greater:
+                case Less:
+                    return false;
+            }
+
+            return true;
         }
 
         #endregion
