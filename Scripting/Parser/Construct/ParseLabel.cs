@@ -9,7 +9,7 @@ namespace IronAHK.Scripting
             string code = line.Code;
             int z = code.Length - 1;
             string name = z > 0 ? code.Substring(0, z) : string.Empty;
-            if (code.Length < 2 || code[z] != HotkeyBound || !IsIdentifier(name))
+            if (code.Length < 2 || code[z] != HotkeyBound)
                 throw new ParseException("Invalid label name");
 
             PushLabel(line, name, true);
