@@ -1,29 +1,25 @@
-#top {
-	position: fixed;
-	width: 100%;
-	top: 0;
-}
-#page { padding-top: 6em; }
 h1 {
 	background: #444;
 	margin: 0;
 }
+#logo {
+	background: url(images/icon.png) no-repeat;
+	height: 48px;
+	width: 48px;
+	float: left;
+	margin-left: 2em;
+	margin-top: .5em;
+}
 #nav {
-	margin: 0;
-	padding: 0;
-	text-align: center;
 	background: #333;
 	color: #eee;
 	font-size: larger;
+	margin: 0 0 2em;
+	padding-left: 6em;
 }
 #nav li {
 	display: inline;
 	line-height: 2;
-}
-#nav li:hover {
-	background: #222;
-	-moz-border-radius: .5em;
-	-webkit-border-radius: .5em;
 }
 #nav a {
 	color: #eee;
@@ -57,7 +53,7 @@ ul#features li.additional { display: none; }
 #download {
 	width: 20em;
 	float: right;
-	background: #903;
+	background: #944;
 	padding: .5em 1em;
 }
 #download h2 {
@@ -67,6 +63,7 @@ ul#features li.additional { display: none; }
 	text-align: center;
 	margin-top: 0;
 }
+#download h2 a { color: #fff; }
 #links {
 	background: #fee;
 	padding: .5em;
@@ -93,11 +90,7 @@ ul#features li.additional { display: none; }
 	width: 80%;
 	min-width: 950px;
 }
-#extra h2{
-	text-indent: .2em;
-	border: thin outset #999;
-	background: #f8f8f8;
-}
+#extra h2 { border: none; }
 #extra pre.code { margin-left: 0; }
 pre.code img { float: right; }
 .right {

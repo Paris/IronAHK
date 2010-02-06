@@ -98,8 +98,9 @@
     <Content Include="Site\images\editor.png" />
     <Content Include="Site\images\helloworld.png" />
     <Content Include="Site\images\helloworld_gtk.png" />
-    <Content Include="Site\images\_file.png" />
-    <Content Include="Site\images\_icon.png" />
+    <Content Include="Site\images\icon.png" />
+    <Content Include="Site\images\src\_file.png" />
+    <Content Include="Site\images\src\_icon.png" />
     <Content Include="Site\docs\copyright\index.html" />
     <Content Include="Site\docs\autohotkey\index.html" />
     <Content Include="Site\docs\changes\index.html" />
