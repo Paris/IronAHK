@@ -1086,7 +1086,7 @@ namespace IronAHK.Scripting
                     return Script.Operator.TernaryA;
 
                 default:
-                    switch (code)
+                    switch (code.ToLowerInvariant())
                     {
                         case NotTxt:
                             return Script.Operator.LogicalNotEx;
