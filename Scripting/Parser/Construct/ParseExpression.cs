@@ -767,7 +767,9 @@ namespace IronAHK.Scripting
                     {
                         int x = i - 1, y = i + 1;
 
-                        if (x > 0 && y < parts.Count && !(parts[x] is Script.Operator) && !(parts[y] is Script.Operator) && !(parts[i] is CodeComplexAssignStatement))
+                        if (x > 0 && y < parts.Count && !(parts[i] is CodeComplexAssignStatement) &&
+                            (parts[x] is CodeMethodInvokeExpression || parts[x] is CodePrimitiveExpression || parts[x] is CodeComplexVariableReferenceExpression) &&
+                            (parts[y] is CodeMethodInvokeExpression || parts[y] is CodePrimitiveExpression || parts[y] is CodeComplexVariableReferenceExpression))
                             parts.Insert(y, Script.Operator.Concat);
                     }
                 }
