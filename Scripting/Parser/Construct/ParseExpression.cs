@@ -804,21 +804,14 @@ namespace IronAHK.Scripting
         {
             int x = i - 1, y = i + 1;
 
+            if (!(parts[i] is string) || ((string)parts[i]).Length != 1 && ((string)parts[i])[0] != Equal)
+                return false;
+
             if (x < 0 || !(parts[x] is CodeComplexVariableReferenceExpression))
                 return false;
 
             if (!(y < parts.Count && parts[y] is string && IsVariable((string)parts[y])))
                 return false;
-
-            if (!(parts[i] is string))
-                return false;
-
-            try
-            {
-                if (OperatorFromString((string)parts[i]) != Script.Operator.ValueEquality)
-                    return false;
-            }
-            catch (ArgumentException) { }
 
             int z = x - 1;
             
