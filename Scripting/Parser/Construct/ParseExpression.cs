@@ -842,7 +842,7 @@ namespace IronAHK.Scripting
         {
             int x = i - 1, y = i + 1;
 
-            if (!(parts[i] is string) || ((string)parts[i]).Length != 1 && ((string)parts[i])[0] != Equal)
+            if (!((parts[i] is string) && ((string)parts[i]).Length == 1 && ((string)parts[i])[0] == Equal))
                 return false;
 
             if (x < 0 || !(parts[x] is CodeComplexVariableReferenceExpression))
