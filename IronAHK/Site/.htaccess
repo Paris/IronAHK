@@ -1,4 +1,4 @@
-Options -Indexes +FollowSymlinks
+Options -Indexes +SymLinksIfOwnerMatch
 ServerSignature Off
 RewriteEngine on
 
