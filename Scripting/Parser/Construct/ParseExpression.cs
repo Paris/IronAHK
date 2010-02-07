@@ -48,7 +48,8 @@ namespace IronAHK.Scripting
 
         CodeExpression ParseSingleExpression(string code)
         {
-            return ParseExpression(SplitTokens(code));
+            var tokens = SplitTokens(code);
+            return ParseExpression(tokens);
         }
 
         CodeExpression[] ParseMultiExpression(object[] parts)
@@ -1306,7 +1307,7 @@ namespace IronAHK.Scripting
                 #endregion
                 #region Comments
                 else if (IsCommentAt(code, i))
-                    break;
+                    MoveToEOL(code, ref i);
                 #endregion
                 #region Identifiers
                 else if (IsIdentifier(sym) || sym == Resolve || (sym == Concatenate && i + 1 < code.Length && IsIdentifier(code[i + 1])))
