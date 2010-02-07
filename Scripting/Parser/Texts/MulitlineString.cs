@@ -45,6 +45,9 @@ namespace IronAHK.Scripting
                             ltrim = true;
                             break;
 
+                        case "RTRIM":
+                            break;
+
                         case "RTRIM0":
                             rtrim = false;
                             break;
