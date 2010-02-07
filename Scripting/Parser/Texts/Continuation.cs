@@ -17,8 +17,6 @@ namespace IronAHK.Scripting
                 case Equal:
                 case TernaryA:
                 case Multicast:
-                    return true;
-
                 case Not:
                 case BitNOT:
                 case BitXOR:

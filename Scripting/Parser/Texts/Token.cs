@@ -127,6 +127,7 @@ namespace IronAHK.Scripting
                     case '*':
                     case '~':
                     case '$':
+                    case '.':
                         break;
 
                     default:
