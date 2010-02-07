@@ -234,7 +234,8 @@ namespace IronAHK.Scripting
 
                     string str = buf.ToString();
                     string result = MultilineString(str);
-                    list[list.Count - 1].Code += result;
+                    list[list.Count - 1].Code += result + code;
+                    continue;
                 }
 
                 #endregion
