@@ -50,6 +50,7 @@
     <Compile Include="Parser\Helpers\LocalInvokes.cs" />
     <Compile Include="Parser\Helpers\Variables.cs" />
     <Compile Include="Parser\Helpers\Invokes.cs" />
+    <Compile Include="Parser\Texts\Line.cs" />
     <Compile Include="Parser\Texts\Types.cs" />
     <Compile Include="Parser\Helpers\Scope.cs" />
     <Compile Include="Parser\Helpers\InternalID.cs" />
