@@ -79,9 +79,8 @@ namespace IronAHK.Scripting
             else
             {
                 numeric = int.TryParse(parts[1], out value);
-                sub = parts[1].Split(new char[] { Multicast }, 2);
-                sub[0] = sub[0].Trim();
-                sub[1] = sub.Length == 0 ? string.Empty : sub[1].Trim();
+                string[] split = parts[1].Split(new char[] { Multicast }, 2);
+                sub = new string[] { split[0].Trim(Spaces), split.Length > 1 ? split[1].Trim(Spaces) : string.Empty };
             }
 
             switch (parts[0].Substring(1).ToUpperInvariant())
