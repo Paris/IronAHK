@@ -23,7 +23,20 @@ namespace IronAHK.Scripting
 
             if (line.Length > 2)
             {
-                string[] options = line.Substring(1).Trim().Split(Spaces);
+                if (line.Contains("%"))
+                {
+                    percentResolve = true;
+                    line = line.Replace("%", string.Empty);
+                }
+                if (line.Contains("`"))
+                {
+                    literalEscape = true;
+                    line = line.Replace("`", string.Empty);
+                }
+                if (line.Contains(","))
+                    line = line.Replace(",", string.Empty);
+
+                string[] options = line.Substring(1).Trim().Split(Spaces, StringSplitOptions.RemoveEmptyEntries);
                 foreach (string option in options)
                 {
                     switch (option.ToUpperInvariant())
@@ -43,15 +56,8 @@ namespace IronAHK.Scripting
                             stripComments = false;
                             break;
 
-                        case "%":
-                            percentResolve = false;
-                            break;
-
-                        case ",":
-                            break;
-
-                        case "`":
-                            literalEscape = true;
+                        case "JOIN":
+                            join = string.Empty;
                             break;
 
                         default:
