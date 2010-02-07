@@ -37,6 +37,8 @@ namespace IronAHK.Scripting
                     return true;
 
                 case TernaryB:
+                    if (code.Length > 1 && code[1] == Equal)
+                        return true;
                     return !(code.Length > 1 && !IsSpace(code[1]));
             }
 
