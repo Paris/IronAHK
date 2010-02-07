@@ -39,6 +39,7 @@ namespace IronAHK.Scripting
         string HotstringEndChars = string.Empty;
         string HotstringNewChars = string.Empty;
         string HotstringNewOptions = string.Empty;
+        bool LTrimForced = false;
 
         string IfWinActive_WinTitle = string.Empty;
         string IfWinActive_WinText = string.Empty;
@@ -119,6 +120,23 @@ namespace IronAHK.Scripting
                 case "IFWINNOTEXIST":
                     IfWinNotExist_WinTitle = sub[0];
                     IfWinNotExist_WinText = sub[1];
+                    break;
+
+                case "LTRIM":
+                    switch (sub[0].ToUpperInvariant())
+                    {
+                        case "":
+                        case "ON":
+                            LTrimForced = true;
+                            break;
+
+                        case "OFF":
+                            LTrimForced = false;
+                            break;
+
+                        default:
+                            throw new ParseException("Directive parameter must be either \"on\" or \"off\"");
+                    }
                     break;
 
                 default:
