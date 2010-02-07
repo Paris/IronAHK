@@ -106,7 +106,10 @@ namespace IronAHK.Scripting
                 str.Append(line);
                 str.Append(join);
             }
-            
+
+            if (str.Length == 0)
+                return string.Empty;
+
             str.Remove(str.Length - join.Length, join.Length);
 
             #endregion
