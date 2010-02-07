@@ -1425,6 +1425,7 @@ namespace IronAHK.Scripting
                                 case Not:
                                 case Equal:
                                 case Greater:
+                                case Less:
                                     op.Append(sym);
                                     op.Append(symNext);
                                     i++;
