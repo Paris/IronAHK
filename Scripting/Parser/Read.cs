@@ -38,6 +38,8 @@ namespace IronAHK.Scripting
                             break;
                         }
                     }
+                    if (code == null)
+                        continue;
                 }
 
                 #endregion
