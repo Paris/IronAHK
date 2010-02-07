@@ -32,10 +32,12 @@ namespace IronAHK.Scripting
                     {
                         line++;
                         codeTrim = code.TrimStart(Spaces);
-                        if (codeTrim.Length > 2 && codeTrim[0] == MultiComB && codeTrim[1] == MultiComA)
+                        if (codeTrim.Length > 1 && codeTrim[0] == MultiComB && codeTrim[1] == MultiComA)
+                        {
+                            code = codeTrim = codeTrim.Substring(2);
                             break;
+                        }
                     }
-                    continue;
                 }
 
                 #endregion
