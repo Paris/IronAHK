@@ -25,7 +25,7 @@ namespace IronAHK.Scripting
             {
                 if (line.Contains("%"))
                 {
-                    percentResolve = true;
+                    percentResolve = false;
                     line = line.Replace("%", string.Empty);
                 }
                 if (line.Contains("`"))
@@ -81,7 +81,7 @@ namespace IronAHK.Scripting
             var str = new StringBuilder(code.Length);
             string resolve = Resolve.ToString();
             string escape = Escape.ToString();
-            string resolveEscaped = string.Concat(resolve, escape);
+            string resolveEscaped = string.Concat(escape, resolve);
             string escapeEscaped = new string(Escape, 2);
 
             while ((line = reader.ReadLine()) != null)
