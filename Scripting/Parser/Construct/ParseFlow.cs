@@ -21,6 +21,16 @@ namespace IronAHK.Scripting
 
             string[] parts = code.TrimStart(Spaces).Split(delimiters, 2);
 
+            if (parts.Length > 0 && parts[0].Length > 1 && parts[0][parts[0].Length - 1] == BlockOpen)
+            {
+                if (parts.Length > 1)
+                    parts[1] = BlockOpen.ToString() + parts[1];
+                else
+                    parts = new string[] { parts[0], BlockOpen.ToString() };
+
+                parts[0] = parts[0].Substring(0, parts[0].Length - 1);
+            }
+
             if (parts.Length > 1)
             {
                 parts[1] = parts[1].Trim(Spaces);
@@ -95,11 +105,12 @@ namespace IronAHK.Scripting
                         bool blockOpen = false;
                         CodeMethodInvokeExpression iterator;
                         bool skip = false;
+                        bool checkBrace = true;
 
                         #region Loop types
-                        if (parts.Length > 0)
+                        if (parts.Length > 1)
                         {
-                            switch (parts[0].ToUpperInvariant())
+                            switch (parts[1].ToUpperInvariant())
                             {
                                 case "READ":
                                     skip = true;
@@ -108,6 +119,7 @@ namespace IronAHK.Scripting
 
                                 case "PARSE":
                                     skip = true;
+                                    checkBrace = false;
                                     iterator = (CodeMethodInvokeExpression)InternalMethods.LoopParse;
                                     break;
 
@@ -129,6 +141,19 @@ namespace IronAHK.Scripting
                                     // TODO: file and normal loops
                                     iterator = (CodeMethodInvokeExpression)InternalMethods.Loop;
                                     break;
+                            }
+
+                            if (checkBrace)
+                            {
+                                // TODO: check expression parameters before stripping comments
+                                int x = parts.Length == 1 ? 0 : 1;
+                                string part = StripComment(parts[x]).TrimEnd(Spaces);
+                                int l = part.Length - 1;
+                                if (part.Length > 0 && part[l] == BlockOpen)
+                                {
+                                    blockOpen = true;
+                                    parts[x] = part.Substring(0, l);
+                                }
                             }
 
                             if (parts.Length > 1)
