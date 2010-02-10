@@ -69,5 +69,29 @@ namespace IronAHK.Tests
         {
             Assert.IsTrue(ValidateScript("hotkey"));
         }
+
+        [Test]
+        public void VanillaExpressions()
+        {
+            Assert.IsTrue(ValidateScript("vanilla-Expressions"));
+        }
+
+        [Test]
+        public void VanillaContinuation()
+        {
+            Assert.IsTrue(ValidateScript("vanilla-Continuation"));
+        }
+
+        [Test]
+        public void VanillaMain()
+        {
+            Assert.IsTrue(ValidateScript("vanilla-MAIN"));
+        }
+
+        [Test]
+        public void VanillaRegex()
+        {
+            Assert.IsTrue(ValidateScript("vanilla-RegExMatch & RegExReplace"));
+        }
     }
 }
