@@ -90,7 +90,6 @@ namespace IronAHK.Scripting
                             string sub = StripCommentSingle(code.Substring(i));
                             return sub.Length == 0 || IsSpace(sub);
                         }
-                        break;
 
                     case ParenOpen:
                     case ParenClose:
