@@ -162,6 +162,7 @@ namespace IronAHK.Scripting
         const string ExCommand = "Invalid command name";
         const string ExUnclosedBlock = "Unclosed block";
         const string ExInvalidExpression = "Invalid expression term";
+        const string ExInvalidExponent = "Invalid exponent.";
 
         #region Internal
         const string ExIntlLineMismatch = "Line and index counts mismatched";

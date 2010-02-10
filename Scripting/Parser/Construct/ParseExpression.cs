@@ -568,6 +568,8 @@ namespace IronAHK.Scripting
                             parent.Value = -(int)parent.Value;
                         else if (parent.Value is decimal)
                             parent.Value = -(decimal)parent.Value;
+                        else if (parent.Value is double)
+                            parent.Value = -(double)parent.Value;
                         else if (parent.Value is string)
                             parent.Value = string.Concat(Minus.ToString(), (string)parent.Value);
                         else
@@ -1319,7 +1321,15 @@ namespace IronAHK.Scripting
                     for (; i < code.Length; i++)
                     {
                         sym = code[i];
-                        if (IsIdentifier(sym) || sym == Resolve || (sym == Concatenate && (i + 1 < code.Length ? code[i + 1] != Equal : true)))
+                        if ((sym == 'e' || sym == 'E') && IsPrimativeObject(id.ToString()) && i + 1 < code.Length)
+                        {
+                            id.Append(sym);
+                            sym = code[++i];
+                            if (!(sym == '+' || sym == '-' || char.IsDigit(sym)))
+                                throw new ParseException(ExInvalidExponent);
+                            id.Append(sym);
+                        }
+                        else if (IsIdentifier(sym) || sym == Resolve || (sym == Concatenate && (i + 1 < code.Length ? code[i + 1] != Equal : true)))
                             id.Append(sym);
                         else
                         {

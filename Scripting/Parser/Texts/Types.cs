@@ -89,11 +89,21 @@ namespace IronAHK.Scripting
             string codeTrim = code.Trim(Spaces);
             var info = CultureInfo.CreateSpecificCulture("en-GB");
 
+            int e = codeTrim.IndexOfAny(new char[] { 'e', 'E' });
+            double x = 0;
+            bool xf = false;
+            if (e != -1)
+            {
+                int n = e + 1;
+                xf = n < codeTrim.Length ? double.TryParse(codeTrim.Substring(e + 1), out x) : false;
+                codeTrim = codeTrim.Substring(0, e);
+            }
+
             decimal d;
             if (decimal.TryParse(codeTrim, NumberStyles.Any, info, out d))
             {
                 result = d;
-                return true;
+                goto exp;
             }
 
             int i;
@@ -108,11 +118,20 @@ namespace IronAHK.Scripting
             if ((z == 0 || negative) && int.TryParse(codeTrim.Replace(hex, string.Empty), NumberStyles.HexNumber, info, out i))
             {
                 result = (decimal)(negative ? -i : i);
-                return true;
+                goto exp;
             }
 
             result = null;
             return false;
+
+        exp:
+            if (x != 0)
+            {
+                if (!xf)
+                    throw new ParseException(ExInvalidExponent);
+                result = decimal.ToDouble((decimal)result) * Math.Pow(10, x);
+            }
+            return true;
         }
 
         bool IsPrimativeObject(string code)
