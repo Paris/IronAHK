@@ -1321,7 +1321,7 @@ namespace IronAHK.Scripting
                     for (; i < code.Length; i++)
                     {
                         sym = code[i];
-                        if ((sym == 'e' || sym == 'E') && IsPrimativeObject(id.ToString()) && i + 1 < code.Length)
+                        if ((sym == 'e' || sym == 'E') && IsPrimativeObject(id.ToString()) && id.ToString().IndexOf("0x") != 0 && i + 1 < code.Length)
                         {
                             id.Append(sym);
                             sym = code[++i];
