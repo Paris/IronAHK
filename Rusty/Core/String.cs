@@ -118,9 +118,9 @@ namespace IronAHK.Rusty
         /// <param name="VarName">The name of the variable whose contents will be sorted.</param>
         /// <param name="Options">See list below.</param>
         [Obsolete, Conditional("LEGACY")]
-        public static void Sort(ref string VarName, string Options)
+        public static void Sort(ref string VarName, params string[] Options)
         {
-            var opts = KeyValues(Options, true, new char[] { 'f' });
+            var opts = KeyValues(string.Join(",", Options), true, new char[] { 'f' });
             
             if (opts.ContainsKey('f'))
                 throw new NotSupportedException(); // UNDONE: dynamic function calling for sort
