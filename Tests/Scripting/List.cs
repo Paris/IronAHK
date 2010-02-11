@@ -79,7 +79,7 @@ namespace IronAHK.Tests
         [Test]
         public void VanillaContinuation()
         {
-            Assert.IsTrue(ValidateScript("vanilla-Continuation"));
+            Assert.IsTrue(ValidateScript("vanilla-Line Continuation"));
         }
 
         [Test]
