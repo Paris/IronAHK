@@ -420,7 +420,7 @@ if var <> test1`ntest2
 #include *i bogus.txt
 
 ; Simple include test:
-#include *i C:\A-Source\AutoHotkey\Test\TEST SUITES\Line Continuation Include.ahk
+#include *i vanilla-Line Continuation Include.ahk
 if Var <> test`ntest2
 	MsgBox %A_LineFile%:`n%Var%
 
