@@ -49,6 +49,8 @@ namespace IronAHK.Scripting
                         str = !str;
                     continue;
                 }
+                else if (IsCommentAt(code, i))
+                    break;
 
                 if (start)
                 {
