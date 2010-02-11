@@ -7,6 +7,8 @@ namespace IronAHK.Scripting
 {
     partial class Parser
     {
+        bool blockOpen = false;
+
         CodeStatement[] ParseFlow(List<CodeLine> lines, int index)
         {
             #region Variables
@@ -287,14 +289,17 @@ namespace IronAHK.Scripting
 #pragma warning restore 0162
             else if (expr || IsExpressionIf(code))
             {
-                // TODO: check for opening brace before comments (i.e "while true { ; something")
                 int l = code.Length - 1;
                 if (code.Length > 0 && code[l] == BlockOpen)
                 {
                     blockOpen = true;
                     code = code.Substring(0, l);
                 }
-                return ParseSingleExpression(code);
+
+                this.blockOpen = false;
+                var result = ParseSingleExpression(code);
+                blockOpen = blockOpen || this.blockOpen;
+                return result;
             }
 #pragma warning disable 0162
             else if (LegacyIf)
