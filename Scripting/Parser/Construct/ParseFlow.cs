@@ -388,8 +388,7 @@ namespace IronAHK.Scripting
                 parts[2] = sub[1];
             }
 
-            // TODO: script methods for IfBetween, IfInOrContains and IfIs
-            var invoke = (CodeMethodInvokeExpression)InternalMethods.IfElse;
+            var invoke = (CodeMethodInvokeExpression)InternalMethods.IfLegacy;
             invoke.Parameters.Add(new CodePrimitiveExpression(parts[0]));
 
             switch (parts[1].ToLowerInvariant())

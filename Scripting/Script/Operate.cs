@@ -181,6 +181,12 @@ namespace IronAHK.Scripting
                 return result != null;
         }
 
+        public static bool IfLegacy(object var, string test)
+        {
+            // TODO: if [not] {between,in,contains,is}
+            return true;
+        }
+
         #endregion
 
         #region Misc
