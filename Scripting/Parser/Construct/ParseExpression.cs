@@ -1475,6 +1475,16 @@ namespace IronAHK.Scripting
                                     op.Append(sym);
                                     break;
 
+                                case BlockOpen:
+                                    blockOpen = true;
+                                    int j = i + 2;
+                                    if (j < code.Length && !IsCommentAt(code, j))
+                                        throw new ParseException(ExUnexpected);
+                                    j--;
+                                    if (j < code.Length && !IsSpace(code[j]))
+                                        throw new ParseException(ExUnexpected);
+                                    return list;
+
                                 default:
                                     throw new ParseException(ExUnexpected);
                             }
