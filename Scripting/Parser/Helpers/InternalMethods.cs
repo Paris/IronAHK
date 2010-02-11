@@ -101,6 +101,11 @@ namespace IronAHK.Scripting
                 get { return new MethodReference(typeof(Script), "IfTest"); }
             }
 
+            public static MethodReference IfLegacy
+            {
+                get { return new MethodReference(typeof(Script), "IfLegacy"); }
+            }
+
             public static MethodReference Parameters
             {
                 get { return new MethodReference(typeof(Script), "Parameters"); }
