@@ -112,7 +112,7 @@ namespace IronAHK.Rusty
         [Obsolete, Conditional("LEGACY")]
         public static void SetBatchLines(string LineCount)
         {
-            throw new NotSupportedException();
+
         }
 
         /// <summary>
