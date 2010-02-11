@@ -81,8 +81,10 @@ namespace IronAHK.Scripting
             var str = new StringBuilder(code.Length);
             string resolve = Resolve.ToString();
             string escape = Escape.ToString();
+            string cast = Multicast.ToString();
             string resolveEscaped = string.Concat(escape, resolve);
             string escapeEscaped = new string(Escape, 2);
+            string castEscaped = string.Concat(escape, cast);
 
             while ((line = reader.ReadLine()) != null)
             {
@@ -105,6 +107,8 @@ namespace IronAHK.Scripting
 
                 if (literalEscape)
                     line = line.Replace(escape, escapeEscaped);
+
+                line = line.Replace(cast, castEscaped);
 
                 str.Append(line);
                 str.Append(join);
