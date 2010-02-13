@@ -85,8 +85,17 @@ namespace IronAHK.Scripting
             for (int i = invoke.Parameters.Count; i < types.Length; i++)
             {
                 Debug("Emitting default parameter " + i + " type " + types[i].Name);
-
-                EmitLiteral(types[i], GetDefaultValueOfType(types[i]));
+                
+                if(types[i].IsByRef)
+                {
+                    // Unspecified ref parameters are given temporary variable with default contents
+                    Type NotRef = types[i].GetElementType();
+                    EmitLiteral(NotRef, GetDefaultValueOfType(NotRef));
+                    LocalBuilder Temp = Generator.DeclareLocal(NotRef);
+                    Generator.Emit(OpCodes.Stloc, Temp);
+                    Generator.Emit(OpCodes.Ldloca, Temp);
+                }
+                else EmitLiteral(types[i], GetDefaultValueOfType(types[i]));
             }
             Depth--;
 
