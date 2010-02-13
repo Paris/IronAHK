@@ -10,107 +10,132 @@ namespace IronAHK.Scripting
     {
         Type EmitMethodInvoke(CodeMethodInvokeExpression invoke)
         {
+            Depth++;
+            Debug("Emitting method "+invoke.Method.MethodName);
+                
             MethodInfo target = null;
             Type[] types = null;
-            bool staticCall = !(invoke.Method.TargetObject is CodeExpression);
-
-            Depth++;
-            Debug("Emitting method invoke " + invoke.Method.MethodName);
-
-            if (invoke.Method.TargetObject == null && Methods.ContainsKey(invoke.Method.MethodName))
+            
+            #region Lookup target function
+            // First we check the local methods
+            if(Methods.ContainsKey(invoke.Method.MethodName))
             {
-                target = Methods[invoke.Method.MethodName].Method;
                 types = ParameterTypes[invoke.Method.MethodName];
+                target = Methods[invoke.Method.MethodName].Method;
             }
-            else if(staticCall)
-            {
-                var args = new ArgType[invoke.Parameters.Count];
-
-                for (int i = 0; i < args.Length; i++)
-                    args[i] = ArgType.Expression;
-
-                target = Lookup.BestMatch(invoke.Method.MethodName, args);
-            }
-            else
+            
+            // Then the methods provided by rusty
+            if(target == null)
+                target = Lookup.BestMatch(invoke.Method.MethodName, invoke.Parameters.Count);
+            
+            // Lastly, the native methods
+            if(target == null)
                 target = GetMethodInfo(invoke.Method);
             
             if(target == null)
-                throw new CompileException(invoke, "Could not look up "+invoke.Method.MethodName);
-
-            if (types == null && target != null)
-            {
-                var param = target.GetParameters();
-                types = new Type[param.Length];
-
-                for (int i = 0; i < types.Length; i++)
-                    types[i] = param[i].ParameterType;
-            }
+                throw new CompileException(invoke, "Could not look up method "+invoke.Method.MethodName);
             
-            bool hasParams = types.Length == 0 ? false : types[types.Length-1] == typeof(System.Object[]);
-            var ByRef = new Dictionary<LocalBuilder, CodeComplexVariableReferenceExpression>();
-
-            Depth++;
-            for (int i = 0; i < invoke.Parameters.Count; i++)
+            bool hasParams = false;
+            if(types == null) // Rusty-defined or native method
             {
-                Debug("Emitting parameter " + i);
+                ParameterInfo[] Params = target.GetParameters();
+                types = new Type[Params.Length];
+                for(int i = 0; i < Params.Length; i++)
+                    types[i] = Params[i].ParameterType;
                 
+                hasParams = types.Length == 0 ? false : types[types.Length-1] == typeof(object[]);
+            }
+            #endregion
+            
+            #region Emit parameters
+            int p = 0;
+            
+            var ByRef = new Dictionary<LocalBuilder, CodeComplexVariableReferenceExpression>();
+            
+            for(p = 0; p < invoke.Parameters.Count; p++)
+            {
+                Depth++;
+                Debug("Emitting parameter "+p);
+                
+                // Collapse superfluous arguments in array if last argument is object[]
+                // _and_ it's not a call into a user-defined function.
                 if(hasParams)
                 {
-                    if(i == types.Length-1)
-                        EmitArrayCreation(typeof(object), invoke.Parameters.Count - types.Length + 1);
-                    
-                    if(i >= types.Length-1)
+                    if(p == types.Length-1)
                     {
-                        EmitArrayInitializer(typeof(object), invoke.Parameters[i], i - types.Length + 1);
+                        Type Generated = EmitExpression(invoke.Parameters[p]);
+                        
+                        // If the last argument is object[], we don't bother about params
+                        if(Generated == typeof(object[]))
+                            break;
+                        
+                        LocalBuilder Temp = Generator.DeclareLocal(typeof(object));
+                        ForceTopStack(Generated, typeof(object));
+                        Generator.Emit(OpCodes.Stloc, Temp);
+                        
+                        EmitArrayCreation(typeof(object), invoke.Parameters.Count - p);
+                        
+                        Generator.Emit(OpCodes.Dup);
+                        Generator.Emit(OpCodes.Ldc_I4, 0);
+                        Generator.Emit(OpCodes.Ldloc, Temp);
+                        Generator.Emit(OpCodes.Stelem_Ref);
+                        continue;
+                    }
+                    else if(p > types.Length-1)
+                    {
+                        EmitArrayInitializer(typeof(object), invoke.Parameters[p], p - types.Length + 1);
                         continue;
                     }
                 }
                 
-                var generated = EmitExpression(invoke.Parameters[i], true);
-                
-                if(types[i].IsByRef && invoke.Parameters[i] is CodeComplexVariableReferenceExpression)
+                if(p < types.Length)
                 {
-                    Debug("Parameter "+i+" was by reference");
-                    LocalBuilder Temporary = Generator.DeclareLocal(typeof(object));
+                    Type Generated = EmitExpression(invoke.Parameters[p]);
+                    
+                    if(types[p].IsByRef && invoke.Parameters[p] is CodeComplexVariableReferenceExpression)
+                    {
+                        // Variables passed by reference need to be stored in a local
+                        Debug("Parameter "+p+" was by reference");
+                        LocalBuilder Temporary = Generator.DeclareLocal(typeof(object));
+                        Generator.Emit(OpCodes.Stloc, Temporary);
+                        Generator.Emit(OpCodes.Ldloca, Temporary);
+                        ByRef.Add(Temporary, invoke.Parameters[p] as CodeComplexVariableReferenceExpression);
+                    }
+                    else ForceTopStack(Generated, types[p]);
+                }
+                
+                Depth--;
+            }
+            
+            // Anything not specified pads to the default IL value
+            // Not to be confused with default values for parameters (ahk-style)
+            while(p < types.Length)
+            {
+                if(types[p].IsByRef)
+                {
+                    Type NotRef = types[p].GetElementType();
+                    EmitLiteral(NotRef, GetDefaultValueOfType(NotRef));
+                    LocalBuilder Temporary = Generator.DeclareLocal(NotRef);
                     Generator.Emit(OpCodes.Stloc, Temporary);
                     Generator.Emit(OpCodes.Ldloca, Temporary);
-
-                    ByRef.Add(Temporary, invoke.Parameters[i] as CodeComplexVariableReferenceExpression);
                 }
-                else ForceTopStack(generated, types[i]);
+                else EmitLiteral(types[p], GetDefaultValueOfType(types[p])); 
+                p++;
             }
-            Depth--;
-
-            Depth++;
-            for (int i = invoke.Parameters.Count; i < types.Length; i++)
-            {
-                Debug("Emitting default parameter " + i + " type " + types[i].Name);
-                
-                if(types[i].IsByRef)
-                {
-                    // Unspecified ref parameters are given temporary variable with default contents
-                    Type NotRef = types[i].GetElementType();
-                    EmitLiteral(NotRef, GetDefaultValueOfType(NotRef));
-                    LocalBuilder Temp = Generator.DeclareLocal(NotRef);
-                    Generator.Emit(OpCodes.Stloc, Temp);
-                    Generator.Emit(OpCodes.Ldloca, Temp);
-                }
-                else EmitLiteral(types[i], GetDefaultValueOfType(types[i]));
-            }
-            Depth--;
-
+            #endregion
+            
             Generator.Emit(OpCodes.Call, target);
-
-            foreach(KeyValuePair<LocalBuilder, CodeComplexVariableReferenceExpression> Pair in ByRef)
+            
+            // Save the variables passed to reference back in Rusty's variable handling
+            foreach(LocalBuilder Builder in ByRef.Keys)
             {
-                EmitComplexVariableReference(Pair.Value, false);
-                Generator.Emit(OpCodes.Ldloc, Pair.Key);
+                EmitComplexVariableReference(ByRef[Builder], false);
+                Generator.Emit(OpCodes.Ldloc, Builder);
                 EmitSaveVar();
                 Generator.Emit(OpCodes.Pop);
             }
-
+            
             Depth--;
-
             return target.ReturnType;
         }
 

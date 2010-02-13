@@ -4,18 +4,16 @@ using System.Reflection;
 
 namespace IronAHK.Scripting
 {
-    enum ArgType { Variable, Literal, Expression }
-    
     class MethodCollection : List<MethodInfo>
     {
         public MethodCollection() 
         {
         }
 
-        public MethodInfo BestMatch(string name, ArgType[] args)
+        public MethodInfo BestMatch(string name, int length)
         {
             MethodInfo result = null;
-            int length = args.Length, last = -1;
+            int last = -1;
 
             foreach (MethodInfo writer in this)
             {
