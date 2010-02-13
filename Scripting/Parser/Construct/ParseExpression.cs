@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.CodeDom;
 using System.Collections.Generic;
 using System.Text;
@@ -916,7 +916,7 @@ namespace IronAHK.Scripting
         CodeExpression ParseDateExpression(string code)
         {
             // TODO: date/time arithmetic expressions
-            return null;
+            return new CodeExpression();
         }
 
         #endregion
