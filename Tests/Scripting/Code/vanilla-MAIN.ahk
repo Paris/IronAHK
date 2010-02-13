@@ -3537,10 +3537,12 @@ if number_with_leading_spaces <> 20
 	msgbox, sum should have been 20
 
 counter = 0
+/*
 repeat, 5
 	envadd, counter, 2
 	envsub, counter, 1
 endrepeat
+*/
 if counter <> 5
 	msgbox, counter should've been 5
 ;listlines
@@ -3548,11 +3550,13 @@ if counter <> 5
 ;exitapp
 
 counter = 0
+/*
 repeat, 0  ; infinite
 	envadd, counter, 2
 	envsub, counter, 1
 	ifgreater, counter, 4, goto, breakfromrepeat
 endrepeat
+*/
 breakfromrepeat:
 if counter <> 5
 	msgbox, counter should've been 5
