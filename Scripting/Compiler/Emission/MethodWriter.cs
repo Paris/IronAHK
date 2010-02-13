@@ -151,7 +151,7 @@ namespace IronAHK.Scripting
             }
             else
             {
-                Debug("Unhandled primitive: " + Value.GetType());
+                Debug("Unhandled primitive: " + T);
                 Generated = null;
             }
             Depth--;
