@@ -33,6 +33,9 @@ namespace IronAHK.Scripting
             }
             else
                 target = GetMethodInfo(invoke.Method);
+            
+            if(target == null)
+                throw new CompileException(invoke, "Could not look up "+invoke.Method.MethodName);
 
             if (types == null && target != null)
             {
@@ -42,15 +45,29 @@ namespace IronAHK.Scripting
                 for (int i = 0; i < types.Length; i++)
                     types[i] = param[i].ParameterType;
             }
-
+            
+            bool hasParams = types.Length == 0 ? false : types[types.Length-1] == typeof(System.Object[]);
             var ByRef = new Dictionary<LocalBuilder, CodeComplexVariableReferenceExpression>();
 
             Depth++;
             for (int i = 0; i < invoke.Parameters.Count; i++)
             {
                 Debug("Emitting parameter " + i);
+                
+                if(hasParams)
+                {
+                    if(i == types.Length-1)
+                        EmitArrayCreation(typeof(object), invoke.Parameters.Count - types.Length + 1);
+                    
+                    if(i >= types.Length-1)
+                    {
+                        EmitArrayInitializer(typeof(object), invoke.Parameters[i], i - types.Length + 1);
+                        continue;
+                    }
+                }
+                
                 var generated = EmitExpression(invoke.Parameters[i], true);
-
+                
                 if(types[i].IsByRef && invoke.Parameters[i] is CodeComplexVariableReferenceExpression)
                 {
                     Debug("Parameter "+i+" was by reference");
