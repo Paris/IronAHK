@@ -181,12 +181,26 @@ namespace IronAHK.Scripting
                 i++;
                 while (i < code.Length && IsSpace(code[i])) i++;
 
-                int n = i + 1;
-
-                if ((i < code.Length && code[i] == Equal) || (n < code.Length && !IsIdentifier(code[i]) && code[n] == Equal))
+                if (i < code.Length && code[i] == Equal)
                     return false;
+                else if (IsCommentAt(code, i))
+                    return true;
 
-                return true;
+                if (IsIdentifier(code[i]))
+                    return !IsKeyword(code[i]);
+
+                int y = i + 1, z = i + 2;
+
+                if (y < code.Length)
+                {
+                    if (code[y] == Equal)
+                        return false;
+                    else if (z < code.Length && code[i] == code[y] && code[z] == Equal)
+                        return false;
+                }
+
+                string pre = code.Substring(0, i).TrimEnd(Spaces);
+                return !IsPrimativeObject(pre);
             }
             else
                 return false;

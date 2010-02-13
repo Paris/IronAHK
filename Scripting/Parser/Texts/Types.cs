@@ -202,6 +202,18 @@ namespace IronAHK.Scripting
             }
         }
 
+        bool IsKeyword(char symbol)
+        {
+            switch (symbol)
+            {
+                case TernaryA:
+                    return true;
+
+                default:
+                    return false;
+            }
+        }
+
         bool IsRemap(string code)
         {
             code = code.Trim(Spaces);
