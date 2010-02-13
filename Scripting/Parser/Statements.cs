@@ -82,6 +82,7 @@ namespace IronAHK.Scripting
                     {
                         case Token.Assign:
                             var assign = ParseAssign(code);
+                            assign.LinePragma = lines[i];
 #pragma warning disable 0162
                             if (UseComplexVar)
                                 parent.Add(assign);
@@ -91,29 +92,48 @@ namespace IronAHK.Scripting
                             break;
 
                         case Token.Command:
-                            parent.Add(new CodeExpressionStatement(ParseCommand(code)));
+                            var command = new CodeExpressionStatement(ParseCommand(code));
+                            command.LinePragma = lines[i];
+                            parent.Add(command);
                             break;
 
                         case Token.Label:
-                            parent.Add(ParseLabel(lines[i]));
+                            var label = new CodeExpressionStatement(ParseLabel(lines[i]));
+                            label.LinePragma = lines[i];
+                            parent.Add(label);
                             break;
 
                         case Token.Hotkey:
-                            parent.Add(ParseHotkey(lines, i));
+                            var hotkey = ParseHotkey(lines, i);
+                            hotkey.LinePragma = lines[i];
+                            parent.Add(hotkey);
                             break;
 
                         case Token.Flow:
-                            var result = ParseFlow(lines, i);
-                            if (result != null)
-                                parent.AddRange(result);
+                            {
+                                var result = ParseFlow(lines, i);
+                                if (result != null)
+                                {
+                                    for (int n = 0; n < result.Length; n++)
+                                        result[n].LinePragma = lines[i];
+                                    parent.AddRange(result);
+                                }
+                            }
                             break;
 
                         case Token.Expression:
-                            int n = i + 1;
-                            if (IsFunction(code, n < lines.Count ? lines[n].Code : string.Empty))
-                                ParseFunction(lines[i]);
-                            else
-                                parent.AddRange(ParseMultiExpression(code));
+                            {
+                                int n = i + 1;
+                                if (IsFunction(code, n < lines.Count ? lines[n].Code : string.Empty))
+                                    ParseFunction(lines[i]);
+                                else
+                                {
+                                    var statements = ParseMultiExpression(code);
+                                    for (n = 0; n < statements.Length; n++)
+                                        statements[n].LinePragma = lines[n];
+                                    parent.AddRange(statements);
+                                }
+                            }
                             break;
 
                         case Token.Directive:
