@@ -29,7 +29,7 @@ namespace IronAHK.Scripting
                 target = Lookup.BestMatch(invoke.Method.MethodName, invoke.Parameters.Count);
             
             // Lastly, the native methods
-            if(target == null)
+            if(target == null && invoke.Method.TargetObject != null)
                 target = GetMethodInfo(invoke.Method);
             
             if(target == null)

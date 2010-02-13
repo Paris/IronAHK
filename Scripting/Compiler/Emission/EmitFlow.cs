@@ -13,7 +13,8 @@ namespace IronAHK.Scripting
 
             // TODO: This could probably be done more efficiently
             EmitExpression(Condition.Condition);
-            Generator.Emit(OpCodes.Brfalse, False);
+            Generator.Emit(OpCodes.Ldc_I4_0);
+            Generator.Emit(OpCodes.Beq, False);
 
             // Execute code for true and jump to end
             EmitStatementCollection(Condition.TrueStatements);

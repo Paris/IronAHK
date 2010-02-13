@@ -23,7 +23,23 @@ namespace IronAHK.Scripting
 
             Debug("Emitting statements [Depth: "+Loops.Count+", Length: "+Statements.Count+"]");
             foreach(CodeStatement Statement in Statements)
-                EmitStatement(Statement);
+            {
+                try
+                {
+                    EmitStatement(Statement);
+                }
+                catch(CompileException Error)
+                {
+                    Console.WriteLine();
+                    Console.WriteLine("============");
+                    Console.WriteLine("Compile error: "+Error.Message);
+                    Console.WriteLine("File "+Statement.LinePragma.FileName+", line: "+Statement.LinePragma.LineNumber);
+                    Console.WriteLine("============");
+                    Console.WriteLine();
+                    
+                    throw;
+                }
+            }
 
             Depth--;
         }
@@ -153,7 +169,8 @@ namespace IronAHK.Scripting
             {
                 bool val = (bool) Value;
                 Debug("Pushing bool: "+Value);
-                Generator.Emit(OpCodes.Ldc_I4, val ? 1 : 0);
+                
+                Generator.Emit(val ? OpCodes.Ldc_I4_1 : OpCodes.Ldc_I4_0);
                 Generated = typeof(bool);
             }
             else if(T == typeof(double))
