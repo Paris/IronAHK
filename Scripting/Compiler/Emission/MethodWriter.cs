@@ -149,6 +149,19 @@ namespace IronAHK.Scripting
                 EmitDynamicName(array);
                 Generated = typeof(object[]);
             }
+            else if(T == typeof(bool))
+            {
+                bool val = (bool) Value;
+                Debug("Pushing bool: "+Value);
+                Generator.Emit(OpCodes.Ldc_I4, val ? 1 : 0);
+                Generated = typeof(bool);
+            }
+            else if(T == typeof(double))
+            {
+                Debug("Pushing double: "+((double) Value));
+                Generator.Emit(OpCodes.Ldc_R4, ((float) ((double) Value)));
+                Generated = typeof(double);
+            }
             else
             {
                 Debug("Unhandled primitive: " + T);

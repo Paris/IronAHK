@@ -23,6 +23,9 @@ namespace IronAHK.Scripting
 
         Type EmitExpression(CodeExpression Expression, bool ForceTypes)
         {
+            if(Expression == null)
+                throw new ArgumentException("Expression can not be null", "Expression");
+            
             Depth++;
             Debug("Emitting expression");
             Type Generated;
@@ -125,6 +128,8 @@ namespace IronAHK.Scripting
                 // Handy side-effect: one bool caused by the "dup" stays on the stack
                 // Resulting in the whole expression evaluating correctly anyway.
                 Generator.MarkLabel(EndLabel);
+                
+                Depth--;
                 return typeof(bool);
             }
 
