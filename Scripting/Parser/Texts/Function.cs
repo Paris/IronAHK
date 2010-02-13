@@ -9,13 +9,12 @@ namespace IronAHK.Scripting
             if (code.Length == 0 || code[0] == ParenOpen)
                 return false;
 
-            var reader = new StringReader(code);
             int stage = 0;
             bool str = false;
 
-            while (reader.Peek() != -1)
+            for (int i = 0; i < code.Length; i++)
             {
-                char sym = (char)reader.Read();
+                char sym = code[i];
 
                 switch (stage)
                 {
@@ -36,16 +35,19 @@ namespace IronAHK.Scripting
                     case 2:
                         if (sym == BlockOpen)
                             return true;
+                        else if (IsCommentAt(code, i))
+                            goto next;
                         else if (!IsSpace(sym))
                             return false;
                         break;
                 }
             }
 
+        next:
             if (next.Length == 0)
                 return false;
 
-            reader = new StringReader(next);
+            var reader = new StringReader(next);
 
             while (reader.Peek() != -1)
             {

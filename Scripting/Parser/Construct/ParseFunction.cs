@@ -97,6 +97,8 @@ namespace IronAHK.Scripting
                     blockType = CodeBlock.BlockType.Within;
                     break;
                 }
+                else if (IsCommentAt(code, i))
+                    break;
                 else if (!IsSpace(sym))
                     throw new ParseException(ExUnexpected);
             }

@@ -163,6 +163,7 @@ namespace IronAHK.Scripting
 
             CloseTopSingleBlocks();
             CloseTopLabelBlock();
+            CloseTopSingleBlocks();
 
             if (blocks.Count > 0)
                 throw new ParseException(ExUnclosedBlock, blocks.Peek().Line);
