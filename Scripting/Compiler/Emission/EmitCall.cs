@@ -79,11 +79,15 @@ namespace IronAHK.Scripting
                         Generator.Emit(OpCodes.Ldc_I4, 0);
                         Generator.Emit(OpCodes.Ldloc, Temp);
                         Generator.Emit(OpCodes.Stelem_Ref);
+                        
+                        Depth--;
                         continue;
                     }
                     else if(p > types.Length-1)
                     {
                         EmitArrayInitializer(typeof(object), invoke.Parameters[p], p - types.Length + 1);
+                        
+                        Depth--;
                         continue;
                     }
                 }
@@ -101,7 +105,10 @@ namespace IronAHK.Scripting
                         Generator.Emit(OpCodes.Ldloca, Temporary);
                         ByRef.Add(Temporary, invoke.Parameters[p] as CodeComplexVariableReferenceExpression);
                     }
-                    else ForceTopStack(Generated, types[p]);
+                    else 
+                    {
+                        ForceTopStack(Generated, types[p]);
+                    }
                 }
                 
                 Depth--;
@@ -178,8 +185,6 @@ namespace IronAHK.Scripting
                 target = EmitExpression(reference.TargetObject as CodeExpression);
             }
             else throw new CompileException(reference.TargetObject, "Non-static method referencing neither type nor expression");
-
-            Console.WriteLine(target);
 
             Type[] parameters = new Type[reference.TypeArguments.Count];
 

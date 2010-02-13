@@ -154,6 +154,9 @@ namespace IronAHK.Scripting
 
         void ConditionalBox(Type Top)
         {
+            if(Top == null)
+                throw new Exception("Top type can not be null");
+            
             if(Top != typeof(object)) Generator.Emit(OpCodes.Box, Top);
         }
 
