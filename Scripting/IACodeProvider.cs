@@ -98,7 +98,7 @@ namespace IronAHK.Scripting
 
         public override CompilerResults CompileAssemblyFromDom(CompilerParameters options, params CodeCompileUnit[] compilationUnits)
         {
-            PrintCSharpCode(compilationUnits, Console.Out);
+            PrintCode(compilationUnits, Console.Out);
 
             CompilerResults results;
 
@@ -127,24 +127,12 @@ namespace IronAHK.Scripting
         #region Helpers
 
         [Conditional("DEBUG")]
-        void PrintCSharpCode(CodeCompileUnit[] units, TextWriter writer)
+        void PrintCode(CodeCompileUnit[] units, TextWriter writer)
         {
-            var provider = new Microsoft.CSharp.CSharpCodeProvider();
-            var options = new CodeGeneratorOptions { BracingStyle = "C", ElseOnClosing = false, IndentString = "  " };
-            var buf = new StringWriter();
-
-            foreach (CodeCompileUnit code in units)
-            {
-                try { provider.GenerateCodeFromCompileUnit(code, buf, options); }
-                catch (Exception e) { buf.WriteLine(e.Message); }
-                finally { }
-            }
-
-            const string ext = ".", prefix = "namespace ";
-            string space = typeof(Script).Namespace + ext;
-            string output = buf.ToString().Replace(typeof(Rusty.Core).Namespace + ext, string.Empty).Replace(space, string.Empty);
-            output = output.Substring(output.IndexOf(prefix)).Replace(prefix, prefix + space);
-            writer.Write(output);
+            var gen = new Generator();
+            var options = new CodeGeneratorOptions { IndentString = " " };
+            foreach (var unit in units)
+                gen.GenerateCodeFromCodeObject(unit, writer, options);
         }
 
         #endregion
