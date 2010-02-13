@@ -24,21 +24,7 @@ namespace IronAHK.Scripting
             Debug("Emitting statements [Depth: "+Loops.Count+", Length: "+Statements.Count+"]");
             foreach(CodeStatement Statement in Statements)
             {
-                try
-                {
-                    EmitStatement(Statement);
-                }
-                catch(CompileException Error)
-                {
-                    Console.WriteLine();
-                    Console.WriteLine("============");
-                    Console.WriteLine("Compile error: "+Error.Message);
-                    Console.WriteLine("File "+Statement.LinePragma.FileName+", line: "+Statement.LinePragma.LineNumber);
-                    Console.WriteLine("============");
-                    Console.WriteLine();
-                    
-                    throw;
-                }
+                EmitStatement(Statement);
             }
 
             Depth--;
