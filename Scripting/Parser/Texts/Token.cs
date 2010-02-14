@@ -44,10 +44,12 @@ namespace IronAHK.Scripting
 
         bool IsFlowOperator(string code)
         {
-            char[] delimiters = new char[Spaces.Length + 2];
+            const int offset = 3;
+            char[] delimiters = new char[Spaces.Length + offset];
             delimiters[0] = Multicast;
             delimiters[1] = BlockOpen;
-            Spaces.CopyTo(delimiters, 2);
+            delimiters[2] = ParenOpen;
+            Spaces.CopyTo(delimiters, offset);
             string word = code.Split(delimiters, 2)[0].ToLowerInvariant();
 
             switch (word)
