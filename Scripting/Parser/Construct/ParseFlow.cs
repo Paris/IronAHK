@@ -58,6 +58,7 @@ namespace IronAHK.Scripting
 
                         var block = new CodeBlock(line, Scope, ifelse.TrueStatements, CodeBlock.BlockKind.IfElse);
                         block.Type = blockOpen ? CodeBlock.BlockType.Within : CodeBlock.BlockType.Expect;
+                        CloseTopSingleBlock();
                         blocks.Push(block);
 
                         elses.Push(ifelse.FalseStatements);
@@ -76,6 +77,7 @@ namespace IronAHK.Scripting
 
                         var type = parts.Length > 1 && parts[1][0] == BlockOpen ? CodeBlock.BlockType.Within : CodeBlock.BlockType.Expect;
                         var block = new CodeBlock(lines[index], Scope, elses.Pop(), CodeBlock.BlockKind.IfElse) { Type = type };
+                        CloseTopSingleBlock();
                         blocks.Push(block);
                     }
                     break;
@@ -199,6 +201,7 @@ namespace IronAHK.Scripting
 
                         var block = new CodeBlock(line, Scope, loop.Statements, CodeBlock.BlockKind.Loop);
                         block.Type = blockOpen ? CodeBlock.BlockType.Within : CodeBlock.BlockType.Expect;
+                        CloseTopSingleBlock();
                         blocks.Push(block);
 
                         var label = new BreakLabels(InternalID, InternalID);
@@ -217,6 +220,7 @@ namespace IronAHK.Scripting
 
                         var block = new CodeBlock(line, Scope, loop.Statements, CodeBlock.BlockKind.Loop);
                         block.Type = blockOpen ? CodeBlock.BlockType.Within : CodeBlock.BlockType.Expect;
+                        CloseTopSingleBlock();
                         blocks.Push(block);
 
                         var label = new BreakLabels(InternalID, InternalID);

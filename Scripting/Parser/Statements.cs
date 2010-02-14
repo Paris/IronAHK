@@ -33,6 +33,7 @@ namespace IronAHK.Scripting
                             if (blocks.Count == 0)
                             {
                                 block = new CodeBlock(lines[i], Scope, new CodeStatementCollection(), CodeBlock.BlockKind.Dummy);
+                                CloseTopSingleBlock();
                                 blocks.Push(block);
                             }
                             block = blocks.Peek();
@@ -155,7 +156,7 @@ namespace IronAHK.Scripting
 
                 #endregion
 
-                if (blocks.Count == blocksCount)
+                if (blocks.Count == blocksCount && blocks.Peek().IsSingle)
                     CloseBlock(blocksCount, blocks.Count > blocksCount && blocksCount != -1);
             }
 

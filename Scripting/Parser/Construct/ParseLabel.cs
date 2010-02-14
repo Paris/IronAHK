@@ -26,6 +26,7 @@ namespace IronAHK.Scripting
 
             var method = LocalMethod(name);
             var block = new CodeBlock(line, method.Name, method.Statements, CodeBlock.BlockKind.Label) { Type = CodeBlock.BlockType.Within };
+            CloseTopSingleBlock();
             blocks.Push(block);
 
             methods.Add(method.Name, method);
