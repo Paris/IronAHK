@@ -14,32 +14,29 @@ namespace IronAHK.Scripting
             #region Variables
 
             var line = lines[index];
-            string code = line.Code;
+            string code = line.Code.TrimStart(Spaces);
+            string[] parts = { string.Empty, string.Empty };
 
-            char[] delimiters = new char[Spaces.Length + 2];
+            char[] delimiters = new char[Spaces.Length + 1];
             delimiters[0] = Multicast;
-            delimiters[1] = ParenOpen;
-            Spaces.CopyTo(delimiters, 2);
+            Spaces.CopyTo(delimiters, 1);
+            int[] d = { code.IndexOfAny(delimiters), code.IndexOfAny(new char[] { BlockOpen, ParenOpen }) };
 
-            string[] parts = code.TrimStart(Spaces).Split(delimiters, 2);
-
-            if (parts.Length > 0 && parts[0].Length > 1 && parts[0][parts[0].Length - 1] == BlockOpen)
+            if (d[0] == -1 && d[1] == -1)
+                parts[0] = code;
+            else if (d[1] != -1 && (d[1] < d[0] || d[0] == -1))
             {
-                if (parts.Length > 1)
-                    parts[1] = BlockOpen.ToString() + parts[1];
-                else
-                    parts = new string[] { parts[0], BlockOpen.ToString() };
-
-                parts[0] = parts[0].Substring(0, parts[0].Length - 1);
+                parts[0] = code.Substring(0, d[1]);
+                parts[1] = code.Substring(d[1], code.Length - d[1]).TrimStart(Spaces);
+            }
+            else
+            {
+                parts[0] = code.Substring(0, d[0]);
+                parts[1] = code.Substring(d[0] + 1, code.Length - d[0] - 1).TrimStart(Spaces);
             }
 
-            if (parts.Length > 1)
-            {
-                parts[1] = parts[1].Trim(Spaces);
-
-                if (IsEmptyStatement(parts[1]))
-                    parts = new string[] { parts[0] };
-            }
+            if (parts.Length > 1 && IsEmptyStatement(parts[1]))
+                parts = new string[] { parts[0] };
 
             #endregion
 
