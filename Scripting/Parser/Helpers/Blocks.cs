@@ -9,6 +9,12 @@ namespace IronAHK.Scripting
         Stack<CodeStatementCollection> elses = new Stack<CodeStatementCollection>();
         Stack<BreakLabels> breakLabels = new Stack<BreakLabels>();
 
+        void CloseTopSingleBlock()
+        {
+            if (blocks.Count != 0 && blocks.Peek().IsSingle)
+                blocks.Pop();
+        }
+
         void CloseTopSingleBlocks()
         {
             while (blocks.Count != 0 && blocks.Peek().IsSingle)

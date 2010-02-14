@@ -114,6 +114,7 @@ namespace IronAHK.Scripting
 
             var block = new CodeBlock(line, method.Name, method.Statements, CodeBlock.BlockKind.Function);
             block.Type = blockType;
+            CloseTopSingleBlock();
             blocks.Push(block);
 
             var fix = ParseFunctionParameters(param);
