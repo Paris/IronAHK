@@ -328,6 +328,17 @@ namespace IronAHK.Rusty
         }
 
         /// <summary>
+        /// Returns true if <paramref name="FunctionName"/> exists in the script as a function.
+        /// </summary>
+        /// <param name="FunctionName"></param>
+        /// <returns></returns>
+        public static bool IsFunc(string FunctionName)
+        {
+            // TODO: check function names in local scope
+            return false;
+        }
+
+        /// <summary>
         /// Returns a non-zero number if LabelName exists in the script as a subroutine, hotkey, or hotstring (do not include the trailing colon(s) in LabelName). For example, the statement if IsLabel(VarContainingLabelName) would be true if the label exists, and false otherwise. This is useful to avoid runtime errors when specifying a dynamic label in commands such as Gosub, Hotkey, Menu, and Gui.
         /// </summary>
         /// <param name="LabelName"></param>
