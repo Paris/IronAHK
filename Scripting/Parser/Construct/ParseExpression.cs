@@ -754,7 +754,14 @@ namespace IronAHK.Scripting
 
                                 invoke.Method = (CodeMethodReferenceExpression)InternalMethods.Operate;
                                 invoke.Parameters.Add(OperatorAsFieldReference(op));
-                                invoke.Parameters.Add(WrappedComplexVar(parts[x]));
+
+#pragma warning disable 0162
+                                if (LaxExpressions && parts[i] is Script.Operator && (Script.Operator)parts[i] == Script.Operator.Concat && parts[x] is CodeComplexAssignStatement)
+                                    invoke.Parameters.Add(new CodePrimitiveExpression(string.Empty));
+                                else
+                                    invoke.Parameters.Add(WrappedComplexVar(parts[x]));
+#pragma warning restore 0162
+
                                 invoke.Parameters.Add(WrappedComplexVar(parts[y]));
                                 parts[x] = invoke;
 
