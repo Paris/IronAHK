@@ -1340,7 +1340,7 @@ namespace IronAHK.Scripting
                             id.Append(sym);
                         else
                         {
-                            if (i < code.Length && code[i] == ParenOpen)
+                            if (i < code.Length && code[i] == ParenOpen && !IsKeyword(id.ToString()))
                                 id.Append(ParenOpen);
                             else
                                 i--;
