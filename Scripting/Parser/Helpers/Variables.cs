@@ -35,7 +35,7 @@ namespace IronAHK.Scripting
                     {
                         if (sub.Length == 0)
                             throw new ParseException(ExEmptyVarRef, i);
-                        parts.Add((CodeMethodInvokeExpression)VarId(sub.ToString()));
+                        parts.Add(ComplexVarRef(VarId(sub.ToString())));
                         sub.Length = 0;
                         id = false;
                     }
