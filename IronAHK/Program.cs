@@ -12,6 +12,7 @@ namespace IronAHK
     {
         static int Main(string[] args)
         {
+            //args = new string[] { string.Format("..{0}..{0}..{0}Tests{0}Scripting{0}Code{0}isolated.ahk", Path.DirectorySeparatorChar) };
             Start(ref args);
 
             #region Constants
@@ -143,7 +144,12 @@ namespace IronAHK
 
             if (reflect)
             {
-                try { results.CompiledAssembly.EntryPoint.Invoke(null, null); }
+                try
+                {
+                    if (results.CompiledAssembly == null)
+                        throw new Exception("compilation failed");
+                    results.CompiledAssembly.EntryPoint.Invoke(null, null);
+                }
 #if DEBUG
                 catch (TargetInvocationException e)
                 {

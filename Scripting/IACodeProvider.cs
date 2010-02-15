@@ -86,6 +86,10 @@ namespace IronAHK.Scripting
                 {
                     errors.Add(new CompilerError(e.Source, e.Line, 0, e.Message.GetHashCode().ToString(), e.Message));
                 }
+                catch (Exception e)
+                {
+                    errors.Add(new CompilerError { ErrorText = e.Message });
+                }
 #endif
                 finally { }
             }
@@ -118,7 +122,18 @@ namespace IronAHK.Scripting
             else
             {
                 Compiler compiler = new Compiler();
-                results = compiler.CompileAssemblyFromDomBatch(options, compilationUnits);
+                try
+                {
+                    results = compiler.CompileAssemblyFromDomBatch(options, compilationUnits);
+                }
+#if !DEBUG
+                catch (Exception e)
+                {
+                    results = new CompilerResults(null);
+                    results.Errors.Add(new CompilerError { ErrorText = e.Message });
+                }
+#endif
+                finally { }
             }
 
             return results;
