@@ -7,11 +7,14 @@ namespace IronAHK.Scripting
     {
         void EmitMethod(CodeMemberMethod method)
         {
+            if (options.BlankLinesBetweenMembers)
+                WriteSpace();
+
             WriteSpace();
-
             writer.Write(method.Name);
-
+            writer.Write('(');
             bool first = true;
+
             foreach (CodeParameterDeclarationExpression param in method.Parameters)
             {
                 if (!first)
@@ -36,9 +39,18 @@ namespace IronAHK.Scripting
 
             }
 
+            writer.Write(')');
+            WriteSpace();
+            writer.Write('{');
+
             depth++;
+            WriteSpace();
+            writer.Write("global");
             EmitStatements(method.Statements);
             depth--;
+
+            WriteSpace();
+            writer.Write('}');
         }
     }
 }

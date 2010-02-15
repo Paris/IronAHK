@@ -33,8 +33,12 @@ namespace IronAHK.Scripting
             if (code is CodeCompileUnit)
             {
                 foreach (CodeTypeMember member in ((CodeCompileUnit)code).Namespaces[0].Types[0].Members)
-                    if (member is CodeEntryPointMethod || code is CodeMemberMethod)
+                {
+                    if (member is CodeEntryPointMethod)
+                        EmitStatements(((CodeEntryPointMethod)member).Statements);
+                    else
                         EmitMethod((CodeMemberMethod)member);
+                }
             }
             else if (code is CodeEntryPointMethod || code is CodeMemberMethod)
                 EmitMethod((CodeMemberMethod)code);
@@ -47,7 +51,7 @@ namespace IronAHK.Scripting
         void WriteSpace()
         {
             writer.WriteLine();
-
+            
             for (int i = 0; i < depth; i++)
                 writer.Write(options.IndentString);
         }
@@ -59,7 +63,10 @@ namespace IronAHK.Scripting
         void EmitStatements(CodeStatementCollection statements)
         {
             foreach (CodeStatement statement in statements)
+            {
+                WriteSpace();
                 EmitStatement(statement);
+            }
         }
 
         void EmitStatement(CodeStatement statement)
@@ -80,9 +87,24 @@ namespace IronAHK.Scripting
                 EmitReturn((CodeMethodReturnStatement)statement);
             else if (statement is CodeVariableDeclarationStatement)
                 EmitVariableDeclaration((CodeVariableDeclarationStatement)statement);
+            else if (statement is CodeCommentStatement)
+                EmitComment((CodeCommentStatement)statement);
             else
                 throw new ArgumentException("Unrecognised statement: " + statement.GetType().ToString());
         }
+
+        #region Misc.
+
+        void EmitComment(CodeCommentStatement comment)
+        {
+            if (string.IsNullOrEmpty(comment.Comment.Text))
+                return;
+
+            writer.Write(" ; ");
+            writer.Write(comment.Comment.Text);
+        }
+
+        #endregion
 
         #endregion
     }
