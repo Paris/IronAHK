@@ -5,11 +5,17 @@ using System.IO;
 
 namespace IronAHK.Scripting
 {
-    class Emit
+    partial class Emit
     {
+        #region Properties
+
         TextWriter writer;
         CodeGeneratorOptions options;
         int depth;
+
+        #endregion
+
+        #region Constructor
 
         public Emit(TextWriter writer, CodeGeneratorOptions options, int depth)
         {
@@ -17,6 +23,10 @@ namespace IronAHK.Scripting
             this.options = options;
             this.depth = depth;
         }
+
+        #endregion
+
+        #region Extra
 
         public void Convert(CodeObject code)
         {
@@ -30,6 +40,8 @@ namespace IronAHK.Scripting
                 EmitMethod((CodeMemberMethod)code);
             else if (code is CodeStatement)
                 EmitStatement((CodeStatement)code);
+
+            writer.WriteLine();
         }
 
         void WriteSpace()
@@ -40,41 +52,9 @@ namespace IronAHK.Scripting
                 writer.Write(options.IndentString);
         }
 
-        void EmitMethod(CodeMemberMethod method)
-        {
-            WriteSpace();
+        #endregion
 
-            writer.Write(method.Name);
-
-            bool first = true;
-            foreach (CodeParameterDeclarationExpression param in method.Parameters)
-            {
-                if (!first)
-                    writer.Write(" ");
-
-                switch (param.Direction)
-                {
-                    case FieldDirection.Out:
-                        throw new NotSupportedException();
-
-                    case FieldDirection.Ref:
-                        writer.Write("ByRef ");
-                        break;
-                }
-
-                writer.Write(param.Name);
-
-                if (first)
-                    first = false;
-                else
-                    writer.Write(",");
-
-            }
-
-            depth++;
-            EmitStatements(method.Statements);
-            depth--;
-        }
+        #region Statements
 
         void EmitStatements(CodeStatementCollection statements)
         {
@@ -84,43 +64,26 @@ namespace IronAHK.Scripting
 
         void EmitStatement(CodeStatement statement)
         {
-            if (statement is CodeConditionStatement)
+            if (statement is CodeAssignStatement)
+                EmitAssignment((CodeAssignStatement)statement);
+            else if (statement is CodeExpressionStatement)
+                EmitExpression(((CodeExpressionStatement)statement).Expression);
+            else if (statement is CodeIterationStatement)
+                EmitIteration((CodeIterationStatement)statement);
+            else if (statement is CodeConditionStatement)
                 EmitConditionStatement((CodeConditionStatement)statement);
+            else if (statement is CodeGotoStatement)
+                EmitGoto((CodeGotoStatement)statement);
+            else if (statement is CodeLabeledStatement)
+                EmitLabel((CodeLabeledStatement)statement);
+            else if (statement is CodeMethodReturnStatement)
+                EmitReturn((CodeMethodReturnStatement)statement);
+            else if (statement is CodeVariableDeclarationStatement)
+                EmitVariableDeclaration((CodeVariableDeclarationStatement)statement);
+            else
+                throw new ArgumentException("Unrecognised statement: " + statement.GetType().ToString());
         }
 
-        void EmitExpression(CodeExpression expr)
-        {
-            writer.Write(expr.ToString());
-        }
-
-        void EmitConditionStatement(CodeConditionStatement cond)
-        {
-            WriteSpace();
-            writer.Write("if (");
-            EmitExpression(cond.Condition);
-            writer.Write(")");
-            WriteSpace();
-            writer.Write("{");
-            depth++;
-            EmitStatements(cond.TrueStatements);
-            depth--;
-            WriteSpace();
-            writer.Write("}");
-            if (options.ElseOnClosing)
-                writer.Write(" ");
-            else
-                WriteSpace();
-            writer.Write("else");
-            if (options.ElseOnClosing)
-                writer.Write(" ");
-            else
-                WriteSpace();
-            writer.Write("{");
-            depth++;
-            EmitStatements(cond.FalseStatements);
-            depth--;
-            WriteSpace();
-            writer.Write("}");
-        }
+        #endregion
     }
 }
