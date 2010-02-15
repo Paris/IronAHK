@@ -181,7 +181,7 @@ namespace IronAHK.Scripting
                     #endregion
                     #region Strings
                     else if (part.Length > 1 && part[0] == StringBound && part[part.Length - 1] == StringBound)
-                        parts[i] = new CodePrimitiveExpression(part.Substring(1, part.Length - 2));
+                        parts[i] = new CodePrimitiveExpression(EscapedString(part.Substring(1, part.Length - 2), false));
                     #endregion
                     #region Numerics
                     else if (IsPrimativeObject(part, out result))
