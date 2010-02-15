@@ -121,9 +121,17 @@ namespace IronAHK.Scripting
         void PrintCode(CodeCompileUnit[] units, TextWriter writer)
         {
             var gen = new Generator();
-            var options = new CodeGeneratorOptions { IndentString = " " };
-            foreach (var unit in units)
-                gen.GenerateCodeFromCodeObject(unit, writer, options);
+            var options = new CodeGeneratorOptions { IndentString = "  " };
+
+            try
+            {
+                foreach (var unit in units)
+                    gen.GenerateCodeFromCodeObject(unit, writer, options);
+            }
+            catch (Exception e)
+            {
+                Console.Error.WriteLine(e.Message);
+            }
         }
 
         #endregion
