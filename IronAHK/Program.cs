@@ -33,7 +33,6 @@ namespace IronAHK
 
             string script = null;
             string exe = null;
-            bool csc = false;
 
             for (int i = 0; i < args.Length; i++)
             {
@@ -112,7 +111,7 @@ namespace IronAHK
 
             #region Compile
 
-            var ahk = new IACodeProvider { UseCSharpCompiler = csc };
+            var ahk = new IACodeProvider();
 
             self = Path.GetDirectoryName(Path.GetFullPath(self));
             const string ext = ".dll";
