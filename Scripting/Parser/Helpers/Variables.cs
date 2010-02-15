@@ -9,6 +9,8 @@ namespace IronAHK.Scripting
     {
         CodeExpression VarNameOrBasicString(string code, bool asValue)
         {
+            code = EscapedString(code, true);
+
             if (asValue)
             {
                 object result;
