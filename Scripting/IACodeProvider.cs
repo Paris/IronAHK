@@ -12,14 +12,6 @@ namespace IronAHK.Scripting
     {
         #region Extras
 
-        bool csc = false;
-
-        public bool UseCSharpCompiler
-        {
-            get { return csc; }
-            set { csc = value; }
-        }
-
         public override string FileExtension
         {
             get { return "ahk"; }
@@ -105,36 +97,20 @@ namespace IronAHK.Scripting
             PrintCode(compilationUnits, Console.Out);
 
             CompilerResults results;
+            var compiler = new Compiler();
 
-#if !DEBUG
-            csc = false;
-#endif
-
-            if (csc)
+            try
             {
-                options.GenerateExecutable = true;
-                options.GenerateInMemory = false;
-                options.IncludeDebugInformation = false;
-                options.CompilerOptions = "/optimize+";
-                var cs = new Microsoft.CSharp.CSharpCodeProvider();
-                results = cs.CompileAssemblyFromDom(options, compilationUnits);
+                results = compiler.CompileAssemblyFromDomBatch(options, compilationUnits);
             }
-            else
-            {
-                Compiler compiler = new Compiler();
-                try
-                {
-                    results = compiler.CompileAssemblyFromDomBatch(options, compilationUnits);
-                }
 #if !DEBUG
-                catch (Exception e)
-                {
-                    results = new CompilerResults(null);
-                    results.Errors.Add(new CompilerError { ErrorText = e.Message });
-                }
-#endif
-                finally { }
+            catch (Exception e)
+            {
+                results = new CompilerResults(null);
+                results.Errors.Add(new CompilerError { ErrorText = e.Message });
             }
+#endif
+            finally { }
 
             return results;
         }
