@@ -92,7 +92,7 @@
     <Compile Include="Parser\Construct\Directive.cs" />
     <Compile Include="Parser\Construct\Exception.cs" />
     <Compile Include="Parser\Construct\Expression.cs" />
-    <Compile Include="Parser\Construct\Fllow.cs" />
+    <Compile Include="Parser\Construct\Flow.cs" />
     <Compile Include="Parser\Construct\Function.cs" />
     <Compile Include="Parser\Construct\Label.cs" />
     <Compile Include="Parser\Parser.cs" />
