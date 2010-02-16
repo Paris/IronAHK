@@ -69,6 +69,7 @@
     <None Include="Scripting\Code\comments.ahk" />
     <Content Include="Scripting\Code\copyright.txt" />
     <Content Include="Scripting\Code\select.txt" />
+    <None Include="Scripting\Code\objects.ahk" />
     <None Include="Scripting\Code\isolated.ahk" />
     <None Include="Scripting\Code\expressions.ahk" />
     <None Include="Scripting\Code\pass.ahk" />
