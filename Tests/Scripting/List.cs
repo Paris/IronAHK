@@ -53,6 +53,12 @@ namespace IronAHK.Tests
         }
 
         [Test]
+        public void Objects()
+        {
+            Assert.IsTrue(TestScript("objects"));
+        }
+
+        [Test]
         public void Assign()
         {
             Assert.IsTrue(TestScript("assign"));
