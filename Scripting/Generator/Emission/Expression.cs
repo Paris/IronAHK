@@ -234,7 +234,9 @@ namespace IronAHK.Scripting
 
         void EmitPrimitive(CodePrimitiveExpression primitive)
         {
-            if (primitive.Value is string)
+            if (primitive.Value == null)
+                writer.Write("null");
+            else if (primitive.Value is string)
             {
                 writer.Write('"');
                 writer.Write((string)primitive.Value);
