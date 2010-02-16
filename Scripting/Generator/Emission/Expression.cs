@@ -216,12 +216,12 @@ namespace IronAHK.Scripting
             depth++;
             EmitExpression(ternary.Condition);
             depth--;
-            writer.Write('?');
+            writer.Write(" ? ");
 
             depth++;
             EmitExpression(ternary.TrueBranch);
             depth--;
-            writer.Write(':');
+            writer.Write(" : ");
 
             depth++;
             EmitExpression(ternary.FalseBranch);
