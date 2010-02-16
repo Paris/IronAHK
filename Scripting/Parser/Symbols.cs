@@ -15,6 +15,8 @@ namespace IronAHK.Scripting
         const char ParenClose = ')';
         const char BlockOpen = '{';
         const char BlockClose = '}';
+        const char ArrayOpen = '[';
+        const char ArrayClose = ']';
         const char MultiComA = '/';
         const char MultiComB = '*';
         const char TernaryA = '?';

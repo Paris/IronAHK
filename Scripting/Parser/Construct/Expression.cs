@@ -191,6 +191,16 @@ namespace IronAHK.Scripting
                     else if (IsIdentifier(part, true) && !IsKeyword(part))
                         parts[i] = VarIdOrConstant(part);
                     #endregion
+                    #region JSON
+                    else if (part.Length == 1 && part[0] == BlockOpen)
+                    {
+                        throw new ParseException("Objects not currently supported");
+                    }
+                    else if (part.Length == 1 && part[0] == ArrayOpen)
+                    {
+                        throw new ParseException("Arrays not currently supported");
+                    }
+                    #endregion
                     #region Invokes
                     else if (part.Length > 1 && part[part.Length - 1] == ParenOpen)
                     {
@@ -1305,6 +1315,7 @@ namespace IronAHK.Scripting
         List<object> SplitTokens(string code)
         {
             var list = new List<object>();
+            bool json = false;
 
             for (int i = 0; i < code.Length; i++)
             {
@@ -1479,18 +1490,35 @@ namespace IronAHK.Scripting
                                 case Concatenate:
                                 case TernaryB:
                                 case Divide:
+                                case ArrayOpen:
+                                case ArrayClose:
                                     op.Append(sym);
                                     break;
 
                                 case BlockOpen:
+                                    if (json)
+                                    {
+                                        op.Append(sym);
+                                        break;
+                                    }
                                     blockOpen = true;
                                     int j = i + 2;
                                     if (j < code.Length && !IsCommentAt(code, j))
-                                        throw new ParseException(ExUnexpected);
+                                    {
+                                        blockOpen = false;
+                                        json = true;
+                                        goto case BlockOpen;
+                                    }
                                     j--;
                                     if (j < code.Length && !IsSpace(code[j]))
                                         throw new ParseException(ExUnexpected);
                                     return list;
+
+                                case BlockClose:
+                                    if (!json)
+                                        goto default;
+                                    op.Append(sym);
+                                    break;
 
                                 default:
                                     throw new ParseException(ExUnexpected);
