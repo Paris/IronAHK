@@ -146,6 +146,7 @@ namespace IronAHK.Scripting
             switch (op)
             {
                 case Operator.Minus:
+                case Operator.Subtract:
                     {
                         decimal value = ForceDecimal(right);
                         return value == default(decimal) ? right : -value;
