@@ -276,7 +276,7 @@ namespace IronAHK.Scripting
             return null;
         }
 
-        #region Flow argument
+        #region Parameters
 
         CodeExpression ParseFlowParameter(string code, bool inequality, out bool blockOpen, bool expr)
         {

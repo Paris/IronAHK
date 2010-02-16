@@ -3,7 +3,7 @@ namespace IronAHK.Scripting
 {
     partial class Parser
     {
-        #region Directive variables
+        #region Variables
 
         const int ClipboardTimeoutDefault = 1000;
         const int HotkeyIntervalDefault = 2000;

@@ -126,6 +126,8 @@ namespace IronAHK.Scripting
             methods.Add(method.Name, method);
         }
 
+        #region Parameters
+
         CodeStatement ParseFunctionParameters(string code)
         {
             #region List
@@ -271,5 +273,7 @@ namespace IronAHK.Scripting
 
             return code;
         }
+
+        #endregion
     }
 }

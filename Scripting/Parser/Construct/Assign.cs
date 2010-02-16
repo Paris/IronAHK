@@ -5,14 +5,16 @@ namespace IronAHK.Scripting
 {
     partial class Parser
     {
-        const string ScopeVar = ".";
-
         CodeComplexAssignStatement ParseAssign(string code)
         {
+            #region Variables
+
             string name, value;
             var buf = new StringBuilder(code.Length);
             int i = 0;
             char sym;
+
+            #endregion
 
             #region Name
 
@@ -68,9 +70,13 @@ namespace IronAHK.Scripting
 
             #endregion
 
+            #region Result
+
             CodeExpression result = value == null ? new CodePrimitiveExpression(null) :
                 IsExpressionParameter(value) ? ParseSingleExpression(value.TrimStart(Spaces).Substring(2)) : VarNameOrBasicString(value, true);
             return new CodeComplexAssignStatement(VarId(name), result);
+
+            #endregion
         }
     }
 }

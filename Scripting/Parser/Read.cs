@@ -9,20 +9,28 @@ namespace IronAHK.Scripting
     {
         List<CodeLine> Read(TextReader source, string name)
         {
+            #region Properties
+
             var list = new List<CodeLine>();
             string code;
             int line = 0;
 
             var includes = new List<string>();
 
+            #endregion
+
             while ((code = source.ReadLine()) != null)
             {
+                #region Line
+
                 line++;
 
                 if (line == 1 && code.Length > 2 && code[0] == '#' && code[1] == '!')
                     continue;
 
                 string codeTrim = code.TrimStart(Spaces);
+
+                #endregion
 
                 #region Multiline comments
 
