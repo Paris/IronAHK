@@ -47,6 +47,12 @@ namespace IronAHK.Tests
         }
 
         [Test]
+        public void Line()
+        {
+            Assert.IsTrue(TestScript("line"));
+        }
+
+        [Test]
         public void Loop()
         {
             Assert.IsTrue(TestScript("loop"));
