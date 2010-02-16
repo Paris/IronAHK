@@ -4,6 +4,7 @@ namespace IronAHK.Scripting
     partial class Parser
     {
         #region Generic
+
         const char CR = '\r';
         const char LF = '\n';
         const char SingleSpace = ' ';
@@ -46,9 +47,11 @@ namespace IronAHK.Scripting
 #if !LEGACY
         const string VarExt = "#_$";
 #endif
+
         #endregion
 
         #region Operators
+
         //const char Power = "**";
         const char Multiply = '*';
         const char Divide = '/';
@@ -92,6 +95,7 @@ namespace IronAHK.Scripting
         const char Dereference = '*';
 
         #region Assignments
+
         //readonly string AssignEqual = ":" + Equal;
         //readonly string AssignAdd = "+" + Equal;
         //readonly string AssignSubtract = "-" + Equal;
@@ -104,11 +108,15 @@ namespace IronAHK.Scripting
         //readonly string AssignBitXOR = "^" + Equal;
         //readonly string AssignShiftLeft = "<<" + Equal;
         //readonly string AssignShiftRight = ">>" + Equal;
+
         #endregion
+
         #endregion
 
         #region Words
+
         #region Flow
+
         const string FlowBreak = "break";
         const string FlowContinue = "continue";
         const string FlowElse = "else";
@@ -118,23 +126,29 @@ namespace IronAHK.Scripting
         const string FlowLoop = "loop";
         const string FlowReturn = "return";
         const string FlowWhile = "while";
+
         #endregion
 
         #region Functions
+
         const string FunctionLocal = "local";
         const string FunctionGlobal = "global";
         const string FunctionStatic = "static";
         const string FunctionParamRef = "byref";
+
         #endregion
 
         #region Directives
+
         const string DirvCommentFlag = "commentflag";
         const string DirvEscapeChar = "escapechar";
         const string DirvInclude = "include";
         const string DirvIncludeAgain = "includeagain";
+
         #endregion
 
         #region Multiline string
+
         const string LTrim = "ltrim";
         const string RTrim = "rtrim";
         const string Join = "join";
@@ -142,10 +156,13 @@ namespace IronAHK.Scripting
         const string Comments1 = "comment";
         const string Comments2 = "com";
         const string Comments3 = "c";
+
         #endregion
+
         #endregion
 
         #region Exceptions
+
         const string ExGeneric = "Unexpected exception";
         const string ExUnexpected = "Unexpected symbol";
         const string ExMultiStr = "Unrecognized multiline string option";
@@ -165,14 +182,9 @@ namespace IronAHK.Scripting
         const string ExUnclosedBlock = "Unclosed block";
         const string ExInvalidExpression = "Invalid expression term";
         const string ExInvalidExponent = "Invalid exponent.";
-
-        #region Internal
         const string ExIntlLineMismatch = "Line and index counts mismatched";
-        #endregion
-
-#if LEGACY
         const string ExContJoinTooLong = "Join string for continuation section is too long";
-#endif
+
         #endregion
     }
 }

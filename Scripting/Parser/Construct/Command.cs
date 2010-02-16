@@ -33,6 +33,8 @@ namespace IronAHK.Scripting
             return invoke;
         }
 
+        #region Parameters
+
         string[] SplitCommandParameters(string code)
         {
             var parts = new List<string>();
@@ -102,5 +104,7 @@ namespace IronAHK.Scripting
             else
                 return VarNameOrBasicString(StripComment(code), true);
         }
+
+        #endregion
     }
 }

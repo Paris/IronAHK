@@ -8,6 +8,8 @@ namespace IronAHK.Scripting
 {
     partial class Parser : ICodeParser
     {
+        #region Properties
+
         const string mainScope = "";
         const string className = "Program";
         CodeEntryPointMethod main = new CodeEntryPointMethod();
@@ -16,6 +18,10 @@ namespace IronAHK.Scripting
 
         string fileName;
         int line;
+
+        #endregion
+
+        #region Getters
 
         /// <summary>
         /// Return a DOM representation of a script.
@@ -46,7 +52,11 @@ namespace IronAHK.Scripting
                 return unit;
             }
         }
-        
+
+        #endregion
+
+        #region Methods
+
         public Parser()
         {
             main.CustomAttributes.Add(new CodeAttributeDeclaration(new CodeTypeReference(typeof(STAThreadAttribute))));
@@ -64,5 +74,7 @@ namespace IronAHK.Scripting
             Statements(lines);
             return CompileUnit;
         }
+
+        #endregion
     }
 }

@@ -9,17 +9,21 @@ namespace IronAHK.Scripting
         {
             for (int i = 0; i < lines.Count; i++)
             {
-                line = lines[i].LineNumber;
-                fileName = lines[i].FileName;
+                #region Line
+
                 string code = lines[i].Code;
 
                 if (string.IsNullOrEmpty(code))
                     continue;
 
-                var parent = blocks.Count > 0 ? blocks.Peek().Statements : main.Statements;
+                line = lines[i].LineNumber;
+                fileName = lines[i].FileName;
+
+                #endregion
 
                 #region Blocks
 
+                var parent = blocks.Count > 0 ? blocks.Peek().Statements : main.Statements;
                 string codeTrim = code.TrimStart(Spaces);
                 int blocksCount = -1;
 
@@ -158,8 +162,12 @@ namespace IronAHK.Scripting
 
                 #endregion
 
+                #region Blocks
+
                 if (blocks.Count == blocksCount && blocks.Peek().IsSingle)
                     CloseBlock(blocksCount, blocks.Count > blocksCount && blocksCount != -1);
+
+                #endregion
             }
 
             #region Blocks
