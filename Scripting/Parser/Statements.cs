@@ -9,6 +9,8 @@ namespace IronAHK.Scripting
         {
             for (int i = 0; i < lines.Count; i++)
             {
+                line = lines[i].LineNumber;
+                fileName = lines[i].FileName;
                 string code = lines[i].Code;
 
                 if (string.IsNullOrEmpty(code))

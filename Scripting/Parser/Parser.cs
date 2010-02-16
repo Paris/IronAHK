@@ -14,6 +14,9 @@ namespace IronAHK.Scripting
         Dictionary<string, CodeMemberMethod> methods = new Dictionary<string, CodeMemberMethod>();
         CodeStatementCollection prepend = new CodeStatementCollection();
 
+        string fileName;
+        int line;
+
         /// <summary>
         /// Return a DOM representation of a script.
         /// </summary>
@@ -43,7 +46,7 @@ namespace IronAHK.Scripting
                 return unit;
             }
         }
-
+        
         public Parser()
         {
             main.CustomAttributes.Add(new CodeAttributeDeclaration(new CodeTypeReference(typeof(STAThreadAttribute))));
@@ -52,7 +55,12 @@ namespace IronAHK.Scripting
 
         public CodeCompileUnit Parse(TextReader codeStream)
         {
-            var lines = Read(codeStream, null);
+            return Parse(codeStream, string.Empty);
+        }
+
+        public CodeCompileUnit Parse(TextReader codeStream, string name)
+        {
+            var lines = Read(codeStream, name);
             Statements(lines);
             return CompileUnit;
         }

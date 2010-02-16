@@ -39,16 +39,6 @@ namespace IronAHK.Scripting
             throw new NotImplementedException();
         }
 
-        public override CompilerResults CompileAssemblyFromFile(CompilerParameters options, params string[] fileNames)
-        {
-            var readers = new TextReader[fileNames.Length];
-
-            for (int i = 0; i < fileNames.Length; i++)
-                readers[i] = new StreamReader(fileNames[i]);
-
-            return CompileAssemblyFromReader(options, readers);
-        }
-
         public override CompilerResults CompileAssemblyFromSource(CompilerParameters options, params string[] sources)
         {
             var readers = new TextReader[sources.Length];
@@ -59,19 +49,36 @@ namespace IronAHK.Scripting
             return CompileAssemblyFromReader(options, readers);
         }
 
-        #endregion
-
         CompilerResults CompileAssemblyFromReader(CompilerParameters options, params TextReader[] readers)
         {
-            var units = new CodeCompileUnit[readers.Length];
-            var errors = new CompilerErrorCollection();
-            var syntax = new Parser();
+            var tempFiles = new TempFileCollection(Path.GetTempPath(), false);
 
             for (int i = 0; i < readers.Length; i++)
             {
+                string file = tempFiles.AddExtension(FileExtension, false);
+                File.WriteAllText(file, readers[i].ReadToEnd()); // UNDONE: use BufferedStream for writing temporary script files
+            }
+
+            string[] fileNames = new string[tempFiles.Count];
+            tempFiles.CopyTo(fileNames, 0);
+            var results = CompileAssemblyFromFile(options, fileNames);
+            tempFiles.Delete();
+            return results;
+        }
+
+        #endregion
+
+        public override CompilerResults CompileAssemblyFromFile(CompilerParameters options, params string[] fileNames)
+        {
+            var units = new CodeCompileUnit[fileNames.Length];
+            var errors = new CompilerErrorCollection();
+            var syntax = new Parser();
+
+            for (int i = 0; i < fileNames.Length; i++)
+            {
                 try
                 {
-                    units[i] = syntax.Parse(readers[i]);
+                    units[i] = syntax.Parse(new StreamReader(fileNames[i]), fileNames[i]);
                 }
 #if !DEBUG
                 catch (ParseException e)

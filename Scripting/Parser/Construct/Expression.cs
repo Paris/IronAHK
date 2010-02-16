@@ -189,7 +189,7 @@ namespace IronAHK.Scripting
                     #endregion
                     #region Variables
                     else if (IsIdentifier(part, true) && !IsKeyword(part))
-                        parts[i] = VarId(part);
+                        parts[i] = VarIdOrConstant(part);
                     #endregion
                     #region Invokes
                     else if (part.Length > 1 && part[part.Length - 1] == ParenOpen)

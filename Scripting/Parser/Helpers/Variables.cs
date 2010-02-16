@@ -35,7 +35,7 @@ namespace IronAHK.Scripting
                     {
                         if (sub.Length == 0)
                             throw new ParseException(ExEmptyVarRef, i);
-                        parts.Add(ComplexVarRef(VarId(sub.ToString())));
+                        parts.Add(ComplexVarRef(VarIdOrConstant(sub.ToString())));
                         sub.Length = 0;
                         id = false;
                     }
@@ -64,6 +64,16 @@ namespace IronAHK.Scripting
                 return StringConcat(all);
             else
                 return ComplexVarRef(new CodeComplexVariableReferenceExpression(all));
+        }
+
+        CodeExpression VarIdOrConstant(string name)
+        {
+            if (name.Equals("A_LineNumber", StringComparison.OrdinalIgnoreCase))
+                return new CodePrimitiveExpression(line);
+            else if (name.Equals("A_LineFile", StringComparison.OrdinalIgnoreCase))
+                return new CodePrimitiveExpression(fileName);
+            else
+                return VarId(name);
         }
 
         CodeComplexVariableReferenceExpression VarId(string name)

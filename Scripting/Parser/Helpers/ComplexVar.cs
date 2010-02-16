@@ -7,6 +7,9 @@ namespace IronAHK.Scripting
     {
         CodeExpression ComplexVarRef(object var)
         {
+            if (var is CodePrimitiveExpression)
+                return (CodePrimitiveExpression)var;
+
             if (!(var is CodeComplexVariableReferenceExpression))
                 throw new ArgumentException();
 
