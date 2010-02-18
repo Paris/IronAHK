@@ -364,5 +364,14 @@ namespace IronAHK.Scripting
                 }
             }
         }
+
+        bool IsObject(object item)
+        {
+            if (item == null || item is Script.Operator || item is CodeComplexAssignStatement)
+                return false;
+
+            return true;
+
+        }
     }
 }

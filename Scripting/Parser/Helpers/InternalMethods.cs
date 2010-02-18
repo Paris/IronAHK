@@ -118,6 +118,15 @@ namespace IronAHK.Scripting
 
             #endregion
 
+            #region Objects
+
+            public static MethodReference Index
+            {
+                get { return new MethodReference(typeof(Script), "Index"); }
+            }
+
+            #endregion
+
             #region Misc
 
             public static MethodReference Concat

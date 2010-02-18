@@ -42,7 +42,7 @@ namespace IronAHK.Scripting
         string Comment = ";";
 
 #if LEGACY
-        const string VarExt = "#_@$?[]";
+        const string VarExt = "#_@$?"; // []
 #endif
 #if !LEGACY
         const string VarExt = "#_$";

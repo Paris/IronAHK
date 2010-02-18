@@ -64,6 +64,7 @@
     <Compile Include="Parser\Helpers\Scope.cs" />
     <Compile Include="Script\Call.cs" />
     <Compile Include="Script\Conversion.cs" />
+    <Compile Include="Script\Objects.cs" />
     <Compile Include="Script\Labels.cs" />
     <Compile Include="Script\Operate.cs" />
     <Compile Include="Script\Parameters.cs" />

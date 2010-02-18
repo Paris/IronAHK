@@ -146,7 +146,31 @@ namespace IronAHK.Scripting
                     }
                     else if (part.Length == 1 && part[0] == ArrayOpen)
                     {
-                        throw new ParseException("Arrays not currently supported");
+                        int n = i + 1;
+                        var paren = Dissect(parts, n, Set(parts, i));
+                        parts.RemoveAt(n);
+
+                        if (IsObject(parts[i - 1]))
+                        {
+                            var invoke = (CodeMethodInvokeExpression)InternalMethods.Index;
+                            n = i - 1;
+                            invoke.Parameters.Add((CodeExpression)parts[n]);
+
+                            var index = ParseMultiExpression(paren.ToArray());
+                            if (index.Length > 1)
+                                throw new ParseException("Cannot have multipart expression in index.");
+                            else if (index.Length == 0)
+                                throw new ParseException("Resizing arrays currently unsupported.");
+                            invoke.Parameters.Add(index[0]);
+
+                            parts[i] = invoke;
+                            parts.RemoveAt(n);
+                        }
+                        else
+                        {
+                            var array = new CodeArrayCreateExpression(typeof(object[]), ParseMultiExpression(paren.ToArray()));
+                            parts[i] = array;
+                        }
                     }
                     #endregion
                     #region Invokes
