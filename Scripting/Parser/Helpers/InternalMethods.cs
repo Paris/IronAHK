@@ -125,6 +125,11 @@ namespace IronAHK.Scripting
                 get { return new MethodReference(typeof(Script), "Index"); }
             }
 
+            public static MethodReference Dictionary
+            {
+                get { return new MethodReference(typeof(Script), "Dictionary"); }
+            }
+
             #endregion
 
             #region Misc

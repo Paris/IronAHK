@@ -142,7 +142,19 @@ namespace IronAHK.Scripting
                     #region JSON
                     else if (part.Length == 1 && part[0] == BlockOpen)
                     {
-                        throw new ParseException("Objects not currently supported");
+                        int n = i + 1;
+                        var paren = Dissect(parts, n, Set(parts, i));
+
+                        var invoke = (CodeMethodInvokeExpression)InternalMethods.Dictionary;
+                        CodePrimitiveExpression[] keys;
+                        CodeExpression[] values;
+                        ParseObject(paren, out keys, out values);
+                        invoke.Parameters.Add(new CodeArrayCreateExpression(typeof(string), keys));
+                        invoke.Parameters.Add(new CodeArrayCreateExpression(typeof(object), values));
+
+                        parts[i] = invoke;
+                        parts.RemoveAt(n);
+                        i--;
                     }
                     else if (part.Length == 1 && part[0] == ArrayOpen)
                     {
@@ -150,7 +162,7 @@ namespace IronAHK.Scripting
                         var paren = Dissect(parts, n, Set(parts, i));
                         parts.RemoveAt(n);
 
-                        if (IsObject(parts[i - 1]))
+                        if (i > 0 && IsObject(parts[i - 1]))
                         {
                             var invoke = (CodeMethodInvokeExpression)InternalMethods.Index;
                             n = i - 1;
@@ -165,6 +177,7 @@ namespace IronAHK.Scripting
 
                             parts[i] = invoke;
                             parts.RemoveAt(n);
+                            i--;
                         }
                         else
                         {
