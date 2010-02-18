@@ -4298,14 +4298,14 @@ var := +string  ; However unary plus is ignored. Obsolete: But the result of an 
 if var <> %string%
 	MsgBox %var%
 
-Array[1][3] = 15
+Array_1_3 = 15
 i = 1
 j = 3
 test = 6
-var := 3 + Array[%i%][%j%]/test
+var := 3 + Array_%i%_%j%/test
 if var <> 5.5
 	MsgBox %var%
-var := (3+Array[%i%][%j%])/test
+var := (3+Array_%i%_%j%)/test
 if var <> 3
 	MsgBox %var%
 
