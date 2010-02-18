@@ -52,7 +52,18 @@ namespace IronAHK.Scripting
                         }
                     }
 
-                    list.Add(id.ToString());
+                    var parts = id.ToString().Split(Concatenate);
+
+                    if (parts[0].Length != 0)
+                        list.Add(parts[0]);
+
+                    for (int n = 1; n < parts.Length; n++)
+                    {
+                        list.Add(ArrayOpen.ToString());
+                        string str = StringBound.ToString();
+                        list.Add(string.Concat(str, parts[n], str));
+                        list.Add(ArrayClose.ToString());
+                    }
                 }
                 #endregion
                 #region Strings
