@@ -104,12 +104,7 @@ namespace IronAHK.Scripting
             if (!(var is CodeComplexVariableReferenceExpression))
                 throw new ArgumentException();
 
-#pragma warning disable 0162
-            if (UseComplexVar)
-                return (CodeComplexVariableReferenceExpression)var;
-            else
-                return (CodeMethodInvokeExpression)(CodeComplexVariableReferenceExpression)var;
-#pragma warning restore 0162
+            return (CodeComplexVariableReferenceExpression)var;
         }
 
         CodeExpression ComplexVarAssign(object var)
@@ -117,12 +112,7 @@ namespace IronAHK.Scripting
             if (!(var is CodeComplexAssignStatement))
                 throw new ArgumentException();
 
-#pragma warning disable 0162
-            if (UseComplexVar)
-                return (CodeBinaryOperatorExpression)(CodeComplexAssignStatement)var;
-            else
-                return (CodeExpression)var;
-#pragma warning restore 0162
+            return (CodeBinaryOperatorExpression)(CodeComplexAssignStatement)var;
         }
 
         CodeExpression WrappedComplexVar(object part)

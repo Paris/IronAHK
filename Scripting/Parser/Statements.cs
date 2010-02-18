@@ -90,12 +90,7 @@ namespace IronAHK.Scripting
                         case Token.Assign:
                             var assign = ParseAssign(code);
                             assign.LinePragma = lines[i];
-#pragma warning disable 0162
-                            if (UseComplexVar)
-                                parent.Add(assign);
-                            else
-                                parent.Add((CodeMethodInvokeExpression)assign);
-#pragma warning restore 0162
+                            parent.Add(assign);
                             break;
 
                         case Token.Command:

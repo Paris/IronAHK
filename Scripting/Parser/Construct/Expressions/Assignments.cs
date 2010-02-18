@@ -42,11 +42,8 @@ namespace IronAHK.Scripting
 
             var assign = (CodeComplexAssignStatement)parts[i];
 
-#pragma warning disable 0162
-            if (UseComplexVar)
-                if (assign.Left != null)
-                    return;
-#pragma warning restore 0162
+            if (assign.Left != null)
+                return;
 
             if (parts[x] is CodeBinaryOperatorExpression)
             {
@@ -59,12 +56,7 @@ namespace IronAHK.Scripting
                 assign.Left = VarId((CodeExpression)parts[x]);
             assign.Right = right ? WrappedComplexVar(parts[y]) : new CodePrimitiveExpression(null);
 
-#pragma warning disable 0162
-            if (UseComplexVar)
-                parts[x] = assign;
-            else
-                parts[x] = (CodeMethodInvokeExpression)assign;
-#pragma warning restore 0162
+            parts[x] = assign;
 
             if (right)
                 parts.RemoveAt(y);
