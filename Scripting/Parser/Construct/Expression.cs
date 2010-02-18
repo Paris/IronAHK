@@ -56,44 +56,34 @@ namespace IronAHK.Scripting
             var expr = new List<CodeExpression>();
             var sub = new List<object>();
 
-            int level = 0;
-
             for (int i = 0; i < parts.Length; i++)
             {
-                if (string.IsNullOrEmpty(parts[i] as string))
-                    goto end;
+                if (!(parts[i] is string) || ((string)parts[i]).Length == 0)
+                {
+                    sub.Add(parts[i]);
+                    continue;
+                }
+
+                int next = Set(parts, i);
+
+                if (next > 0)
+                {
+                    for (; i < next; i++)
+                        sub.Add(parts[i]);
+                    i--;
+                    continue;
+                }
 
                 string check = (string)parts[i];
 
-                if (check.Length > 1)
+                if (check.Length == 1 && check[0] == Multicast && sub.Count != 0)
                 {
-                    if (check[check.Length - 1] == ParenOpen)
-                        level++;
-                    goto end;
+                    expr.Add(ParseExpression(sub));
+                    sub.Clear();
+                    continue;
                 }
-
-                switch (check[0])
-                {
-                    case ParenOpen:
-                        level++;
-                        break;
-
-                    case ParenClose:
-                        level--;
-                        break;
-
-                    case Multicast:
-                        if (level == 0 && sub.Count != 0)
-                        {
-                            expr.Add(ParseExpression(sub));
-                            sub.Clear();
-                            continue;
-                        }
-                        break;
-                }
-
-            end:
-                sub.Add(parts[i]);
+                else
+                    sub.Add(parts[i]);
             }
 
             if (sub.Count != 0)
@@ -126,54 +116,13 @@ namespace IronAHK.Scripting
                     #region Parentheses
                     if (part[0] == ParenOpen)
                     {
-                        int levels = 1;
-
-                        for (int x = i + 1; x < parts.Count; x++)
-                        {
-                            if (string.IsNullOrEmpty(parts[x] as string))
-                                continue;
-
-                            string check = (string)parts[x];
-
-                            switch (check[check.Length - 1])
-                            {
-                                case ParenOpen:
-                                    levels++;
-                                    break;
-
-                                case ParenClose:
-                                    if (check.Length != 1)
-                                        break;
-
-                                    levels--;
-
-                                    if (levels < 0)
-                                        throw new ParseException(ExUnbalancedParens);
-                                    else if (levels == 0)
-                                    {
-                                        int count = x - i;
-
-                                        var sub = new List<object>(count);
-
-                                        for (int n = i + 1; n < x; n++)
-                                            sub.Add(parts[n]);
-
-                                        parts.RemoveRange(i, count + 1);
-
-                                        if (sub.Count > 0)
-                                            parts.Insert(i, ParseExpression(sub));
-
-                                        next = true;
-                                    }
-                                    break;
-                            }
-
-                            if (next)
-                                break;
-                        }
-
-                        if (levels != 0)
-                            throw new ParseException(ExUnbalancedParens);
+                        int n = i + 1;
+                        var paren = Dissect(parts, n, Set(parts, i));
+                        parts.RemoveAt(n);
+                        if (paren.Count == 0)
+                            parts.RemoveAt(i);
+                        else 
+                            parts[i] = ParseExpression(paren);
                     }
                     else if (part[0] == ParenClose)
                         rescan = true;
@@ -214,67 +163,28 @@ namespace IronAHK.Scripting
                                 throw new ParseException("Invalid function name");
                         }
 
-                        int levels = 1;
+                        int n = i + 1;
+                        var paren = Dissect(parts, n, Set(parts, i));
+                        parts.RemoveAt(n);
 
-                        for (int x = i + 1; x < parts.Count; x++)
+                        CodeMethodInvokeExpression invoke;
+
+                        if (dynamic)
                         {
-                            if (string.IsNullOrEmpty(parts[x] as string))
-                                continue;
+                            invoke = (CodeMethodInvokeExpression)InternalMethods.FunctionCall;
+                            invoke.Parameters.Add(VarNameOrBasicString(name, true));
+                        }
+                        else
+                            invoke = LocalMethodInvoke(name);
 
-                            string current = (string)parts[x];
-
-                            switch (current[0])
-                            {
-                                case ParenOpen:
-                                    levels++;
-                                    break;
-
-                                default:
-                                    if (current[current.Length - 1] == ParenOpen)
-                                        goto case ParenOpen;
-                                    break;
-
-                                case ParenClose:
-                                    if (--levels == 0)
-                                    {
-                                        int count = x - i - 1;
-
-                                        object[] sub = new object[count];
-
-                                        for (int n = 0; n < count; n++)
-                                            sub[n] = parts[i + 1 + n];
-
-                                        CodeMethodInvokeExpression invoke;
-
-                                        if (dynamic)
-                                        {
-                                            invoke = (CodeMethodInvokeExpression)InternalMethods.FunctionCall;
-                                            invoke.Parameters.Add(VarNameOrBasicString(name, true));
-                                        }
-                                        else
-                                            invoke = LocalMethodInvoke(name);
-
-                                        if (count != 0)
-                                        {
-                                            var passed = ParseMultiExpression(sub);
-                                            invoke.Parameters.AddRange(passed);
-                                            invokes.Add(invoke);
-                                        }
-
-                                        parts.RemoveRange(i, count + 2);
-                                        parts.Insert(i, invoke);
-
-                                        next = true;
-                                    }
-                                    break;
-                            }
-
-                            if (next)
-                                break;
+                        if (paren.Count != 0)
+                        {
+                            var passed = ParseMultiExpression(paren.ToArray());
+                            invoke.Parameters.AddRange(passed);
+                            invokes.Add(invoke);
                         }
 
-                        if (levels != 0)
-                            throw new ParseException(ExUnbalancedParens);
+                        parts[i] = invoke;
                     }
                     #endregion
                     #region Assignments
