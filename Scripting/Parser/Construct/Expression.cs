@@ -121,7 +121,7 @@ namespace IronAHK.Scripting
                         parts.RemoveAt(n);
                         if (paren.Count == 0)
                             parts.RemoveAt(i);
-                        else 
+                        else
                             parts[i] = ParseExpression(paren);
                     }
                     else if (part[0] == ParenClose)
@@ -714,17 +714,6 @@ namespace IronAHK.Scripting
                 MergeAssignmentAt(parts, i);
             #endregion
 
-            #region Variables
-#pragma warning disable 0162
-            if (!UseComplexVar)
-            {
-                for (int i = 0; i < parts.Count; i++)
-                    if (parts[i] is CodeComplexVariableReferenceExpression)
-                        parts[i] = (CodeMethodInvokeExpression)(CodeComplexVariableReferenceExpression)parts[i];
-            }
-#pragma warning restore 0162
-            #endregion
-
             #region Result
 
             if (parts.Count > 1)
@@ -750,17 +739,10 @@ namespace IronAHK.Scripting
             if (parts.Count != 1)
                 throw new ArgumentOutOfRangeException();
 
-#pragma warning disable 0162
-            if (UseComplexVar)
-            {
-                if (parts[0] is CodeComplexAssignStatement)
-                    return (CodeBinaryOperatorExpression)(CodeComplexAssignStatement)parts[0];
-                else
-                    return (CodeExpression)parts[0];
-            }
+            if (parts[0] is CodeComplexAssignStatement)
+                return (CodeBinaryOperatorExpression)(CodeComplexAssignStatement)parts[0];
             else
                 return (CodeExpression)parts[0];
-#pragma warning restore 0162
 
             #endregion
         }
