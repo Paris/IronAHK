@@ -223,7 +223,7 @@ namespace IronAHK.Scripting
                     else if (part.Length == 1 && part[0] == Multicast)
                     {
 #pragma warning disable 0162
-                        if (!AllowNestedMultipartExpressions)
+                        if (!LaxExpressions)
                             throw new ParseException("Nested multipart expression not allowed.");
 
                         // implement as: + Dummy(expr..)

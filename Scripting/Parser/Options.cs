@@ -12,15 +12,6 @@ namespace IronAHK.Scripting
 #endif
 ;
 
-        const bool LegacyIf =
-#if LEGACY
- true
-#endif
-#if !LEGACY
- false
-#endif
-;
-
-        const bool AllowNestedMultipartExpressions = true;
+        const bool LegacyIf = LaxExpressions;
     }
 }
