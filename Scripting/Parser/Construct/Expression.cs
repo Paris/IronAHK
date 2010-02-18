@@ -111,7 +111,6 @@ namespace IronAHK.Scripting
                 {
                     string part = (string)parts[i];
                     object result;
-                    bool next = false;
 
                     #region Parentheses
                     if (part[0] == ParenOpen)
