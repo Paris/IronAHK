@@ -50,6 +50,7 @@
     <Compile Include="Generator\Emission\Expression.cs" />
     <Compile Include="Parser\CodeDom\CodeTernaryOperatorExpression.cs" />
     <Compile Include="Parser\Construct\Expressions\Assignments.cs" />
+    <Compile Include="Parser\Construct\Expressions\Object.cs" />
     <Compile Include="Parser\Construct\Expressions\List.cs" />
     <Compile Include="Parser\Construct\Expressions\Set.cs" />
     <Compile Include="Parser\Construct\Expressions\Operators.cs" />

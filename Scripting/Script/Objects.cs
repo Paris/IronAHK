@@ -1,10 +1,13 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 
 namespace IronAHK.Scripting
 {
     partial class Script
     {
+        #region Index
+
         public static object Index(object item, object key)
         {
             if (item == null || key == null)
@@ -71,5 +74,38 @@ namespace IronAHK.Scripting
 
             return null;
         }
+
+        #endregion
+
+        #region Create
+
+        public static Dictionary<string, object> Dictionary(string[] keys, object[] values)
+        {
+            var table = new Dictionary<string, object>();
+            values = (object[])values[0];
+
+            for (int i = 0; i < keys.Length; i++)
+            {
+                string name = keys[i].ToLowerInvariant();
+                object entry = i < values.Length ? values[i] : null;
+
+                if (entry == null)
+                {
+                    if (table.ContainsKey(name))
+                        table.Remove(name);
+                }
+                else
+                {
+                    if (table.ContainsKey(name))
+                        table[name] = entry;
+                    else
+                        table.Add(name, entry);
+                }
+            }
+
+            return table;
+        }
+
+        #endregion
     }
 }
