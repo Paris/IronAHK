@@ -34,6 +34,15 @@ namespace IronAHK.Scripting
 
         void MergeAssignmentAt(List<object> parts, int i)
         {
+            int n = i - 1;
+
+            if (i > 0 && parts[n] is CodeMethodInvokeExpression &&
+                ((CodeMethodInvokeExpression)parts[n]).Method.MethodName == InternalMethods.Index.MethodName)
+            {
+                MergeObjectAssignmentAt(parts, i);
+                return;
+            }
+
             if (!(parts[i] is CodeComplexAssignStatement))
                 return;
 
@@ -61,6 +70,44 @@ namespace IronAHK.Scripting
             if (right)
                 parts.RemoveAt(y);
             parts.RemoveAt(i);
+        }
+
+        void MergeObjectAssignmentAt(List<object> parts, int i)
+        {
+            int x = i - 1, y = i + 1;
+            var invoke = (CodeMethodInvokeExpression)parts[x];
+            CodeExpression target = null;
+            var step = new List<CodeExpression>();
+
+            while (invoke.Parameters.Count == 2 && invoke.Method.MethodName == InternalMethods.Index.MethodName)
+            {
+                step.Add(invoke.Parameters[1]);
+
+                if (invoke.Parameters[0] is CodeMethodInvokeExpression)
+                    invoke = (CodeMethodInvokeExpression)invoke.Parameters[0];
+                else
+                {
+                    target = invoke.Parameters[0];
+                    break;
+                }
+            }
+
+            var set = (CodeMethodInvokeExpression)InternalMethods.SetObject;
+            set.Parameters.Add(target);
+            set.Parameters.Add(step[0]);
+            step.RemoveAt(0);
+            set.Parameters.Add(new CodeArrayCreateExpression(typeof(object), step.ToArray()));
+
+            if (y < parts.Count)
+            {
+                set.Parameters.Add(WrappedComplexVar(parts[y]));
+                parts.RemoveAt(y);
+            }
+            else
+                set.Parameters.Add(new CodePrimitiveExpression(null));
+
+            parts.RemoveAt(i);
+            parts[x] = set;
         }
     }
 }

@@ -77,7 +77,7 @@ namespace IronAHK.Scripting
 
         #endregion
 
-        #region Create
+        #region Modify
 
         public static Dictionary<string, object> Dictionary(string[] keys, object[] values)
         {
@@ -104,6 +104,70 @@ namespace IronAHK.Scripting
             }
 
             return table;
+        }
+
+        public static object SetObject(object item, object key, object[] parents, object value)
+        {
+            bool isDictionary;
+
+            for (int i = parents.Length - 1; i > -1; i--)
+            {
+                object child = Index(item, parents[i]);
+
+                if (child == null)
+                {
+                    isDictionary = typeof(IDictionary).IsAssignableFrom(item.GetType());
+
+                    if (!isDictionary)
+                        return null;
+
+                    var dictionary = (IDictionary)item;
+                    dictionary.Add(parents[i], new Dictionary<object, object>());
+                }
+                else
+                    item = child;
+            }
+
+            if (item == null)
+                return null;
+
+            var type = item.GetType();
+            isDictionary = typeof(IDictionary).IsAssignableFrom(type);
+            bool isNumericKey = IsNumeric(key);
+
+            if (isNumericKey && isDictionary)
+                return null;
+
+            if (isDictionary) // set object
+            {
+                if (!(key is string))
+                    return null;
+
+                string name = ((string)key).ToLowerInvariant();
+
+                var dictionary = (IDictionary)item;
+
+                if (dictionary.Contains(name))
+                    dictionary[name] = value;
+                else
+                    dictionary.Add(name, value);
+            }
+            else // set array
+            {
+                int index = ForceInt(key);
+
+                if (!type.IsArray)
+                    return null;
+
+                var array = (Array)item;
+
+                if (index < 0 || index > array.Length - 1)
+                    return null;
+
+                array.SetValue(value, index);
+            }
+
+            return value;
         }
 
         #endregion
