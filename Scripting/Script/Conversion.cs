@@ -1,4 +1,7 @@
-﻿
+﻿using System;
+using System.Collections;
+using System.Text;
+
 namespace IronAHK.Scripting
 {
     partial class Script
@@ -83,7 +86,72 @@ namespace IronAHK.Scripting
         {
             if (input == null)
                 return string.Empty;
-            return input is string ? (string)input : input.ToString();
+            else if (input is string)
+                return (string)input;
+            else if (IsNumeric(input) || input is bool)
+                return input.ToString();
+
+            var type = input.GetType();
+            var buffer = new StringBuilder();
+
+            // UNDONE: use constants from parser for tokens like multicast, arrays and object boundaries
+
+            if (typeof(IDictionary).IsAssignableFrom(type))
+            {
+                buffer.Append('{');
+
+                var dictionary = (IDictionary)input;
+                bool first = true;
+
+                foreach (object key in dictionary.Keys)
+                {
+                    if (first)
+                        first = false;
+                    else
+                        buffer.Append(',');
+
+                    buffer.Append('"');
+                    buffer.Append(ForceString(key));
+                    buffer.Append('"');
+                    buffer.Append(':');
+
+                    var subtype = dictionary[key].GetType();
+                    bool obj = subtype.IsArray || typeof(IDictionary).IsAssignableFrom(subtype);
+
+                    if (!obj)
+                        buffer.Append('"');
+
+                    buffer.Append(ForceString(dictionary[key]));
+
+                    if (!obj)
+                        buffer.Append('"');
+                }
+
+                buffer.Append('}');
+            }
+            else if (type.IsArray)
+            {
+                buffer.Append('[');
+
+                var array = (Array)input;
+                bool first = true;
+
+                foreach (object item in array)
+                {
+                    if (first)
+                        first = false;
+                    else
+                        buffer.Append(',');
+
+                    buffer.Append(ForceString(item));
+                }
+
+                buffer.Append(']');
+            }
+            else
+                return string.Empty;
+
+            return buffer.ToString();
         }
     }
 }
