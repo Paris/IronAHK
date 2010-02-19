@@ -300,7 +300,10 @@ namespace IronAHK.Scripting
                 this.blockOpen = false;
                 var result = ParseSingleExpression(code);
                 blockOpen = blockOpen || this.blockOpen;
-                return result;
+
+                var iftest = (CodeMethodInvokeExpression)InternalMethods.IfElse;
+                iftest.Parameters.Add(result);
+                return iftest;
             }
 #pragma warning disable 0162
             else if (LegacyIf)
