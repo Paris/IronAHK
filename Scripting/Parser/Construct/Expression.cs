@@ -227,18 +227,19 @@ namespace IronAHK.Scripting
                     else if (IsAssignOp(part) || IsImplicitAssignment(parts, i))
                     {
                         int n = i - 1;
-                        if (n < 0 || !(parts[n] is CodeComplexVariableReferenceExpression))
+
+                        if (i > 0 && IsJsonObject(parts[n])) { }
+                        else if (n < 0 || !(parts[n] is CodeComplexVariableReferenceExpression))
                         {
                             if (LaxExpressions)
                             {
-                                if (parts[n] is CodePrimitiveExpression &&
-                                    ((CodePrimitiveExpression)parts[n]).Value is decimal)
+                                if (parts[n] is CodePrimitiveExpression && ((CodePrimitiveExpression)parts[n]).Value is decimal)
                                     parts[n] = VarId(((decimal)((CodePrimitiveExpression)parts[n]).Value).ToString());
                             }
                             else
                                 throw new ParseException("Can only assign to a variable");
                         }
-
+                        
                         // (x += y) => (x = x + y)
                         parts[i] = new CodeComplexAssignStatement();
                         if (part[0] != AssignPre && part.Length != 1)

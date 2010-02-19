@@ -99,5 +99,10 @@ namespace IronAHK.Scripting
             keys = names.ToArray();
             values = entries.ToArray();
         }
+
+        bool IsJsonObject(object item)
+        {
+            return item is CodeMethodInvokeExpression && ((CodeMethodInvokeExpression)item).Method.MethodName == InternalMethods.Index.MethodName;
+        }
     }
 }

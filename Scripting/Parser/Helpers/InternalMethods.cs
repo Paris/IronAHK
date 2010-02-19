@@ -130,6 +130,11 @@ namespace IronAHK.Scripting
                 get { return new MethodReference(typeof(Script), "Dictionary"); }
             }
 
+            public static MethodReference SetObject
+            {
+                get { return new MethodReference(typeof(Script), "SetObject"); }
+            }
+
             #endregion
 
             #region Misc
