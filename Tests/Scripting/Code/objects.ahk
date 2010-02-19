@@ -15,4 +15,9 @@ if ({ a : { b : "c" } }.a["b"] != "c")
 if (([1,2,3][1] += 3) != 5)
 	FileAppend, fail4, *
 
+c := { }
+c["x"]["y"] := "z"
+if (c.x.y != "z")
+	FileAppend, fail, *
+
 FileAppend, % %a%["three"][0], *
