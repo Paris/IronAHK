@@ -176,6 +176,20 @@ namespace IronAHK.Scripting
             return value;
         }
 
+        public static int ExtendArray(ref object item)
+        {
+            const int err = -1;
+
+            if (item == null || !item.GetType().IsArray)
+                return err;
+
+            var array = (object[])item;
+            int i = array.Length;
+            Array.Resize<object>(ref array, i + 1); // HACK: array resizing does not work because argument is not passed by reference
+
+            return i;
+        }
+
         #endregion
     }
 }
