@@ -171,8 +171,15 @@ namespace IronAHK.Scripting
                             if (index.Length > 1)
                                 throw new ParseException("Cannot have multipart expression in index.");
                             else if (index.Length == 0)
-                                throw new ParseException("Resizing arrays currently unsupported.");
-                            invoke.Parameters.Add(index[0]);
+                            {
+                                var extend = (CodeMethodInvokeExpression)InternalMethods.ExtendArray;
+                                var sub = new List<object>(1);
+                                sub.Add(parts[i - 1]);
+                                extend.Parameters.Add(ParseExpression(sub));
+                                invoke.Parameters.Add(extend);
+                            }
+                            else
+                                invoke.Parameters.Add(index[0]);
 
                             parts[i] = invoke;
                             parts.RemoveAt(n);

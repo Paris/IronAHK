@@ -135,6 +135,11 @@ namespace IronAHK.Scripting
                 get { return new MethodReference(typeof(Script), "SetObject"); }
             }
 
+            public static MethodReference ExtendArray
+            {
+                get { return new MethodReference(typeof(Script), "ExtendArray"); }
+            }
+
             #endregion
 
             #region Misc
