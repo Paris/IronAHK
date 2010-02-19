@@ -36,8 +36,7 @@ namespace IronAHK.Scripting
         {
             int n = i - 1;
 
-            if (i > 0 && parts[n] is CodeMethodInvokeExpression &&
-                ((CodeMethodInvokeExpression)parts[n]).Method.MethodName == InternalMethods.Index.MethodName)
+            if (i > 0 && IsJsonObject(parts[n]))
             {
                 MergeObjectAssignmentAt(parts, i);
                 return;
