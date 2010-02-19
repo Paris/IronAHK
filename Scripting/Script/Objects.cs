@@ -116,13 +116,19 @@ namespace IronAHK.Scripting
 
                 if (child == null)
                 {
+                    if (!(parents[i] is string))
+                        return null;
+
                     isDictionary = typeof(IDictionary).IsAssignableFrom(item.GetType());
 
                     if (!isDictionary)
                         return null;
 
                     var dictionary = (IDictionary)item;
-                    dictionary.Add(parents[i], new Dictionary<object, object>());
+                    string name = (string)parents[i];
+                    dictionary.Add(name, new Dictionary<string, object>());
+
+                    item = dictionary[name];
                 }
                 else
                     item = child;
