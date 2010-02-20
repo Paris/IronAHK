@@ -104,5 +104,10 @@ namespace IronAHK.Scripting
         {
             return item is CodeMethodInvokeExpression && ((CodeMethodInvokeExpression)item).Method.MethodName == InternalMethods.Index.MethodName;
         }
+
+        bool IsArrayExtension(object item)
+        {
+            return item is CodeMethodInvokeExpression && ((CodeMethodInvokeExpression)item).Method.MethodName == InternalMethods.ExtendArray.MethodName;
+        }
     }
 }

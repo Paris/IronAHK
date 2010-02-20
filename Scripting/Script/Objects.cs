@@ -176,16 +176,18 @@ namespace IronAHK.Scripting
             return value;
         }
 
-        public static int ExtendArray(ref object item)
+        public static object ExtendArray(ref object item, object value)
         {
             if (item == null || !item.GetType().IsArray)
-                return -1;
+                return null;
 
             var array = (object[])item;
             int i = array.Length;
             Array.Resize<object>(ref array, i + 1);
+            array[i] = value;
             item = array;
-            return i;
+
+            return value;
         }
 
         #endregion
