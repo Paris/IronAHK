@@ -3062,7 +3062,7 @@ FileSelectFile, file, , , Pick a filename in a deeply nested folder:
 if file =
 {
 	MsgBox, 4,, Continue?
-	IfMsgBox, No, ExitApp
+	;IfMsgBox, No, ExitApp
 }
 else
 {
