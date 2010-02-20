@@ -95,17 +95,19 @@ namespace IronAHK.Scripting
                 if(p < types.Length)
                 {
                     Type Generated = EmitExpression(invoke.Parameters[p]);
-                    
-                    if(types[p].IsByRef && invoke.Parameters[p] is CodeComplexVariableReferenceExpression)
+
+                    if(types[p].IsByRef)
                     {
                         // Variables passed by reference need to be stored in a local
                         Debug("Parameter "+p+" was by reference");
                         LocalBuilder Temporary = Generator.DeclareLocal(typeof(object));
                         Generator.Emit(OpCodes.Stloc, Temporary);
                         Generator.Emit(OpCodes.Ldloca, Temporary);
-                        ByRef.Add(Temporary, invoke.Parameters[p] as CodeComplexVariableReferenceExpression);
+
+                        if(invoke.Parameters[p] is CodeComplexVariableReferenceExpression)
+                            ByRef.Add(Temporary, invoke.Parameters[p] as CodeComplexVariableReferenceExpression);
                     }
-                    else 
+                    else
                     {
                         ForceTopStack(Generated, types[p]);
                     }
