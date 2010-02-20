@@ -60,6 +60,68 @@ namespace IronAHK.Scripting
                     EmitExpression(invoke.Parameters[2]);
                     return;
                 }
+                else if (name == Parser.InternalMethods.ExtendArray.MethodName && invoke.Parameters.Count == 1)
+                    return;
+                else if (name == Parser.InternalMethods.SetObject.MethodName && invoke.Parameters.Count == 4)
+                {
+                    EmitExpression(invoke.Parameters[1]);
+                    EmitExpression(invoke.Parameters[2]);
+                    EmitExpression(invoke.Parameters[0]);
+
+                    writer.Write(Parser.SingleSpace);
+                    writer.Write(Parser.AssignPre);
+                    writer.Write(Parser.Equal);
+                    writer.Write(Parser.SingleSpace);
+
+                    EmitExpression(invoke.Parameters[3]);
+
+                    return;
+                }
+                else if (name == Parser.InternalMethods.Index.MethodName && invoke.Parameters.Count == 2)
+                {
+                    EmitExpression(invoke.Parameters[0]);
+                    writer.Write(Parser.ArrayOpen);
+                    EmitExpression(invoke.Parameters[1]);
+                    writer.Write(Parser.ArrayClose);
+
+                    return;
+                }
+                else if (name == Parser.InternalMethods.Dictionary.MethodName && invoke.Parameters.Count == 2)
+                {
+                    writer.Write(Parser.BlockOpen);
+                    writer.Write(Parser.SingleSpace);
+
+                    var parts = new CodeExpressionCollection[2];
+
+                    for (int i = 0; i < parts.Length; i++)
+                        parts[i] = ((CodeArrayCreateExpression)invoke.Parameters[i]).Initializers;
+
+                    bool first =true;
+
+                    for (int i = 0; i < parts[0].Count; i++)
+                    {
+                        if (first)
+                            first = false;
+                        else
+                        {
+                            writer.Write(Parser.Multicast);
+                            writer.Write(Parser.SingleSpace);
+                        }
+
+                        depth++;
+                        EmitExpression(parts[0][i]);
+                        writer.Write(Parser.SingleSpace);
+                        writer.Write(Parser.AssignPre);
+                        writer.Write(Parser.SingleSpace);
+                        EmitExpression(parts[1][i]);
+                        depth--;
+                    }
+
+                    writer.Write(Parser.SingleSpace);
+                    writer.Write(Parser.BlockClose);
+
+                    return;
+                }
             }
 
             if (invoke.Method.TargetObject != null && 
@@ -143,9 +205,19 @@ namespace IronAHK.Scripting
         {
             writer.Write(Parser.ArrayOpen);
 
+            bool first = true;
             depth++;
             foreach (CodeExpression expr in array.Initializers)
+            {
+                if (first)
+                    first = false;
+                else
+                {
+                    writer.Write(Parser.Multicast);
+                    writer.Write(Parser.SingleSpace);
+                }
                 EmitExpression(expr);
+            }
             depth--;
 
             writer.Write(Parser.ArrayClose);
