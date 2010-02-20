@@ -35,6 +35,9 @@ namespace IronAHK.Scripting
 
             string[] parts = SplitCommandParameters(param);
 
+            if (parts.Length > 0)
+                parts[parts.Length - 1] = StripCommentSingle(parts[parts.Length - 1]);
+
             for (int i = 0; i < parts.Length; i++)
             {
                 if (IsExpressionParameter(parts[i]))
@@ -58,9 +61,6 @@ namespace IronAHK.Scripting
                     }
                 }
             }
-
-            if (parts.Length > 0)
-                parts[parts.Length - 1] = StripCommentSingle(parts[parts.Length - 1]);
 
             #endregion
 
@@ -100,8 +100,8 @@ namespace IronAHK.Scripting
                 case "settitlematchmode":
                 case "setwindelay":
                 case "setworkingdir":
+                    replaced.Append("A_");
                     replaced.Append(cmd, 3, cmd.Length - 3);
-                    replaced.Append(AssignPre);
                     replaced.Append(Equal);
                     replaced.Append(param);
                     break;
@@ -112,7 +112,6 @@ namespace IronAHK.Scripting
                 case "stringcasesense":
                     replaced.Append("A_");
                     replaced.Append(cmd);
-                    replaced.Append(AssignPre);
                     replaced.Append(Equal);
                     replaced.Append(param);
                     break;
@@ -255,9 +254,11 @@ namespace IronAHK.Scripting
                         throw new ParseException(ExTooFewParams);
                     replaced.Append(FlowIf);
                     replaced.Append(SingleSpace);
+                    replaced.Append(ParenOpen);
                     replaced.Append("A_MsgBox");
                     replaced.Append(Equal);
                     replaced.Append(parts[0]);
+                    replaced.Append(ParenClose);
                     break;
 
                 case "ifwinactive":
@@ -271,7 +272,8 @@ namespace IronAHK.Scripting
                         replaced.Append(part);
                         replaced.Append(Multicast);
                     }
-                    replaced.Remove(replaced.Length - 1, 1);
+                    if (parts.Length > 1)
+                        replaced.Remove(replaced.Length - 1, 1);
                     replaced.Append(ParenClose, 2);
                     break;
 
@@ -286,7 +288,8 @@ namespace IronAHK.Scripting
                         replaced.Append(part);
                         replaced.Append(Multicast);
                     }
-                    replaced.Remove(replaced.Length - 1, 1);
+                    if (parts.Length > 1)
+                        replaced.Remove(replaced.Length - 1, 1);
                     replaced.Append(ParenClose, 2);
                     break;
 
@@ -302,7 +305,8 @@ namespace IronAHK.Scripting
                         replaced.Append(part);
                         replaced.Append(Multicast);
                     }
-                    replaced.Remove(replaced.Length - 1, 1);
+                    if (parts.Length > 1)
+                        replaced.Remove(replaced.Length - 1, 1);
                     replaced.Append(ParenClose, 2);
                     break;
 
@@ -318,7 +322,8 @@ namespace IronAHK.Scripting
                         replaced.Append(part);
                         replaced.Append(Multicast);
                     }
-                    replaced.Remove(replaced.Length - 1, 1);
+                    if (parts.Length > 1)
+                        replaced.Remove(replaced.Length - 1, 1);
                     replaced.Append(ParenClose, 2);
                     break;
 
