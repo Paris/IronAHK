@@ -174,9 +174,9 @@ namespace IronAHK.Scripting
                             {
                                 var extend = (CodeMethodInvokeExpression)InternalMethods.ExtendArray;
                                 var sub = new List<object>(1);
-                                sub.Add(parts[i - 1]);
+                                sub.Add(parts[n]);
                                 extend.Parameters.Add(ParseExpression(sub));
-                                invoke.Parameters.Add(extend);
+                                invoke = extend;
                             }
                             else
                                 invoke.Parameters.Add(index[0]);

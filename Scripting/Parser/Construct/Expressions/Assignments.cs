@@ -34,19 +34,26 @@ namespace IronAHK.Scripting
 
         void MergeAssignmentAt(List<object> parts, int i)
         {
-            int n = i - 1;
-
-            if (i > 0 && IsJsonObject(parts[n]))
-            {
-                MergeObjectAssignmentAt(parts, i);
-                return;
-            }
+            int x = i - 1, y = i + 1;
+            bool right = y < parts.Count;
 
             if (!(parts[i] is CodeComplexAssignStatement))
                 return;
 
-            int x = i - 1, y = i + 1;
-            bool right = y < parts.Count;
+            if (i > 0 && IsJsonObject(parts[x]))
+            {
+                MergeObjectAssignmentAt(parts, i);
+                return;
+            }
+            else if (i > 0 && IsArrayExtension(parts[x]))
+            {
+                var extend = (CodeMethodInvokeExpression)parts[x];
+                extend.Parameters.Add(right ? WrappedComplexVar(parts[y]) : new CodePrimitiveExpression(null));
+                if (right)
+                    parts.RemoveAt(y);
+                parts.RemoveAt(i);
+                return;
+            }
 
             var assign = (CodeComplexAssignStatement)parts[i];
 
