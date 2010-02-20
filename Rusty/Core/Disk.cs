@@ -766,15 +766,14 @@ namespace IronAHK.Rusty
         /// <param name="OutDrive">Name of the variable in which to store the drive letter or server name of the file. If the file is on a local or mapped drive, the variable will be set to the drive letter followed by a colon (no backslash). If the file is on a network path (UNC), the variable will be set to the share name, e.g. \\Workstation01</param>
         public static void SplitPath(string InputVar, out string OutFileName, out string OutDir, out string OutExtension, out string OutNameNoExt, out string OutDrive)
         {
-            FileInfo path = new FileInfo(InputVar);
+            try { InputVar = Path.GetFullPath(InputVar); }
+            catch (Exception) { error = 1; }
 
-            OutFileName = path.Name;
-            OutDir = path.DirectoryName;
-            OutExtension = path.Extension;
-            OutNameNoExt = path.Extension.Length == 0 ? path.Name : path.Name.Substring(0, path.Extension.Length);
-
-            OutDrive = path.FullName;
-            OutDrive = OutDrive.Substring(0, OutDrive.IndexOf(':'));
+            OutFileName = Path.GetFileName(InputVar);
+            OutDir = Path.GetDirectoryName(InputVar);
+            OutExtension = Path.GetExtension(InputVar);
+            OutNameNoExt = Path.GetFileNameWithoutExtension(InputVar);
+            OutDrive = Path.GetPathRoot(InputVar);
         }
     }
 }
