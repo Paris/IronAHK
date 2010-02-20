@@ -106,7 +106,7 @@ namespace IronAHK.Scripting
             return table;
         }
 
-        public static object SetObject(object item, object key, object[] parents, object value)
+        public static object SetObject(object key, object item, object[] parents, object value)
         {
             bool isDictionary;
 
@@ -178,15 +178,13 @@ namespace IronAHK.Scripting
 
         public static int ExtendArray(ref object item)
         {
-            const int err = -1;
-
             if (item == null || !item.GetType().IsArray)
-                return err;
+                return -1;
 
             var array = (object[])item;
             int i = array.Length;
-            Array.Resize<object>(ref array, i + 1); // HACK: array resizing does not work because argument is not passed by reference
-
+            Array.Resize<object>(ref array, i + 1);
+            item = array;
             return i;
         }
 

@@ -92,9 +92,9 @@ namespace IronAHK.Scripting
             }
 
             var set = (CodeMethodInvokeExpression)InternalMethods.SetObject;
-            set.Parameters.Add(target);
             set.Parameters.Add(step[0]);
             step.RemoveAt(0);
+            set.Parameters.Add(target);
             set.Parameters.Add(new CodeArrayCreateExpression(typeof(object), step.ToArray()));
 
             if (y < parts.Count)
