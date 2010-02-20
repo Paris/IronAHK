@@ -6,14 +6,15 @@ namespace IronAHK.Scripting
     {
         void EmitConditionStatement(CodeConditionStatement cond)
         {
-            writer.Write("if (");
+            writer.Write(Parser.FlowIf);
+            writer.Write(Parser.ParenOpen);
             EmitExpression(cond.Condition);
-            writer.Write(")");
+            writer.Write(Parser.ParenClose);
 
             if (cond.TrueStatements.Count > 1)
             {
                 WriteSpace();
-                writer.Write("{");
+                writer.Write(Parser.BlockOpen);
             }
 
             depth++;
@@ -23,25 +24,25 @@ namespace IronAHK.Scripting
             if (cond.TrueStatements.Count > 1)
             {
                 WriteSpace();
-                writer.Write("}");
+                writer.Write(Parser.BlockClose);
             }
 
             if (cond.FalseStatements.Count > 0)
             {
                 if (options.ElseOnClosing)
-                    writer.Write(" ");
+                    writer.Write(Parser.SingleSpace);
                 else
                     WriteSpace();
 
-                writer.Write("else");
+                writer.Write(Parser.FlowElse);
 
                 if (options.ElseOnClosing)
-                    writer.Write(" ");
+                    writer.Write(Parser.SingleSpace);
                 else
                     WriteSpace();
 
                 if (cond.FalseStatements.Count > 1)
-                    writer.Write("{");
+                    writer.Write(Parser.BlockOpen);
 
                 depth++;
                 EmitStatements(cond.FalseStatements);
@@ -50,7 +51,7 @@ namespace IronAHK.Scripting
                 if (cond.FalseStatements.Count > 1)
                 {
                     WriteSpace();
-                    writer.Write("}");
+                    writer.Write(Parser.BlockClose);
                 }
             }
         }
@@ -59,15 +60,16 @@ namespace IronAHK.Scripting
         {
             EmitStatement(iteration.InitStatement);
             WriteSpace();
-            writer.Write("white (");
+            writer.Write(Parser.FlowWhile);
+            writer.Write(Parser.ParenOpen);
 
             depth++;
             EmitExpression(iteration.TestExpression);
             depth--;
 
-            writer.Write(')');
+            writer.Write(Parser.ParenClose);
             WriteSpace();
-            writer.Write('{');
+            writer.Write(Parser.BlockOpen);
 
             depth++;
             EmitStatements(iteration.Statements);
@@ -75,19 +77,20 @@ namespace IronAHK.Scripting
             depth--;
 
             WriteSpace();
-            writer.Write('}');
+            writer.Write(Parser.BlockClose);
         }
 
         void EmitGoto(CodeGotoStatement go)
         {
-            writer.Write("goto ");
+            writer.Write(Parser.FlowGoto);
+            writer.Write(Parser.SingleSpace);
             writer.Write(go.Label);
         }
 
         void EmitLabel(CodeLabeledStatement label)
         {
             writer.Write(label.Label);
-            writer.Write(':');
+            writer.Write(Parser.HotkeyBound);
         }
     }
 }
