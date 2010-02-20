@@ -94,11 +94,9 @@ namespace IronAHK.Scripting
             var type = input.GetType();
             var buffer = new StringBuilder();
 
-            // UNDONE: use constants from parser for tokens like multicast, arrays and object boundaries
-
             if (typeof(IDictionary).IsAssignableFrom(type))
             {
-                buffer.Append('{');
+                buffer.Append(Parser.BlockOpen);
 
                 var dictionary = (IDictionary)input;
                 bool first = true;
@@ -108,30 +106,30 @@ namespace IronAHK.Scripting
                     if (first)
                         first = false;
                     else
-                        buffer.Append(',');
+                        buffer.Append(Parser.Multicast);
 
-                    buffer.Append('"');
+                    buffer.Append(Parser.StringBound);
                     buffer.Append(ForceString(key));
-                    buffer.Append('"');
-                    buffer.Append(':');
+                    buffer.Append(Parser.StringBound);
+                    buffer.Append(Parser.AssignPre);
 
                     var subtype = dictionary[key].GetType();
                     bool obj = subtype.IsArray || typeof(IDictionary).IsAssignableFrom(subtype);
 
                     if (!obj)
-                        buffer.Append('"');
+                        buffer.Append(Parser.StringBound);
 
                     buffer.Append(ForceString(dictionary[key]));
 
                     if (!obj)
-                        buffer.Append('"');
+                        buffer.Append(Parser.StringBound);
                 }
 
-                buffer.Append('}');
+                buffer.Append(Parser.BlockClose);
             }
             else if (type.IsArray)
             {
-                buffer.Append('[');
+                buffer.Append(Parser.ArrayOpen);
 
                 var array = (Array)input;
                 bool first = true;
@@ -141,12 +139,12 @@ namespace IronAHK.Scripting
                     if (first)
                         first = false;
                     else
-                        buffer.Append(',');
+                        buffer.Append(Parser.Multicast);
 
                     buffer.Append(ForceString(item));
                 }
 
-                buffer.Append(']');
+                buffer.Append(Parser.ArrayClose);
             }
             else
                 return string.Empty;
