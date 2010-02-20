@@ -51,12 +51,12 @@ namespace IronAHK.Scripting
                 else if (name == Parser.InternalMethods.Operate.MethodName && invoke.Parameters.Count == 3)
                 {
                     EmitExpression(invoke.Parameters[1]);
-                    writer.Write(' ');
+                    writer.Write(Parser.SingleSpace);
 
                     var op = (Script.Operator)Enum.Parse(typeof(Script.Operator), ((CodeFieldReferenceExpression)invoke.Parameters[0]).FieldName);
                     writer.Write(ScriptOperator(op));
 
-                    writer.Write(' ');
+                    writer.Write(Parser.SingleSpace);
                     EmitExpression(invoke.Parameters[2]);
                     return;
                 }
@@ -67,32 +67,35 @@ namespace IronAHK.Scripting
             {
                 depth++;
                 EmitExpression(invoke.Method.TargetObject);
-                writer.Write('.');
+                writer.Write(Parser.Concatenate);
                 depth--;
             }
 
             writer.Write(invoke.Method.MethodName);
-            writer.Write('(');
+            writer.Write(Parser.ParenOpen);
 
             for (int i = 0; i < invoke.Parameters.Count; i++)
             {
                 depth++;
                 if (i > 0)
-                    writer.Write(", ");
+                {
+                    writer.Write(Parser.Multicast);
+                    writer.Write(Parser.SingleSpace);
+                }
                 EmitExpression(invoke.Parameters[i]);
                 depth--;
             }
 
-            writer.Write(')');
+            writer.Write(Parser.ParenClose);
         }
 
         void EmitReturn(CodeMethodReturnStatement returns)
         {
-            writer.Write("return");
+            writer.Write(Parser.FlowReturn);
 
             if (returns.Expression != null)
             {
-                writer.Write(' ');
+                writer.Write(Parser.SingleSpace);
                 depth++;
                 EmitExpression(returns.Expression);
                 depth--;
@@ -106,10 +109,13 @@ namespace IronAHK.Scripting
         void EmitVariableDeclaration(CodeVariableDeclarationStatement var)
         {
             writer.Write(var.Name);
-            writer.Write(" := ");
+            writer.Write(Parser.SingleSpace);
+            writer.Write(Parser.AssignPre);
+            writer.Write(Parser.Equal);
+            writer.Write(Parser.SingleSpace);
 
             if (var.InitExpression == null)
-                writer.Write("null");
+                writer.Write(Parser.NullTxt);
             else
             {
                 depth++;
@@ -126,20 +132,23 @@ namespace IronAHK.Scripting
         void EmitAssignment(CodeAssignStatement assign)
         {
             EmitExpression(assign.Left);
-            writer.Write(" := ");
+            writer.Write(Parser.SingleSpace);
+            writer.Write(Parser.AssignPre);
+            writer.Write(Parser.Equal);
+            writer.Write(Parser.SingleSpace);
             EmitExpression(assign.Right);
         }
 
         void EmitArray(CodeArrayCreateExpression array)
         {
-            writer.Write('[');
+            writer.Write(Parser.ArrayOpen);
 
             depth++;
             foreach (CodeExpression expr in array.Initializers)
                 EmitExpression(expr);
             depth--;
 
-            writer.Write(']');
+            writer.Write(Parser.ArrayClose);
         }
 
         void EmitFieldReference(CodeFieldReferenceExpression field)
@@ -174,9 +183,9 @@ namespace IronAHK.Scripting
                         EmitPrimitive((CodePrimitiveExpression)part);
                     else if (part is CodeComplexVariableReferenceExpression)
                     {
-                        writer.Write('%');
+                        writer.Write(Parser.Resolve);
                         EmitComplexReference((CodeComplexVariableReferenceExpression)part);
-                        writer.Write('%');
+                        writer.Write(Parser.Resolve);
                     }
                     else
                         throw new ArgumentException("var");
@@ -194,21 +203,21 @@ namespace IronAHK.Scripting
 
         void EmitBinary(CodeBinaryOperatorExpression binary)
         {
-            writer.Write('(');
+            writer.Write(Parser.ParenOpen);
 
             depth++;
             EmitExpression(binary.Left);
             depth--;
 
-            writer.Write(' ');
+            writer.Write(Parser.SingleSpace);
             writer.Write(Operator(binary.Operator));
-            writer.Write(' ');
+            writer.Write(Parser.SingleSpace);
 
             depth++;
             EmitExpression(binary.Right);
             depth--;
 
-            writer.Write(')');
+            writer.Write(Parser.ParenClose);
         }
 
         void EmitTernary(CodeTernaryOperatorExpression ternary)
@@ -216,12 +225,16 @@ namespace IronAHK.Scripting
             depth++;
             EmitExpression(ternary.Condition);
             depth--;
-            writer.Write(" ? ");
+            writer.Write(Parser.SingleSpace);
+            writer.Write(Parser.TernaryA);
+            writer.Write(Parser.SingleSpace);
 
             depth++;
             EmitExpression(ternary.TrueBranch);
             depth--;
-            writer.Write(" : ");
+            writer.Write(Parser.SingleSpace);
+            writer.Write(Parser.TernaryB);
+            writer.Write(Parser.SingleSpace);
 
             depth++;
             EmitExpression(ternary.FalseBranch);
@@ -235,12 +248,12 @@ namespace IronAHK.Scripting
         void EmitPrimitive(CodePrimitiveExpression primitive)
         {
             if (primitive.Value == null)
-                writer.Write("null");
+                writer.Write(Parser.NullTxt);
             else if (primitive.Value is string)
             {
-                writer.Write('"');
+                writer.Write(Parser.StringBound);
                 writer.Write((string)primitive.Value);
-                writer.Write('"');
+                writer.Write(Parser.StringBound);
             }
             else if (primitive.Value is decimal)
                 writer.Write(((decimal)primitive.Value).ToString());
@@ -251,7 +264,7 @@ namespace IronAHK.Scripting
             else if (primitive.Value is int)
                 writer.Write(((int)primitive.Value).ToString());
             else if (primitive.Value is bool)
-                writer.Write(((bool)primitive.Value) ? "true" : "false");
+                writer.Write(((bool)primitive.Value) ? Parser.TrueTxt : Parser.FalseTxt);
             else
                 throw new ArgumentException("Unrecognised primitive: " + primitive.Value.ToString());
         }

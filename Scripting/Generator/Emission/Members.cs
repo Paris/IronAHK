@@ -12,13 +12,13 @@ namespace IronAHK.Scripting
 
             WriteSpace();
             writer.Write(method.Name);
-            writer.Write('(');
+            writer.Write(Parser.ParenOpen);
             bool first = true;
 
             foreach (CodeParameterDeclarationExpression param in method.Parameters)
             {
                 if (!first)
-                    writer.Write(" ");
+                    writer.Write(Parser.SingleSpace);
 
                 switch (param.Direction)
                 {
@@ -26,7 +26,8 @@ namespace IronAHK.Scripting
                         throw new NotSupportedException();
 
                     case FieldDirection.Ref:
-                        writer.Write("ByRef ");
+                        writer.Write(Parser.FunctionParamRef);
+                        writer.Write(Parser.SingleSpace);
                         break;
                 }
 
@@ -35,22 +36,22 @@ namespace IronAHK.Scripting
                 if (first)
                     first = false;
                 else
-                    writer.Write(",");
+                    writer.Write(Parser.Multicast);
 
             }
 
-            writer.Write(')');
+            writer.Write(Parser.ParenClose);
             WriteSpace();
-            writer.Write('{');
+            writer.Write(Parser.BlockOpen);
 
             depth++;
             WriteSpace();
-            writer.Write("global");
+            writer.Write(Parser.FunctionGlobal);
             EmitStatements(method.Statements);
             depth--;
 
             WriteSpace();
-            writer.Write('}');
+            writer.Write(Parser.BlockClose);
         }
     }
 }

@@ -7,7 +7,7 @@ namespace IronAHK.Scripting
 
         const char CR = '\r';
         const char LF = '\n';
-        const char SingleSpace = ' ';
+        internal const char SingleSpace = ' ';
         const char Reserved = '\0';
         readonly char[] Spaces = { CR, LF, SingleSpace, '\t', '\xA0' };
 
@@ -31,16 +31,18 @@ namespace IronAHK.Scripting
         internal const char LastVar = '$';
 #endif
 
-        internal
+        internal const char DefaultEscpe = '`';
+        internal const char DefaultComment = ';';
+
 #if !LEGACY
         const
 #endif
-        char Escape = '`';
+        char Escape = DefaultEscpe;
 
 #if !LEGACY
-        internal const char Comment = ';';
+        const char Comment = DefaultComment;
 #endif
-        internal string Comment = ";";
+        string Comment = DefaultComment.ToString();
 
 #if LEGACY
         internal const string VarExt = "#_@$?"; // []
@@ -118,24 +120,24 @@ namespace IronAHK.Scripting
 
         #region Flow
 
-        const string FlowBreak = "break";
-        const string FlowContinue = "continue";
-        const string FlowElse = "else";
-        const string FlowGosub = "gosub";
-        const string FlowGoto = "goto";
-        const string FlowIf = "if";
-        const string FlowLoop = "loop";
-        const string FlowReturn = "return";
-        const string FlowWhile = "while";
+        internal const string FlowBreak = "break";
+        internal const string FlowContinue = "continue";
+        internal const string FlowElse = "else";
+        internal const string FlowGosub = "gosub";
+        internal const string FlowGoto = "goto";
+        internal const string FlowIf = "if";
+        internal const string FlowLoop = "loop";
+        internal const string FlowReturn = "return";
+        internal const string FlowWhile = "while";
 
         #endregion
 
         #region Functions
 
-        const string FunctionLocal = "local";
-        const string FunctionGlobal = "global";
-        const string FunctionStatic = "static";
-        const string FunctionParamRef = "byref";
+        internal const string FunctionLocal = "local";
+        internal const string FunctionGlobal = "global";
+        internal const string FunctionStatic = "static";
+        internal const string FunctionParamRef = "byref";
 
         #endregion
 

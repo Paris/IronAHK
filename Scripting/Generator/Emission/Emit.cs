@@ -100,7 +100,9 @@ namespace IronAHK.Scripting
             if (string.IsNullOrEmpty(comment.Comment.Text))
                 return;
 
-            writer.Write(" ; ");
+            writer.Write(Parser.SingleSpace);
+            writer.Write(Parser.DefaultComment);
+            writer.Write(Parser.SingleSpace);
             writer.Write(comment.Comment.Text);
         }
 
