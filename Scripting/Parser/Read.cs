@@ -254,6 +254,7 @@ namespace IronAHK.Scripting
                     continue;
 
                 code = code.Trim(Spaces);
+                Translate(ref code);
 
                 if (IsCommentLine(code))
                     continue;

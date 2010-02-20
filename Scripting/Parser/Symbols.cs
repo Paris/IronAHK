@@ -184,6 +184,7 @@ namespace IronAHK.Scripting
         const string ExInvalidExponent = "Invalid exponent.";
         const string ExIntlLineMismatch = "Line and index counts mismatched";
         const string ExContJoinTooLong = "Join string for continuation section is too long";
+        const string ExTooFewParams = "Too few parameters passed to function";
 
         #endregion
     }
