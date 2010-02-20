@@ -50,7 +50,7 @@ namespace IronAHK.Scripting
             #region Emit parameters
             int p = 0;
             
-            var ByRef = new Dictionary<LocalBuilder, CodeComplexVariableReferenceExpression>();
+            var ByRef = new Dictionary<LocalBuilder, CodeExpression>();
             
             for(p = 0; p < invoke.Parameters.Count; p++)
             {
@@ -106,6 +106,12 @@ namespace IronAHK.Scripting
 
                         if(invoke.Parameters[p] is CodeComplexVariableReferenceExpression)
                             ByRef.Add(Temporary, invoke.Parameters[p] as CodeComplexVariableReferenceExpression);
+                        if(invoke.Parameters[p] is CodeMethodInvokeExpression)
+                        {
+                            var inv = invoke.Parameters[p] as CodeMethodInvokeExpression;
+                            if(inv.Method.MethodName == "Index")
+                                ByRef.Add(Temporary, inv);
+                        }
                     }
                     else
                     {
@@ -135,14 +141,30 @@ namespace IronAHK.Scripting
             
             Generator.Emit(OpCodes.Call, target);
             
+            #region Save back the variables
             // Save the variables passed to reference back in Rusty's variable handling
             foreach(LocalBuilder Builder in ByRef.Keys)
             {
-                EmitComplexVariableReference(ByRef[Builder], false);
-                Generator.Emit(OpCodes.Ldloc, Builder);
-                EmitSaveVar();
-                Generator.Emit(OpCodes.Pop);
+                if(ByRef[Builder] is CodeComplexVariableReferenceExpression)
+                {
+                    EmitComplexVariableReference(ByRef[Builder] as CodeComplexVariableReferenceExpression, false);
+                    Generator.Emit(OpCodes.Ldloc, Builder);
+                    EmitSaveVar();
+                    Generator.Emit(OpCodes.Pop);
+                }
+                else if(ByRef[Builder] is CodeMethodInvokeExpression)
+                {
+                    var inv = ByRef[Builder] as CodeMethodInvokeExpression;
+                    EmitExpression(inv.Parameters[1]);
+                    EmitExpression(inv.Parameters[0]);
+                    Generator.Emit(OpCodes.Ldc_I4, 0);
+                    Generator.Emit(OpCodes.Newarr, typeof(object));
+                    Generator.Emit(OpCodes.Ldloc, Builder);
+                    Generator.Emit(OpCodes.Call, typeof(Script).GetMethod("SetObject"));
+                    Generator.Emit(OpCodes.Pop);
+                }
             }
+            #endregion
             
             Depth--;
             return target.ReturnType;
