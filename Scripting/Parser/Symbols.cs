@@ -11,88 +11,89 @@ namespace IronAHK.Scripting
         const char Reserved = '\0';
         readonly char[] Spaces = { CR, LF, SingleSpace, '\t', '\xA0' };
 
-        const char StringBound = '"';
-        const char ParenOpen = '(';
-        const char ParenClose = ')';
-        const char BlockOpen = '{';
-        const char BlockClose = '}';
-        const char ArrayOpen = '[';
-        const char ArrayClose = ']';
-        const char MultiComA = '/';
-        const char MultiComB = '*';
-        const char TernaryA = '?';
-        const char TernaryB = ':';
-        const char HotkeyBound = ':';
-        const string HotkeySignal = "::";
-        const char Multicast = ',';
-        const char Directive = '#';
+        internal const char StringBound = '"';
+        internal const char ParenOpen = '(';
+        internal const char ParenClose = ')';
+        internal const char BlockOpen = '{';
+        internal const char BlockClose = '}';
+        internal const char ArrayOpen = '[';
+        internal const char ArrayClose = ']';
+        internal const char MultiComA = '/';
+        internal const char MultiComB = '*';
+        internal const char TernaryA = '?';
+        internal const char TernaryB = ':';
+        internal const char HotkeyBound = ':';
+        internal const string HotkeySignal = "::";
+        internal const char Multicast = ',';
+        internal const char Directive = '#';
 
 #if !LEGACY
-        const char LastVar = '$';
+        internal const char LastVar = '$';
 #endif
 
+        internal
 #if !LEGACY
         const
 #endif
         char Escape = '`';
 
 #if !LEGACY
-        const char Comment = ';';
+        internal const char Comment = ';';
 #endif
-        string Comment = ";";
+        internal string Comment = ";";
 
 #if LEGACY
-        const string VarExt = "#_@$?"; // []
+        internal const string VarExt = "#_@$?"; // []
 #endif
 #if !LEGACY
-        const string VarExt = "#_$";
+        internal const string VarExt = "#_$";
 #endif
 
         #endregion
 
         #region Operators
 
-        //const char Power = "**";
-        const char Multiply = '*';
-        const char Divide = '/';
-        //const string FloorDivide = "//";
-        const char Add = '+';
-        const char Subtract = '-';
-        const char BitAND = '&';
-        //const string And = "&&";
-        const char BitXOR = '^';
-        const char BitOR = '|';
-        //const string Or = "||";
-        const char BitNOT = '~';
-        const char Concatenate = '.';
-        const char Greater = '>';
-        const char Less = '<';
-        //const string BitShiftLeft = "<<";
-        //const string BitShiftRight = ">>";
-        //const string GreaterOrEqual = ">=";
-        //const string LessOrEqual = "<=";
-        const char Equal = '=';
-        const char AssignPre = ':';
-        //const string CaseSensitiveEqual = "==";
-        //const string NotEqual = "!=";
+        //internal const char Power = "**";
+        internal const char Multiply = '*';
+        internal const char Divide = '/';
+        //internal const string FloorDivide = "//";
+        internal const char Add = '+';
+        internal const char Subtract = '-';
+        internal const char BitAND = '&';
+        //internal const string And = "&&";
+        internal const char BitXOR = '^';
+        internal const char BitOR = '|';
+        //internal const string Or = "||";
+        internal const char BitNOT = '~';
+        internal const char Concatenate = '.';
+        internal const char Greater = '>';
+        internal const char Less = '<';
+        //internal const string BitShiftLeft = "<<";
+        //internal const string BitShiftRight = ">>";
+        //internal const string GreaterOrEqual = ">=";
+        //internal const string LessOrEqual = "<=";
+        internal const char Equal = '=';
+        internal const char AssignPre = ':';
+        //internal const string CaseSensitiveEqual = "==";
+        //internal const string NotEqual = "!=";
 
-        const string AndTxt = "and";
-        const string OrTxt = "or";
-        const string NotTxt = "not";
-        const string TrueTxt = "true";
-        const string FalseTxt = "false";
-        const string NullTxt = "null";
+        internal const string AndTxt = "and";
+        internal const string OrTxt = "or";
+        internal const string NotTxt = "not";
+        internal const string TrueTxt = "true";
+        internal const string FalseTxt = "false";
+        internal const string NullTxt = "null";
 
-        const string BetweenTxt = "between";
-        const string InTxt = "in";
-        const string ContainsTxt = "contains";
-        const string IsTxt = "is";
+        internal const string BetweenTxt = "between";
+        internal const string InTxt = "in";
+        internal const string ContainsTxt = "contains";
+        internal const string IsTxt = "is";
 
-        const char Resolve = '%';
-        const char Minus = '-';
-        const char Not = '!';
-        const char Address = '&';
-        const char Dereference = '*';
+        internal const char Resolve = '%';
+        internal const char Minus = '-';
+        internal const char Not = '!';
+        internal const char Address = '&';
+        internal const char Dereference = '*';
 
         #region Assignments
 
