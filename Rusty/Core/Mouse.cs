@@ -51,6 +51,36 @@ namespace IronAHK.Rusty
         }
 
         /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="X"></param>
+        /// <param name="Y"></param>
+        /// <param name="ClickCount"></param>
+        /// <param name="Speed"></param>
+        /// <param name="DU"></param>
+        /// <param name="R"></param>
+        [Obsolete, Conditional("LEGACY")]
+        public static void LeftClick(int X, int Y, int ClickCount, int Speed, string DU, bool R)
+        {
+            MouseClick(Keyword_Left, X, Y, ClickCount, Speed, DU, R);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="X1"></param>
+        /// <param name="Y1"></param>
+        /// <param name="X2"></param>
+        /// <param name="Y2"></param>
+        /// <param name="Speed"></param>
+        /// <param name="R"></param>
+        [Obsolete, Conditional("LEGACY")]
+        public static void LeftClickDrag(int X1, int Y1, int X2, int Y2, int Speed, bool R)
+        {
+            MouseClickDrag(Keyword_Left, X1, Y1, X2, Y2, Speed, R);
+        }
+
+        /// <summary>
         /// Clicks or holds down a mouse button, or turns the mouse wheel. NOTE: The Click command is generally more flexible and easier to use.
         /// </summary>
         /// <param name="WhichButton">
