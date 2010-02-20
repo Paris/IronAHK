@@ -39,7 +39,8 @@ namespace IronAHK.Scripting
         {
             var parts = new List<string>();
             bool start = true, expr = false, str = false;
-            int last = 0, parens = 0;
+            int last = 0;
+            int[] levels = { 0, 0, 0 }; // parentheses, objects, arrays
 
             for (int i = 0; i < code.Length; i++)
             {
@@ -71,12 +72,16 @@ namespace IronAHK.Scripting
                     switch (sym)
                     {
                         case StringBound: str = !str; break;
-                        case ParenOpen: parens++; break;
-                        case ParenClose: parens--; break;
+                        case ParenOpen: levels[0]++; break;
+                        case ParenClose: levels[0]--; break;
+                        case BlockOpen: levels[1]++; break;
+                        case BlockClose: levels[1]--; break;
+                        case ArrayOpen: levels[2]++; break;
+                        case ArrayClose: levels[2]--; break;
                     }
                 }
-
-                if (sym == Multicast && (i == 0 || code[i - 1] != Escape) && (!str && parens == 0))
+                
+                if (sym == Multicast && (i == 0 || code[i - 1] != Escape) && !str && levels[0] == 0 && levels[1] == 0 && levels[2] == 0)
                 {
                     parts.Add(code.Substring(last, i - last));
                     last = i + 1;
