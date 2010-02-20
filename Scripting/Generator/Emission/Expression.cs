@@ -5,6 +5,15 @@ namespace IronAHK.Scripting
 {
     partial class Emit
     {
+        bool stmt = false;
+
+        void EmitExpressionStatement(CodeExpression expr)
+        {
+            stmt = true;
+            EmitExpression(expr);
+            stmt = false;
+        }
+
         void EmitExpression(CodeExpression expr)
         {
             if (expr is CodeMethodInvokeExpression)
@@ -275,7 +284,12 @@ namespace IronAHK.Scripting
 
         void EmitBinary(CodeBinaryOperatorExpression binary)
         {
-            writer.Write(Parser.ParenOpen);
+            bool stmt = this.stmt;
+
+            if (stmt)
+                this.stmt = false;
+            else
+                writer.Write(Parser.ParenOpen);
 
             depth++;
             EmitExpression(binary.Left);
@@ -289,7 +303,8 @@ namespace IronAHK.Scripting
             EmitExpression(binary.Right);
             depth--;
 
-            writer.Write(Parser.ParenClose);
+            if (!stmt)
+                writer.Write(Parser.ParenClose);
         }
 
         void EmitTernary(CodeTernaryOperatorExpression ternary)

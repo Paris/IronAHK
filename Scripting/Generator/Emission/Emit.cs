@@ -74,7 +74,7 @@ namespace IronAHK.Scripting
             if (statement is CodeAssignStatement)
                 EmitAssignment((CodeAssignStatement)statement);
             else if (statement is CodeExpressionStatement)
-                EmitExpression(((CodeExpressionStatement)statement).Expression);
+                EmitExpressionStatement(((CodeExpressionStatement)statement).Expression);
             else if (statement is CodeIterationStatement)
                 EmitIteration((CodeIterationStatement)statement);
             else if (statement is CodeConditionStatement)
