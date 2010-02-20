@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Text;
 
 namespace IronAHK.Scripting
@@ -12,9 +11,9 @@ namespace IronAHK.Scripting
             #region Variables
 
             char[] delim = new char[Spaces.Length + 1];
-            delim[1] = Multicast;
+            delim[0] = Multicast;
             Spaces.CopyTo(delim, 1);
-            int z = code.IndexOfAny(Spaces);
+            int z = code.IndexOfAny(delim);
             string cmd, param;
 
             if (z == -1)
@@ -24,16 +23,44 @@ namespace IronAHK.Scripting
             }
             else
             {
-                z--;
                 cmd = code.Substring(0, z);
-                param = code.Substring(z);
+                param = code.Substring(z).TrimStart(delim);
             }
 
-            string[] parts = null;
             var replaced = new StringBuilder(code.Length);
 
-            if (param.Length > 0 && param[0] == Multicast)
-                param = param.Substring(1);
+            #endregion
+
+            #region Parameters
+
+            string[] parts = SplitCommandParameters(param);
+
+            for (int i = 0; i < parts.Length; i++)
+            {
+                if (IsExpressionParameter(parts[i]))
+                {
+                    int e = parts[i].IndexOf(Resolve) + 1;
+                    if (e < parts[i].Length)
+                        parts[i] = parts[i].Substring(e);
+                    else
+                        parts[i] = new string(StringBound, 2);
+                }
+                else
+                {
+                    parts[i] = parts[i].TrimStart(Spaces);
+                    int l = parts[i].Length;
+                    if (l > 1 && parts[i][0] == Resolve && parts[i][l - 1] == Resolve)
+                        parts[i] = parts[i].Substring(1, l - 2);
+                    else
+                    {
+                        string str = StringBound.ToString();
+                        parts[i] = string.Concat(str, parts[i], str);
+                    }
+                }
+            }
+
+            if (parts.Length > 0)
+                parts[parts.Length - 1] = StripCommentSingle(parts[parts.Length - 1]);
 
             #endregion
 
@@ -94,22 +121,205 @@ namespace IronAHK.Scripting
 
                 #region If
 
-                // TODO: convert legacy if commands
+                #region Equality
+
+                // TODO: push single conditional command on same line as legacy converted equality-if statements
+
                 case "ifequal":
+                    if (parts.Length < 1)
+                        throw new ParseException(ExTooFewParams);
+                    replaced.Append(FlowIf);
+                    replaced.Append(SingleSpace);
+                    replaced.Append(parts[0]);
+                    replaced.Append(Equal);
+                    if (parts.Length > 1)
+                        replaced.Append(parts[1]);
+                    break;
+
                 case "ifnotequal":
+                    if (parts.Length < 1)
+                        throw new ParseException(ExTooFewParams);
+                    replaced.Append(FlowIf);
+                    replaced.Append(SingleSpace);
+                    replaced.Append(parts[0]);
+                    replaced.Append(Not);
+                    replaced.Append(Equal);
+                    if (parts.Length > 1)
+                        replaced.Append(parts[1]);
+                    break;
+
                 case "ifgreater":
+                    if (parts.Length < 1)
+                        throw new ParseException(ExTooFewParams);
+                    replaced.Append(FlowIf);
+                    replaced.Append(SingleSpace);
+                    replaced.Append(parts[0]);
+                    replaced.Append(Greater);
+                    if (parts.Length > 1)
+                        replaced.Append(parts[1]);
+                    break;
+
                 case "ifgreaterorequal":
+                    if (parts.Length < 1)
+                        throw new ParseException(ExTooFewParams);
+                    replaced.Append(FlowIf);
+                    replaced.Append(SingleSpace);
+                    replaced.Append(parts[0]);
+                    replaced.Append(Greater);
+                    replaced.Append(Equal);
+                    if (parts.Length > 1)
+                        replaced.Append(parts[1]);
+                    break;
+
                 case "ifless":
+                    if (parts.Length < 1)
+                        throw new ParseException(ExTooFewParams);
+                    replaced.Append(FlowIf);
+                    replaced.Append(SingleSpace);
+                    replaced.Append(parts[0]);
+                    replaced.Append(Less);
+                    if (parts.Length > 1)
+                        replaced.Append(parts[1]);
+                    break;
+
                 case "iflessorequal":
+                    if (parts.Length < 1)
+                        throw new ParseException(ExTooFewParams);
+                    replaced.Append(FlowIf);
+                    replaced.Append(SingleSpace);
+                    replaced.Append(parts[0]);
+                    replaced.Append(Less);
+                    replaced.Append(Equal);
+                    if (parts.Length > 1)
+                        replaced.Append(parts[1]);
+                    break;
+
+                #endregion
+
                 case "ifexist":
+                    if (parts.Length < 1)
+                        throw new ParseException(ExTooFewParams);
+                    replaced.Append(FlowIf);
+                    replaced.Append(SingleSpace);
+                    replaced.Append(ParenOpen);
+                    replaced.Append("FileExist");
+                    replaced.Append(ParenOpen);
+                    replaced.Append(parts[0]);
+                    replaced.Append(ParenClose, 2);
+                    break;
+
                 case "ifnotexist":
+                    if (parts.Length < 1)
+                        throw new ParseException(ExTooFewParams);
+                    replaced.Append(FlowIf);
+                    replaced.Append(SingleSpace);
+                    replaced.Append(ParenOpen);
+                    replaced.Append(Not);
+                    replaced.Append("FileExist");
+                    replaced.Append(ParenOpen);
+                    replaced.Append(parts[0]);
+                    replaced.Append(ParenClose, 2);
+                    break;
+
                 case "ifinstring":
+                    if (parts.Length < 2)
+                        throw new ParseException(ExTooFewParams);
+                    replaced.Append(FlowIf);
+                    replaced.Append(SingleSpace);
+                    replaced.Append(ParenOpen);
+                    replaced.Append("InStr");
+                    replaced.Append(ParenOpen);
+                    replaced.Append(parts[0]);
+                    replaced.Append(Multicast);
+                    replaced.Append(parts[1]);
+                    replaced.Append(ParenClose, 2);
+                    break;
+
                 case "ifnotinstring":
+                    if (parts.Length < 2)
+                        throw new ParseException(ExTooFewParams);
+                    replaced.Append(FlowIf);
+                    replaced.Append(SingleSpace);
+                    replaced.Append(ParenOpen);
+                    replaced.Append(Not);
+                    replaced.Append("InStr");
+                    replaced.Append(ParenOpen);
+                    replaced.Append(parts[0]);
+                    replaced.Append(Multicast);
+                    replaced.Append(parts[1]);
+                    replaced.Append(ParenClose, 2);
+                    break;
+
                 case "ifmsgbox":
+                    if (parts.Length < 1)
+                        throw new ParseException(ExTooFewParams);
+                    replaced.Append(FlowIf);
+                    replaced.Append(SingleSpace);
+                    replaced.Append("A_MsgBox");
+                    replaced.Append(Equal);
+                    replaced.Append(parts[0]);
+                    break;
+
                 case "ifwinactive":
+                    replaced.Append(FlowIf);
+                    replaced.Append(SingleSpace);
+                    replaced.Append(ParenOpen);
+                    replaced.Append("WinActive");
+                    replaced.Append(ParenOpen);
+                    foreach (string part in parts)
+                    {
+                        replaced.Append(part);
+                        replaced.Append(Multicast);
+                    }
+                    replaced.Remove(replaced.Length - 1, 1);
+                    replaced.Append(ParenClose, 2);
+                    break;
+
                 case "ifwinexist":
+                    replaced.Append(FlowIf);
+                    replaced.Append(SingleSpace);
+                    replaced.Append(ParenOpen);
+                    replaced.Append("WinExist");
+                    replaced.Append(ParenOpen);
+                    foreach (string part in parts)
+                    {
+                        replaced.Append(part);
+                        replaced.Append(Multicast);
+                    }
+                    replaced.Remove(replaced.Length - 1, 1);
+                    replaced.Append(ParenClose, 2);
+                    break;
+
                 case "ifwinnotactive":
+                    replaced.Append(FlowIf);
+                    replaced.Append(SingleSpace);
+                    replaced.Append(ParenOpen);
+                    replaced.Append(Not);
+                    replaced.Append("WinActive");
+                    replaced.Append(ParenOpen);
+                    foreach (string part in parts)
+                    {
+                        replaced.Append(part);
+                        replaced.Append(Multicast);
+                    }
+                    replaced.Remove(replaced.Length - 1, 1);
+                    replaced.Append(ParenClose, 2);
+                    break;
+
                 case "ifwinnotexist":
+                    replaced.Append(FlowIf);
+                    replaced.Append(SingleSpace);
+                    replaced.Append(ParenOpen);
+                    replaced.Append(Not);
+                    replaced.Append("WinExist");
+                    replaced.Append(ParenOpen);
+                    foreach (string part in parts)
+                    {
+                        replaced.Append(part);
+                        replaced.Append(Multicast);
+                    }
+                    replaced.Remove(replaced.Length - 1, 1);
+                    replaced.Append(ParenClose, 2);
                     break;
 
                 #endregion
@@ -121,7 +331,6 @@ namespace IronAHK.Scripting
                 //    break;
 
                 case "stringleft":
-                    SplitParameters(param, ref parts, 3);
                     if (parts.Length < 3)
                         throw new ParseException(ExTooFewParams);
                     replaced.Append(parts[0]);
@@ -138,7 +347,6 @@ namespace IronAHK.Scripting
                     break;
 
                 case "stringlen":
-                    SplitParameters(param, ref parts, 2);
                     if (parts.Length < 2)
                         throw new ParseException(ExTooFewParams);
                     replaced.Append(parts[0]);
@@ -151,7 +359,6 @@ namespace IronAHK.Scripting
                     break;
 
                 case "stringmid":
-                    SplitParameters(param, ref parts, 5);
                     if (parts.Length < 3)
                         throw new ParseException(ExTooFewParams);
                     replaced.Append(parts[0]);
@@ -176,7 +383,6 @@ namespace IronAHK.Scripting
                     break;
 
                 case "stringright":
-                    SplitParameters(param, ref parts, 3);
                     if (parts.Length < 3)
                         throw new ParseException(ExTooFewParams);
                     replaced.Append(parts[0]);
@@ -196,7 +402,6 @@ namespace IronAHK.Scripting
                     break;
 
                 case "stringtrimleft":
-                    SplitParameters(param, ref parts, 3);
                     if (parts.Length < 3)
                         throw new ParseException(ExTooFewParams);
                     replaced.Append(parts[0]);
@@ -213,7 +418,6 @@ namespace IronAHK.Scripting
                     break;
 
                 case "stringtrimright":
-                    SplitParameters(param, ref parts, 3);
                     if (parts.Length < 3)
                         throw new ParseException(ExTooFewParams);
                     replaced.Append(parts[0]);
@@ -237,54 +441,6 @@ namespace IronAHK.Scripting
 
             if (replaced.Length > 0)
                 code = replaced.ToString();
-        }
-
-        [Conditional("LEGACY")]
-        void SplitParameters(string code, ref string[] parameters, int max)
-        {
-            if (max == 1)
-            {
-                parameters = new string[] { code };
-                return;
-            }
-
-            var list = new List<string>();
-            var buffer = new StringBuilder(code.Length);
-
-            for (int i = 0; i < code.Length; i++)
-            {
-                char sym = code[i];
-
-                if (sym == Multicast && (i > 0 ? code[i - 1] != Escape : true))
-                {
-                    if (list.Count == max)
-                    {
-                        buffer.Append(code.Substring(i));
-                        break;
-                    }
-
-                    list.Add(buffer.ToString());
-                    buffer.Length = 0;
-                }
-                else
-                    buffer.Append(sym);
-            }
-
-            if (buffer.Length > 0)
-            {
-                if (list.Count == max)
-                    list[max - 1] += Multicast.ToString() + buffer.ToString();
-                else
-                    list.Add(buffer.ToString());
-            }
-
-            // TODO: recognise forced expression mode parameters for legacy command conversions
-
-            int last = list.Count - 1;
-            if (last > -1)
-                list[last] = StripCommentSingle(list[last]);
-
-            parameters = list.ToArray();
         }
     }
 }
