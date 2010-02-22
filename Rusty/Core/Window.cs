@@ -195,32 +195,6 @@ namespace IronAHK.Rusty
         }
 
         /// <summary>
-        /// Determines whether invisible text in a window is "seen" for the purpose of finding the window. This affects commands such as IfWinExist and WinActivate.
-        /// </summary>
-        /// <param name="Mode">
-        /// <para>On: This is the default for non-AutoIt v2 scripts (e.g. .ahk, .ini). Hidden text will be detected.</para>
-        /// <para>Off: This is the default for AutoIt v2 scripts. Hidden text is not detected.</para>
-        /// </param>
-        [Obsolete, Conditional("LEGACY")]
-        public static void DetectHiddenText(string Mode)
-        {
-            OnOff(ref _DetectHiddenText, Mode);
-        }
-
-        /// <summary>
-        /// Determines whether invisible windows are "seen" by the script.
-        /// </summary>
-        /// <param name="Mode">
-        /// <para>On: Hidden windows are detected. </para>
-        /// <para>Off: This is the default. Hidden windows are not detected, except by the WinShow command.</para>
-        /// </param>
-        [Obsolete, Conditional("LEGACY")]
-        public static void DetectHiddenWindows(string Mode)
-        {
-            OnOff(ref _DetectHiddenWindows, Mode);
-        }
-
-        /// <summary>
         /// Activates the next window in a window group that was defined with GroupAdd.
         /// </summary>
         /// <param name="GroupName">The name of the group to activate, as originally defined by GroupAdd.</param>
@@ -273,62 +247,6 @@ namespace IronAHK.Rusty
         }
         
         /// <summary>
-        /// Checks if the specified window exists and is currently active (foremost).
-        /// </summary>
-        /// <param name="WinTitle">The title or partial title of the target window (the matching behavior is determined by SetTitleMatchMode). If this and the other 3 parameters are omitted, the Last Found Window will be used. To use a window class, specify ahk_class ExactClassName (shown by Window Spy). To use a process identifier (PID), specify ahk_pid %VarContainingPID%. To use a window group, specify ahk_group GroupName. To use a window's unique ID number, specify ahk_id %VarContainingID%. The search can be narrowed by specifying multiple criteria. For example: My File.txt ahk_class Notepad</param>
-        /// <param name="WinText">If present, this parameter must be a substring from a single text element of the target window (as revealed by the included Window Spy utility). Hidden text elements are detected if DetectHiddenText is ON.</param>
-        /// <param name="ExcludeTitle">Windows whose titles include this value will not be considered. Note: Due to backward compatibility with .aut scripts, this parameter will be interpreted as a command if it exactly matches the name of a command. To work around this, use the WinActive() function instead.</param>
-        /// <param name="ExcludeText">Windows whose text include this value will not be considered.</param>
-        /// <returns></returns>
-        [Obsolete, Conditional("FLOW")]
-        public static void IfWinActive(string WinTitle, string WinText, string ExcludeTitle, string ExcludeText)
-        {
-            throw new NotSupportedException();
-        }
-
-        /// <summary>
-        /// Checks if the specified window exists.
-        /// </summary>
-        /// <param name="WinTitle">The title or partial title of the target window (the matching behavior is determined by SetTitleMatchMode). If this and the other 3 parameters are all omitted, the Last Found Window will be used (i.e. that specific window is checked to see whether it still exists). To use a window class, specify ahk_class ExactClassName (shown by Window Spy). To use a process identifier (PID), specify ahk_pid %VarContainingPID%. To use a window group, specify ahk_group GroupName. To use a window's unique ID number, specify ahk_id %VarContainingID%. The search can be narrowed by specifying multiple criteria. For example: My File.txt ahk_class Notepad</param>
-        /// <param name="WinText">If present, this parameter must be a substring from a single text element of the target window (as revealed by the included Window Spy utility). Hidden text elements are detected if DetectHiddenText is ON.</param>
-        /// <param name="ExcludeTitle">Windows whose titles include this value will not be considered. Note: Due to backward compatibility with .aut scripts, this parameter will be interpreted as a command if it exactly matches the name of a command. To work around this, use the WinExist() function instead.</param>
-        /// <param name="ExcludeText">Windows whose text include this value will not be considered.</param>
-        /// <returns></returns>
-        [Obsolete, Conditional("FLOW")]
-        public static void IfWinExist(string WinTitle, string WinText, string ExcludeTitle, string ExcludeText)
-        {
-            throw new NotSupportedException();
-        }
-
-        /// <summary>
-        /// Checks if the specified window exists and is currently active (foremost).
-        /// </summary>
-        /// <param name="WinTitle">The title or partial title of the target window (the matching behavior is determined by SetTitleMatchMode). If this and the other 3 parameters are omitted, the Last Found Window will be used. To use a window class, specify ahk_class ExactClassName (shown by Window Spy). To use a process identifier (PID), specify ahk_pid %VarContainingPID%. To use a window group, specify ahk_group GroupName. To use a window's unique ID number, specify ahk_id %VarContainingID%. The search can be narrowed by specifying multiple criteria. For example: My File.txt ahk_class Notepad</param>
-        /// <param name="WinText">If present, this parameter must be a substring from a single text element of the target window (as revealed by the included Window Spy utility). Hidden text elements are detected if DetectHiddenText is ON.</param>
-        /// <param name="ExcludeTitle">Windows whose titles include this value will not be considered. Note: Due to backward compatibility with .aut scripts, this parameter will be interpreted as a command if it exactly matches the name of a command. To work around this, use the WinActive() function instead.</param>
-        /// <param name="ExcludeText">Windows whose text include this value will not be considered.</param>
-        /// <returns></returns>
-        [Obsolete, Conditional("FLOW")]
-        public static void IfWinNotActive(string WinTitle, string WinText, string ExcludeTitle, string ExcludeText)
-        {
-            throw new NotSupportedException();
-        }
-
-        /// <summary>
-        /// Checks if the specified window exists.
-        /// </summary>
-        /// <param name="WinTitle">The title or partial title of the target window (the matching behavior is determined by SetTitleMatchMode). If this and the other 3 parameters are all omitted, the Last Found Window will be used (i.e. that specific window is checked to see whether it still exists). To use a window class, specify ahk_class ExactClassName (shown by Window Spy). To use a process identifier (PID), specify ahk_pid %VarContainingPID%. To use a window group, specify ahk_group GroupName. To use a window's unique ID number, specify ahk_id %VarContainingID%. The search can be narrowed by specifying multiple criteria. For example: My File.txt ahk_class Notepad</param>
-        /// <param name="WinText">If present, this parameter must be a substring from a single text element of the target window (as revealed by the included Window Spy utility). Hidden text elements are detected if DetectHiddenText is ON.</param>
-        /// <param name="ExcludeTitle">Windows whose titles include this value will not be considered. Note: Due to backward compatibility with .aut scripts, this parameter will be interpreted as a command if it exactly matches the name of a command. To work around this, use the WinExist() function instead.</param>
-        /// <param name="ExcludeText">Windows whose text include this value will not be considered.</param>
-        /// <returns></returns>
-        [Obsolete, Conditional("FLOW")]
-        public static void IfWinNotExist(string WinTitle, string WinText, string ExcludeTitle, string ExcludeText)
-        {
-            throw new NotSupportedException();
-        }
-        
-        /// <summary>
         /// Sends a message to a window or control (SendMessage additionally waits for acknowledgement).
         /// </summary>
         /// <param name="Msg">The message number to send. See the message list to determine the number.</param>
@@ -352,25 +270,6 @@ namespace IronAHK.Rusty
         }
 
         /// <summary>
-        /// Perform a series of commands repeatedly: either the specified number of times or until break is encountered.
-        /// </summary>
-        [Obsolete, Conditional("FLOW")]
-        public static void Repeat()
-        {
-            throw new NotSupportedException();
-        }
-
-        /// <summary>
-        /// Returns from a subroutine to which execution had previously jumped via function-call, Gosub, Hotkey activation, GroupActivate, or other means.
-        /// </summary>
-        /// <param name="Expression">This parameter should be omitted except when return is used inside a function.</param>
-        [Obsolete, Conditional("FLOW")]
-        public static void Return(string Expression)
-        {
-            throw new NotSupportedException();
-        }
-
-        /// <summary>
         /// Sends a message to a window or control (SendMessage additionally waits for acknowledgement).
         /// </summary>
         /// <param name="Msg">The message number to send. See the message list to determine the number.</param>
@@ -391,74 +290,6 @@ namespace IronAHK.Rusty
 
             IntPtr hwnd = Windows.FindWindow(WinTitle, WinText, ExcludeTitle, ExcludeText, Control);
             error = Windows.SendMessage(hwnd, (uint)Msg, new IntPtr(wParam), new IntPtr(lParam)).ToInt32();
-        }
-
-        /// <summary>
-        /// Sets the state of the Capslock key. Can also force the key to stay on or off.
-        /// </summary>
-        /// <param name="Mode">
-        /// <para>If this parameter is omitted, the AlwaysOn/Off attribute of the key is removed (if present). Otherwise, specify one of the following words:</para>
-        /// <para>On: Turns on the key and removes the AlwaysOn/Off attribute of the key (if present).</para>
-        /// <para>Off: Turns off the key and removes the AlwaysOn/Off attribute of the key (if present).</para>
-        /// <para>AlwaysOn: Forces the key to stay on permanently (has no effect on Windows 9x).</para>
-        /// <para>AlwaysOff: Forces the key to stay off permanently (has no effect on Windows 9x).</para>
-        /// </param>
-        [Obsolete, Conditional("LEGACY")]
-        public static void SetCapsLockState(string Mode)
-        {
-
-        }
-
-        /// <summary>
-        /// Sets the delay that will occur after each control-modifying command.
-        /// </summary>
-        /// <param name="Delay">Time in milliseconds. Use -1 for no delay at all and 0 for the smallest possible delay. If unset, the default delay is 20.</param>
-        [Obsolete, Conditional("LEGACY")]
-        public static void SetControlDelay(int Delay)
-        {
-            _ControlDelay = Delay;
-        }
-
-        /// <summary>
-        /// Sets the matching behavior of the WinTitle parameter in commands such as WinWait.
-        /// </summary>
-        /// <param name="Mode">
-        /// <para>One of the following digits or the word RegEx:</para>
-        /// <list type="">
-        /// <item>1: A window's title must start with the specified WinTitle to be a match.</item>
-        /// <item>2: A window's title can contain WinTitle anywhere inside it to be a match.</item>
-        /// <item>3: A window's title must exactly match WinTitle to be a match.</item>
-        /// </list>
-        /// <para>RegEx: Changes WinTitle, WinText, ExcludeTitle, and ExcludeText to be regular expressions. Do not enclose such expressions in quotes when using them with commands. For example: WinActivate Untitled.*Notepad. RegEx also applies to ahk_group and ahk_class; for example, ahk_class IEFrame searches for any window whose class name contains IEFrame anywhere (this is because by default, regular expressions find a match anywhere in the target string). Note: For WinText, each text element (i.e. each control's text) is matched against the RegEx separately. Therefore, it is not possible to have a match span more than one text element.</para>
-        /// <para>The modes above also affect ExcludeTitle in the same way as WinTitle. For example, mode 3 requires that a window's title exactly match ExcludeTitle for that window to be excluded.</para>
-        /// </param>
-        [Obsolete, Conditional("LEGACY")]
-        public static void SetTitleMatchMode(string Mode)
-        {
-            switch (Mode.ToLowerInvariant())
-            {
-                case "1":
-                case "2":
-                case "3":
-                case Keyword_RegEx:
-                    A_TitleMatchMode = Mode;
-                    break;
-
-                case Keyword_Fast:
-                case Keyword_Slow:
-                    A_TitleMatchModeSpeed = Mode;
-                    break;
-            }
-        }
-
-        /// <summary>
-        /// Sets the delay that will occur after each windowing command, such as WinActivate.
-        /// </summary>
-        /// <param name="Delay">Time in milliseconds. Use -1 for no delay at all and 0 for the smallest possible delay. If unset, the default delay is 100.</param>
-        [Obsolete, Conditional("LEGACY")]
-        public static void SetWinDelay(int Delay)
-        {
-            A_WinDelay = Delay;
         }
 
         /// <summary>

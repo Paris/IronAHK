@@ -89,35 +89,10 @@ namespace IronAHK.Rusty
         }
 
         /// <summary>
-        /// Checks if a variable contains the specified string.
-        /// </summary>
-        /// <param name="Var">The name of the variable whose contents will be searched for a match.</param>
-        /// <param name="SearchString">The string to search for. Matching is not case sensitive unless <see cref="StringCaseSense"/> has been turned on.</param>
-        /// <returns>True if a match has been found, false otherwise.</returns>
-        [Obsolete, Conditional("FLOW")]
-        public static void IfInString(string Var, string SearchString)
-        {
-            throw new NotSupportedException();
-        }
-
-        /// <summary>
-        /// Checks if a variable contains the specified string.
-        /// </summary>
-        /// <param name="Var">The name of the variable whose contents will be searched for a match.</param>
-        /// <param name="SearchString">The string to search for. Matching is not case sensitive unless <see cref="StringCaseSense"/> has been turned on.</param>
-        /// <returns>True if a match has not been found, false otherwise.</returns>
-        [Obsolete, Conditional("LEGACY")]
-        public static void IfNotInString(string Var, string SearchString)
-        {
-            throw new NotSupportedException();
-        }
-
-        /// <summary>
         /// Arranges a variable's contents in alphabetical, numerical, or random order (optionally removing duplicates).
         /// </summary>
         /// <param name="VarName">The name of the variable whose contents will be sorted.</param>
         /// <param name="Options">See list below.</param>
-        [Obsolete, Conditional("LEGACY")]
         public static void Sort(ref string VarName, params string[] Options)
         {
             var opts = KeyValues(string.Join(",", Options), true, new char[] { 'f' });
@@ -255,24 +230,6 @@ namespace IronAHK.Rusty
         }
 
         /// <summary>
-        /// Determines whether string comparisons are case sensitive (default is "not case sensitive").
-        /// </summary>
-        /// <param name="Mode">
-        /// <para>On: String comparisons are case sensitive.</para>
-        /// <para>Off: The letters A-Z are considered identical to their lowercase counterparts.</para>
-        /// </param>
-        [Obsolete, Conditional("LEGACY")]
-        public static void StringCaseSense(string Mode)
-        {
-            switch (Mode.ToLowerInvariant())
-            {
-                case Keyword_On: _StringCaseSense = StringComparison.Ordinal; break;
-                case Keyword_Off: _StringCaseSense = StringComparison.OrdinalIgnoreCase; break;
-                case Keyword_Locale: _StringCaseSense = StringComparison.CurrentCultureIgnoreCase; break;
-            }
-        }
-
-        /// <summary>
         /// Retrieves the position of the specified substring within a string.
         /// </summary>
         /// <param name="OutputVar">The name of the variable in which to store the retrieved position relative to the first character of <paramref name="InputVar"/>. Position 0 is the first character.</param>
@@ -331,30 +288,6 @@ namespace IronAHK.Rusty
         }
 
         /// <summary>
-        /// Retrieves a number of characters from the left or right-hand side of a string.
-        /// </summary>
-        /// <param name="OutputVar">The name of the variable in which to store the substring extracted from <paramref name="InputVar"/>.</param>
-        /// <param name="InputVar">The name of the variable whose contents will be extracted from.</param>
-        /// <param name="Count">The number of characters to extract.</param>
-        [Obsolete, Conditional("LEGACY")]
-        public static void StringLeft(ref string OutputVar, string InputVar, int Count)
-        {
-            OutputVar = InputVar.Length == 0 || Count < 1 ? string.Empty :
-                Count >= InputVar.Length ? InputVar : InputVar.Substring(0, Count);
-        }
-
-        /// <summary>
-        /// Retrieves the count of how many characters are in a string.
-        /// </summary>
-        /// <param name="OutputVar">The name of the variable in which to store the length.</param>
-        /// <param name="InputVar">The name of the variable whose contents will be measured.</param>
-        [Obsolete, Conditional("LEGACY")]
-        public static void StringLen(ref int OutputVar, string InputVar)
-        {
-            OutputVar = InputVar.Length;
-        }
-
-        /// <summary>
         /// Converts a string to lowercase.
         /// </summary>
         /// <param name="OutputVar">The name of the variable in which to store newly converted string.</param>
@@ -364,33 +297,6 @@ namespace IronAHK.Rusty
         {
             OutputVar = Title.Length == 1 && Title.ToLowerInvariant()[0] == 't' ?
                 CultureInfo.CurrentCulture.TextInfo.ToTitleCase(InputVar) : InputVar.ToUpperInvariant();
-        }
-
-        /// <summary>
-        /// Retrieves one or more characters from the specified position in a string.
-        /// </summary>
-        /// <param name="OutputVar">The name of the variable in which to store the substring extracted from InputVar.</param>
-        /// <param name="InputVar">The name of the variable from whose contents the substring will be extracted.</param>
-        /// <param name="StartChar">The position of the first character to be extracted.
-        /// Unlike <see cref="StringGetPos"/>, 1 is the first character.
-        /// If <paramref name="StartChar"/> is less than 1, it will be assumed to be 1.
-        /// If <paramref name="StartChar"/> is beyond the end of the string, <paramref name="OutputVar"/> is made empty (blank).</param>
-        /// <param name="Count">
-        /// <para>This parameter may be omitted or left blank, which is the same as specifying an integer large enough to retrieve all characters from the string.</para>
-        /// <para>Otherwise, specify the number of characters to extract.
-        /// If <paramref name="Count"/> is less than or equal to zero, <paramref name="OutputVar"/> will be made empty (blank).
-        /// If <paramref name="Count"/> exceeds the length of <paramref name="InputVar"/> measured from <paramref name="Startchar"/>,
-        /// <paramref name="OutputVar"/> will be set equal to the entirety of <paramref name="InputVar"/> starting at <paramref name="StartChar"/>.</para>
-        /// </param>
-        /// <param name="Reverse">Specify the letter L can be used to extract characters that lie to the left of <paramref name="StartChar"/> rather than to the right.</param>
-        [Obsolete, Conditional("LEGACY")]
-        public static void StringMid(ref string OutputVar, string InputVar, int StartChar, int Count, string Reverse)
-        {
-            OutputVar = string.Empty;
-            if (StartChar < 1)
-                StartChar = 1;
-            else if (StartChar < InputVar.Length && Count > 0)
-                OutputVar = SubStr(InputVar, Reverse.Length == 1 && Reverse.ToLowerInvariant()[0] == 'l' ? StartChar : -StartChar, Count);
         }
 
         /// <summary>
@@ -450,26 +356,6 @@ namespace IronAHK.Rusty
         }
 
         /// <summary>
-        /// Retrieves a number of characters from the left or right-hand side of a string.
-        /// </summary>
-        /// <param name="OutputVar">The name of the variable in which to store the substring extracted from <paramref name="InputVar"/>.</param>
-        /// <param name="InputVar">The name of the variable whose contents will be extracted from.</param>
-        /// <param name="Count">The number of characters to extract.
-        /// If <paramref name="Count"/> is less than or equal to zero, <paramref name="OutputVar"/> will be made empty (blank).
-        /// If <paramref name="Count"/> exceeds the length of InputVar,
-        /// <paramref name="OutputVar"/> will be set equal to the entirety of <paramref name="InputVar"/>.</param>
-        [Obsolete, Conditional("LEGACY")]
-        public static void StringRight(ref string OutputVar, string InputVar, int Count)
-        {
-            if (Count < 1)
-                OutputVar = string.Empty;
-            else if (Count >= InputVar.Length)
-                OutputVar = InputVar;
-            else
-                OutputVar = InputVar.Substring(InputVar.Length - Count - 1);
-        }
-
-        /// <summary>
         /// Separates a string into an array of substrings using the specified delimiters.
         /// </summary>
         /// <param name="OutputArray">The name of the array in which to store each substring extracted from <paramref name="InputVar"/>.</param>
@@ -505,44 +391,6 @@ namespace IronAHK.Rusty
                 for (int i = 0; i < OutputArray.Length; i++)
                     OutputArray[i] = OutputArray[i].Trim(omit);
             }
-        }
-
-        /// <summary>
-        /// Removes a number of characters from the left-hand side of a string.
-        /// </summary>
-        /// <param name="OutputVar">The name of the variable in which to store the shortened version of <paramref name="InputVar"/>.</param>
-        /// <param name="InputVar">The name of the variable whose contents will be read from.</param>
-        /// <param name="Count">The number of characters to remove.
-        /// If <paramref name="Count"/> is less than or equal to zero, <paramref name="OutputVar"/> will be set equal to the entirety of <paramref name="InputVar"/>.
-        /// If <paramref name="Count"/> exceeds the length of <paramref name="InputVar"/>, <paramref name="OutputVar"/> will be made empty (blank).</param>
-        [Obsolete, Conditional("LEGACY")]
-        public static void StringTrimLeft(ref string OutputVar, string InputVar, int Count)
-        {
-            if (Count < 1)
-                OutputVar = InputVar;
-            else if (Count >= InputVar.Length)
-                OutputVar = string.Empty;
-            else
-                OutputVar = InputVar.Substring(Count - 1);
-        }
-
-        /// <summary>
-        /// Removes a number of characters from the right-hand side of a string.
-        /// </summary>
-        /// <param name="OutputVar">The name of the variable in which to store the shortened version of <paramref name="InputVar"/>.</param>
-        /// <param name="InputVar">The name of the variable whose contents will be read from.</param>
-        /// <param name="Count">The number of characters to remove.
-        /// If <paramref name="Count"/> is less than or equal to zero, <paramref name="OutputVar"/> will be set equal to the entirety of <paramref name="InputVar"/>.
-        /// If <paramref name="Count"/> exceeds the length of <paramref name="InputVar"/>, <paramref name="OutputVar"/> will be made empty (blank).</param>
-        [Obsolete, Conditional("LEGACY")]
-        public static void StringTrimRight(ref string OutputVar, string InputVar, int Count)
-        {
-            if (Count < 1)
-                OutputVar = InputVar;
-            else if (Count >= InputVar.Length)
-                OutputVar = string.Empty;
-            else
-                OutputVar = InputVar.Substring(0, InputVar.Length - Count - 1);
         }
 
         /// <summary>

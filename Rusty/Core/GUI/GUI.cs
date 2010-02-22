@@ -50,16 +50,6 @@ namespace IronAHK.Rusty
         }
 
         /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="Mode"></param>
-        [Obsolete, Conditional("FLOW")]
-        public static void IfMsgBox(string Mode)
-        {
-            throw new NotSupportedException();
-        }
-
-        /// <summary>
         /// Displays an input box to ask the user to enter a string.
         /// </summary>
         /// <param name="OutputVar">The name of the variable in which to store the text entered by the user.</param>
@@ -184,7 +174,6 @@ namespace IronAHK.Rusty
         /// <para>The name of the font to use for both MainText and SubText. The font table lists the fonts included with the various versions of Windows. If unspecified or if the font cannot be found, the system's default GUI font will be used.</para>
         /// <para>See the options section below for how to change the size, weight, and color of the font.</para>
         /// </param>
-        [Obsolete, Conditional("LEGACY")]
         public static void Progress(string ProgressParam1, string SubText, string MainText, string WinTitle, string FontName)
         {
 
