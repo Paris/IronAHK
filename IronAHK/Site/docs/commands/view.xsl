@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- DWXMLSource="control/index.xml" -->
 <!DOCTYPE xsl:stylesheet  [
 	<!ENTITY nbsp   "&#160;">
 	<!ENTITY copy   "&#169;">
 ]>
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
   <xsl:output method="html" encoding="utf-8" doctype-public="-//W3C//DTD XHTML 1.0 Strict//EN" doctype-system="http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"/>
+  <xsl:include href="doc.xsl"/>
   <xsl:template match="/doc">
     <html xmlns="http://www.w3.org/1999/xhtml">
     <xsl:variable name="cmd" select="substring(substring-after(substring-before(concat(members/member/@name,'('),'('),assembly/name),7)"/>
@@ -19,7 +19,7 @@
     <h1><xsl:value-of select="$cmd"/></h1>
     <div id="page">
       <xsl:if test="members/member/summary">
-        <p><xsl:value-of select="members/member/summary"/></p>
+        <p><xsl:apply-templates select="members/member/summary"/></p>
       </xsl:if>
       <h3 class="command"><xsl:value-of select="$cmd"/><xsl:text>(</xsl:text>
         <xsl:for-each select="members/member/param">
@@ -34,19 +34,20 @@
         <table class="params">
           <xsl:for-each select="members/member/param">
             <tr>
+              <xsl:attribute name="id"><xsl:value-of select="@name"/></xsl:attribute>
               <td><xsl:value-of select="@name"/></td>
-              <td><xsl:value-of select="."/></td>
+              <td><xsl:apply-templates/></td>
             </tr>
           </xsl:for-each>
         </table>
       </xsl:if>
       <xsl:if test="members/member/returns">
         <h4>Returns</h4>
-        <p><xsl:value-of select="members/member/returns"/></p>
+        <xsl:apply-templates select="members/member/returns"/>
       </xsl:if>
       <xsl:if test="members/member/remarks">
         <h4>Remarks</h4>
-        <p><xsl:value-of select="members/member/remarks"/></p>
+        <xsl:apply-templates select="members/member/remarks"/>
       </xsl:if>
     </div>
     </body>
