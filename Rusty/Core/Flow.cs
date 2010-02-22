@@ -8,24 +8,6 @@ namespace IronAHK.Rusty
     partial class Core
     {
         /// <summary>
-        /// Exits (terminates) a loop. Valid inside any kind of loop.
-        /// </summary>
-        [Obsolete, Conditional("FLOW")]
-        public static void Break() { }
-
-        /// <summary>
-        /// Skips the rest of the current loop iteration and begins a new one. Valid inside any kind of loop.
-        /// </summary>
-        [Obsolete, Conditional("FLOW")]
-        public static void Continue() { }
-
-        /// <summary>
-        /// Specifies the command(s) to perform if an IF-statement evaluates to FALSE. When more than one command is present, enclose them in a block (braces). 
-        /// </summary>
-        [Obsolete, Conditional("FLOW")]
-        public static void Else() { }
-
-        /// <summary>
         /// Exits the current thread or (if the script is not persistent contains no hotkeys) the entire script.
         /// </summary>
         /// <param name="ExitCode">An integer (i.e. negative, positive, zero, or an expression) that is returned to its caller when the script exits. This code is accessible to any program that spawned the script, such as another script (via RunWait) or a batch (.bat) file. If omitted, ExitCode defaults to zero. Zero is traditionally used to indicate success. Note: Windows 95 may be limited in how large ExitCode can be.</param>
@@ -43,26 +25,6 @@ namespace IronAHK.Rusty
         {
             Environment.ExitCode = ExitCode;
             Application.Exit();
-        }
-
-        /// <summary>
-        /// Jumps to the specified label and continues execution until Return is encountered.
-        /// </summary>
-        /// <param name="Label"></param>
-        [Obsolete, Conditional("FLOW")]
-        public static void Gosub(string Label)
-        {
-            throw new NotSupportedException();
-        }
-
-        /// <summary>
-        /// Jumps to the specified label and continues execution.
-        /// </summary>
-        /// <param name="Label"></param>
-        [Obsolete, Conditional("FLOW")]
-        public static void Goto(string Label)
-        {
-            throw new NotSupportedException();
         }
 
         /// <summary>
@@ -100,19 +62,6 @@ namespace IronAHK.Rusty
         public static void Reload()
         {
             Application.Restart();
-        }
-
-        /// <summary>
-        /// Determines how fast a script will run (affects CPU utilization).
-        /// </summary>
-        /// <param name="LineCount">
-        /// <para>(The 20ms is just an example.) If the value ends in ms, it indicates how often the script should sleep (each sleep is 10 ms long). In the following example, the script will sleep for 10ms every time it has run for 20ms: <example>SetBatchLines, 20ms</example></para>
-        /// <para>The number of script lines to execute prior to sleeping for 10ms. The value can be as high as 9223372036854775807. Also, this mode is mutually exclusive of the 20ms mode in the previous paragraph; that is, only one of them can be in effect at a time.</para>
-        /// </param>
-        [Obsolete, Conditional("LEGACY")]
-        public static void SetBatchLines(string LineCount)
-        {
-
         }
 
         /// <summary>

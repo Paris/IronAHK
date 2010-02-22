@@ -297,5 +297,7 @@ namespace IronAHK.Rusty
         const string Keyword_Menu = "menu";
         const string Keyword_Locale = "locale";
         const string Keyword_CSV = "csv";
+        const string Keyword_Up = "up";
+        const string Keyword_Down = "down";
     }
 }

@@ -366,27 +366,7 @@ namespace IronAHK.Rusty
             catch (Exception) { error = 1; }
         }
 
-        /// <summary>
-        /// Includes the specified file inside the compiled version of the script.
-        /// </summary>
-        /// <param name="Source">
-        /// <para>The name of the file to be added to the compiled EXE. The file is assumed to be in (or relative to) the script's own directory if an absolute path isn't specified.</para>
-        /// <para>The file name must not contain double quotes, variable references (e.g. %A_ProgramFiles%), or wildcards. In addition, any special characters such as literal percent signs and commas must be escaped (just like in the parameters of all other commands). Finally, this parameter must be listed to the right of the FileInstall command (that is, not on a continuation line beneath it).</para>
-        /// </param>
-        /// <param name="Dest">When Source is extracted from the EXE, this is the name of the file to be created. It is assumed to be in %A_WorkingDir% if an absolute path isn't specified. Unlike Source, variable references may be used.</param>
-        /// <param name="Flag">
-        /// <para>(optional) this flag determines whether to overwrite files if they already exist:</para>
-        /// <list type="">
-        /// <item>0 = (default) do not overwrite existing files</item>
-        /// <item>1 = overwrite existing files</item>
-        /// </list>
-        /// <para>This parameter can be an expression, even one that evalutes to true or false (since true and false are stored internally as 1 and 0).</para>
-        /// </param>
-        [Obsolete, Conditional("LEGACY")]
-        public static void FileInstall(string Source, string Dest, string Flag)
-        {
-            throw new NotSupportedException();
-        }
+
 
         /// <summary>
         /// Moves or renames one or more files.
@@ -722,28 +702,6 @@ namespace IronAHK.Rusty
                 }
             }
             catch (Exception) { error = 1; }
-        }
-
-        /// <summary>
-        /// Checks for the existence of a file or folder.
-        /// </summary>
-        /// <param name="File_Dir_Pattern">The path, filename, or file pattern to check. FilePattern is assumed to be in %A_WorkingDir% if an absolute path isn't specified.</param>
-        /// <returns>Boolean.</returns>
-        [Obsolete, Conditional("FLOW")]
-        public static void IfExist(string File_Dir_Pattern)
-        {
-            throw new NotSupportedException();
-        }
-
-        /// <summary>
-        /// Checks for the existence of a file or folder.
-        /// </summary>
-        /// <param name="File_Dir_Pattern">The path, filename, or file pattern to check. FilePattern is assumed to be in %A_WorkingDir% if an absolute path isn't specified.</param>
-        /// <returns>Boolean.</returns>
-        [Obsolete, Conditional("FLOW")]
-        public static void IfNotExist(string File_Dir_Pattern)
-        {
-            throw new NotSupportedException();
         }
 
         /// <summary>

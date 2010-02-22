@@ -71,15 +71,6 @@ namespace IronAHK.Rusty
         }
 
         /// <summary>
-        /// Displays the hotkeys in use by the current script, whether their subroutines are currently running, and whether or not they use the keyboard or mouse hook.
-        /// </summary>
-        [Obsolete, Conditional("LEGACY")]
-        public static void ListHotkeys()
-        {
-            throw new NotSupportedException();
-        }
-
-        /// <summary>
         /// Disables or enables the user's ability to interact with the computer via keyboard and mouse.
         /// </summary>
         /// <param name="Mode">
@@ -143,15 +134,6 @@ namespace IronAHK.Rusty
         public static void GetKeyStateX(out string OutputVar, string WhichKey, string Mode)
         {
             OutputVar = null;
-        }
-
-        /// <summary>
-        /// Displays script info and a history of the most recent keystrokes and mouse clicks.
-        /// </summary>
-        [Obsolete, Conditional("LEGACY")]
-        public static void KeyHistory()
-        {
-            throw new NotSupportedException();
         }
 
         /// <summary>

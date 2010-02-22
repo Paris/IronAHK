@@ -10,15 +10,6 @@ namespace IronAHK.Rusty
 {
     partial class Core
     {
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="Mode"></param>
-        [Obsolete, Conditional("LEGACY")]
-        public static void AutoTrim(string Mode)
-        {
-            OnOff(ref _AutoTrim, Mode);
-        }
 
         /// <summary>
         /// Sets coordinate mode for various commands to be relative to either the active window or the screen.
@@ -55,15 +46,6 @@ namespace IronAHK.Rusty
         }
 
         /// <summary>
-        /// 
-        /// </summary>
-        [Obsolete, Conditional("LEGACY")]
-        public static void Edit()
-        {
-            throw new NotSupportedException();
-        }
-
-        /// <summary>
         /// Searches a region of the screen for an image.
         /// </summary>
         /// <param name="OutputVarX">
@@ -86,24 +68,6 @@ namespace IronAHK.Rusty
         {
             OutputVarX = null;
             OutputVarY = null;
-        }
-
-        /// <summary>
-        /// Displays the script lines most recently executed.
-        /// </summary>
-        [Obsolete, Conditional("LEGACY")]
-        public static void ListLines()
-        {
-            throw new NotSupportedException();
-        }
-
-        /// <summary>
-        /// Displays the script's variables: their names and current contents.
-        /// </summary>
-        [Obsolete, Conditional("LEGACY")]
-        public static void ListVars()
-        {
-            throw new NotSupportedException();
         }
 
         /// <summary>

@@ -88,6 +88,7 @@
     <Compile Include="Core\Math.cs" />
     <Compile Include="Core\Misc.cs" />
     <Compile Include="Core\Mouse.cs" />
+    <Compile Include="Core\Obsolete.cs" />
     <Compile Include="Core\Process.cs" />
     <Compile Include="Core\Properties.cs" />
     <Compile Include="Core\Registry.cs" />

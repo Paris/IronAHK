@@ -442,6 +442,12 @@ namespace IronAHK.Scripting
                     break;
 
                 #endregion
+
+                #region Arithmetic
+
+                // TODO: translate legacy EnvMult, EnvDiv etc
+
+                #endregion
             }
 
             if (replaced.Length > 0)
