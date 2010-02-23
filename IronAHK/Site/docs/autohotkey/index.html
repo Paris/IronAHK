@@ -1,1 +1,31 @@
-﻿
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>AutoHotkey</title>
+<link href="../primary.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<h1>AutoHotkey</h1>
+<div id="page">
+  <h2 id="differences">Differences</h2>
+  <h3 id="syntax">Syntax</h3>
+  <p>The script compiler automatically makes the following conversions to ease transition from AutoHotkey:</p>
+  <ul>
+    <li id="accessors"><em id="accessors">Set</em> commands such as <code>SetKeyDelay</code>, <code>AutoTrim</code> and <code>DetectHiddenWindows</code> have been replaced with accessors to their respective <code>A_</code> variables, i.e. <code>SetWorkingDir, %A_Temp%</code> is translated to <code>A_WorkingDir = %A_Temp%</code>;</li>
+    <li id="ifs"><em>If</em> commands are replaced by the equivalent if-statements, e.g. <code>IfGreater, var, 10</code> becomes <code>if var &gt; 10</code>. This includes <code>IfMsgBox</code>, <code>IfInString</code>, <code>IfWinActive</code> and others;</li>
+    <li id="strings"><a href="../commands/instr/"><code>InStr</code></a> and <a href="../commands/substr/"><code>SubStr</code></a> are used in place of older string commands like <code>StringLeft</code> and <code>StringTrimRight</code>;</li>
+    <li id="repeat"><code>Repeat</code> is converted to <a href="../commands/loop/"><code>Loop</code></a>;</li>
+    <li id="debugging"><code>Edit</code>, <code>ListHotkeys</code>, <code>ListLines</code> and <code>ListVars</code> will do nothing until a future version which has improved debugging support.</li>
+  </ul>
+  <p id="arrays"><strong>Arrays</strong></p>
+  <p>The symbols <code>[</code> and <code>]</code> are used as array indexers and can no longer be used in variable names.</p>
+  <h3 id="security">Security</h3>
+  <p>When scripts are <a href="../overview/compiling/">compiled</a> the source code is not attached to the resulting binary file so it cannot be decompiled. This is unlike AutoHotkey which stores a full copy of the script with the compiled .exe that can be extracted and decrypted or read from process memory when it is executed.</p>
+  <h3 id="portability">Portability</h3>
+  <p>Scripts will run the same natively on all operating systems and architectures (32/64 bit) with a .NET compatible runtime such as <a href="http://www.go-mono.com/">Mono</a>. Almost every version of Windows from XP onwards and most recent Linux desktop distributions have this by default.</p>
+  <h3 id="unicode">Unicode</h3>
+  <p>Source files are read as unicode text. This is the same for all strings and hotkey labels in a script.</p>
+</div>
+</body>
+</html>
