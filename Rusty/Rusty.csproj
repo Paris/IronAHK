@@ -71,7 +71,7 @@
     <Compile Include="Core\PInvoke.cs" />
     <Compile Include="Core\Environment.cs" />
     <Compile Include="Core\Flow.cs" />
-    <Compile Include="Core\Formats.cs" />
+    <Compile Include="Core\Common\Formats.cs" />
     <Compile Include="Core\GUI\Sub.cs" />
     <Compile Include="Core\GUI\GUI.cs" />
     <Compile Include="Core\GUI\ImageList.cs" />
@@ -82,14 +82,14 @@
     <Compile Include="Core\INI.cs" />
     <Compile Include="Core\JSON.cs" />
     <Compile Include="Core\Keyboard.cs" />
-    <Compile Include="Core\Keywords.cs" />
+    <Compile Include="Core\Common\Keywords.cs" />
     <Compile Include="Core\Loop.cs" />
     <Compile Include="Core\Math.cs" />
     <Compile Include="Core\Screen.cs" />
     <Compile Include="Core\Mouse.cs" />
     <Compile Include="Core\Obsolete.cs" />
     <Compile Include="Core\Process.cs" />
-    <Compile Include="Core\Properties.cs" />
+    <Compile Include="Core\Common\Properties.cs" />
     <Compile Include="Core\Registry.cs" />
     <Compile Include="Core\Sound.cs" />
     <Compile Include="Core\Accessors.cs" />
@@ -97,7 +97,7 @@
     <Compile Include="Core\Variables.cs" />
     <Compile Include="Core\Window.cs" />
     <Compile Include="Extras\SimpleJSON\SimpleJSON.cs" />
-    <Compile Include="Native\KeyboardHook.cs" />
+    <Compile Include="Core\Common\KeyboardHook.cs" />
     <Compile Include="Linux\IHotkeyRegister.cs" />
     <Compile Include="Linux\KeyCombination.cs" />
     <Compile Include="Linux\KeyModifiers.cs" />
