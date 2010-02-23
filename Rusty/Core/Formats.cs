@@ -11,6 +11,23 @@ namespace IronAHK.Rusty
 {
     partial class Core
     {
+        static bool? OnOff(string mode)
+        {
+            switch (mode.ToLowerInvariant())
+            {
+                case Keyword_On:
+                case "1":
+                    return true;
+
+                case Keyword_Off:
+                case "0":
+                    return false;
+
+                default:
+                    return null;
+            }
+        }
+
         static string ToYYYYMMDDHH24MISS(DateTime time)
         {
             return time.ToString("yyyyMMddHHmmss");
