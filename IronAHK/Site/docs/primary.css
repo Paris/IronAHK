@@ -36,6 +36,7 @@ pre.code {
 	overflow: auto;
 }
 kbd { font: 1em "Courier New", Courier, monospace; }
+code { background: #fafafa; }
 code, pre.code { font: .9em "Courier New", Courier, monospace; }
 pre.code em, code em {
 	color: #060;
