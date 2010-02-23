@@ -103,7 +103,7 @@ namespace IronAHK.Rusty
         /// </param>
         /// <param name="OperateOnUnderlyingThread">
         /// <list type="bullet">
-        /// <item><term>0</term>: <description>pause the current thread.</description></para>
+        /// <item><term>0</term>: <description>pause the current thread.</description></item>
         /// <item><term>1</term>: <description>marks the thread beneath the current thread as paused so that when it resumes, it will finish the command it was running (if any) and then enter a paused state. If there is no thread beneath the current thread, the program itself is paused, which prevents timers from running.</description></item>
         /// </list>
         /// </param>

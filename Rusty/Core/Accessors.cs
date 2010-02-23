@@ -76,11 +76,12 @@ namespace IronAHK.Rusty
         }
 
         /// <summary>
-        /// The current delay set by <see cref="SetControlDelay"/>.
+        /// The delay in milliseconds that will occur after each control-modifying command.
         /// </summary>
         public static int A_ControlDelay
         {
             get { return _ControlDelay ?? 20; }
+            set { _ControlDelay = value; }
         }
 
         /// <summary>
@@ -116,11 +117,12 @@ namespace IronAHK.Rusty
         }
 
         /// <summary>
-        /// The current speed set by <see cref="SetDefaultMouseSpeed"/>.
+        /// Sets the mouse speed that will be used if unspecified in <see cref="Click"/>.
         /// </summary>
         public static int A_DefaultMouseSpeed
         {
             get { return _DefaultMouseSpeed ?? 2; }
+            set { _DefaultMouseSpeed = value; }
         }
 
         /// <summary>
@@ -140,19 +142,21 @@ namespace IronAHK.Rusty
         }
 
         /// <summary>
-        /// The current mode (<code>On</code> or <code>Off</code>) set by <see cref="DetectHiddenText"/>.
+        /// Determines whether invisible text in a window is "seen" for the purpose of finding the window. This affects commands such as <see cref="WinExist"/> and <see cref="WinActivate"/>.
         /// </summary>
         public static string A_DetectHiddenText
         {
             get { return _DetectHiddenText ?? true ? Keyword_On : Keyword_Off; }
+            set { _DetectHiddenText = OnOff(value); }
         }
 
         /// <summary>
-        /// The current mode (<code>On</code> or <code>Off</code>) set by <see cref="DetectHiddenWindows"/>.
+        /// Determines whether invisible windows are "seen".
         /// </summary>
         public static string A_DetectHiddenWindows
         {
             get { return _DetectHiddenWindows ?? false ? Keyword_On : Keyword_Off; }
+            set { _DetectHiddenWindows = OnOff(value); }
         }
 
         /// <summary>
@@ -186,7 +190,7 @@ namespace IronAHK.Rusty
         }
 
         /// <summary>
-        /// The current floating point number format set by <see cref="SetFormat"/>.
+        /// The current floating point number format.
         /// </summary>
         public static string A_FormatFloat
         {
@@ -195,7 +199,7 @@ namespace IronAHK.Rusty
         }
 
         /// <summary>
-        /// The current integer format (<code>H</code> or <code>D</code>) set by <see cref="SetFormat"/>.
+        /// The current integer format (<c>H</c> or <c>D</c>).
         /// </summary>
         public static char A_FormatInteger
         {
@@ -680,11 +684,12 @@ namespace IronAHK.Rusty
         }
 
         /// <summary>
-        /// The current delay set by <code>SetMouseDelay</code>.
+        /// Sets the delay that will occur after each mouse movement or click.
         /// </summary>
         public static int A_MouseDelay
         {
             get { return _MouseDelay ?? 10; }
+            set { _MouseDelay = value; }
         }
 
         /// <summary>
@@ -886,11 +891,28 @@ namespace IronAHK.Rusty
         }
 
         /// <summary>
-        /// The current mode (On, Off, or Locale) set by StringCaseSense.
+        /// Determines whether string comparisons are case sensitive.
         /// </summary>
+        /// <value>
+        /// <list type="bullet">
+        /// <item><term>On</term>: <description>comparisons are case sensitive.</description></item>
+        /// <item><term>Off</term>: <description>the letters A-Z are considered identical to their lowercase counterparts.</description></item>
+        /// <item><term>Locale</term>: <description>comparisons are case insensitive according to the rules of the current locale.</description></item>
+        /// </list>
+        /// </value>
         public static string A_StringCaseSense
         {
             get { return ToStringCaseSense(_StringCaseSense ?? StringComparison.OrdinalIgnoreCase); }
+            set
+            {
+                switch (value.ToLowerInvariant())
+                {
+                    case Keyword_On: _StringCaseSense = StringComparison.Ordinal; break;
+                    case Keyword_Off: _StringCaseSense = StringComparison.OrdinalIgnoreCase; break;
+                    case Keyword_Locale: _StringCaseSense = StringComparison.CurrentCulture; break;
+                    default: _StringCaseSense = null; break;
+                }
+            }
         }
 
         /// <summary>
@@ -932,8 +954,7 @@ namespace IronAHK.Rusty
         /// </summary>
         public static string A_ThisHotkey
         {
-            // TODO: A_ThisHotkey
-            get { return _ThisHotkey; }
+            get { return null; }
         }
 
         /// <summary>

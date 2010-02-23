@@ -69,9 +69,6 @@ namespace IronAHK.Rusty
         static int? _DefaultMouseSpeed;
 
         [ThreadStatic]
-        static string _ThisHotkey;
-
-        [ThreadStatic]
         static int? _TitleMatchMode;
 
         [ThreadStatic]
@@ -87,13 +84,9 @@ namespace IronAHK.Rusty
 
         #region GUI
 
-        static Dictionary<int, ToolTip> ToolTips;
-
         static Dictionary<int, GUI> GUIs;
 
         static NotifyIcon Tray;
-
-        static Dictionary<string, ContextMenu> Menus;
 
         [ThreadStatic]
         static int _DefaultGUI;

@@ -336,7 +336,7 @@ namespace IronAHK.Rusty
         /// </summary>
         /// <param name="OutputVar">The name of the variable in which to store the retrieved position relative to the first character of <paramref name="InputVar"/>. Position 0 is the first character.</param>
         /// <param name="InputVar">The name of the input variable, whose contents will be searched.</param>
-        /// <param name="SearchText">The string to search for. Matching is not case sensitive unless <see cref="StringCaseSense"/> has been turned on.</param>
+        /// <param name="SearchText">The string to search for. Matching is not case sensitive unless <see cref="A_StringCaseSense"/> has been turned on.</param>
         /// <param name="Mode">
         /// <para>This affects which occurrence will be found if <paramref name="SearchText"/> occurs more than once within <paramref name="InputVar"/>. If this parameter is omitted, <paramref name="InputVar"/> will be searched starting from the left for the first match. If this parameter is 1 or the letter R, the search will start looking at the right side of <paramref name="InputVar"/> and will continue leftward until the first match is found.</para>
         /// <para>To find a match other than the first, specify the letter L or R followed by the number of the occurrence. For example, to find the fourth occurrence from the right, specify r4. Note: If the number is less than or equal to zero, no match will be found.</para>
@@ -407,7 +407,7 @@ namespace IronAHK.Rusty
         /// <param name="OutputVar">The name of the variable in which to store the result of the replacement process.</param>
         /// <param name="InputVar">The name of the variable whose contents will be read from.</param>
         /// <param name="SearchText">The string to search for.
-        /// Matching is not case sensitive unless <see cref="StringCaseSense"/> has been turned on.</param>
+        /// Matching is not case sensitive unless <see cref="A_StringCaseSense"/> has been turned on.</param>
         /// <param name="ReplaceText">SearchText will be replaced with this text.</param>
         /// <param name="All">
         /// <para>If omitted, only the first occurrence of <paramref name="SearchText"/> will be replaced.
