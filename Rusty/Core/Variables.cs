@@ -36,9 +36,6 @@ namespace IronAHK.Rusty
             }
             else
             {
-                if (_AutoTrim == true && Value is string)
-                    Value = ((string)Value).Trim(Keyword_Spaces);
-
                 if (exists)
                     variables[Name] = Value;
                 else

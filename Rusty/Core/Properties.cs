@@ -36,9 +36,6 @@ namespace IronAHK.Rusty
         #region Statics
 
         [ThreadStatic]
-        static bool? _AutoTrim = true;
-
-        [ThreadStatic]
         static int? _ControlDelay;
 
         [ThreadStatic]
