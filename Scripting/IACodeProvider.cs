@@ -56,7 +56,7 @@ namespace IronAHK.Scripting
             for (int i = 0; i < readers.Length; i++)
             {
                 string file = tempFiles.AddExtension(FileExtension, false);
-                File.WriteAllText(file, readers[i].ReadToEnd()); // UNDONE: use BufferedStream for writing temporary script files
+                File.WriteAllText(file, readers[i].ReadToEnd());
             }
 
             string[] fileNames = new string[tempFiles.Count];

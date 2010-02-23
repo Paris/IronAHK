@@ -234,7 +234,7 @@ namespace IronAHK.Rusty
         /// <param name="ID">Omit this parameter if you don't need multiple tooltips to appear simultaneously. Otherwise, this is a number between 1 and 20 to indicate which tooltip window to operate upon. If unspecified, that number is 1 (the first).</param>
         public static void ToolTip(string Text, int X, int Y, int ID)
         {
-            // TODO: ToolTip
+
         }
 
         /// <summary>

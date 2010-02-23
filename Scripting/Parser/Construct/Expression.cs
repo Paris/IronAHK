@@ -654,8 +654,6 @@ namespace IronAHK.Scripting
                             if (op == Script.Operator.LogicalNotEx && parts[y] is CodeComplexVariableReferenceExpression && z < parts.Count)
                                 MergeAssignmentAt(parts, z);
 
-                            // TODO: raise precedence of assignments for other cases (e.g. ++var)
-
                             if (LaxExpressions)
                             {
                                 if (y > parts.Count - 1)

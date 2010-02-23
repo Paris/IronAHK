@@ -237,8 +237,6 @@ namespace IronAHK.Scripting
 
         bool IsLegacyIf(string code)
         {
-            // UNDONE: mark legacy if methods with compiler conditional
-
             string[] part = code.TrimStart(Spaces).Split(Spaces, 3);
 
             if (part.Length < 2 || !IsIdentifier(part[0]))

@@ -146,7 +146,7 @@ namespace IronAHK.Scripting
                         case 'a': buffer.Append('\a'); break;
                         case 'f': buffer.Append('\f'); break;
 
-                        case '0': buffer.Append('\0'); break; // UNDONE: should \0 be in non-legacy versions?
+                        case '0': buffer.Append('\0'); break;
 
                         case Resolve:
                             if (resolve)
