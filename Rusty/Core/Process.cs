@@ -5,6 +5,8 @@ namespace IronAHK.Rusty
 {
     partial class Core
     {
+        // TODO: organise Process.cs
+
         /// <summary>
         /// Performs one of the following operations on a process: checks if it exists; changes its priority; closes it; waits for it to close.
         /// </summary>

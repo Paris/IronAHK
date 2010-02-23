@@ -68,11 +68,10 @@
   <ItemGroup>
     <Compile Include="Core\Core.cs" />
     <Compile Include="Core\Disk.cs" />
-    <Compile Include="Core\Call.cs" />
+    <Compile Include="Core\PInvoke.cs" />
     <Compile Include="Core\Environment.cs" />
     <Compile Include="Core\Flow.cs" />
     <Compile Include="Core\Formats.cs" />
-    <Compile Include="Core\Functions.cs" />
     <Compile Include="Core\GUI\Sub.cs" />
     <Compile Include="Core\GUI\GUI.cs" />
     <Compile Include="Core\GUI\ImageList.cs" />
@@ -84,16 +83,16 @@
     <Compile Include="Core\JSON.cs" />
     <Compile Include="Core\Keyboard.cs" />
     <Compile Include="Core\Keywords.cs" />
-    <Compile Include="Core\Loops.cs" />
+    <Compile Include="Core\Loop.cs" />
     <Compile Include="Core\Math.cs" />
-    <Compile Include="Core\Misc.cs" />
+    <Compile Include="Core\Screen.cs" />
     <Compile Include="Core\Mouse.cs" />
     <Compile Include="Core\Obsolete.cs" />
     <Compile Include="Core\Process.cs" />
     <Compile Include="Core\Properties.cs" />
     <Compile Include="Core\Registry.cs" />
     <Compile Include="Core\Sound.cs" />
-    <Compile Include="Core\ReservedVariables.cs" />
+    <Compile Include="Core\Accessors.cs" />
     <Compile Include="Core\String.cs" />
     <Compile Include="Core\Variables.cs" />
     <Compile Include="Core\Window.cs" />

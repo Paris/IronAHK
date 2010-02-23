@@ -1,5 +1,4 @@
 using System;
-using System.Diagnostics;
 using System.Reflection;
 using System.Windows.Forms;
 
@@ -7,6 +6,8 @@ namespace IronAHK.Rusty
 {
     partial class Core
     {
+        // TODO: organise GUI.cs
+
         /// <summary>
         /// Creates and manages windows and controls. Such windows can be used as data entry forms or custom user interfaces.
         /// </summary>
@@ -66,6 +67,22 @@ namespace IronAHK.Rusty
         public static void InputBox(out string OutputVar, string Title, string Prompt, string HIDE, string Width, string Height, string X, string Y, string Font, string Timeout, string Default)
         {
             OutputVar = null;
+        }
+
+        /// <summary>
+        /// Creates, deletes, modifies and displays menus and menu items. Changes the tray icon and its tooltip. Controls whether the main window of a compiled script can be opened.
+        /// </summary>
+        /// <param name="MenuName">
+        /// <para>It can be TRAY or the name of any custom menu. A custom menu is automatically created the first time its name is used with the Add command. For example: Menu, MyMenu, Add, Item1</para>
+        /// <para>Once created, a custom menu can be displayed with the Show command. It can also be attached as a submenu to one or more other menus via the Add command.</para>
+        /// </param>
+        /// <param name="Cmd">These 4 parameters are dependent on each other. See list below for the allowed combinations.</param>
+        /// <param name="P3">See <paramref name="Cmd"/>.</param>
+        /// <param name="P4">See <paramref name="Cmd"/>.</param>
+        /// <param name="P5">See <paramref name="Cmd"/>.</param>
+        public static void Menu(string MenuName, string Cmd, string P3, string P4, string P5)
+        {
+
         }
 
         /// <summary>

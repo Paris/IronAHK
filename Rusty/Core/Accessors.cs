@@ -8,6 +8,8 @@ namespace IronAHK.Rusty
 {
     partial class Core
     {
+        // TODO: organise Accessors.cs
+
         /// <summary>
         /// The full path of the assembly that is currently executing.
         /// </summary>

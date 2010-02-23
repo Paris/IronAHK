@@ -4,11 +4,14 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace IronAHK.Rusty
 {
     partial class Core
     {
+        // TODO: organise String.cs
+
         /// <summary>
         /// Transforms a YYYYMMDDHH24MISS timestamp into the specified date/time format.
         /// </summary>
@@ -86,6 +89,95 @@ namespace IronAHK.Rusty
             {
                 OutputVar = null;
             }
+        }
+
+        /// <summary>
+        /// Returns the position of the first occurrence of the string Needle in the string Haystack. Unlike StringGetPos, position 1 is the first character; this is because 0 is synonymous with "false", making it an intuitive "not found" indicator. If the parameter CaseSensitive is omitted or false, the search is not case sensitive (the method of insensitivity depends on StringCaseSense); otherwise, the case must match exactly. If StartingPos is omitted, it defaults to 1 (the beginning of Haystack). Otherwise, specify 2 to start at Haystack's second character, 3 to start at the third, etc. If StartingPos is beyond the length of Haystack, 0 is returned. If StartingPos is 0, the search is conducted in reverse (right-to-left) so that the rightmost match is found. Regardless of the value of StartingPos, the returned position is always relative to the first character of Haystack. For example, the position of "abc" in "123abc789" is always 4. Related items: RegExMatch(), IfInString, and StringGetPos.
+        /// </summary>
+        /// <param name="Haystack"></param>
+        /// <param name="Needle"></param>
+        /// <param name="CaseSensitive"></param>
+        /// <param name="StartingPos"></param>
+        /// <returns></returns>
+        public static int InStr(string Haystack, string Needle, string CaseSensitive, int StartingPos)
+        {
+            StringComparison type = CaseSensitive == null ?
+                StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal;
+
+            return StartingPos == 0 ? Haystack.LastIndexOf(Needle, 0, type) :
+                Haystack.IndexOf(Needle, StartingPos, type);
+        }
+
+        /// <summary>
+        /// Determines whether a string contains a pattern (regular expression).
+        /// </summary>
+        /// <param name="Haystack">The string whose content is searched.</param>
+        /// <param name="NeedleRegEx">The pattern to search for, which is a Perl-compatible regular expression (PCRE). The pattern's options (if any) must be included at the beginning of the string followed by an close-parenthesis. For example, the pattern "i)abc.*123" would turn on the case-insensitive option and search for "abc", followed by zero or more occurrences of any character, followed by "123". If there are no options, the ")" is optional; for example, ")abc" is equivalent to "abc".</param>
+        /// <param name="UnquotedOutputVar">
+        /// <para>Mode 1 (default): OutputVar is the unquoted name of a variable in which to store the part of Haystack that matched the entire pattern. If the pattern is not found (that is, if the function returns 0), this variable and all array elements below are made blank.</para>
+        /// <para>If any capturing subpatterns are present inside NeedleRegEx, their matches are stored in an array whose base name is OutputVar. For example, if the variable's name is Match, the substring that matches the first subpattern would be stored in Match1, the second would be stored in Match2, and so on. The exception to this is named subpatterns: they are stored by name instead of number. For example, the substring that matches the named subpattern (?P&lt;Year&gt;\d{4}) would be stored in MatchYear. If a particular subpattern does not match anything (or if the function returns zero), the corresponding variable is made blank.</para>
+        /// <para>Within a function, to create an array that is global instead of local, declare the base name of the array (e.g. Match) as a global variable prior to using it. The converse is true for assume-global functions.</para>
+        /// <para>Mode 2 (position-and-length): If a capital P is present in the RegEx's options -- such as "P)abc.*123" -- the length of the entire-pattern match is stored in OutputVar (or 0 if no match). If any capturing subpatterns are present, their positions and lengths are stored in two arrays: OutputVarPos and OutputVarLen. For example, if the variable's base name is Match, the one-based position of the first subpattern's match would be stored in MatchPos1, and its length in MatchLen1 (zero is stored in both if the subpattern was not matched or the function returns 0). The exception to this is named subpatterns: they are stored by name instead of number (e.g. MatchPosYear and MatchLenYear).</para>
+        /// </param>
+        /// <param name="StartingPos">
+        /// <para>If StartingPosition is omitted, it defaults to 1 (the beginning of Haystack). Otherwise, specify 2 to start at the second character, 3 to start at the third, and so on. If StartingPosition is beyond the length of Haystack, the search starts at the empty string that lies at the end of Haystack (which typically results in no match).</para>
+        /// <para>If StartingPosition is less than 1, it is considered to be an offset from the end of Haystack. For example, 0 starts at the last character and -1 starts at the next-to-last character. If StartingPosition tries to go beyond the left end of Haystack, all of Haystack is searched.</para>
+        /// <para>Regardless of the value of StartingPosition, the return value is always relative to the first character of Haystack. For example, the position of "abc" in "123abc789" is always 4.</para>
+        /// </param>
+        /// <returns>RegExMatch() returns the position of the leftmost occurrence of NeedleRegEx in the string Haystack. Position 1 is the first character. Zero is returned if the pattern is not found. If an error occurs (such as a syntax error inside NeedleRegEx), an empty string is returned and ErrorLevel is set to one of the values below instead of 0.</returns>
+        public static int RegExMatch(string Haystack, string NeedleRegEx, out string[] UnquotedOutputVar, int StartingPos)
+        {
+            Regex exp;
+            try { exp = ParseRegEx(NeedleRegEx); }
+            catch (ArgumentException)
+            {
+                UnquotedOutputVar = new string[] { };
+                error = 2;
+                return 0;
+            }
+
+            Match res = exp.Match(Haystack, StartingPos);
+
+            string[] matches = new string[res.Groups.Count];
+            for (int i = 0; i < res.Groups.Count; i++)
+                matches[i] = res.Groups[i].Value;
+
+            UnquotedOutputVar = matches;
+
+            return 0;
+        }
+
+        /// <summary>
+        /// Replaces occurrences of a pattern (regular expression) inside a string.
+        /// </summary>
+        /// <param name="Haystack">The string whose content is searched and replaced.</param>
+        /// <param name="NeedleRegEx">The pattern to search for, which is a Perl-compatible regular expression (PCRE). The pattern's options (if any) must be included at the beginning of the string followed by an close-parenthesis. For example, the pattern "i)abc.*123" would turn on the case-insensitive option and search for "abc", followed by zero or more occurrences of any character, followed by "123". If there are no options, the ")" is optional; for example, ")abc" is equivalent to "abc".</param>
+        /// <param name="Replacement">
+        /// <para>The string to be substituted for each match, which is plain text (not a regular expression). It may include backreferences like $1, which brings in the substring from Haystack that matched the first subpattern. The simplest backreferences are $0 through $9, where $0 is the substring that matched the entire pattern, $1 is the substring that matched the first subpattern, $2 is the second, and so on. For backreferences above 9 (and optionally those below 9), enclose the number in braces; e.g. ${10}, ${11}, and so on. For named subpatterns, enclose the name in braces; e.g. ${SubpatternName}. To specify a literal $, use $$ (this is the only character that needs such special treatment; backslashes are never needed to escape anything).</para>
+        /// <para>To convert the case of a subpattern, follow the $ with one of the following characters: U or u (uppercase), L or l (lowercase), T or t (title case, in which the first letter of each word is capitalized but all others are made lowercase). For example, both $U1 and $U{1} transcribe an uppercase version of the first subpattern.</para>
+        /// <para>Nonexistent backreferences and those that did not match anything in Haystack -- such as one of the subpatterns in (abc)|(xyz) -- are transcribed as empty strings.</para>
+        /// </param>
+        /// <param name="OutputVarCount">The unquoted name of a variable in which to store the number of replacements that occurred (0 if none).</param>
+        /// <param name="Limit">If Limit is omitted, it defaults to -1, which replaces all occurrences of the pattern found in Haystack. Otherwise, specify the maximum number of replacements to allow. The part of Haystack to the right of the last replacement is left unchanged.</param>
+        /// <param name="StartingPos">
+        /// <para>If StartingPosition is omitted, it defaults to 1 (the beginning of Haystack). Otherwise, specify 2 to start at the second character, 3 to start at the third, and so on. If StartingPosition is beyond the length of Haystack, the search starts at the empty string that lies at the end of Haystack (which typically results in no replacements).</para>
+        /// <para>If StartingPosition is less than 1, it is considered to be an offset from the end of Haystack. For example, 0 starts at the last character and -1 starts at the next-to-last character. If StartingPosition tries to go beyond the left end of Haystack, all of Haystack is searched.</para>
+        /// <para>Regardless of the value of StartingPosition, the return value is always a complete copy of Haystack -- the only difference is that more of its left side might be unaltered compared to what would have happened with a StartingPosition of 1.</para>
+        /// </param>
+        /// <returns>RegExReplace() returns a version of Haystack whose contents have been replaced by the operation. If no replacements are needed, Haystack is returned unaltered. If an error occurs (such as a syntax error inside NeedleRegEx), Haystack is returned unaltered (except in versions prior to 1.0.46.06, which return "") and ErrorLevel is set to one of the values below instead of 0.</returns>
+        public static string RegExReplace(string Haystack, string NeedleRegEx, string Replacement, out int OutputVarCount, int Limit, int StartingPos)
+        {
+            Regex exp;
+            try { exp = ParseRegEx(NeedleRegEx); }
+            catch (ArgumentException)
+            {
+                OutputVarCount = 0;
+                error = 2;
+                return null;
+            }
+            int total = exp.Matches(Haystack, StartingPos).Count;
+            OutputVarCount = Math.Min(Limit, total);
+            return exp.Replace(Haystack, Replacement, Limit, StartingPos);
         }
 
         /// <summary>
@@ -227,6 +319,16 @@ namespace IronAHK.Rusty
                 Array.Reverse(list);
 
             VarName = string.Join(split.ToString(), list);
+        }
+
+        /// <summary>
+        /// Returns the length of String. If String is a variable to which ClipboardAll was previously assigned, its total size is returned. Corresponding command: StringLen.
+        /// </summary>
+        /// <param name="String"></param>
+        /// <returns></returns>
+        public static decimal StrLen(string String)
+        {
+            return (decimal)String.Length;
         }
 
         /// <summary>
@@ -403,6 +505,18 @@ namespace IronAHK.Rusty
         {
             OutputVar = Title.Length == 1 && Title.ToLowerInvariant()[0] == 't' ?
                 CultureInfo.CurrentCulture.TextInfo.ToTitleCase(InputVar) : InputVar.ToUpperInvariant();
+        }
+
+        /// <summary>
+        /// Copies a substring from String starting at StartingPos and proceeding rightward to include at most Length characters (if Length is omitted, it defaults to "all characters"). For StartingPos, specify 1 to start at the first character, 2 to start at the second, and so on (if StartingPos is beyond String's length, an empty string is returned). If StartingPos is less than 1, it is considered to be an offset from the end of the string. For example, 0 extracts the last character and -1 extracts the two last characters (but if StartingPos tries to go beyond the left end of the string, the extraction starts at the first character). Length is the maximum number of characters to retrieve (fewer than the maximum are retrieved whenever the remaining part of the string too short). Specify a negative Length to omit that many characters from the end of the returned string (an empty string is returned if all or too many characters are omitted). Related items: RegExMatch(), StringMid, StringLeft/Right, StringTrimLeft/Right.
+        /// </summary>
+        /// <param name="String"></param>
+        /// <param name="StartingPos"></param>
+        /// <param name="Length"></param>
+        /// <returns></returns>
+        public static string SubStr(string String, decimal StartingPos, decimal Length)
+        {
+            return String.Substring((int)(StartingPos < 1 ? String.Length - StartingPos : StartingPos + 1), (int)Length);
         }
     }
 }

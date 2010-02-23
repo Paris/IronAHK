@@ -20,7 +20,7 @@ table.params td {
 	background: #fff;
 	border: 1px solid #f3f3f3;
 }
-table.params td p:first-child { margin-top: 0; }
-table.params td p:last-child { margin-bottom: 0; }
+table.params td *:first-child { margin-top: 0; }
+table.params td *:last-child { margin-bottom: 0; }
 table.params td:first-child { background: #f3f3f3 !important; }
 @media print { table.params { margin-left: 0; } }

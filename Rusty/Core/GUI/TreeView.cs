@@ -5,6 +5,8 @@ namespace IronAHK.Rusty
 {
     partial class Core
     {
+        // TODO: organise TreeView.cs
+
         /// <summary>
         /// Adds a new item to the TreeView and returns its unique Item ID number (or 0 upon failure). Name is the displayed text of the item, which can be text or numeric (including numeric expression results). ParentItemID is the ID number of the new item's parent (omit it or specify 0 to add the item at the top level). When adding a large number of items, performance can be improved by using GuiControl, -Redraw, MyTreeView before adding the items, and GuiControl, +Redraw, MyTreeView afterward.
         /// </summary>

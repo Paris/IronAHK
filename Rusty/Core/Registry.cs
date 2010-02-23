@@ -4,6 +4,8 @@ namespace IronAHK.Rusty
 {
     partial class Core
     {
+        // TODO: organise Registry.cs
+
         /// <summary>
         /// Deletes a subkey or value from the registry.
         /// </summary>

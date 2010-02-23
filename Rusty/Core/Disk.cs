@@ -1,11 +1,14 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Net;
 
 namespace IronAHK.Rusty
 {
     partial class Core
     {
+        // TODO: organise Disk.cs
+
         /// <summary>
         /// Ejects/retracts the tray in a CD or DVD drive, or sets a drive's volume label.
         /// </summary>
@@ -217,6 +220,17 @@ namespace IronAHK.Rusty
                 error = 0;
             }
             catch (Exception) { error = 1; }
+        }
+
+        /// <summary>
+        /// Returns a blank value (empty string) if FilePattern does not exist (FilePattern is assumed to be in A_WorkingDir if an absolute path isn't specified). Otherwise, it returns the attribute string (a subset of "RASHNDOCT") of the first matching file or folder. If the file has no attributes (rare), "X" is returned. FilePattern may be the exact name of a file or folder, or it may contain wildcards (* or ?). Since an empty string is seen as "false", the function's return value can always be used as a quasi-boolean value. For example, the statement if FileExist("C:\My File.txt") would be true if the file exists and false otherwise. Similarly, the statement if InStr(FileExist("C:\My Folder"), "D") would be true only if the file exists and is a directory. Corresponding commands: IfExist and FileGetAttrib.
+        /// </summary>
+        /// <param name="FilePattern"></param>
+        /// <returns></returns>
+        public static string FileExist(string FilePattern)
+        {
+            try { return FromFileAttribs(File.GetAttributes(FilePattern)); }
+            catch (Exception) { return string.Empty; }
         }
 
         /// <summary>
@@ -732,6 +746,26 @@ namespace IronAHK.Rusty
             OutExtension = Path.GetExtension(InputVar);
             OutNameNoExt = Path.GetFileNameWithoutExtension(InputVar);
             OutDrive = Path.GetPathRoot(InputVar);
+        }
+
+        /// <summary>
+        /// Downloads a file from the Internet.
+        /// </summary>
+        /// <param name="URL">URL of the file to download. For example, http://www.example.com might retrieve the welcome page for that organization.</param>
+        /// <param name="Filename">Specify the name of the file to be created locally, which is assumed to be in %A_WorkingDir% if an absolute path isn't specified. Any existing file will be overwritten by the new file.</param>
+        public static void URLDownloadToFile(string URL, string Filename)
+        {
+            int z = URL.IndexOf('*');
+            if (z != -1) // i.e. *0 http://...
+            {
+                for (; z < URL.Length; z++)
+                    if (char.IsWhiteSpace(URL, z))
+                        break;
+                URL = URL.Substring(z);
+            }
+
+            try { (new WebClient()).DownloadFile(URL, Filename); }
+            catch (Exception) { error = 1; }
         }
     }
 }

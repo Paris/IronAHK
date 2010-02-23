@@ -1,49 +1,12 @@
-using System;
-using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
-using System.Net;
-using System.Threading;
 using System.Windows.Forms;
 
 namespace IronAHK.Rusty
 {
     partial class Core
     {
-
-        /// <summary>
-        /// Sets coordinate mode for various commands to be relative to either the active window or the screen.
-        /// </summary>
-        /// <param name="Item">
-        /// <list type="">
-        /// <item>ToolTip: Affects ToolTip.</item>
-        /// <item>Pixel: Affects PixelGetColor, PixelSearch, and ImageSearch.</item>
-        /// <item>Mouse: Affects MouseGetPos, Click, and MouseMove/Click/Drag.</item>
-        /// <item>Caret: Affects the built-in variables A_CaretX and A_CaretY.</item>
-        /// <item>Menu: Affects the "Menu Show" command when coordinates are specified for it.</item>
-        /// </list>
-        /// </param>
-        /// <param name="Mode">
-        /// <para>If Param2 is omitted, it defaults to Screen.</para>
-        /// <list type="">
-        /// <item>Screen: Coordinates are relative to the desktop (entire screen).</item>
-        /// <item>Relative: Coordinates are relative to the active window.</item>
-        /// </list>
-        /// </param>
-        public static void CoordMode(string Item, string Mode)
-        {
-            // TODO: CoordMode
-        }
-
-        /// <summary>
-        /// Prevents the current thread from being interrupted by other threads.
-        /// </summary>
-        /// <param name="Mode"></param>
-        public static void Critical(string Mode)
-        {
-            System.Threading.Thread.CurrentThread.Priority = Mode == null ?
-                ThreadPriority.Highest : ThreadPriority.Normal;
-        }
+        // TODO: organise Screen.cs
 
         /// <summary>
         /// Searches a region of the screen for an image.
@@ -68,32 +31,6 @@ namespace IronAHK.Rusty
         {
             OutputVarX = null;
             OutputVarY = null;
-        }
-
-        /// <summary>
-        /// Creates, deletes, modifies and displays menus and menu items. Changes the tray icon and its tooltip. Controls whether the main window of a compiled script can be opened.
-        /// </summary>
-        /// <param name="MenuName">
-        /// <para>It can be TRAY or the name of any custom menu. A custom menu is automatically created the first time its name is used with the Add command. For example: Menu, MyMenu, Add, Item1</para>
-        /// <para>Once created, a custom menu can be displayed with the Show command. It can also be attached as a submenu to one or more other menus via the Add command.</para>
-        /// </param>
-        /// <param name="Cmd">These 4 parameters are dependent on each other. See list below for the allowed combinations.</param>
-        /// <param name="P3">See <paramref name="Cmd"/>.</param>
-        /// <param name="P4">See <paramref name="Cmd"/>.</param>
-        /// <param name="P5">See <paramref name="Cmd"/>.</param>
-        public static void Menu(string MenuName, string Cmd, string P3, string P4, string P5)
-        {
-
-        }
-
-        /// <summary>
-        /// Sends a string to the debugger (if any) for display.
-        /// </summary>
-        /// <param name="Text">The text to send to the debugger for display. This text may include linefeed characters (`n) to start new lines. In addition, a single long line can be broken up into several shorter ones by means of a continuation section.</param>
-        public static void OutputDebug(string Text)
-        {
-            if (Environment.OSVersion.Platform == PlatformID.Win32NT)
-                Windows.OutputDebugString(Text);
         }
 
         /// <summary>
@@ -205,48 +142,6 @@ namespace IronAHK.Rusty
                 }
 
             error = 1;
-        }
-
-        /// <summary>
-        /// Retrieves screen resolution, multi-monitor info, dimensions of system objects, and other system properties.
-        /// </summary>
-        /// <param name="OutputVar">The name of the variable in which to store the result.</param>
-        /// <param name="Command">See list below.</param>
-        /// <param name="Param3">This parameter is omitted except where noted below.</param>
-        public static void SysGet(out string OutputVar, string Command, string Param3)
-        {
-            OutputVar = null;
-        }
-
-        /// <summary>
-        /// Sets the priority or interruptibility of threads. It can also temporarily disable all timers.
-        /// </summary>
-        /// <param name="Setting"></param>
-        /// <param name="P2"></param>
-        /// <param name="P3"></param>
-        public static void Thread(string Setting, string P2, string P3)
-        {
-
-        }
-
-        /// <summary>
-        /// Downloads a file from the Internet.
-        /// </summary>
-        /// <param name="URL">URL of the file to download. For example, http://www.example.com might retrieve the welcome page for that organization.</param>
-        /// <param name="Filename">Specify the name of the file to be created locally, which is assumed to be in %A_WorkingDir% if an absolute path isn't specified. Any existing file will be overwritten by the new file.</param>
-        public static void URLDownloadToFile(string URL, string Filename)
-        {
-            int z = URL.IndexOf('*');
-            if (z != -1) // i.e. *0 http://...
-            {
-                for (; z < URL.Length; z++)
-                    if (char.IsWhiteSpace(URL, z))
-                        break;
-                URL = URL.Substring(z);
-            }
-
-            try { (new WebClient()).DownloadFile(URL, Filename); }
-            catch (Exception) { error = 1; }
         }
     }
 }

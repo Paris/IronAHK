@@ -6,6 +6,8 @@ namespace IronAHK.Rusty
 {
     partial class Core
     {
+        // TODO: organise Properties.cs
+
         /// <summary>
         /// A function.
         /// </summary>

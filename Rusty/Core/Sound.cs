@@ -5,6 +5,8 @@ namespace IronAHK.Rusty
 {
     partial class Core
     {
+        // TODO: organise Sound.cs
+
         /// <summary>
         /// Emits a tone from the PC speaker.
         /// </summary>
