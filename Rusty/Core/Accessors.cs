@@ -43,14 +43,6 @@ namespace IronAHK.Rusty
         }
 
         /// <summary>
-        /// The current mode (<code>On</code> or <code>Off</code>) set by <see cref="AutoTrim"/>.
-        /// </summary>
-        public static string A_AutoTrim
-        {
-            get { return _AutoTrim ?? true ? Keyword_On : Keyword_Off; }
-        }
-
-        /// <summary>
         /// (synonymous with A_NumBatchLines) The current value as set by SetBatchLines. Examples: 200 or 10ms (depending on format).
         /// </summary>
         [Obsolete]

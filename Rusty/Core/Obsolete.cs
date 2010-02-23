@@ -5,6 +5,20 @@ namespace IronAHK.Rusty
 {
     partial class Core
     {
+        #region Accessors
+
+        /// <summary>
+        /// Determines whether <c>Var1 = %Var2%</c> statements omit spaces and tabs from the beginning and end of Var2.
+        /// </summary>
+        [Obsolete]
+        public static string A_AutoTrim
+        {
+            get;
+            set;
+        }
+
+        #endregion
+
         #region Misc
 
         /// <summary>
