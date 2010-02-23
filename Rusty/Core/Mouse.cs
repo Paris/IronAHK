@@ -72,7 +72,7 @@ namespace IronAHK.Rusty
         /// </param>
         public static void CoordMode(string Item, string Mode)
         {
-            // TODO: CoordMode
+
         }
 
         /// <summary>

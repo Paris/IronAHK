@@ -148,8 +148,6 @@ namespace IronAHK.Rusty
                 case 'e': UseErrorLevel = true; break;
             }
 
-            // TODO: RunAs for Run
-
             error = 0;
             try
             {
