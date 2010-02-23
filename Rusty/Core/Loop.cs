@@ -8,6 +8,8 @@ namespace IronAHK.Rusty
 {
     partial class Core
     {
+        // TODO: organise Loops.cs
+
         static Stack<LoopInfo> loops = new Stack<LoopInfo>();
 
         enum LoopType { Normal, Registry, Directory, Parse, File }

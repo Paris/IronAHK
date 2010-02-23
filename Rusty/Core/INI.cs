@@ -5,6 +5,8 @@ namespace IronAHK.Rusty
 {
     partial class Core
     {
+        // TODO: organise INI.cs
+
         /// <summary>
         /// Deletes a value from a standard format .ini file.
         /// </summary>

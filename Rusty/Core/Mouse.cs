@@ -1,5 +1,4 @@
 using System;
-using System.Diagnostics;
 using System.Drawing;
 using System.Runtime.InteropServices;
 
@@ -7,6 +6,8 @@ namespace IronAHK.Rusty
 {
     partial class Core
     {
+        // TODO: organise Mouse.cs
+
         /// <summary>
         /// Clicks a mouse button at the specified coordinates. It can also hold down a mouse button, turn the mouse wheel, or move the mouse.
         /// </summary>
@@ -48,6 +49,30 @@ namespace IronAHK.Rusty
         public static void ControlClick(string Target, string WinTitle, string WinText, string WhichButton, string ClickCount, string Options, string ExcludeTitle, string ExcludeText)
         {
 
+        }
+
+        /// <summary>
+        /// Sets coordinate mode for various commands to be relative to either the active window or the screen.
+        /// </summary>
+        /// <param name="Item">
+        /// <list type="">
+        /// <item>ToolTip: Affects ToolTip.</item>
+        /// <item>Pixel: Affects PixelGetColor, PixelSearch, and ImageSearch.</item>
+        /// <item>Mouse: Affects MouseGetPos, Click, and MouseMove/Click/Drag.</item>
+        /// <item>Caret: Affects the built-in variables A_CaretX and A_CaretY.</item>
+        /// <item>Menu: Affects the "Menu Show" command when coordinates are specified for it.</item>
+        /// </list>
+        /// </param>
+        /// <param name="Mode">
+        /// <para>If Param2 is omitted, it defaults to Screen.</para>
+        /// <list type="">
+        /// <item>Screen: Coordinates are relative to the desktop (entire screen).</item>
+        /// <item>Relative: Coordinates are relative to the active window.</item>
+        /// </list>
+        /// </param>
+        public static void CoordMode(string Item, string Mode)
+        {
+            // TODO: CoordMode
         }
 
         /// <summary>

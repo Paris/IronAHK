@@ -5,6 +5,8 @@ namespace IronAHK.Rusty
 {
     partial class Core
     {
+        // TODO: organise Windows.cs
+
         /// <summary>
         /// Makes a variety of changes to a control.
         /// </summary>

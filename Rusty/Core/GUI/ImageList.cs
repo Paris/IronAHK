@@ -5,6 +5,8 @@ namespace IronAHK.Rusty
 {
     partial class Core
     {
+        // TODO: organise ImageList.cs
+
         /// <summary>
         /// Adds an icon or picture to the specified ImageListID and returns the new icon's index (1 is the first icon, 2 is the second, and so on). Filename is the name of an icon (.ICO), cursor (.CUR), or animated cursor (.ANI) file (animated cursors will not actually be animated when displayed in a ListView). Other sources of icons include the following types of files: EXE, DLL, CPL, SCR, and other types that contain icon resources. To use an icon group other than the first one in the file, specify its number for IconNumber. In the following example, the default icon from the second icon group would be used: IL_Add(ImageListID, "C:\My Application.exe", 2).
         /// </summary>

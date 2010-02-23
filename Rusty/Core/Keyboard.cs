@@ -1,11 +1,12 @@
 using System;
-using System.Diagnostics;
 using System.Windows.Forms;
 
 namespace IronAHK.Rusty
 {
     partial class Core
     {
+        // TODO: organise Keyboard.cs
+
         /// <summary>
         /// Creates, modifies, enables, or disables a hotkey while the script is running.
         /// </summary>
@@ -123,6 +124,198 @@ namespace IronAHK.Rusty
         public static void ControlSendRaw(string Control, string Keys, string WinTitle, string WinText, string ExcludeTitle, string ExcludeText)
         {
 
+        }
+
+        /// <summary>
+        /// Unlike the GetKeyState command -- which returns D for down and U for up -- this function returns (1) if the key is down and (0) if it is up.
+        /// If <paramref name="KeyName"/> is invalid, an empty string is returned.
+        /// </summary>
+        /// <param name="KeyName">Use autohotkey definition or virtual key starting from "VK"</param>
+        /// <param name="Mode"></param>
+        public static string GetKeyState(string KeyName, string Mode)
+        {
+            int VK = 0;
+            if (KeyName.Contains("VK"))
+            {
+                try
+                {
+                    VK = Convert.ToInt32(Core.SubStr(KeyName.Trim(), 3, KeyName.Trim().Length - 2));
+                }
+                catch
+                {
+                    return string.Empty;
+                }
+            }
+            else if (KeyName.Trim().Length == 1)
+            {
+                VK = Windows.VkKeyScan(Convert.ToChar(KeyName.Trim().ToLowerInvariant()));
+            }
+            else
+            {
+                switch (KeyName.Trim().ToLowerInvariant())
+                {
+                    //keyboard
+                    case "space": VK = (int)System.Windows.Forms.Keys.Space; break;
+                    case "tab": VK = (int)System.Windows.Forms.Keys.Tab; break;
+                    case "enter":
+                    case "return": VK = (int)System.Windows.Forms.Keys.Return; break;
+                    case "escape":
+                    case "esc": VK = (int)System.Windows.Forms.Keys.Escape; break;
+                    case "backspace":
+                    case "bs": VK = (int)System.Windows.Forms.Keys.Back; break;
+                    case "delete":
+                    case "del": VK = (int)System.Windows.Forms.Keys.Delete; break;
+                    case "insert":
+                    case "ins": VK = (int)System.Windows.Forms.Keys.Insert; break;
+                    case "home": VK = (int)System.Windows.Forms.Keys.Home; break;
+                    case "end": VK = (int)System.Windows.Forms.Keys.End; break;
+                    case "pgup":
+                    case "pageup": VK = (int)System.Windows.Forms.Keys.PageUp; break;
+                    case "pgdn":
+                    case "pagedown": VK = (int)System.Windows.Forms.Keys.PageDown; break;
+                    case "up": VK = (int)System.Windows.Forms.Keys.Up; break;
+                    case "down": VK = (int)System.Windows.Forms.Keys.Down; break;
+                    case "left": VK = (int)System.Windows.Forms.Keys.Left; break;
+                    case "right": VK = (int)System.Windows.Forms.Keys.Right; break;
+                    case "scrolllock": VK = (int)System.Windows.Forms.Keys.Scroll; break;
+                    case "capslock": VK = (int)System.Windows.Forms.Keys.CapsLock; break;
+                    case "numlock": VK = (int)System.Windows.Forms.Keys.NumLock; break;
+                    case "numpad0": VK = (int)System.Windows.Forms.Keys.NumPad0; break;
+                    case "numpadins": VK = (int)System.Windows.Forms.Keys.Insert; break;
+                    case "numpad1": VK = (int)System.Windows.Forms.Keys.NumPad1; break;
+                    case "numpadend": VK = (int)System.Windows.Forms.Keys.End; break;
+                    case "numpad2": VK = (int)System.Windows.Forms.Keys.NumPad2; break;
+                    case "numpaddown": VK = (int)System.Windows.Forms.Keys.Down; break;
+                    case "numpad3": VK = (int)System.Windows.Forms.Keys.NumPad3; break;
+                    case "numpadpgdn": VK = (int)System.Windows.Forms.Keys.PageDown; break;
+                    case "numpad4": VK = (int)System.Windows.Forms.Keys.NumPad4; break;
+                    case "numpadleft": VK = (int)System.Windows.Forms.Keys.Left; break;
+                    case "numpad5": VK = (int)System.Windows.Forms.Keys.NumPad5; break;
+                    case "numpadclear": VK = (int)System.Windows.Forms.Keys.Clear; break;
+                    case "numpad6": VK = (int)System.Windows.Forms.Keys.NumPad6; break;
+                    case "numpadright": VK = (int)System.Windows.Forms.Keys.Right; break;
+                    case "numpad7": VK = (int)System.Windows.Forms.Keys.NumPad7; break;
+                    case "numpadhome": VK = (int)System.Windows.Forms.Keys.Home; break;
+                    case "numpad8": VK = (int)System.Windows.Forms.Keys.NumPad8; break;
+                    case "numpadup": VK = (int)System.Windows.Forms.Keys.Up; break;
+                    case "numpad9": VK = (int)System.Windows.Forms.Keys.NumPad9; break;
+                    case "numpadpgup": VK = (int)System.Windows.Forms.Keys.PageUp; break;
+                    case "numpaddot": VK = (int)System.Windows.Forms.Keys.Decimal; break;
+                    case "numpaddel": VK = (int)System.Windows.Forms.Keys.Delete; break;
+                    case "numpaddiv": VK = (int)System.Windows.Forms.Keys.Divide; break;
+                    case "numpadmult": VK = (int)System.Windows.Forms.Keys.Multiply; break;
+                    case "numpadadd": VK = (int)System.Windows.Forms.Keys.Add; break;
+                    case "numpadsub": VK = (int)System.Windows.Forms.Keys.Subtract; break;
+                    case "numpadenter": VK = (int)System.Windows.Forms.Keys.Enter; break;
+                    case "f1": VK = (int)System.Windows.Forms.Keys.F1; break;
+                    case "f2": VK = (int)System.Windows.Forms.Keys.F2; break;
+                    case "f3": VK = (int)System.Windows.Forms.Keys.F3; break;
+                    case "f4": VK = (int)System.Windows.Forms.Keys.F4; break;
+                    case "f5": VK = (int)System.Windows.Forms.Keys.F5; break;
+                    case "f6": VK = (int)System.Windows.Forms.Keys.F6; break;
+                    case "f7": VK = (int)System.Windows.Forms.Keys.F7; break;
+                    case "f8": VK = (int)System.Windows.Forms.Keys.F8; break;
+                    case "f9": VK = (int)System.Windows.Forms.Keys.F9; break;
+                    case "f10": VK = (int)System.Windows.Forms.Keys.F10; break;
+                    case "f11": VK = (int)System.Windows.Forms.Keys.F11; break;
+                    case "f12": VK = (int)System.Windows.Forms.Keys.F12; break;
+                    case "f13": VK = (int)System.Windows.Forms.Keys.F13; break;
+                    case "f14": VK = (int)System.Windows.Forms.Keys.F14; break;
+                    case "f15": VK = (int)System.Windows.Forms.Keys.F15; break;
+                    case "f16": VK = (int)System.Windows.Forms.Keys.F16; break;
+                    case "f17": VK = (int)System.Windows.Forms.Keys.F17; break;
+                    case "f18": VK = (int)System.Windows.Forms.Keys.F18; break;
+                    case "f19": VK = (int)System.Windows.Forms.Keys.F19; break;
+                    case "f20": VK = (int)System.Windows.Forms.Keys.F20; break;
+                    case "f21": VK = (int)System.Windows.Forms.Keys.F21; break;
+                    case "f22": VK = (int)System.Windows.Forms.Keys.F22; break;
+                    case "f23": VK = (int)System.Windows.Forms.Keys.F23; break;
+                    case "f24": VK = (int)System.Windows.Forms.Keys.F24; break;
+                    case "appskey": VK = (int)System.Windows.Forms.Keys.Apps; break;
+                    case "lwin": VK = (int)System.Windows.Forms.Keys.LWin; break;
+                    case "rwin": VK = (int)System.Windows.Forms.Keys.RWin; break;
+                    case "ctrl":
+                    case "control": VK = (int)System.Windows.Forms.Keys.ControlKey; break;
+                    case "alt": VK = (int)System.Windows.Forms.Keys.Menu; break;
+                    case "shift": VK = (int)System.Windows.Forms.Keys.ShiftKey; break;
+                    case "lctrl":
+                    case "lcontrol": VK = (int)System.Windows.Forms.Keys.LControlKey; break;
+                    case "rctrl":
+                    case "rcontrol": VK = (int)System.Windows.Forms.Keys.RControlKey; break;
+                    case "lshift": VK = (int)System.Windows.Forms.Keys.LShiftKey; break;
+                    case "rshift": VK = (int)System.Windows.Forms.Keys.RShiftKey; break;
+                    case "lalt": VK = (int)System.Windows.Forms.Keys.LMenu; break;
+                    case "ralt": VK = (int)System.Windows.Forms.Keys.RMenu; break;
+                    case "printscreen": VK = (int)System.Windows.Forms.Keys.PrintScreen; break;
+                    case "ctrlbreak": VK = (int)System.Windows.Forms.Keys.Cancel; break;
+                    case "pause":
+                    case "break": VK = (int)System.Windows.Forms.Keys.Pause; break;
+                    case "help": VK = (int)System.Windows.Forms.Keys.Help; break;
+                    case "sleep": VK = (int)System.Windows.Forms.Keys.Sleep; break;
+                    case "browser_back": VK = (int)System.Windows.Forms.Keys.BrowserBack; break;
+                    case "browser_forward": VK = (int)System.Windows.Forms.Keys.BrowserForward; break;
+                    case "browser_refresh": VK = (int)System.Windows.Forms.Keys.BrowserRefresh; break;
+                    case "browser_stop": VK = (int)System.Windows.Forms.Keys.BrowserStop; break;
+                    case "browser_search": VK = (int)System.Windows.Forms.Keys.BrowserSearch; break;
+                    case "browser_favorites": VK = (int)System.Windows.Forms.Keys.BrowserFavorites; break;
+                    case "browser_home": VK = (int)System.Windows.Forms.Keys.BrowserHome; break;
+                    case "volume_mute": VK = (int)System.Windows.Forms.Keys.VolumeMute; break;
+                    case "volume_down": VK = (int)System.Windows.Forms.Keys.VolumeDown; break;
+                    case "volume_up": VK = (int)System.Windows.Forms.Keys.VolumeUp; break;
+                    case "media_next": VK = (int)System.Windows.Forms.Keys.MediaNextTrack; break;
+                    case "media_prev": VK = (int)System.Windows.Forms.Keys.MediaPreviousTrack; break;
+                    case "media_stop": VK = (int)System.Windows.Forms.Keys.MediaStop; break;
+                    case "media_play_pause": VK = (int)System.Windows.Forms.Keys.MediaPlayPause; break;
+                    case "launch_mail": VK = (int)System.Windows.Forms.Keys.LaunchMail; break;
+                    case "launch_media": break; //??
+                    case "launch_app1": VK = (int)System.Windows.Forms.Keys.LaunchApplication1; break;
+                    case "launch_app2": VK = (int)System.Windows.Forms.Keys.LaunchApplication2; break;
+
+                    //mouse
+                    case "lbutton": VK = (int)System.Windows.Forms.Keys.LButton; break;
+                    case "rbutton": VK = (int)System.Windows.Forms.Keys.RButton; break;
+                    case "wd":
+                    case "wheeldown":
+                    case "wu":
+                    case "wheelup":
+                    case "wheelleft":
+                    case "wheelright": break; //??
+                    case "xbutton1": VK = (int)System.Windows.Forms.Keys.XButton1; break;
+                    case "xbutton2": VK = (int)System.Windows.Forms.Keys.XButton2; break;
+
+                }
+            }
+
+            if (VK == 0) return string.Empty;
+
+            short result = Windows.GetKeyState(VK);
+
+            switch (result)
+            {
+                case 0:
+                    // Not pressed and not toggled on.
+                    return "0";
+
+                case 1:
+                    // Not pressed, but toggled on
+                    if (Mode.Trim().ToLowerInvariant() == "t") return "1";
+                    return "0";
+
+                default:
+                    // Pressed (and may be toggled on)
+                    if (Mode.Trim().ToLowerInvariant() == "t")
+                    {
+                        switch (Convert.ToByte(result))
+                        {
+                            case 0: return "0";
+                            case 1: return "1";
+                        }
+                    }
+                    else
+                        return "1";
+                    break;
+            }
+            return string.Empty;
         }
 
         /// <summary>

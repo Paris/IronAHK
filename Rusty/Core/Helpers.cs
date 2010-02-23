@@ -6,7 +6,11 @@ namespace IronAHK.Rusty
 {
     partial class Core
     {
-        static Bitmap GetScreen() { return GetScreen(Screen.PrimaryScreen.Bounds); }
+        static Bitmap GetScreen()
+        {
+            return GetScreen(Screen.PrimaryScreen.Bounds);
+        }
+
         static Bitmap GetScreen(Rectangle rect)
         {
             int color = Screen.PrimaryScreen.BitsPerPixel;

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Drawing;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -12,27 +11,6 @@ namespace IronAHK.Rusty
 {
     partial class Core
     {
-        static bool OnOff(ref bool? state, string mode)
-        {
-            switch (mode.ToLowerInvariant())
-            {
-                case "1":
-                case Keyword_On:
-                    state = true;
-                    break;
-
-                case "0":
-                case Keyword_Off:
-                    state = false;
-                    break;
-
-                default:
-                    return false;
-            }
-
-            return true;
-        }
-
         static string ToYYYYMMDDHH24MISS(DateTime time)
         {
             return time.ToString("yyyyMMddHHmmss");
@@ -152,7 +130,7 @@ namespace IronAHK.Rusty
 
         static string FromFileAttribs(FileAttributes attribs)
         {
-            StringBuilder str = new StringBuilder(9);
+            var str = new StringBuilder(9);
 
             if ((attribs & FileAttributes.ReadOnly) == FileAttributes.ReadOnly)
                 str.Append('R');
@@ -210,25 +188,6 @@ namespace IronAHK.Rusty
                 return filelist;
 
             return new string[] { };
-        }
-
-        static string ToRGB(Color col)
-        {
-            StringBuilder hex = new StringBuilder(8);
-            const string s = "x";
-            const char p = '0';
-            hex.Append(p);
-            hex.Append(s);
-            if (col.R < 0x10)
-                hex.Append(p);
-            hex.Append(col.R.ToString(s));
-            if (col.G < 0x10)
-                hex.Append(p);
-            hex.Append(col.R.ToString(s));
-            if (col.B < 0x10)
-                hex.Append(p);
-            hex.Append(col.B.ToString(s));
-            return hex.ToString();
         }
 
         static int FromTime(DateTime time)
@@ -293,7 +252,7 @@ namespace IronAHK.Rusty
 
         static RegistryKey ToRegKey(string RootKey, ref string SubKey, bool Parent)
         {
-            RegistryKey reg = ToRegRootKey(RootKey);
+            var reg = ToRegRootKey(RootKey);
             
             string[] keys = SubKey.Split('/');
             int j = keys.Length - (Parent ? 1 : 0);
@@ -307,7 +266,7 @@ namespace IronAHK.Rusty
 
         static RegexOptions ToRegexOptions(string sequence)
         {
-            RegexOptions options = RegexOptions.None;
+            var options = RegexOptions.None;
 
             foreach (char modifier in sequence)
             {
@@ -341,7 +300,7 @@ namespace IronAHK.Rusty
         static Process ToProcess(string id)
         {
             int pid = 0;
-            Process Proc = new Process();
+            var Proc = new Process();
 
             if (int.TryParse(id, out pid))
             {
@@ -363,8 +322,9 @@ namespace IronAHK.Rusty
 
         static Regex ParseRegEx(string exp)
         {
-            Regex mod = new Regex("^[imsxADJUXPS`nra]\\)");
-            Match res = mod.Match(exp);
+            var mod = new Regex("^[imsxADJUXPS`nra]\\)");
+            var res = mod.Match(exp);
+
             if (res.Success)
             {
                 string seq = res.Groups[0].Value;
@@ -377,6 +337,7 @@ namespace IronAHK.Rusty
         static void LV_RowOptions(ref ListViewItem row, string options)
         {
             string[] opts = options.Split(new char[] { ' ', '\t' });
+
             for (int i = 0; i < opts.Length; i++)
             {
                 bool enable = true;
@@ -408,21 +369,11 @@ namespace IronAHK.Rusty
 
         }
 
-        static bool ToggleOption(char mode, bool state)
-        {
-            switch (mode)
-            {
-                case '-': state = false; break;
-                case '+': state = true; break;
-                case '^': state = !state; break;
-            }
-            return state;
-        }
 
         static Dictionary<char, string> KeyValues(string Options, bool Lowercase, char[] Exceptions)
         {
             var table = new Dictionary<char, string>();
-            StringBuilder buf = new StringBuilder();
+            var buf = new StringBuilder();
             int i = 0;
             bool exp = false;
             char key = default(char);
@@ -490,38 +441,11 @@ namespace IronAHK.Rusty
             return table;
         }
 
-        static Dictionary<string, char> ParseStateKeys(string Options)
-        {
-            char mode = '+';
-            string key = string.Empty;
-            Dictionary<string, char> table = new Dictionary<string, char>();
-
-            foreach (char opt in Options)
-            {
-                if (char.IsWhiteSpace(opt))
-                {
-                    key = key.ToLowerInvariant();
-                    if (table.ContainsKey(key))
-                        table[key] = mode;
-                    else
-                        table.Add(key, mode);
-                    key = string.Empty;
-                }
-                else
-                {
-                    if (key.Length == 0 && (opt == '+' || opt == '-' || opt == '^'))
-                        mode = opt;
-                    else
-                        key += opt.ToString();
-                }
-            }
-
-            return table;
-        }
 
         static List<string> ParseKeys(string Options)
         {
             var list = new List<string>();
+
             for (int i = 0, j = 0; i < Options.Length; i++)
             {
                 if (!char.IsLetterOrDigit(Options, i))
@@ -530,6 +454,7 @@ namespace IronAHK.Rusty
                     j = i;
                 }
             }
+
             return list;
         }
 
