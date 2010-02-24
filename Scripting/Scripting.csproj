@@ -14,6 +14,8 @@
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkSubset>
     </TargetFrameworkSubset>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>Scripting.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugType>full</DebugType>
@@ -133,4 +135,7 @@
   <ProjectExtensions>
     <VisualStudio />
   </ProjectExtensions>
+  <ItemGroup>
+    <None Include="Scripting.snk" />
+  </ItemGroup>
 </Project>
