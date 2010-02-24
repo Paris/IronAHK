@@ -73,6 +73,7 @@
     <None Include="Example.ahk">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="license.rtf" />
     <None Include="setup.sh">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
