@@ -14,6 +14,7 @@
     <title><xsl:value-of select="$cmd"/></title>
     <link href="../../primary.css" rel="stylesheet" type="text/css" />
     <link href="../../api.css" rel="stylesheet" type="text/css" />
+    <script type="text/javascript" src="../../main.js" defer="defer"></script>
     </head>
     <body>
     <h1><xsl:value-of select="$cmd"/></h1>
