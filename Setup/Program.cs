@@ -48,7 +48,7 @@ namespace IronAHK.Setup
             project.Name = name;
             project.Version = new Version(version);
             project.UI = WUI.WixUI_InstallDir;
-            project.MSIFileName = "setup-x" + (x64 ? "64" : "86");
+            project.MSIFileName = x64 ? "x64" : "x86";
             project.AddRemoveProgramsIcon = string.Format("{1}{0}..{0}..{0}Site{0}favicon.ico", Path.DirectorySeparatorChar, path);
 
             project.LicenceFile = string.Format("{1}{0}..{0}..{0}license.rtf", Path.DirectorySeparatorChar, path);
