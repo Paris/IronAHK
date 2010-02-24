@@ -24,9 +24,9 @@ namespace IronAHK.Scripting
             Methods = new MethodCollection();
         }
         
-        public void LinkTo(string File)
+        public void LinkTo(string file)
         {
-            LinkingTo = Assembly.LoadFrom(File);
+            LinkingTo = File.Exists(file) ? Assembly.LoadFrom(file) : Assembly.LoadWithPartialName(Path.GetFileNameWithoutExtension(file));
                 
             MineTypes(LinkingTo);
         }
