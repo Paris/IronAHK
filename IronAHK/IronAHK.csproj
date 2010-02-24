@@ -95,6 +95,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Site\docs\developing\status\index.html" />
+    <Content Include="Site\docs\main.js" />
     <Content Include="Site\images\countdown.png" />
     <Content Include="Site\images\cross.png" />
     <Content Include="Site\images\delete.png" />
