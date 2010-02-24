@@ -28,6 +28,8 @@ namespace IronAHK.Scripting
                     var id = new StringBuilder(code.Length);
                     id.Append(sym);
                     i++;
+                    
+                    // UNDONE: optimise split tokens
 
                     for (; i < code.Length; i++)
                     {
@@ -44,7 +46,7 @@ namespace IronAHK.Scripting
                             id.Append(sym);
                         else
                         {
-                            if (i < code.Length && code[i] == ParenOpen && !IsKeyword(id.ToString()))
+                            if (sym == ParenOpen && !IsKeyword(id.ToString()) && !id.ToString().Contains(Concatenate.ToString()))
                                 id.Append(ParenOpen);
                             else
                                 i--;
