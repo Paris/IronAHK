@@ -93,21 +93,30 @@ namespace IronAHK.Rusty
         {
             Assembly gtk = null;
 
-            try { gtk = Assembly.Load("gtk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f"); }
-            catch (Exception) { }
+            if (Environment.OSVersion.Platform == PlatformID.Unix)
+            {
+                try { gtk = Assembly.Load("gtk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f"); }
+                catch (Exception) { gtk = null; }
+            }
 
             if (gtk != null)
             {
-                gtk.GetType("Gtk.Application").InvokeMember("Init", BindingFlags.InvokeMethod, null, null, new object[] { });
+                try
+                {
+                    gtk.GetType("Gtk.Application").InvokeMember("Init", BindingFlags.InvokeMethod, null, null, new object[] { });
 
-                var md_ctor = gtk.GetType("Gtk.MessageDialog").GetConstructor(new Type[] {
-				gtk.GetType("Gtk.Window"), typeof(int), typeof(int), typeof(int), typeof(string), typeof(object[]) });
+                    var md_ctor = gtk.GetType("Gtk.MessageDialog").GetConstructor(new Type[] {
+                        gtk.GetType("Gtk.Window"), typeof(int), typeof(int), typeof(int), typeof(string), typeof(object[]) });
 
-                var md = md_ctor.Invoke(new object[] { null, 1, 4, 1, Text, new object[] { } });
-                md.GetType().InvokeMember("Run", BindingFlags.InvokeMethod, null, md, new object[] { });
+                    var md = md_ctor.Invoke(new object[] { null, 1, 4, 1, Text, new object[] { } });
+                    md.GetType().InvokeMember("Run", BindingFlags.InvokeMethod, null, md, new object[] { });
+
+                    return;
+                }
+                catch (Exception) { }
             }
-            else
-                MessageBox.Show(Text);
+
+            MessageBox.Show(Text);
         }
 
         /// <summary>
