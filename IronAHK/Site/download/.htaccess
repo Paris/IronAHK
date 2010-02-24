@@ -1,0 +1,6 @@
+RewriteEngine on
+
+RewriteRule ^setup-(x\d+)$ http://ironahk.googlecode.com/files/IronAHK-0.5-$1.msi [L]
+RewriteRule ^zip$ http://ironahk.googlecode.com/files/ironahk-0.5.zip [L]
+RewriteRule ^source$ http://gitorious.org/ironahk/mainline/archive-tarball/v0.5 [L]
+
