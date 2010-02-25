@@ -1,14 +1,21 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using System.Runtime.InteropServices;
 
 namespace IronAHK
 {
     static partial class Program
     {
+        [DllImport("Kernel32.dll")]
+        static extern bool AllocConsole();
+
         [Conditional("DEBUG")]
         static void Start(ref string[] args)
         {
+            if (Environment.OSVersion.Platform == PlatformID.Win32NT)
+                AllocConsole();
+
             Sandbox();
 
             /* 
