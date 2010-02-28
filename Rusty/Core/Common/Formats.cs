@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
@@ -11,6 +12,23 @@ namespace IronAHK.Rusty
 {
     partial class Core
     {
+        static MethodInfo FindLocalMethod(string name)
+        {
+            var stack = new StackTrace(false).GetFrames();
+
+            for (int i = 0; i < 3; i++)
+            {
+                var type = stack[i].GetMethod().DeclaringType;
+                var list = type.GetMethods();
+
+                for (int z = 0; z < list.Length; z++)
+                    if (list[z].Name.Equals(name, StringComparison.OrdinalIgnoreCase))
+                        return list[z];
+            }
+
+            return null;
+        }
+
         static bool? OnOff(string mode)
         {
             switch (mode.ToLowerInvariant())
@@ -478,6 +496,11 @@ namespace IronAHK.Rusty
         static List<string> ParseKeys(string[] Options)
         {
             return ParseKeys(string.Join(" ", Options));
+        }
+
+        static string[] ParseOptions(string options)
+        {
+            return options.Split(Keyword_Spaces, StringSplitOptions.RemoveEmptyEntries);
         }
     }
 }
