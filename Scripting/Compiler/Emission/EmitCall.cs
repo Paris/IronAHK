@@ -17,8 +17,11 @@ namespace IronAHK.Scripting
             Type[] types = null;
             
             #region Lookup target function
+            if (invoke.Method.TargetObject != null)
+                target = GetMethodInfo(invoke.Method);
+
             // First we check the local methods
-            if(Methods.ContainsKey(invoke.Method.MethodName))
+            if(target == null && Methods.ContainsKey(invoke.Method.MethodName))
             {
                 types = ParameterTypes[invoke.Method.MethodName];
                 target = Methods[invoke.Method.MethodName].Method;
