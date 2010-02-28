@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Threading;
 using System.Windows.Forms;
 
 namespace IronAHK.Rusty
@@ -8,57 +10,127 @@ namespace IronAHK.Rusty
         // TODO: organise Keyboard.cs
 
         /// <summary>
-        /// Creates, modifies, enables, or disables a hotkey while the script is running.
+        /// Creates or modifies a hotkey.
         /// </summary>
-        /// <param name="KeyName">
-        /// <para>Name of the hotkey's activation key, including any modifier symbols. For example, specify #c for the Win+C hotkey.</para>
-        /// <para>If KeyName already exists as a hotkey, that hotkey will be updated with the values of the command's other parameters.</para>
-        /// <para>KeyName can also be the name of an existing hotkey label (i.e. a double-colon label), which will cause that hotkey to be updated with the values of the command's other parameters.</para>
-        /// <para>When specifying an existing hotkey, KeyName is not case sensitive. However, the names of keys must be spelled the same as in the existing hotkey (e.g. Esc is not the same as Escape for this purpose). Also, the order of modifier symbols such as ^!+# does not matter.</para>
-        /// <para>The current IfWin setting determines the variant of a hotkey upon which the Hotkey command will operate. If the variant does not yet exist, it will be created.</para>
-        /// <para>When a hotkey is first created -- either by the Hotkey command or a double-colon label in the script -- its key name and the ordering of its modifier symbols becomes the permanent name of that hotkey as reflected by A_ThisHotkey. This name does not change even if the Hotkey command later accesses the hotkey with a different symbol ordering.</para>
-        /// </param>
-        /// <param name="Label">
-        /// <para>The label name whose contents will be executed (as a new thread) when the hotkey is pressed. Both normal labels and hotkey/hotstring labels can be used. The trailing colon(s) should not be included. If Label is dynamic (e.g. %VarContainingLabelName%), IsLabel(VarContainingLabelName) may be called beforehand to verify that the label exists.</para>
-        /// <para>This parameter can be left blank if KeyName already exists as a hotkey, in which case its label will not be changed. This is useful to change only the hotkey's Options.</para>
-        /// <para>If the label is specified but the hotkey is disabled from a previous use of this command, the hotkey will still be disabled afterward. To prevent this, include the word ON in Options.</para>
-        /// <para>This parameter can also be one of the following special values:</para>
-        /// <list type="">
-        /// <item>On: The hotkey becomes enabled. No action is taken if the hotkey is already On.</item>
-        /// <item>Off: The hotkey becomes disabled. No action is taken if the hotkey is already Off.</item>
-        /// <item>Toggle: The hotkey is set to the opposite state (enabled or disabled).</item>
-        /// <item>AltTab (and others): These are special Alt-Tab hotkey actions that are described here.</item>
-        /// </list>
-        /// <para>Note: The current IfWin setting determines the variant of a hotkey upon which On/Off/Toggle will operate.</para>
+        /// <param name="KeyName">Name of the hotkey's activation key including any modifier symbols.</param>
+        /// <param name="Label">The name of the function or label whose contents will be executed when the hotkey is pressed.
+        /// This parameter can be left blank if <paramref name="KeyName"/> already exists as a hotkey,
+        /// in which case its label will not be changed. This is useful for changing only the <paramref name="Options"/>.
         /// </param>
         /// <param name="Options">
-        /// <para>A string of zero or more of the following letters with optional spaces in between. For example: UseErrorLevel B0</para>
-        /// <list type="">
-        /// <item>UseErrorLevel: If the command encounters a problem, this option skips the warning dialog, sets ErrorLevel to one of the codes from the table below, then allows the current thread to continue.</item>
-        /// <item>On: Enables the hotkey if it is currently disabled.</item>
-        /// <item>Off: Disables the hotkey if it is currently enabled. This is typically used to create a hotkey in an initially-disabled state.</item>
-        /// <item>B or B0: Specify the letter B to buffer the hotkey as described in #MaxThreadsBuffer. Specify B0 (B with the number 0) to disable this type of buffering.</item>
-        /// <item>Pn: Specify the letter P followed by the hotkey's thread priority. If the P option is omitted when creating a hotkey, 0 will be used.</item>
-        /// <item>Tn: Specify the letter T followed by a the number of threads to allow for this hotkey as described in #MaxThreadsPerHotkey. For example: T5</item>
+        /// <list type="bullet">
+        /// <item><term>UseErrorLevel</term>: <description>skips the warning dialog and sets <see cref="ErrorLevel"/> if there was a problem.</description></item>
+        /// <item><term>On</term>: <description>the hotkey becomes enabled.</description></item>
+        /// <item><term>Off</term>: <description>the hotkey becomes disabled.</description></item>
+        /// <item><term>Toggle</term>: <description>the hotkey is set to the opposite state (enabled or disabled).</description></item>
         /// </list>
-        /// <para>If either or both of the B and T option letters are omitted and the hotkey already exists, those options will not be changed. But if the hotkey does not yet exist -- that is, it is about to be created by this command -- the options will default to those most recently in effect. For example, the instance of #MaxThreadsBuffer that occurs closest to the bottom of the script will be used. If #MaxThreadsBuffer does not appear in the script, its default setting (OFF in this case) will be used. This behavior also applies to #IfWin: the bottommost occurrence applies to newly created hotkeys unless "Hotkey IfWin" has executed since the script started.</para>
-        /// <para>Note: The current IfWin setting determines the variant of a hotkey upon which the Hotkey command will operate. If the variant does not yet exist, it will be created.</para>
         /// </param>
         public static void Hotkey(string KeyName, string Label, string Options)
         {
-            if (Environment.OSVersion.Platform == PlatformID.Win32NT)
+            #region Initialise
+
+            if (keyboardHook == null)
             {
-                if (keyboardHook == null)
-                {
+                if (Environment.OSVersion.Platform == PlatformID.Win32NT)
                     keyboardHook = new Windows.KeyboardHook();
-                    Application.Run();
+                else
+                    throw new NotImplementedException(); // TODO: Linux hotkeys
+            }
+
+            if (hotkeys == null)
+                hotkeys = new Dictionary<string, HotkeyDefinition>();
+
+            #endregion
+
+            #region Options
+
+            bool? enabled = true;
+            bool error = false;
+
+            foreach (string option in ParseOptions(Options))
+            {
+                switch (option.ToLowerInvariant())
+                {
+                    case Keyword_On: enabled = true; break;
+                    case Keyword_Off: enabled = false; break;
+                    case Keyword_Toggle: enabled = null; break;
+                    case Keyword_UseErrorLevel: error = true; break;
+
+                    default:
+                        switch (option[0])
+                        {
+                            case 'B':
+                            case 'b':
+                            case 'P':
+                            case 'p':
+                            case 'T':
+                            case 't':
+                                break;
+
+                            default:
+                                ErrorLevel = 10;
+                                break;
+                        }
+                        break;
+                }
+            }
+
+            #endregion
+
+            #region Modify
+
+            HotkeyDefinition key;
+
+            try { key = HotkeyDefinition.Parse(KeyName); }
+#if !DEBUG
+            catch (Exception)
+            {
+                ErrorLevel = 2;
+                if (!error)
+                    throw new ArgumentException();
+                return;
+            }
+#endif
+            finally { }
+
+            string id = KeyName;
+
+            if (hotkeys.ContainsKey(id))
+            {
+                if (enabled == null)
+                    hotkeys[id].Enabled = !hotkeys[id].Enabled;
+                else
+                    hotkeys[id].Enabled = enabled == true;
+
+                switch (Label.ToLowerInvariant())
+                {
+                    case Keyword_On: hotkeys[id].Enabled = true; break;
+                    case Keyword_Off: hotkeys[id].Enabled = true; break;
+                    case Keyword_Toggle: hotkeys[id].Enabled = !hotkeys[id].Enabled; break;
                 }
             }
             else
             {
-                // TODO: Linux hotkeys
-                throw new NotImplementedException();
+                try
+                {
+                    var method = FindLocalMethod(Label);
+                    if (method == null)
+                        throw new ArgumentNullException();
+                    key.Proc = (GenericFunction)Delegate.CreateDelegate(typeof(GenericFunction), method);
+                }
+                catch (Exception)
+                {
+                    ErrorLevel = 1;
+                    if (!error)
+                        throw new ArgumentException();
+                    return;
+                }
+
+                hotkeys.Add(id, key);
+                keyboardHook.Add(key);
             }
+
+            #endregion
         }
 
         /// <summary>

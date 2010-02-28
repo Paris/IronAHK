@@ -49,31 +49,140 @@ namespace IronAHK.Rusty
 
         internal class HotkeyDefinition
         {
-            Keys keys;
-            HotkeyEvent proc;
+            #region Properties
+
+            Keys keys, extra;
+            Options options;
+            GenericFunction proc;
             bool enabled;
 
-            public HotkeyDefinition(Keys keys, HotkeyEvent proc)
+            public enum Options { None, IgnoreModifiers, PassThrough, Up }
+
+            #endregion
+
+            public HotkeyDefinition(Keys keys, Keys extra, Options options, GenericFunction proc)
             {
                 this.keys = keys;
+                this.extra = extra;
+                this.options = options;
                 this.proc = proc;
                 enabled = true;
             }
+
+            #region Accessors
 
             public Keys Keys
             {
                 get { return keys; }
             }
 
-            public HotkeyEvent Proc
+            public Keys Extra
+            {
+                get { return extra; }
+            }
+
+            public Options EnabledOptions
+            {
+                get { return options; }
+            }
+
+            public GenericFunction Proc
             {
                 get { return proc; }
+                set { proc = value; }
             }
 
             public bool Enabled
             {
                 get { return enabled; }
                 set { enabled = value; }
+            }
+
+            #endregion
+
+            public static HotkeyDefinition Parse(string sequence)
+            {
+                Keys keys = Keys.None, extra = Keys.None;
+                Options options = Options.None;
+
+                #region Modifiers
+
+                for (int i = 0; i < sequence.Length; i++)
+                {
+                    switch (sequence[i])
+                    {
+                        case Keyword_ModifierLeftPair:
+                            i++;
+                            if (i == sequence.Length)
+                                throw new ArgumentException();
+                            switch (sequence[i])
+                            {
+                                case Keyword_ModifierWin: extra = Keys.LWin; break;
+                                case Keyword_ModifierCtrl: extra = Keys.LControlKey; break;
+                                case Keyword_ModifierShift: extra = Keys.LShiftKey; break;
+                                default: throw new ArgumentException();
+                            }
+                            break;
+
+                        case Keyword_ModifierRightPair:
+                            i++;
+                            if (i == sequence.Length)
+                                throw new ArgumentException();
+                            switch (sequence[i])
+                            {
+                                case Keyword_ModifierWin: extra = Keys.RWin; break;
+                                case Keyword_ModifierCtrl: extra = Keys.RControlKey; break;
+                                case Keyword_ModifierShift: extra = Keys.RShiftKey; break;
+                                default: throw new ArgumentException();
+                            }
+                            break;
+
+                        case Keyword_ModifierWin: keys |= Keys.LWin; break;
+                        case Keyword_ModifierAlt: keys |= Keys.Alt; break;
+                        case Keyword_ModifierCtrl: keys |= Keys.Control; break;
+                        case Keyword_ModifierShift: keys |= Keys.Shift; break;
+
+                        case Keyword_HotkeyIgnoreModifiers: options |= Options.IgnoreModifiers; break;
+                        case Keyword_HotkeyPassThrough: options |= Options.PassThrough; break;
+
+                        default:
+                            if (i > 0)
+                                sequence = sequence.Substring(i);
+                            i = sequence.Length;
+                            break;
+                    }
+                }
+
+                #endregion
+
+                int z = sequence.IndexOf(Keyword_HotkeyCombination);
+                
+                if (z != -1)
+                {
+                    z++;
+                    if (z < sequence.Length)
+                    {
+                        string alt = sequence.Substring(z).Trim();
+                        extra = ParseKey(alt);
+                    }
+                    sequence = sequence.Substring(0, z - 1).Trim();
+                }
+
+                if (sequence.EndsWith(Keyword_Up, StringComparison.OrdinalIgnoreCase))
+                {
+                    sequence = sequence.Substring(0, sequence.Length - Keyword_Up.Length).Trim();
+                    options |= Options.Up;
+                }
+
+                keys |= ParseKey(sequence);
+
+                return new HotkeyDefinition(keys, extra, options, null);
+            }
+
+            static Keys ParseKey(string name)
+            {
+                object value = Enum.Parse(typeof(Keys), name, true);
+                return value == null ? Keys.None : (Keys)value;
             }
         }
 
@@ -123,17 +232,29 @@ namespace IronAHK.Rusty
 
         internal abstract class KeyboardHook
         {
+            #region Properties
+
             List<HotkeyDefinition> hotkeys;
             List<HotstringDefinition> hotstrings;
+            Dictionary<Keys, bool> pressed;
 
             StringBuilder history;
             const int retention = 1024;
+
+            #endregion
+
+            #region Constructor/destructor
 
             public KeyboardHook()
             {
                 hotkeys = new List<HotkeyDefinition>();
                 hotstrings = new List<HotstringDefinition>();
                 history = new StringBuilder(retention);
+                pressed = new Dictionary<Keys, bool>();
+
+                foreach (int i in Enum.GetValues(typeof(Keys)))
+                    if (!pressed.ContainsKey((Keys)i))
+                        pressed.Add((Keys)i, false);
 
                 RegisterHook();
             }
@@ -142,6 +263,8 @@ namespace IronAHK.Rusty
             {
                 DeregisterHook();
             }
+
+            #endregion
 
             #region Add/remove
 
@@ -195,8 +318,26 @@ namespace IronAHK.Rusty
 
             #endregion
 
-            protected void KeyReceived(Keys key)
+            #region Hotkey fired
+
+            protected void KeyReceived(Keys key, bool down)
             {
+                pressed[key] = down;
+
+                foreach (var hotkey in hotkeys)
+                {
+                    if (hotkey.Enabled && (hotkey.Keys & key) == key && HasModifiers(hotkey) &&
+                        ((hotkey.EnabledOptions & HotkeyDefinition.Options.Up) == HotkeyDefinition.Options.Up ? !down : true))
+                    {
+                        if ((hotkey.EnabledOptions & HotkeyDefinition.Options.PassThrough) == HotkeyDefinition.Options.PassThrough)
+                            PassThrough(hotkey.Keys);
+                        hotkey.Proc(new object[] { });
+                    }
+                }
+
+                if (!down)
+                    return;
+
                 string sequence = null;
 
                 if (hotstrings.Count > 0)
@@ -214,12 +355,6 @@ namespace IronAHK.Rusty
                     sequence = history.ToString();
                 }
 
-                foreach (var hotkey in hotkeys)
-                {
-                    if (hotkey.Keys == key && hotkey.Enabled)
-                        hotkey.Proc(this, new HotkeyEventArgs(key));
-                }
-
                 foreach (var hotstring in hotstrings)
                 {
                     if (sequence.EndsWith(hotstring.Sequence, StringComparison.OrdinalIgnoreCase) && hotstring.Enabled) // TODO: hotstring case sensitive matching
@@ -227,9 +362,38 @@ namespace IronAHK.Rusty
                 }
             }
 
+            bool HasModifiers(HotkeyDefinition hotkey)
+            {
+                if (hotkey.Extra != Keys.None && !pressed[hotkey.Extra])
+                    return false;
+
+                if ((hotkey.EnabledOptions & HotkeyDefinition.Options.IgnoreModifiers) == HotkeyDefinition.Options.IgnoreModifiers)
+                    return true;
+
+                bool[,] modifiers = { 
+                                       { (hotkey.Keys & Keys.Alt) == Keys.Alt , pressed[Keys.Alt] },
+                                       { (hotkey.Keys & Keys.Control) == Keys.Control, pressed[Keys.Control] || pressed[Keys.LControlKey] || pressed[Keys.RControlKey] },
+                                       { (hotkey.Keys & Keys.Shift) == Keys.Shift, pressed[Keys.Shift] || pressed[Keys.LShiftKey] || pressed[Keys.RShiftKey] }
+                                   };
+
+                for (int i = 0; i < 3; i++)
+                    if ((modifiers[i, 0] && !modifiers[i, 1]) || (modifiers[i, 1] && !modifiers[i, 0]))
+                        return false;
+
+                return true;
+            }
+
+            #endregion
+
+            #region Abstract methods
+
             protected abstract void RegisterHook();
 
             protected abstract void DeregisterHook();
+
+            protected abstract void PassThrough(Keys keys);
+
+            #endregion
         }
     }
 }
