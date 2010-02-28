@@ -299,5 +299,16 @@ namespace IronAHK.Rusty
         const string Keyword_CSV = "csv";
         const string Keyword_Up = "up";
         const string Keyword_Down = "down";
+        const string Keyword_Toggle = "toggle";
+
+        const char Keyword_ModifierWin = '#';
+        const char Keyword_ModifierAlt = '!';
+        const char Keyword_ModifierCtrl = '^';
+        const char Keyword_ModifierShift = '+';
+        const char Keyword_ModifierLeftPair = '<';
+        const char Keyword_ModifierRightPair = '>';
+        const char Keyword_HotkeyIgnoreModifiers = '*';
+        const char Keyword_HotkeyPassThrough = '~';
+        const char Keyword_HotkeyCombination = '&';
     }
 }
