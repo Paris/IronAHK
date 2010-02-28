@@ -149,6 +149,11 @@ namespace IronAHK.Scripting
                 get { return new MethodReference(typeof(string), "Concat", new Type[] { typeof(string[]) }); }
             }
 
+            public static MethodReference ApplicationRun
+            {
+                get { return new MethodReference(typeof(System.Windows.Forms.Application), "Run", Type.EmptyTypes); }
+            }
+
             #endregion
         }
     }
