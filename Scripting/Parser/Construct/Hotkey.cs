@@ -61,7 +61,7 @@ namespace IronAHK.Scripting
                 invoke = (CodeMethodInvokeExpression)InternalMethods.Hotkey;
                 invoke.Parameters.Add(new CodePrimitiveExpression(parts[0]));
                 invoke.Parameters.Add(new CodePrimitiveExpression(name));
-                invoke.Parameters.Add(new CodePrimitiveExpression(null));
+                invoke.Parameters.Add(new CodePrimitiveExpression(string.Empty));
             }
 
             prepend.Add(invoke);
