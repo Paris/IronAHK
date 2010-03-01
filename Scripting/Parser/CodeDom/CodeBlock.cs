@@ -63,7 +63,6 @@ namespace IronAHK.Scripting
             get { return name; }
             set { name = value; }
         }
-            
 
         public bool IsSingle
         {
