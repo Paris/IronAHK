@@ -95,6 +95,8 @@
     <Compile Include="Core\String.cs" />
     <Compile Include="Core\Variables.cs" />
     <Compile Include="Core\Window.cs" />
+    <Compile Include="Extras\GUI\Base.cs" />
+    <Compile Include="Extras\GUI\WinForms.cs" />
     <Compile Include="Extras\SimpleJSON\SimpleJSON.cs" />
     <Compile Include="Core\Common\KeyboardHook.cs" />
     <Compile Include="Linux\IHotkeyRegister.cs" />
