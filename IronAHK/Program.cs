@@ -15,6 +15,7 @@ namespace IronAHK
         const int ExitSuccess = 0;
         static bool gui;
 
+        [STAThread]
         static int Main(string[] args)
         {
             //args = new string[] { string.Format("..{0}..{0}..{0}Tests{0}Scripting{0}Code{0}isolated.ahk", Path.DirectorySeparatorChar) };
@@ -87,8 +88,30 @@ namespace IronAHK
                             {
                                 exe = args[n];
                                 i = n;
+
+                                if (exe == "!")
+                                {
+                                    exe = null;
+
+                                    var saveas = new SaveFileDialog()
+                                    {
+                                        AddExtension = true,
+                                        AutoUpgradeEnabled = true,
+                                        CheckPathExists = true,
+                                        DefaultExt = "exe",
+                                        Filter = "Application (*.exe)|*.exe",
+                                        OverwritePrompt = true,
+                                        ValidateNames = true,
+                                    };
+
+                                    if (!string.IsNullOrEmpty(script))
+                                        saveas.FileName = Path.GetFileNameWithoutExtension(script) + ".exe";
+
+                                    if (saveas.ShowDialog() == DialogResult.OK)
+                                        exe = saveas.FileName;
+                                }
                             }
-                            else
+                            if (exe == null)
                                 return Message(ErrorOutputUnspecified, ExitInvalidFunction);
                             break;
 
