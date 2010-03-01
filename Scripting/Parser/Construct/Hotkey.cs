@@ -28,7 +28,7 @@ namespace IronAHK.Scripting
                 parts[0] = string.Concat(mode, parts[0]);
 
             string name = Script.LabelMethodName(parts[0]);
-            PushLabel(lines[index], name, false);
+            PushLabel(lines[index], name, parts[0], false);
 
             if (parts.Length > 0 && !IsEmptyStatement(parts[1]))
             {
