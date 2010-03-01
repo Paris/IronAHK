@@ -28,102 +28,215 @@ namespace IronAHK.Rusty
         /// <para>ReturnType: If the function returns a 32-bit signed integer (Int), BOOL, or nothing at all, ReturnType may be omitted. Otherwise, specify one of the argument types from the types table below. The asterisk suffix is also supported.</para>
         /// </param>
         /// <returns>DllCall returns the actual value returned by the function. If the function is of a type that does not return a value, the result is an undefined integer. If the function cannot be called due to an error, the return value is blank (an empty string).</returns>
-        public static object DllCall(string Function, params object[] Parameters)
+        public static object DllCall(object Function, params object[] Parameters)
         {
-            // see http://blogs.msdn.com/devinj/archive/2005/07/12/438323.aspx
-            AppDomain domain = AppDomain.CurrentDomain;
-            AssemblyName name = new AssemblyName("a");
-            AssemblyBuilder assembly = domain.DefineDynamicAssembly(name, AssemblyBuilderAccess.Run);
-            ModuleBuilder module = assembly.DefineDynamicModule("w");
+            ErrorLevel = 0;
 
-            var types = new List<Type>();
-            var args = new List<object>();
-            bool cdcel = false;
-            Type t = typeof(int);
+            #region Parameters
+
+            var types = new Type[Parameters.Length / 2];
+            var refs = new bool[types.Length];
+            var args = new object[types.Length];
+            var returns = typeof(int);
+            bool cdecl = false;
 
             for (int i = 0; i < Parameters.Length; i++)
             {
-                if (i % 2 == 0) // type
+                Type type = null;
+                string name = ((string)Parameters[i]).ToLowerInvariant().Trim();
+                const string Cdecl = "cdecl";
+
+                if (name.StartsWith(Cdecl))
                 {
-                    string p = ((string)Parameters[i]).Trim().ToLowerInvariant();
+                    name = name.Substring(Cdecl.Length).Trim();
 
-                    if (i == Parameters.Length)
+                    if (i + 1 == Parameters.Length)
                     {
-                        string c = "cdcel";
-                        if (cdcel = p.Contains(c))
-                            p = p.Replace(c, string.Empty);
-                    }
-
-                    int z = p.LastIndexOfAny(new char[] { 'p', '*' });
-                    if (z != -1)
-                    {
-                        t = typeof(IntPtr);
-                        p = p.Substring(0, z);
+                        cdecl = true;
+                        goto returntype;
                     }
                     else
-                        switch (p)
-                        {
-                            case "string":
-                            case "str":
-                                t = typeof(string);
-                                break;
-                            case "int64": t = typeof(Int64); break;
-                            case "int": t = typeof(int); break;
-                            case "short": t = typeof(short); break;
-                            case "char": t = typeof(sbyte); break;
-                            case "float": t = typeof(float); break;
-                            case "double": t = typeof(double); break;
-                            case "uint64": t = typeof(UInt64); break;
-                            case "uint": t = typeof(uint); break;
-                            case "ushort": t = typeof(ushort); break;
-                            case "uchar": t = typeof(byte); break;
-                        }
-                }
-                else
-                {
-                    types.Add(t);
-                    if (t == typeof(IntPtr))
                     {
-                        unsafe
+                        ErrorLevel = 2;
+                        return null;
+                    }
+                }
+
+                switch (name[name.Length - 1])
+                {
+                    case '*':
+                    case 'P':
+                    case 'p':
+                        name = name.Substring(0, name.Length - 1).Trim();
+                        ErrorLevel = -6;
+                        // TODO: unmanaged pointers for pinvokes
+                        return null;
+                }
+
+                switch (name)
+                {
+                    case "str": type = typeof(string); break;
+                    case "int64": type = typeof(long); break;
+                    case "uint64": type = typeof(ulong); break;
+                    case "int": type = typeof(int); break;
+                    case "uint": type = typeof(uint); break;
+                    case "short": type = typeof(short); break;
+                    case "ushort": type = typeof(ushort); break;
+                    case "char": type = typeof(char); break;
+                    case "uchar": type = typeof(char); break;
+                    case "float": type = typeof(float); break;
+                    case "double": type = typeof(double); break;
+
+                    default:
+                        ErrorLevel = 2;
+                        return null;
+                }
+
+                i++;
+
+                if (i < Parameters.Length)
+                {
+                    int n = i / 2;
+                    types[n] = type;
+                    args[n] = Convert.ChangeType(Parameters[i], type);
+                    continue;
+                }
+
+            returntype:
+                returns = type;
+            }
+
+            #endregion
+
+            #region Method
+
+            #region DLL
+            if (Function is string)
+            {
+                string path = (string)Function, name;
+
+                int z = path.LastIndexOf(Path.DirectorySeparatorChar);
+
+                if (z == -1)
+                {
+                    name = path;
+                    path = string.Empty;
+
+                    if (Environment.OSVersion.Platform == PlatformID.Win32NT)
+                    {
+                        foreach (string lib in new[] { "user32", "kernel32", "comctl32", "gdi32" })
                         {
-                            byte[] p = (byte[])Parameters[i];
-                            fixed (byte* pz = p)
+                            var handle = Windows.GetModuleHandle(lib);
+                            if (handle == null || handle == IntPtr.Zero)
+                                continue;
+                            var address = Windows.GetProcAddress(handle, name);
+                            if (!(handle == null || handle == IntPtr.Zero))
                             {
-                                args.Add(new IntPtr(pz));
+                                path = lib + ".dll";
+                                break;
                             }
                         }
                     }
-                    else args.Add(Convert.ChangeType(Parameters[i], t));
-                    t = typeof(int);
+
+                    if (path.Length == 0)
+                    {
+                        ErrorLevel = -4;
+                        return null;
+                    }
                 }
+                else
+                {
+                    z++;
+
+                    if (z >= path.Length)
+                    {
+                        ErrorLevel = -4;
+                        return null;
+                    }
+
+                    name = path.Substring(z);
+                    path = path.Substring(0, z - 1);
+                }
+
+                if (Environment.OSVersion.Platform == PlatformID.Win32NT && path.Length != 0 && !Path.HasExtension(path))
+                    path += ".dll";
+
+                var assembly = AppDomain.CurrentDomain.DefineDynamicAssembly(new AssemblyName("pinvokes"), AssemblyBuilderAccess.Run);
+                var module = assembly.DefineDynamicModule("module");
+                var container = module.DefineType("container", TypeAttributes.Public | TypeAttributes.UnicodeClass);
+
+                var invoke = container.DefinePInvokeMethod(
+                    name,
+                    path,
+                    MethodAttributes.Public | MethodAttributes.Static | MethodAttributes.PinvokeImpl,
+                    CallingConventions.Standard,
+                    returns,
+                    types,
+                    cdecl ? CallingConvention.Cdecl : CallingConvention.Winapi,
+                    CharSet.Auto);
+
+                invoke.SetImplementationFlags(invoke.GetMethodImplementationFlags() | MethodImplAttributes.PreserveSig);
+                var created = container.CreateType();
+                // TODO: pinvoke method caching
+
+                try
+                {
+                    var method = created.GetMethod(name);
+
+                    if (method == null)
+                    {
+                        ErrorLevel = -4;
+                        return null;
+                    }
+
+                    object value = method.Invoke(null, args);
+                    return value;
+                }
+#if !DEBUG
+                catch (Exception)
+                {
+                    ErrorLevel = -5;
+                    return null;
+                }
+#endif
+                finally { }
             }
+            #endregion
+            #region Address
+            else if (Function is decimal || Function is int || Function is float)
+            {
+                int address = (int)Function;
 
-            int pos = Function.LastIndexOf(Path.PathSeparator);
-            Type[] a_types = new Type[types.Count];
-            types.CopyTo(a_types, 0);
-            string sig = "m";
-            MethodBuilder mb = module.DefinePInvokeMethod(
-                sig,
-                Function.Substring(0, pos),
-                Function.Substring(pos + 1),
-                MethodAttributes.Public | MethodAttributes.Static | MethodAttributes.PinvokeImpl,
-                CallingConventions.Standard,
-                t,
-                a_types,
-                cdcel ? CallingConvention.Cdecl : CallingConvention.Winapi,
-                CharSet.Auto);
+                if (address < 0)
+                {
+                    ErrorLevel = -1;
+                    return null;
+                }
 
-            mb.SetImplementationFlags(MethodImplAttributes.PreserveSig | mb.GetMethodImplementationFlags());
-            module.CreateGlobalFunctions();
+                try
+                {
+                    object value = Marshal.GetDelegateForFunctionPointer(new IntPtr(address), typeof(Delegate)).Method.Invoke(null, args);
+                    return value;
+                }
+#if !DEBUG
+                catch (Exception)
+                {
+                    ErrorLevel = -5;
+                    return null;
+                }
+#endif
+                finally { }
+            }
+            #endregion
+            #region Uknown
+            else
+            {
+                ErrorLevel = -3;
+                return null;
+            }
+            #endregion
 
-            object[] a_args = new object[args.Count];
-            args.CopyTo(a_args, 0);
-
-            return module.GetMethod(sig).Invoke(null,
-                BindingFlags.Default | BindingFlags.InvokeMethod,
-                null,
-                a_args,
-                CultureInfo.InvariantCulture);
+            #endregion
         }
 
         /// <summary>
