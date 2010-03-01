@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Reflection;
 
 namespace IronAHK.Rusty
@@ -27,19 +28,23 @@ namespace IronAHK.Rusty
             }
 
             Name = NormaliseVariableName(Name);
-            bool exists = variables.ContainsKey(Name);
 
-            if (Value == null)
+            lock (variables)
             {
-                if (exists)
-                    variables.Remove(Name);
-            }
-            else
-            {
-                if (exists)
-                    variables[Name] = Value;
+                bool exists = variables.ContainsKey(Name);
+
+                if (Value == null)
+                {
+                    if (!exists)
+                        variables.Remove(Name);
+                }
                 else
-                    variables.Add(Name, Value);
+                {
+                    if (exists)
+                        variables[Name] = Value;
+                    else
+                        variables.Add(Name, Value);
+                }
             }
 
             return Value;
@@ -54,17 +59,21 @@ namespace IronAHK.Rusty
         {
             Name = NormaliseVariableName(Name);
 
-            if (variables.ContainsKey(Name))
-                return variables[Name];
-            else
+            lock (variables)
             {
-                var method = GetReservedVariableReference(Name, false);
-                return method == null ? null : method.Invoke(null, new object[] { });
+                if (variables != null && variables.ContainsKey(Name))
+                    return variables[Name];
             }
+
+            var method = GetReservedVariableReference(Name, false);
+            return method == null ? null : method.Invoke(null, new object[] { });
         }
 
         static string NormaliseVariableName(string name)
         {
+            if (variables == null)
+                variables = new Dictionary<string, object>();
+
             return name.ToLowerInvariant();
         }
 
