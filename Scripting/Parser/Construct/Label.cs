@@ -12,12 +12,12 @@ namespace IronAHK.Scripting
             if (code.Length < 2 || code[z] != HotkeyBound)
                 throw new ParseException("Invalid label name");
 
-            PushLabel(line, name, true);
+            PushLabel(line, name, name, true);
 
             return LocalLabelInvoke(name);
         }
 
-        void PushLabel(CodeLine line, string name, bool fallthrough)
+        void PushLabel(CodeLine line, string name, string realname, bool fallthrough)
         {
             var last = CloseTopLabelBlock();
 
@@ -25,7 +25,11 @@ namespace IronAHK.Scripting
                 last.Statements.Add(LocalLabelInvoke(name));
 
             var method = LocalMethod(name);
-            var block = new CodeBlock(line, method.Name, method.Statements, CodeBlock.BlockKind.Label) { Type = CodeBlock.BlockType.Within };
+            var block = new CodeBlock(line, method.Name, method.Statements, CodeBlock.BlockKind.Label)
+            {
+                Type = CodeBlock.BlockType.Within,
+                Name = realname
+            };
             CloseTopSingleBlock();
             blocks.Push(block);
 

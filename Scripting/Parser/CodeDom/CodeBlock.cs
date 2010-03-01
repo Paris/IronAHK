@@ -14,6 +14,7 @@ namespace IronAHK.Scripting
         BlockType type;
         BlockKind kind;
         int level;
+        string name;
 
         public CodeBlock(CodeLine line, string method, CodeStatementCollection statements, BlockKind kind)
         {
@@ -56,6 +57,13 @@ namespace IronAHK.Scripting
             get { return level; }
             set { level = value; }
         }
+
+        public string Name
+        {
+            get { return name; }
+            set { name = value; }
+        }
+            
 
         public bool IsSingle
         {
