@@ -132,16 +132,14 @@ namespace IronAHK.Rusty
         /// </list>
         /// </param>
         /// <param name="Priority">A value between 0 and 4 inclusive to indicate the priority of the timer's thread.</param>
-        public static void SetTimer(GenericFunction Label, string Mode, int Priority)
+        public static void SetTimer(string Label, string Mode, int Priority)
         {
-            string name = Label.Method.Name;
-
             switch (Mode.ToLowerInvariant())
             {
                 case Keyword_On:
-                    if (timers.ContainsKey(name))
+                    if (timers.ContainsKey(Label))
                     {
-                        timers[name].Start();
+                        timers[Label].Start();
                         return;
                     }
                     else
@@ -149,8 +147,8 @@ namespace IronAHK.Rusty
                     break;
 
                 case Keyword_Off:
-                    if (timers.ContainsKey(name))
-                        timers[name].Stop();
+                    if (timers.ContainsKey(Label))
+                        timers[Label].Stop();
                     else
                         error = 1;
                     return;
@@ -171,13 +169,13 @@ namespace IronAHK.Rusty
             if (once)
                 interval = -interval;
 
-            if (timers.ContainsKey(name))
-                timers[name].Interval = interval;
+            if (timers.ContainsKey(Label))
+                timers[Label].Interval = interval;
             else
-                timers.Add(name, timer);
+                timers.Add(Label, timer);
 
             if (once)
-                timers.Remove(name);
+                timers.Remove(Label);
 
             timer.Interval = interval;
 
@@ -186,10 +184,19 @@ namespace IronAHK.Rusty
             if (Priority > -1 && Priority < 5)
                 priority = (System.Threading.ThreadPriority)Priority;
 
+            var method = FindLocalMethod(Label);
+
             timer.Elapsed += new ElapsedEventHandler(delegate(object s, ElapsedEventArgs e)
             {
                 System.Threading.Thread.CurrentThread.Priority = priority;
-                Label(new object[] { });
+
+                try { method.Invoke(null, new object[] { new object[] { } }); }
+                catch (Exception)
+                {
+                    timer.Stop();
+                    timers.Remove(Label);
+                    timer.Dispose();
+                }
 
                 if (once)
                 {
@@ -197,6 +204,8 @@ namespace IronAHK.Rusty
                     timer.Dispose();
                 }
             });
+
+            timer.Start();
         }
 
         /// <summary>
