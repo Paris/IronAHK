@@ -70,12 +70,32 @@ namespace IronAHK.Scripting
 
         CodeExpression VarIdOrConstant(string name)
         {
-            if (name.Equals("A_LineNumber", StringComparison.OrdinalIgnoreCase))
-                return new CodePrimitiveExpression(line);
-            else if (name.Equals("A_LineFile", StringComparison.OrdinalIgnoreCase))
-                return new CodePrimitiveExpression(fileName);
-            else
-                return VarId(name);
+            switch (name.ToLowerInvariant())
+            {
+                case "a_linenumber":
+                    return new CodePrimitiveExpression(line);
+
+                case "a_linefile":
+                    return new CodePrimitiveExpression(fileName);
+
+                case "a_thisfunc":
+                    return new CodePrimitiveExpression(Scope);
+
+                case "a_thislabel":
+                    {
+                        if (blocks.Count == 0)
+                            return new CodePrimitiveExpression(string.Empty);
+
+                        var all = blocks.ToArray();
+                        for (int i = all.Length - 1; i > -1; i--)
+                            if (all[i].Kind == CodeBlock.BlockKind.Label)
+                                return new CodePrimitiveExpression(all[i].Name);
+                    }
+                    return new CodePrimitiveExpression(string.Empty);
+
+                default:
+                    return VarId(name);
+            }
         }
         
         #endregion
