@@ -41,12 +41,26 @@ namespace IronAHK.Scripting
                 container.Attributes = MemberAttributes.Private;
                 space.Types.Add(container);
 
-                var run = new CodeExpressionStatement((CodeMethodInvokeExpression)InternalMethods.ApplicationRun);
                 foreach (CodeStatement statement in prepend)
                     main.Statements.Insert(0, statement);
+               
                 if (prepend.Count > 0)
-                    main.Statements.Insert(prepend.Count, run);
-                prepend = new CodeStatementCollection();
+                {
+                    prepend.Clear();
+                    var run = new CodeExpressionStatement((CodeMethodInvokeExpression)InternalMethods.ApplicationRun);
+
+                    for (int i = 0; i < main.Statements.Count; i++)
+                    {
+                        if (main.Statements[i] is CodeMethodReturnStatement)
+                        {
+                            for (int n = main.Statements.Count - 1; n > i - 1; n--)
+                                main.Statements.RemoveAt(n);
+                            break;
+                        }
+                    }
+
+                    main.Statements.Add(run);
+                }
 
                 ResolveLocalInvokes();
                 foreach (CodeMemberMethod method in methods.Values)
