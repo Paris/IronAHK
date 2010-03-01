@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Xml.Linq;
+using Microsoft.Win32;
 using WixSharp;
 
 [assembly: CLSCompliant(true)]
@@ -42,6 +43,7 @@ namespace IronAHK.Setup
             string version = System.IO.File.ReadAllText(string.Format("{1}{0}..{0}..{0}version.txt", Path.DirectorySeparatorChar, path)).Trim();
             string docroot = Path.GetFullPath(string.Format("{1}{0}..{0}..{0}Site{0}docs", Path.DirectorySeparatorChar, path));
             string shortcut = string.Format("%ProgramMenu%{0}{1}", Path.DirectorySeparatorChar, name);
+            const string extension = "ia";
 
             var project = new Project();
 
@@ -68,13 +70,19 @@ namespace IronAHK.Setup
                     new Assembly(typeof(Scripting.IACodeProvider).Namespace + ".dll", true),
                     new WixSharp.File(name + ".exe",
                         new FileShortcut(name, shortcut),
-                        new FileAssociation("ia") { ContentType = "text/plain", Description = name + " Script", Icon = null }
+                        new FileAssociation(extension) { ContentType = "text/plain", Description= name + " Script", Arguments = "\"%1\" %*", Icon = null }
                         ),
                     new WixSharp.File("license.txt", new FileShortcut("License", shortcut)),
-                    docs
-                    )
+                    docs)
             };
 
+            project.RegValues = new[]
+            {
+                new RegValue(RegistryHive.ClassesRoot, "." + extension, "PerceivedType", "text")
+            };
+
+            // TODO: add installer path to HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths
+            // TODO: add installer compile option for file association
 
             string wixbin = Path.GetFullPath(string.Format("..{0}..{0}WixSharp{0}Wix_bin{0}bin", Path.DirectorySeparatorChar));
             Compiler.WixLocation = wixbin;
