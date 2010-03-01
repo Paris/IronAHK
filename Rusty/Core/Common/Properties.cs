@@ -29,7 +29,7 @@ namespace IronAHK.Rusty
 
         static Dictionary<string, HotkeyDefinition> hotkeys = null;
 
-        static Dictionary<string, object> variables = new Dictionary<string, object>();
+        static Dictionary<string, object> variables = null;
 
         static Dictionary<string, System.Timers.Timer> timers = new Dictionary<string, System.Timers.Timer>();
 
