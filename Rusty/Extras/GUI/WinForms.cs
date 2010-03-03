@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Drawing;
 
-namespace IronAHK.Rusty.GUI
+namespace IronAHK.Rusty
 {
-    class WinForms : Base
+    class WinForms : BaseGui
     {
         #region Information
 
@@ -17,7 +17,7 @@ namespace IronAHK.Rusty.GUI
             get { return "WinForms"; }
         }
 
-        public override Base.Window CreateWindow()
+        public override BaseGui.Window CreateWindow()
         {
             return new Window();
         }
@@ -26,11 +26,11 @@ namespace IronAHK.Rusty.GUI
 
         #region Window
 
-        public new class Window : Base.Window
+        public new class Window : BaseGui.Window
         {
             #region Methods
 
-            public override void Add(Base.Control control)
+            public override void Add(BaseGui.Control control)
             {
                 throw new NotImplementedException();
             }
@@ -77,102 +77,102 @@ namespace IronAHK.Rusty.GUI
 
             #region Controls
 
-            public override Base.Text CreateText()
+            public override BaseGui.Text CreateText()
             {
                 return new Text();
             }
 
-            public override Base.Edit CreateEdit()
+            public override BaseGui.Edit CreateEdit()
             {
                 return new Edit();
             }
 
-            public override Base.UpDown CreateUpDown()
+            public override BaseGui.UpDown CreateUpDown()
             {
                 return new UpDown();
             }
 
-            public override Base.Picture CreatePicture()
+            public override BaseGui.Picture CreatePicture()
             {
                 return new Picture();
             }
 
-            public override Base.Button CreateButton()
+            public override BaseGui.Button CreateButton()
             {
                 return new Button();
             }
 
-            public override Base.Checkbox CreateCheckbox()
+            public override BaseGui.Checkbox CreateCheckbox()
             {
                 return new Checkbox();
             }
 
-            public override Base.Radio CreateRadio()
+            public override BaseGui.Radio CreateRadio()
             {
                 return new Radio();
             }
 
-            public override Base.DropDownList CreateDropDownList()
+            public override BaseGui.DropDownList CreateDropDownList()
             {
                 return new DropDownList();
             }
 
-            public override Base.ComboBox CreateComboBox()
+            public override BaseGui.ComboBox CreateComboBox()
             {
                 return new ComboBox();
             }
 
-            public override Base.ListBox CreateListBox()
+            public override BaseGui.ListBox CreateListBox()
             {
                 return new ListBox();
             }
 
-            public override Base.ListView CreateListView()
+            public override BaseGui.ListView CreateListView()
             {
                 return new ListView();
             }
 
-            public override Base.TreeView CreateTreeView()
+            public override BaseGui.TreeView CreateTreeView()
             {
                 return new TreeView();
             }
 
-            public override Base.Hotkey CreateHotkey()
+            public override BaseGui.Hotkey CreateHotkey()
             {
                 return new Hotkey();
             }
 
-            public override Base.DateTime CreateDateTime()
+            public override BaseGui.DateTime CreateDateTime()
             {
                 return new DateTime();
             }
 
-            public override Base.MonthCal CreateMonthCal()
+            public override BaseGui.MonthCal CreateMonthCal()
             {
                 return new MonthCal();
             }
 
-            public override Base.Slider CreateSider()
+            public override BaseGui.Slider CreateSider()
             {
                 return new Slider();
             }
 
-            public override Base.Progress CreateProgress()
+            public override BaseGui.Progress CreateProgress()
             {
                 return new Progress();
             }
 
-            public override Base.GroupBox CreateGroupBox()
+            public override BaseGui.GroupBox CreateGroupBox()
             {
                 return new GroupBox();
             }
 
-            public override Base.Tab CreateTab()
+            public override BaseGui.Tab CreateTab()
             {
                 return new Tab();
             }
 
-            public override Base.WebBrowser CreateWebBrowser()
+            public override BaseGui.WebBrowser CreateWebBrowser()
             {
                 return new WebBrowser();
             }
@@ -193,7 +193,7 @@ namespace IronAHK.Rusty.GUI
                 base.OnEscaped(e);
             }
 
-            protected override void OnResized(Base.Window.ResizedArgs e)
+            protected override void OnResized(BaseGui.Window.ResizedArgs e)
             {
                 base.OnResized(e);
             }
@@ -215,7 +215,7 @@ namespace IronAHK.Rusty.GUI
 
         #region Controls
 
-        static void ApplyStyles(System.Windows.Forms.Control control, Base.Control information)
+        static void ApplyStyles(System.Windows.Forms.Control control, BaseGui.Control information)
         {
             control.Enabled = information.Enabled;
             control.Location = information.Location;
@@ -227,7 +227,7 @@ namespace IronAHK.Rusty.GUI
                 control.BackColor = Color.Transparent;
         }
 
-        public new class Text : Base.Text
+        public new class Text : BaseGui.Text
         {
             public override void Draw()
             {
@@ -235,7 +235,7 @@ namespace IronAHK.Rusty.GUI
             }
         }
 
-        public new class Edit : Base.Edit
+        public new class Edit : BaseGui.Edit
         {
             public override void Draw()
             {
@@ -243,7 +243,7 @@ namespace IronAHK.Rusty.GUI
             }
         }
 
-        public new class UpDown : Base.UpDown
+        public new class UpDown : BaseGui.UpDown
         {
             public override void Draw()
             {
@@ -251,7 +251,7 @@ namespace IronAHK.Rusty.GUI
             }
         }
 
-        public new class Picture : Base.Picture
+        public new class Picture : BaseGui.Picture
         {
             public override void Draw()
             {
@@ -259,7 +259,7 @@ namespace IronAHK.Rusty.GUI
             }
         }
 
-        public new class Button : Base.Button
+        public new class Button : BaseGui.Button
         {
             public override void Draw()
             {
@@ -267,7 +267,7 @@ namespace IronAHK.Rusty.GUI
             }
         }
 
-        public new class Checkbox : Base.Checkbox
+        public new class Checkbox : BaseGui.Checkbox
         {
             public override void Draw()
             {
@@ -275,7 +275,7 @@ namespace IronAHK.Rusty.GUI
             }
         }
 
-        public new class Radio : Base.Radio
+        public new class Radio : BaseGui.Radio
         {
             public override void Draw()
             {
@@ -283,7 +283,7 @@ namespace IronAHK.Rusty.GUI
             }
         }
 
-        public new class DropDownList : Base.DropDownList
+        public new class DropDownList : BaseGui.DropDownList
         {
             public override void Draw()
             {
@@ -291,7 +291,7 @@ namespace IronAHK.Rusty.GUI
             }
         }
 
-        public new class ComboBox : Base.ComboBox
+        public new class ComboBox : BaseGui.ComboBox
         {
             public override void Draw()
             {
@@ -299,7 +299,7 @@ namespace IronAHK.Rusty.GUI
             }
         }
 
-        public new class ListBox : Base.ListBox
+        public new class ListBox : BaseGui.ListBox
         {
             public override void Draw()
             {
@@ -307,7 +307,7 @@ namespace IronAHK.Rusty.GUI
             }
         }
 
-        public new class ListView : Base.ListView
+        public new class ListView : BaseGui.ListView
         {
             public override void Draw()
             {
@@ -315,7 +315,7 @@ namespace IronAHK.Rusty.GUI
             }
         }
 
-        public new class TreeView : Base.TreeView
+        public new class TreeView : BaseGui.TreeView
         {
             public override void Draw()
             {
@@ -323,7 +323,7 @@ namespace IronAHK.Rusty.GUI
             }
         }
 
-        public new class Hotkey : Base.Hotkey
+        public new class Hotkey : BaseGui.Hotkey
         {
             public override void Draw()
             {
@@ -331,7 +331,7 @@ namespace IronAHK.Rusty.GUI
             }
         }
 
-        public new class DateTime : Base.DateTime
+        public new class DateTime : BaseGui.DateTime
         {
             public override void Draw()
             {
@@ -339,7 +339,7 @@ namespace IronAHK.Rusty.GUI
             }
         }
 
-        public new class MonthCal : Base.MonthCal
+        public new class MonthCal : BaseGui.MonthCal
         {
             public override void Draw()
             {
@@ -347,7 +347,7 @@ namespace IronAHK.Rusty.GUI
             }
         }
 
-        public new class Slider : Base.Slider
+        public new class Slider : BaseGui.Slider
         {
             public override void Draw()
             {
@@ -355,7 +355,7 @@ namespace IronAHK.Rusty.GUI
             }
         }
 
-        public new class Progress : Base.Progress
+        public new class Progress : BaseGui.Progress
         {
             public override void Draw()
             {
@@ -363,7 +363,7 @@ namespace IronAHK.Rusty.GUI
             }
         }
 
-        public new class GroupBox : Base.GroupBox
+        public new class GroupBox : BaseGui.GroupBox
         {
             public override void Draw()
             {
@@ -371,7 +371,7 @@ namespace IronAHK.Rusty.GUI
             }
         }
 
-        public new class Tab : Base.Tab
+        public new class Tab : BaseGui.Tab
         {
             public override void Draw()
             {
@@ -379,7 +379,7 @@ namespace IronAHK.Rusty.GUI
             }
         }
 
-        public new class StatusBar : Base.StatusBar
+        public new class StatusBar : BaseGui.StatusBar
         {
             public override void Draw()
             {
@@ -387,7 +387,7 @@ namespace IronAHK.Rusty.GUI
             }
         }
 
-        public new class WebBrowser : Base.WebBrowser
+        public new class WebBrowser : BaseGui.WebBrowser
         {
             public override void Draw()
             {
