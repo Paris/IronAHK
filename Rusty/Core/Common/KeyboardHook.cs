@@ -56,7 +56,8 @@ namespace IronAHK.Rusty
             GenericFunction proc;
             bool enabled;
 
-            public enum Options { None, IgnoreModifiers, PassThrough, Up }
+            [Flags]
+            public enum Options { None = 0, IgnoreModifiers = 1, PassThrough = 2, Up = 4 }
 
             #endregion
 
