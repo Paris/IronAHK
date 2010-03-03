@@ -171,26 +171,6 @@ namespace IronAHK.Rusty
         }
 
         /// <summary>
-        /// Sends simulated keystrokes to a window or control.
-        /// </summary>
-        /// <param name="Control">
-        /// <para>Can be either ClassNN (the classname and instance number of the control) or the name/text of the control, both of which can be determined via Window Spy. When using name/text, the matching behavior is determined by SetTitleMatchMode. If this parameter is blank or omitted, the target window's topmost control will be used. If this parameter is ahk_parent, the keystrokes will be sent directly to the control's parent window (see Automating Winamp for an example).</para>
-        /// <para>To operate upon a control's HWND (window handle), leave the Control parameter blank and specify ahk_id %ControlHwnd% for the WinTitle parameter (this also works on hidden controls even when DetectHiddenWindows is Off) . The HWND of a control is typically retrieved via ControlGet Hwnd, MouseGetPos, or DllCall.</para>
-        /// </param>
-        /// <param name="Keys">
-        /// <para>The sequence of keys to send (see the Send command for details). To send a literal comma, escape it (`,). The rate at which characters are sent is determined by SetKeyDelay.</para>
-        /// <para>Unlike the Send command, mouse clicks cannot be sent by ControlSend. Use ControlClick for that.</para>
-        /// </param>
-        /// <param name="WinTitle">The title or partial title of the target window (the matching behavior is determined by SetTitleMatchMode). If this and the next 3 parameters are omitted, the Last Found Window will be used. If this is the letter A and the next 3 parameters are omitted, the active window will be used. To use a window class, specify ahk_class ExactClassName (shown by Window Spy). To use a process identifier (PID), specify ahk_pid %VarContainingPID%. To use a window group, specify ahk_group GroupName. To use a window's unique ID number, specify ahk_id %VarContainingID%. The search can be narrowed by specifying multiple criteria. For example: My File.txt ahk_class Notepad</param>
-        /// <param name="WinText">If present, this parameter must be a substring from a single text element of the target window (as revealed by the included Window Spy utility). Hidden text elements are detected if DetectHiddenText is ON.</param>
-        /// <param name="ExcludeTitle">Windows whose titles include this value will not be considered.</param>
-        /// <param name="ExcludeText">Windows whose text include this value will not be considered.</param>
-        public static void ControlSend(string Control, string Keys, string WinTitle, string WinText, string ExcludeTitle, string ExcludeText)
-        {
-
-        }
-
-        /// <summary>
         /// <see cref="Control"/>
         /// </summary>
         public static void ControlSendRaw(string Control, string Keys, string WinTitle, string WinText, string ExcludeTitle, string ExcludeText)
