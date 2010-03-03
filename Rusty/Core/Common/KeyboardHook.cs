@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading;
 using System.Windows.Forms;
 
 namespace IronAHK.Rusty
@@ -321,23 +322,27 @@ namespace IronAHK.Rusty
 
             #region Hotkey fired
 
-            protected void KeyReceived(Keys key, bool down)
+            protected bool KeyReceived(Keys key, bool down)
             {
+                bool block = false;
                 pressed[key] = down;
 
                 foreach (var hotkey in hotkeys)
                 {
-                    if (hotkey.Enabled && (hotkey.Keys & key) == key && HasModifiers(hotkey) &&
-                        ((hotkey.EnabledOptions & HotkeyDefinition.Options.Up) == HotkeyDefinition.Options.Up ? !down : true))
-                    {
-                        if ((hotkey.EnabledOptions & HotkeyDefinition.Options.PassThrough) == HotkeyDefinition.Options.PassThrough)
-                            PassThrough(hotkey.Keys);
-                        hotkey.Proc(new object[] { });
-                    }
+                    bool match = (hotkey.Keys & key) == key;
+                    bool up = (hotkey.EnabledOptions & HotkeyDefinition.Options.Up) == HotkeyDefinition.Options.Up;
+
+                    if (hotkey.Enabled && match && HasModifiers(hotkey) && up != down)
+                        new Thread(new ThreadStart(delegate() { hotkey.Proc(new object[] { }); })).Start();
+
+                    if (match && (hotkey.EnabledOptions & HotkeyDefinition.Options.PassThrough) != HotkeyDefinition.Options.PassThrough)
+                        block = true;
                 }
 
                 if (!down)
-                    return;
+                    return block;
+
+                #region Sequencing
 
                 string sequence = null;
 
@@ -356,11 +361,15 @@ namespace IronAHK.Rusty
                     sequence = history.ToString();
                 }
 
+                #endregion
+
                 foreach (var hotstring in hotstrings)
                 {
                     if (sequence.EndsWith(hotstring.Sequence, StringComparison.OrdinalIgnoreCase) && hotstring.Enabled) // TODO: hotstring case sensitive matching
-                        hotstring.Proc(this, new HotstringEventArgs(sequence));
+                        new Thread(new ThreadStart(delegate() { hotstring.Proc(this, new HotstringEventArgs(sequence)); })).Start();
                 }
+
+                return block;
             }
 
             bool HasModifiers(HotkeyDefinition hotkey)
@@ -391,8 +400,6 @@ namespace IronAHK.Rusty
             protected abstract void RegisterHook();
 
             protected abstract void DeregisterHook();
-
-            protected abstract void PassThrough(Keys keys);
 
             #endregion
         }
