@@ -109,9 +109,9 @@
     <Compile Include="Extras\SimpleJSON\Decode.cs" />
     <Compile Include="Extras\SimpleJSON\Encode.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Windows\Hooks.cs" />
+    <Compile Include="Windows\KeyboardHook.cs" />
     <Compile Include="Windows\Misc.cs" />
-    <Compile Include="Windows\MouseKeyboard.cs" />
+    <Compile Include="Windows\Input.cs" />
     <Compile Include="Windows\Windows.cs" />
   </ItemGroup>
   <ItemGroup>
