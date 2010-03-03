@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
-using System.Threading;
 using System.Windows.Forms;
 
 namespace IronAHK.Rusty
@@ -19,11 +18,6 @@ namespace IronAHK.Rusty
             LowLevelKeyboardProc proc;
             IntPtr hookId = IntPtr.Zero;
 
-            protected override void PassThrough(Keys keys)
-            {
-                // TODO: send back keys with SendInput
-            }
-
             protected override void RegisterHook()
             {
                 proc = HookCallback;
@@ -37,13 +31,16 @@ namespace IronAHK.Rusty
 
             IntPtr HookCallback(int nCode, IntPtr wParam, IntPtr lParam)
             {
+                bool block = false;
+
                 if (nCode >= 0 && wParam == (IntPtr)WM_KEYDOWN || wParam == (IntPtr)WM_KEYUP)
                 {
                     int vkCode = Marshal.ReadInt32(lParam);
-                    new Thread(new ThreadStart(delegate() { KeyReceived((Keys)vkCode, wParam == (IntPtr)WM_KEYDOWN); })).Start();
-                    
+                    block = KeyReceived((Keys)vkCode, wParam == (IntPtr)WM_KEYDOWN);
                 }
-                return CallNextHookEx(hookId, nCode, wParam, lParam);
+
+                var next = CallNextHookEx(hookId, nCode, wParam, lParam);
+                return block ? new IntPtr(1) : next;
             }
         }
     }
