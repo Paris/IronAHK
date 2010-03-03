@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Threading;
 using System.Windows.Forms;
 
 namespace IronAHK.Rusty
@@ -171,14 +170,6 @@ namespace IronAHK.Rusty
         }
 
         /// <summary>
-        /// <see cref="Control"/>
-        /// </summary>
-        public static void ControlSendRaw(string Control, string Keys, string WinTitle, string WinText, string ExcludeTitle, string ExcludeText)
-        {
-
-        }
-
-        /// <summary>
         /// Unlike the GetKeyState command -- which returns D for down and U for up -- this function returns (1) if the key is down and (0) if it is up.
         /// If <paramref name="KeyName"/> is invalid, an empty string is returned.
         /// </summary>
@@ -264,161 +255,25 @@ namespace IronAHK.Rusty
         }
 
         /// <summary>
-        /// Sends simulated keystrokes and mouse clicks to the active window.
+        /// Sets the state of the NumLock, ScrollLock or CapsLock keys.
         /// </summary>
-        /// <param name="Keys">The sequence of keys to send.</param>
-        public static void SendEvent(string Keys)
-        {
-            SendKeys.Send(Keys);
-        }
-
-        /// <summary>
-        /// Sends simulated keystrokes and mouse clicks to the active window.
-        /// </summary>
-        /// <param name="Keys">The sequence of keys to send.</param>
-        /// <remarks>
-        /// <para>SendInput is generally the preferred method to send keystrokes and mouse clicks because of its superior speed and reliability. Under most conditions, SendInput is nearly instantaneous, even when sending long strings. Since SendInput is so fast, it is also more reliable because there is less opportunity for some other window to pop up unexpectedly and intercept the keystrokes. Reliability is further improved by the fact that anything the user types during a SendInput is postponed until afterward.</para>
-        /// <para>Unlike the other sending modes, the operating system limits SendInput to about 5000 characters (this may vary depending on the operating system's version and performance settings). Characters and events beyond this limit are not sent.</para>
-        /// <para>Note: SendInput ignores SetKeyDelay because the operating system does not support a delay in this mode. However, when SendInput reverts to SendEvent under the conditions described below, it uses SetKeyDelay -1, 0 (unless SendEvent's KeyDelay is "-1,-1", in which case "-1,-1" is used). When SendInput reverts to SendPlay, it uses SendPlay's KeyDelay.</para>
-        /// <para>If a script other than the one executing SendInput has a low-level keyboard hook installed, SendInput automatically reverts to SendEvent (or SendPlay if SendMode InputThenPlay is in effect). This is done because the presence of an external hook disables all of SendInput's advantages, making it inferior to both SendPlay and SendEvent. However, since SendInput is unable to detect a low-level hook in programs other than AutoHotkey v1.0.43+, it will not revert in these cases, making it less reliable than SendPlay/Event.</para>
-        /// <para>When SendInput sends mouse clicks by means such as {Click}, and CoordMode Mouse, Relative is in effect (the default), every click will be relative to the window that was active at the start of the send. Therefore, if SendInput intentionally activates another window (by means such as alt-tab), the coordinates of subsequent clicks within the same command will be wrong because they will still be relative to the old window rather than the new one.</para>
-        /// <para>Windows 95 (and NT4 pre-SP3): SendInput is not supported and will automatically revert to SendEvent (or SendPlay if SendMode InputThenPlay is in effect).</para>
-        /// </remarks>
-        public static void SendInput(string Keys)
-        {
-            SendKeys.Send(Keys);
-        }
-
-        /// <summary>
-        /// Makes Send synonymous with SendInput or SendPlay rather than the default (SendEvent). Also makes Click and MouseMove/Click/Drag use the specified method.
-        /// </summary>
+        /// <param name="Key">
+        /// <list type="bullet">
+        /// <item>NumLock</item>
+        /// <item>ScrollLock</item>
+        /// <item>CapsLock</item>
+        /// </list>
+        /// </param>
         /// <param name="Mode">
-        /// <para>Event: This is the starting default used by all scripts. It uses the SendEvent method for Send, SendRaw, Click, and MouseMove/Click/Drag.</para>
-        /// <para>Input: Switches to the SendInput method for Send, SendRaw, Click, and MouseMove/Click/Drag. Known limitations:</para>
-        /// <list type="">
-        /// <item>Windows Explorer ignores SendInput's simulation of certain navigational hotkeys such as Alt+LeftArrow. To work around this, use either SendEvent !{Left} or SendInput {Backspace}.</item>
-        /// </list>
-        /// <para>InputThenPlay: Same as above except that rather than falling back to Event mode when SendInput is unavailable, it reverts to Play mode (below). This also causes the SendInput command itself to revert to Play mode when SendInput is unavailable.</para>
-        /// <para>Play: Switches to the SendPlay method for Send, SendRaw, Click, and MouseMove/Click/Drag.
-        /// Known limitations:</para>
-        /// <list type="">
-        /// <item>Characters that do not exist in the current keyboard layout (such as Ô in English) cannot be sent. To work around this, use SendEvent.</item>
-        /// <item>Simulated mouse dragging might have no effect in RichEdit controls (and possibly others) such as those of WordPad and Metapad. To use an alternate mode for a particular drag, follow this example: SendEvent {Click 6, 52, down}{Click 45, 52, up}</item>
-        /// <item>Simulated mouse wheel rotation produces movement in only one direction (usually downward, but upward in some applications). Also, wheel rotation might have no effect in applications such as MS Word and Notepad. To use an alternate mode for a particular rotation, follow this example: SendEvent {WheelDown 5}</item>
-        /// <item>When using SendMode Play in the auto-execute section (top part of the script), all remapped keys are affected and might lose some of their functionality. See SendPlay remapping limitations for details.</item>
+        /// <list type="bullet">
+        /// <item><term>On</term></item>
+        /// <item><term>Off</term></item>
+        /// <item><term>AlwaysOn</term>: <description>forces the key to stay on permanently.</description></item>
+        /// <item><term>AlwaysOn</term>: <description>forces the key to stay off permanently.</description></item>
+        /// <item><term>(blank)</term>: turn off the <c>AlwaysOn</c> or <c>Off</c> states if present.</item>
         /// </list>
         /// </param>
-        public static void SendMode(string Mode)
-        {
-            char m = 'e';
-            switch (Mode.Trim().ToLowerInvariant())
-            {
-                case "event": m = 'e'; break;
-                case "input": m = 'i'; break;
-                case "inputthenplay": m = 't'; break;
-                case "play": m = 'p'; break;
-            }
-            _SendMode = m;
-        }
-
-        /// <summary>
-        /// Sends simulated keystrokes and mouse clicks to the active window.
-        /// </summary>
-        /// <param name="Keys">The sequence of keys to send.</param>
-        /// <remarks>
-        /// <para>SendPlay's biggest advantage is its ability to "play back" keystrokes and mouse clicks in a broader variety of games than the other modes. For example, a particular game may accept hotstrings only when they have the SendPlay option.</para>
-        /// <para>Of the three sending modes, SendPlay is the most unusual because it does not simulate keystrokes and mouse clicks per se. Instead, it creates a series of events (messages) that flow directly to the active window (similar to ControlSend, but at a lower level).</para>
-        /// <para>Like SendInput, SendPlay's keystrokes do not get interspersed with keystrokes typed by the user. Thus, if the user happens to type something during a SendPlay, those keystrokes are postponed until afterward.</para>
-        /// <para>Although SendPlay is considerably slower than SendInput, it is usually faster than the traditional SendEvent mode (even when KeyDelay is -1).</para>
-        /// <para>SendPlay is unable to trigger system hotkeys that involve the two Windows keys (LWin and RWin). For example, it cannot display the Start Menu or use Win-R to show the Run dialog.</para>
-        /// <para>The Windows keys (LWin and RWin) are automatically blocked during a SendPlay if the keyboard hook is installed. This prevents the Start Menu from appearing if the user accidentally presses a Windows key during the send. By contrast, keys other than LWin and RWin do not need to be blocked because the operating system automatically postpones them until after the SendPlay (via buffering).</para>
-        /// <para>SendPlay does not use the standard settings of SetKeyDelay and SetMouseDelay. Instead, it defaults to no delay at all, which can be changed as shown in the following examples:</para>
-        /// <code>
-        /// SetKeyDelay, 0, 10, Play  ; Note that both 0 and -1 are the same in SendPlay mode.
-        /// SetMouseDelay, 10, Play
-        /// </code>
-        /// <para>SendPlay is unable to turn on or off the Capslock, Numlock, or Scroll-lock keys. Similarly, it is unable to change a key's state as seen by GetKeyState unless the keystrokes are sent to one of the script's own windows. Even then, any changes to the left/right modifier keys (e.g. RControl) can be detected only via their neutral counterparts (e.g. Control). Also, SendPlay has other limitations described on the SendMode page.</para>
-        /// <para>Unlike SendInput and SendEvent, the user may interrupt a SendPlay by pressing Control-Alt-Del or Control-Escape. When this happens, the remaining keystrokes are not sent but the script continues executing as though the SendPlay had completed normally.</para>
-        /// <para>Although SendPlay can send LWin and RWin events, they are sent directly to the active window rather than performing their native operating system function. To work around this, use SendEvent. For example, SendEvent #r would show the Start Menu's Run dialog.</para>
-        /// <para>Unlike SendInput, SendPlay works even on Windows 95 and NT4-pre-SP3.</para>
-        /// </remarks>
-        public static void SendPlay(string Keys)
-        {
-            SendKeys.Send(Keys);
-        }
-
-        /// <summary>
-        /// Sends simulated keystrokes and mouse clicks to the active window.
-        /// </summary>
-        /// <param name="Keys">The sequence of keys to send.</param>
-        public static void SendRaw(string Keys)
-        {
-            SendKeys.Send(Keys);
-        }
-
-        /// <summary>
-        /// Sets the delay that will occur after each keystroke sent by Send and ControlSend.
-        /// </summary>
-        /// <param name="Delay">Time in milliseconds. Use -1 for no delay at all and 0 for the smallest possible delay (however, if the Play parameter is present, both 0 and -1 produce no delay). Leave this parameter blank to retain the current Delay.</param>
-        /// <param name="PressDuration">
-        /// <para>Certain games and other specialized applications may require a delay inside each keystroke; that is, after the press of the key but before its release.</para>
-        /// <para>Use -1 for no delay at all (default) and 0 for the smallest possible delay (however, if the Play parameter is present, both 0 and -1 produce no delay). Omit this parameter to leave the current PressDuration unchanged.</para>
-        /// <para>Note: PressDuration also produces a delay after any change to the modifier key state (CTRL, ALT, SHIFT, and WIN) needed to support the keys being sent.</para>
-        /// </param>
-        /// <param name="Play">The word Play applies the above settings to the SendPlay mode rather than the traditional SendEvent mode. If a script never uses this parameter, the delay is always -1/-1 for SendPlay.</param>
-        public static void SetKeyDelay(int Delay, int PressDuration, bool Play)
-        {
-            _KeyDelay = Delay;
-            _KeyPressDuration = PressDuration;
-        }
-
-        /// <summary>
-        /// Sets the state of the NumLock key. Can also force the key to stay on or off.
-        /// </summary>
-        /// <param name="Mode">
-        /// <para>If this parameter is omitted, the AlwaysOn/Off attribute of the key is removed (if present). Otherwise, specify one of the following words:</para>
-        /// <list type="">
-        /// <item>On: Turns on the key and removes the AlwaysOn/Off attribute of the key (if present).</item>
-        /// <item>Off: Turns off the key and removes the AlwaysOn/Off attribute of the key (if present).</item>
-        /// <item>AlwaysOn: Forces the key to stay on permanently (has no effect on Windows 9x).</item>
-        /// <item>AlwaysOff: Forces the key to stay off permanently (has no effect on Windows 9x).</item>
-        /// </list>
-        /// </param>
-        public static void SetNumLockState(string Mode)
-        {
-
-        }
-
-        /// <summary>
-        /// Sets the state of the ScrollLock key. Can also force the key to stay on or off.
-        /// </summary>
-        /// <param name="Mode">
-        /// <para>If this parameter is omitted, the AlwaysOn/Off attribute of the key is removed (if present). Otherwise, specify one of the following words:</para>
-        /// <list type="">
-        /// <item>On: Turns on the key and removes the AlwaysOn/Off attribute of the key (if present).</item>
-        /// <item>Off: Turns off the key and removes the AlwaysOn/Off attribute of the key (if present).</item>
-        /// <item>AlwaysOn: Forces the key to stay on permanently (has no effect on Windows 9x).</item>
-        /// <item>AlwaysOff: Forces the key to stay off permanently (has no effect on Windows 9x).</item>
-        /// </list>
-        /// </param>
-        public static void SetScrollLockState(string Mode)
-        {
-
-        }
-
-        /// <summary>
-        /// Sets the state of the Capslock key. Can also force the key to stay on or off.
-        /// </summary>
-        /// <param name="Mode">
-        /// <para>If this parameter is omitted, the AlwaysOn/Off attribute of the key is removed (if present). Otherwise, specify one of the following words:</para>
-        /// <list type="">
-        /// <item>On: Turns on the key and removes the AlwaysOn/Off attribute of the key (if present).</item>
-        /// <item>Off: Turns off the key and removes the AlwaysOn/Off attribute of the key (if present).</item>
-        /// <item>AlwaysOn: Forces the key to stay on permanently (has no effect on Windows 9x).</item>
-        /// <item>AlwaysOff: Forces the key to stay off permanently (has no effect on Windows 9x).</item>
-        /// </list>
-        /// </param>
-        public static void SetStoreCapslockMode(string Mode)
+        public static void SetLockState(string Key, string Mode)
         {
 
         }

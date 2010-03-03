@@ -88,14 +88,11 @@ namespace IronAHK.Scripting
                 #region Setters
 
                 case "setbatchlines":
-                case "setcapslockstate":
                 case "setcontroldelay":
                 case "setdefaultmousespeed":
                 case "setformat":
                 case "setkeydelay":
                 case "setmousedelay":
-                case "setnumlockstate":
-                case "setscrolllockstate":
                 case "setstorecapslockmode":
                 case "settitlematchmode":
                 case "setwindelay":
@@ -448,10 +445,77 @@ namespace IronAHK.Scripting
                 // TODO: translate legacy EnvMult, EnvDiv etc
 
                 #endregion
+
+                #region Send
+
+                case "sendevent":
+                case "sendinput":
+                case "sendplay":
+                    replaced.Append("Send");
+                    replaced.Append(Multicast);
+                    replaced.Append(SingleSpace);
+                    replaced.Append(param);
+                    break;
+
+                case "sendraw":
+                    replaced.Append("Send");
+                    replaced.Append(Multicast);
+                    replaced.Append(SingleSpace);
+                    ParameterPrepend(ref param, "{Raw}");
+                    replaced.Append(param);
+                    break;
+
+                case "controlsendraw":
+                    replaced.Append("ControlSend");
+                    replaced.Append(Multicast);
+                    replaced.Append(SingleSpace);
+                    ParameterPrepend(ref param, "{Raw}");
+                    replaced.Append(param);
+                    break;
+
+                case "sendmode":
+                    code = string.Empty;
+                    break;
+
+                case "setcapslockstate":
+                case "setnumlockstate":
+                case "setscrolllockstate":
+                    replaced.Append("SetLockState");
+                    replaced.Append(Multicast);
+                    replaced.Append(SingleSpace);
+                    replaced.Append(cmd, 3, cmd.Length - 3 - 5);
+                    replaced.Append(Multicast);
+                    replaced.Append(SingleSpace);
+                    replaced.Append(param);
+                    break;
+
+                #endregion
             }
 
             if (replaced.Length > 0)
                 code = replaced.ToString();
+        }
+
+
+        [Conditional("LEGACY")]
+        void ParameterPrepend(ref string param, string insert)
+        {
+            if (IsExpressionParameter(param))
+            {
+                var buffer = new StringBuilder(param.Length + insert.Length + 2);
+                buffer.Append(Resolve);
+                buffer.Append(SingleSpace);
+                buffer.Append(StringBound);
+                buffer.Append(insert);
+                buffer.Append(StringBound);
+                buffer.Append(SingleSpace);
+                buffer.Append(Concatenate);
+                buffer.Append(SingleSpace);
+                buffer.Append(param, 2, param.Length - 2);
+                param = buffer.ToString();
+            }
+            else
+                param = string.Concat(insert, param);
         }
     }
 }

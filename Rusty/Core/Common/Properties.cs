@@ -77,9 +77,6 @@ namespace IronAHK.Rusty
         static bool? _TitleMatchModeSpeed;
 
         [ThreadStatic]
-        static char? _SendMode;
-
-        [ThreadStatic]
         static string _UserAgent;
 
         #endregion
