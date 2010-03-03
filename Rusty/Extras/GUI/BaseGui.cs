@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace IronAHK.Rusty.GUI
+namespace IronAHK.Rusty
 {
-    abstract class Base
+    abstract class BaseGui
     {
         #region Information
 
