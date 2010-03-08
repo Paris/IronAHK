@@ -310,5 +310,13 @@ namespace IronAHK.Rusty
         const char Keyword_HotkeyIgnoreModifiers = '*';
         const char Keyword_HotkeyPassThrough = '~';
         const char Keyword_HotkeyCombination = '&';
+
+        const char Keyword_HotstringAuto = '*';
+        const char Keyword_HotstringNested = '?';
+        const char Keyword_HotstringBackspace = 'B';
+        const char Keyword_HotstringCase = 'C';
+        const char Keyword_HotstringOmitEnding = 'O';
+        const char Keyword_HotstringReset = 'Z';
+        const char Keyword_HotstringOff = '0';
     }
 }
