@@ -252,7 +252,7 @@ namespace IronAHK.Rusty
         /// <param name="Keys">The sequence of keys to send.</param>
         public static void Send(string Keys)
         {
-            SendKeys.Send(Keys);
+            SendKeys.SendWait(Keys);
         }
 
         /// <summary>
