@@ -28,6 +28,7 @@ namespace IronAHK.Rusty
         }
 
         static Dictionary<string, HotkeyDefinition> hotkeys = null;
+        static Dictionary<string, HotstringDefinition> hotstrings = null;
 
         static Dictionary<string, object> variables = null;
 

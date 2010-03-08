@@ -33,6 +33,8 @@ namespace IronAHK.Rusty
         {
             string sequence;
 
+            public HotstringEventArgs() : this(string.Empty) { }
+
             public HotstringEventArgs(string sequence)
             {
                 this.sequence = sequence;
@@ -190,27 +192,31 @@ namespace IronAHK.Rusty
 
         internal class HotstringDefinition
         {
-            string sequence, replace;
-            HotstringEvent proc;
+            string sequence;
+            string endchars;
+            Options options;
+            GenericFunction proc;
             bool enabled;
 
-            public HotstringDefinition(string sequence, HotstringEvent proc)
+            [Flags]
+            public enum Options { None = 0, AutoTrigger = 1, Nested = 2, Backspace = 4, CaseSensitive = 8, OmitEnding = 16, Raw = 32, Reset = 64 }
+
+            public HotstringDefinition(string sequence, GenericFunction proc)
             {
                 this.sequence = sequence;
                 this.proc = proc;
             }
 
-            public HotstringDefinition(string sequence, string replace)
+            internal void PreFilter()
             {
-                this.sequence = sequence;
-                this.replace = replace;
-                proc = Replace;
+                if ((options & Options.Backspace) == Options.Backspace)
+                    Send("{BS " + sequence.Length.ToString() + "}");
             }
 
-            void Replace(object sender, EventArgs e)
+            internal void PostFilter()
             {
-                if (replace != null)
-                    Send(replace);
+                if ((options & Options.OmitEnding) == Options.OmitEnding && (options & Options.AutoTrigger) != Options.AutoTrigger)
+                    Send("{BS}");
             }
 
             public string Sequence
@@ -218,7 +224,19 @@ namespace IronAHK.Rusty
                 get { return sequence; }
             }
 
-            public HotstringEvent Proc
+            public string EndChars
+            {
+                get { return endchars; }
+                set { endchars = value; }
+            }
+
+            public Options EnabledOptions
+            {
+                get { return options; }
+                set { options = value; }
+            }
+
+            public GenericFunction Proc
             {
                 get { return proc; }
             }
@@ -227,6 +245,42 @@ namespace IronAHK.Rusty
             {
                 get { return enabled; }
                 set { enabled = value; }
+            }
+
+            public static Options ParseOptions(string mode)
+            {
+                var options = Options.None;
+
+                mode = mode.ToLowerInvariant();
+
+                for (int i = 0; i < mode.Length; i++)
+                {
+                    char sym = mode[i];
+                    var change = Options.None;
+
+                    switch (sym)
+                    {
+                        case Keyword_HotstringAuto: change = Options.AutoTrigger; break;
+                        case Keyword_HotstringNested: change = Options.Nested; break;
+                        case Keyword_HotstringBackspace: change = Options.Backspace; break;
+                        case Keyword_HotstringCase: change = Options.CaseSensitive; break;
+                        case Keyword_HotstringOmitEnding: change = Options.OmitEnding; break;
+                        case Keyword_HotstringReset: change = Options.Reset; break;
+                    }
+
+                    if (change == Options.None)
+                        continue;
+
+                    int n = i + 1;
+                    bool off = n < mode.Length && mode[n] == Keyword_HotstringOff;
+
+                    if (off)
+                        options &= ~change;
+                    else
+                        options |= change;
+                }
+
+                return options;
             }
         }
 
@@ -344,8 +398,6 @@ namespace IronAHK.Rusty
 
                 #region Sequencing
 
-                string sequence = null;
-
                 if (hotstrings.Count > 0)
                 {
                     char letter = Letter(key);
@@ -354,19 +406,27 @@ namespace IronAHK.Rusty
                     {
                         history.Append(letter);
 
-                        if (history.Length > retention)
-                            history.Remove(0, retention / 4);
+                        if (history.Length == retention)
+                            history.Remove(0, 1); // lifo stack
                     }
-
-                    sequence = history.ToString();
                 }
 
                 #endregion
 
                 foreach (var hotstring in hotstrings)
                 {
-                    if (sequence.EndsWith(hotstring.Sequence, StringComparison.OrdinalIgnoreCase) && hotstring.Enabled) // TODO: hotstring case sensitive matching
-                        new Thread(new ThreadStart(delegate() { hotstring.Proc(this, new HotstringEventArgs(sequence)); })).Start();
+                    if (hotstring.Enabled && HasConditions(hotstring))
+                    {
+                        new Thread(new ThreadStart(delegate()
+                        {
+                            hotstring.PreFilter();
+                            hotstring.Proc(new object[] { });
+                            hotstring.PostFilter();
+                        })).Start();
+
+                        if ((hotstring.EnabledOptions & HotstringDefinition.Options.Reset) == HotstringDefinition.Options.Reset)
+                            history.Length = 0;
+                    }
                 }
 
                 return block;
@@ -388,6 +448,43 @@ namespace IronAHK.Rusty
 
                 for (int i = 0; i < 3; i++)
                     if ((modifiers[i, 0] && !modifiers[i, 1]) || (modifiers[i, 1] && !modifiers[i, 0]))
+                        return false;
+
+                return true;
+            }
+
+            bool HasConditions(HotstringDefinition hotstring)
+            {
+                string history = this.history.ToString();
+
+                if (history.Length == 0)
+                    return false;
+
+                var compare = (hotstring.EnabledOptions & HotstringDefinition.Options.CaseSensitive) == HotstringDefinition.Options.CaseSensitive ?
+                    StringComparison.Ordinal : StringComparison.OrdinalIgnoreCase;
+
+                int x = hotstring.Sequence.Length - 1;
+
+                if ((hotstring.EnabledOptions & HotstringDefinition.Options.AutoTrigger) == HotstringDefinition.Options.AutoTrigger)
+                {
+                    if (!history.EndsWith(hotstring.Sequence, compare))
+                        return false;
+                    x--;
+                }
+                else
+                {
+                    if (history.Length < hotstring.Sequence.Length + 1)
+                        return false;
+
+                    if (hotstring.EndChars.IndexOf(history[history.Length - 1]) == -1)
+                        return false;
+
+                    if (!history.Substring(x, hotstring.Sequence.Length).Equals(hotstring.Sequence, compare))
+                        return false;
+                }
+
+                if ((hotstring.EnabledOptions & HotstringDefinition.Options.Nested) == HotstringDefinition.Options.Nested)
+                    if (x > -1 && !char.IsLetterOrDigit(history[x]))
                         return false;
 
                 return true;

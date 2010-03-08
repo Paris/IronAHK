@@ -140,7 +140,44 @@ namespace IronAHK.Rusty
         /// <param name="Options"></param>
         public static void Hotstring(string Sequence, string Label, string Options)
         {
+            #region Initialise
 
+            if (keyboardHook == null)
+            {
+                if (Environment.OSVersion.Platform == PlatformID.Win32NT)
+                    keyboardHook = new Windows.KeyboardHook();
+                else
+                    throw new NotImplementedException(); // TODO: Linux hotkeys
+            }
+
+            if (hotstrings == null)
+                hotstrings = new Dictionary<string, HotstringDefinition>();
+
+            #endregion
+
+            #region Create
+
+            GenericFunction proc;
+
+            try
+            {
+                var method = FindLocalMethod(Label);
+                if (method == null)
+                    throw new ArgumentNullException();
+                proc = (GenericFunction)Delegate.CreateDelegate(typeof(GenericFunction), method);
+            }
+            catch (Exception)
+            {
+                ErrorLevel = 1;
+                throw new ArgumentException();
+            }
+
+            var options = HotstringDefinition.ParseOptions(Options);
+            var key = new HotstringDefinition(Sequence, proc) { Enabled = true, EnabledOptions = options };
+            hotstrings.Add(Sequence, key);
+            keyboardHook.Add(key);
+
+            #endregion
         }
 
         /// <summary>
