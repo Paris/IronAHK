@@ -135,9 +135,10 @@ namespace IronAHK.Rusty
         /// <summary>
         /// Creates a hotstring.
         /// </summary>
-        /// <param name="Options"></param>
         /// <param name="Sequence"></param>
-        public static void Hotstring(string Options, string Sequence)
+        /// <param name="Label"></param>
+        /// <param name="Options"></param>
+        public static void Hotstring(string Sequence, string Label, string Options)
         {
 
         }
