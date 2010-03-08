@@ -30,7 +30,7 @@ namespace IronAHK.Scripting
 
             public static MethodReference Hotstring
             {
-                get { return new MethodReference(typeof(Core), "Hotstring", new Type[] { typeof(string), typeof(string) }); }
+                get { return new MethodReference(typeof(Core), "Hotstring", new Type[] { typeof(string), typeof(string), typeof(string) }); }
             }
 
             public static MethodReference Send
