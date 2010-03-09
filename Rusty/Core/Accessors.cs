@@ -404,7 +404,8 @@ namespace IronAHK.Rusty
         /// </summary>
         public static bool A_IsSuspended
         {
-            get { return false; }
+            get { return suspended; }
+            set { suspended = value; }
         }
 
         /// <summary>
