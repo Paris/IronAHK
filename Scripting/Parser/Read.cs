@@ -99,41 +99,6 @@ namespace IronAHK.Scripting
                                 includes.Add(parts[1]);
                             break;
 
-                        case "KEYHISTORY":
-                            KeyHistory = numeric ? Math.Min(0, Math.Max(value, 500)) : KeyHistoryDefault;
-                            break;
-
-                        case "MAXHOTKEYSPERINTERVAL":
-                            MaxHotkeysPerInterval = numeric ? value : MaxHotkeysPerIntervalDefault;
-                            break;
-
-                        case "MAXMEM":
-                            MaxMem = numeric ? value : MaxMemDefault;
-                            break;
-
-                        case "MAXTHREADS":
-                            MaxThreads = numeric ? Math.Min(1, Math.Max(value, 255)) : MaxThreadsDefault;
-                            break;
-
-                        case "MAXTHREADSBUFFER":
-                            switch (parts[1].ToUpperInvariant())
-                            {
-                                case "ON":
-                                    MaxThreadsBuffer = true;
-                                    break;
-                                case "OFF":
-                                    MaxThreadsBuffer = false;
-                                    break;
-                                default:
-                                    MaxThreadsBuffer = MaxThreadsBufferDefault;
-                                    break;
-                            }
-                            break;
-
-                        case "MAXTHREADSPERHOTKEY":
-                            MaxThreadsPerHotkey = numeric ? Math.Min(1, Math.Max(value, 20)) : MaxThreadsPerHotkeyDefault;
-                            break;
-
                         case "NOENV":
                             NoEnv = true;
                             break;
@@ -167,14 +132,6 @@ namespace IronAHK.Scripting
                             WinActivateForce = true;
                             break;
 
-                        case "HOTKEYINTERVAL":
-                            HotkeyInterval = numeric ? value : HotkeyIntervalDefault;
-                            break;
-
-                        case "HOTKEYMODIFIERTIMEOUT":
-                            HotkeyModifierTimeout = numeric ? Math.Max(-1, value) : HotkeyModifierTimeoutDefault;
-                            break;
-
                         case "HOTSTRING":
                             switch (parts[1].ToUpperInvariant())
                             {
@@ -192,8 +149,16 @@ namespace IronAHK.Scripting
 
                         case "ALLOWSAMELINECOMMENTS":
                         case "ERRORSTDOUT":
+                        case "HOTKEYINTERVAL":
+                        case "HOTKEYMODIFIERTIMEOUT":
                         case "INSTALLKEYBDHOOK":
                         case "INSTALLMOUSEHOOK":
+                        case "KEYHISTORY":
+                        case "MAXHOTKEYSPERINTERVAL":
+                        case "MAXMEM":
+                        case "MAXTHREADS":
+                        case "MAXTHREADSBUFFER":
+                        case "MAXTHREADSPERHOTKEY":
                         case "USEHOOK":
                             // deprecated directives
                             break;
