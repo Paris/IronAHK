@@ -426,6 +426,8 @@ namespace IronAHK.Rusty
 
                         if ((hotstring.EnabledOptions & HotstringDefinition.Options.Reset) == HotstringDefinition.Options.Reset)
                             history.Length = 0;
+
+                        block = true;
                     }
                 }
 
