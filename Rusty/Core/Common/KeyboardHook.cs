@@ -392,6 +392,10 @@ namespace IronAHK.Rusty
             protected bool KeyReceived(Keys key, bool down)
             {
                 bool block = false;
+
+                if (suspended)
+                    goto next;
+
                 pressed[key] = down;
 
                 foreach (var hotkey in hotkeys)
@@ -405,6 +409,8 @@ namespace IronAHK.Rusty
                     if (match && (hotkey.EnabledOptions & HotkeyDefinition.Options.PassThrough) != HotkeyDefinition.Options.PassThrough)
                         block = true;
                 }
+
+            next:
 
                 if (!down)
                     return block;
@@ -426,6 +432,9 @@ namespace IronAHK.Rusty
                             history.Remove(0, 1); // lifo stack
                     }
                 }
+
+                if (suspended)
+                    return block;
 
                 #endregion
 
