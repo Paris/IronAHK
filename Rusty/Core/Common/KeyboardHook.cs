@@ -362,24 +362,14 @@ namespace IronAHK.Rusty
 
             char Letter(Keys key)
             {
-                const string map = "abcdefghijklmnopqrstuvwxyz";
-                var list = new Keys[] { Keys.A, Keys.B, Keys.D, Keys.E, Keys.F, Keys.G, Keys.H, Keys.I, Keys.J, Keys.K, Keys.L
-                    , Keys.M, Keys.N, Keys.O, Keys.P, Keys.Q, Keys.R, Keys.S, Keys.T, Keys.U, Keys.V, Keys.W, Keys.X, Keys.Y, Keys.Z };
+                bool caps = (key & Keys.Shift) == Keys.Shift || pressed[Keys.ShiftKey] || pressed[Keys.LShiftKey] || pressed[Keys.RShiftKey];
+                key &= ~Keys.Modifiers;
+                string letter = key.ToString();
 
-                for (int i = 0; i < list.Length; i++)
-                {
-                    if ((key & list[i]) == list[i])
-                    {
-                        char letter = map[i];
+                if (!caps)
+                    letter = letter.ToLowerInvariant();
 
-                        if ((key & Keys.Shift) == Keys.Shift) // TODO: check capslock
-                            letter = letter.ToString().ToUpperInvariant()[0];
-
-                        return letter;
-                    }
-                }
-
-                return (char)0;
+                return letter.Length == 1 ? letter[0] : (char)0;
             }
 
             #endregion
