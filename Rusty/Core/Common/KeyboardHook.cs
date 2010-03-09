@@ -364,6 +364,13 @@ namespace IronAHK.Rusty
             {
                 bool caps = (key & Keys.Shift) == Keys.Shift || pressed[Keys.ShiftKey] || pressed[Keys.LShiftKey] || pressed[Keys.RShiftKey];
                 key &= ~Keys.Modifiers;
+
+                switch (key)
+                {
+                    case Keys.Space: return ' ';
+                    case Keys.Enter: return '\n';
+                }
+
                 string letter = key.ToString();
 
                 if (!caps)
