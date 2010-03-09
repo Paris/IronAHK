@@ -36,6 +36,8 @@ namespace IronAHK.Rusty
 
         static KeyboardHook keyboardHook = null;
 
+        static bool suspended = false;
+
         #region Statics
 
         [ThreadStatic]
