@@ -31,6 +31,8 @@ namespace IronAHK
             const string ErrorDuplicatePaths = "Duplicate paths to source file.";
             const string ErrorOutputUnspecified = "No output path specified.";
             const string ErrorUnrecognisedSwitch = "Unrecognised switch.";
+            const string ErrorErrorsOccurred = "The following errors occurred:";
+            const string ErrorCompilationFailed = "Compilation failed.";
 
             #endregion
 
@@ -186,9 +188,27 @@ namespace IronAHK
             options.GenerateInMemory = reflect;
 
             var results = ahk.CompileAssemblyFromFile(options, script);
+            bool failed = false;
+
+            var warnings = new StringWriter();
+            warnings.WriteLine(ErrorErrorsOccurred);
+            warnings.WriteLine();
 
             foreach (CompilerError error in results.Errors)
-                Console.Error.WriteLine("{0} ({1}): ==> {2}", error.FileName, error.Line.ToString(), error.ErrorText);
+            {
+                string file = string.IsNullOrEmpty(error.FileName) ? script : error.FileName;
+
+                if (!error.IsWarning)
+                {
+                    failed = true;
+                    warnings.WriteLine("{0}:{1} - {2}", Path.GetFileName(file), error.Line.ToString(), error.ErrorText);
+                }
+
+                Console.Error.WriteLine("{0} ({1}): ==> {2}", file, error.Line.ToString(), error.ErrorText);
+            }
+
+            if (failed)
+                return Message(gui ? warnings.ToString() : ErrorCompilationFailed, ExitInvalidFunction);
 
 #if DEBUG
             reflect = true;
@@ -199,7 +219,7 @@ namespace IronAHK
                 try
                 {
                     if (results.CompiledAssembly == null)
-                        throw new Exception("compilation failed");
+                        throw new Exception(ErrorCompilationFailed);
                     results.CompiledAssembly.EntryPoint.Invoke(null, null);
                 }
 #if DEBUG
@@ -210,7 +230,10 @@ namespace IronAHK
                 }
 #endif
 #if !DEBUG
-                catch (Exception e) { Console.Error.WriteLine("Could not execute: {0}", e.Message); }
+                catch (Exception e)
+                {
+                    return Message("Could not execute: " + e.Message, ExitInvalidFunction);
+                }
 #endif
                 finally { }
             }
