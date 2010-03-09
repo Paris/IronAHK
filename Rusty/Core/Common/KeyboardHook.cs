@@ -198,6 +198,8 @@ namespace IronAHK.Rusty
             GenericFunction proc;
             bool enabled;
 
+            const string backspace = "{BS}";
+
             [Flags]
             public enum Options { None = 0, AutoTrigger = 1, Nested = 2, Backspace = 4, CaseSensitive = 8, OmitEnding = 16, Raw = 32, Reset = 64 }
 
@@ -209,14 +211,22 @@ namespace IronAHK.Rusty
 
             internal void PreFilter()
             {
-                if ((options & Options.Backspace) == Options.Backspace)
-                    Send("{BS " + sequence.Length.ToString() + "}");
+                if ((options & Options.Backspace) == Options.Backspace && sequence.Length > 1)
+                {
+                    int length = sequence.Length - 1;
+                    var buf = new StringBuilder(backspace.Length * length);
+
+                    for (int i = 0; i < length; i++)
+                        buf.Append(backspace);
+
+                    Send(buf.ToString());
+                }
             }
 
             internal void PostFilter()
             {
                 if ((options & Options.OmitEnding) == Options.OmitEnding && (options & Options.AutoTrigger) != Options.AutoTrigger)
-                    Send("{BS}");
+                    Send(backspace);
             }
 
             public string Sequence
@@ -249,7 +259,7 @@ namespace IronAHK.Rusty
 
             public static Options ParseOptions(string mode)
             {
-                var options = Options.None;
+                var options = Options.Backspace;
 
                 mode = mode.ToLowerInvariant();
 
