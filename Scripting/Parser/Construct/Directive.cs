@@ -6,14 +6,6 @@ namespace IronAHK.Scripting
         #region Variables
 
         const int ClipboardTimeoutDefault = 1000;
-        const int HotkeyIntervalDefault = 2000;
-        const int HotkeyModifierTimeoutDefault = 50;
-        const int MaxHotkeysPerIntervalDefault = 70;
-        const int MaxMemDefault = 64;
-        const int KeyHistoryDefault = 40;
-        const int MaxThreadsDefault = 10;
-        const bool MaxThreadsBufferDefault = false;
-        const int MaxThreadsPerHotkeyDefault = 1;
         const bool NoEnvDefault = false;
         const bool NoTrayIconDefault = false;
         const bool PersistentDefault = false;
@@ -22,14 +14,6 @@ namespace IronAHK.Scripting
         #pragma warning disable 414
 
         int ClipboardTimeout = ClipboardTimeoutDefault;
-        int HotkeyInterval = HotkeyIntervalDefault;
-        int HotkeyModifierTimeout = HotkeyModifierTimeoutDefault;
-        int MaxHotkeysPerInterval = MaxHotkeysPerIntervalDefault;
-        int MaxMem = MaxMemDefault;
-        int KeyHistory = KeyHistoryDefault;
-        int MaxThreads = MaxThreadsDefault;
-        bool MaxThreadsBuffer = MaxThreadsBufferDefault;
-        int MaxThreadsPerHotkey = MaxThreadsPerHotkeyDefault;
         bool NoEnv = NoEnvDefault;
         bool NoTrayIcon = NoTrayIconDefault;
         bool Persistent = PersistentDefault;
