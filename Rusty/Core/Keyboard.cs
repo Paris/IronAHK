@@ -33,7 +33,7 @@ namespace IronAHK.Rusty
                 if (Environment.OSVersion.Platform == PlatformID.Win32NT)
                     keyboardHook = new Windows.KeyboardHook();
                 else
-                    throw new NotImplementedException(); // TODO: Linux hotkeys
+                    keyboardHook = new Linux.KeyboardHook();
             }
 
             if (hotkeys == null)

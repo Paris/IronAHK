@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -56,7 +56,7 @@
     <RegisterForComInterop>false</RegisterForComInterop>
     <DocumentationFile>bin\Release\IronAHK.Rusty.xml</DocumentationFile>
   </PropertyGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
@@ -99,12 +99,8 @@
     <Compile Include="Extras\GUI\WinForms.cs" />
     <Compile Include="Extras\SimpleJSON\SimpleJSON.cs" />
     <Compile Include="Core\Common\KeyboardHook.cs" />
-    <Compile Include="Linux\IHotkeyRegister.cs" />
-    <Compile Include="Linux\KeyCombination.cs" />
-    <Compile Include="Linux\KeyModifiers.cs" />
     <Compile Include="Linux\Linux.cs" />
     <Compile Include="Linux\PlatformInvokes.cs" />
-    <Compile Include="Linux\PoliteRegister.cs" />
     <Compile Include="Linux\Structs.cs" />
     <Compile Include="Extras\SimpleJSON\Decode.cs" />
     <Compile Include="Extras\SimpleJSON\Encode.cs" />
@@ -113,6 +109,8 @@
     <Compile Include="Windows\Misc.cs" />
     <Compile Include="Windows\Input.cs" />
     <Compile Include="Windows\Windows.cs" />
+    <Compile Include="Linux\KeyboardHook.cs" />
+    <Compile Include="Linux\Mapping.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
