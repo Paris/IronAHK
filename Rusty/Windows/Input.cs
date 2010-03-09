@@ -7,7 +7,7 @@ namespace IronAHK.Rusty
     partial class Windows
     {
         [DllImport("user32.dll")]
-        public static extern uint SendInput(uint nInputs, INPUT[] pInputs, int cbSize);
+        public static extern uint SendInput(uint nInputs, ref INPUT pInputs, int cbSize);
 
         [DllImport("user32.dll")]
         public static extern IntPtr GetMessageExtraInfo();
