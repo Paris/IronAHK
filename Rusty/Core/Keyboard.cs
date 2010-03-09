@@ -289,7 +289,14 @@ namespace IronAHK.Rusty
         /// <param name="Keys">The sequence of keys to send.</param>
         public static void Send(string Keys)
         {
-            SendKeys.SendWait(Keys);
+            if (suspended)
+                SendKeys.SendWait(Keys);
+            else
+            {
+                suspended = true;
+                SendKeys.SendWait(Keys);
+                suspended = false;
+            }
         }
 
         /// <summary>
