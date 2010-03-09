@@ -501,8 +501,8 @@ namespace IronAHK.Rusty
                         return false;
                 }
 
-                if ((hotstring.EnabledOptions & HotstringDefinition.Options.Nested) == HotstringDefinition.Options.Nested)
-                    if (x > -1 && !char.IsLetterOrDigit(history[x]))
+                if ((hotstring.EnabledOptions & HotstringDefinition.Options.Nested) != HotstringDefinition.Options.Nested)
+                    if (x > -1 && char.IsLetterOrDigit(history[x]))
                         return false;
 
                 return true;
