@@ -32,11 +32,12 @@ namespace IronAHK.Rusty
             IntPtr HookCallback(int nCode, IntPtr wParam, IntPtr lParam)
             {
                 bool block = false;
+                bool pressed = wParam == (IntPtr)WM_KEYDOWN;
 
-                if (nCode >= 0 && wParam == (IntPtr)WM_KEYDOWN || wParam == (IntPtr)WM_KEYUP)
+                if (nCode >= 0 && pressed || wParam == (IntPtr)WM_KEYUP)
                 {
                     int vkCode = Marshal.ReadInt32(lParam);
-                    block = KeyReceived((Keys)vkCode, wParam == (IntPtr)WM_KEYDOWN);
+                    block = KeyReceived((Keys)vkCode, pressed);
                 }
 
                 var next = CallNextHookEx(hookId, nCode, wParam, lParam);
