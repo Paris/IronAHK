@@ -207,6 +207,8 @@ namespace IronAHK.Rusty
             {
                 this.sequence = sequence;
                 this.proc = proc;
+
+                endchars = "-()[]{}:;'\"/\\,.?!\n \t";
             }
 
             internal void PreFilter()
