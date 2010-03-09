@@ -481,13 +481,12 @@ namespace IronAHK.Rusty
                 var compare = (hotstring.EnabledOptions & HotstringDefinition.Options.CaseSensitive) == HotstringDefinition.Options.CaseSensitive ?
                     StringComparison.Ordinal : StringComparison.OrdinalIgnoreCase;
 
-                int x = hotstring.Sequence.Length - 1;
+                int x = history.Length - hotstring.Sequence.Length - 1;
 
                 if ((hotstring.EnabledOptions & HotstringDefinition.Options.AutoTrigger) == HotstringDefinition.Options.AutoTrigger)
                 {
                     if (!history.EndsWith(hotstring.Sequence, compare))
                         return false;
-                    x--;
                 }
                 else
                 {
@@ -497,7 +496,7 @@ namespace IronAHK.Rusty
                     if (hotstring.EndChars.IndexOf(history[history.Length - 1]) == -1)
                         return false;
 
-                    if (!history.Substring(x, hotstring.Sequence.Length).Equals(hotstring.Sequence, compare))
+                    if (!history.Substring(x--, hotstring.Sequence.Length).Equals(hotstring.Sequence, compare))
                         return false;
                 }
 
