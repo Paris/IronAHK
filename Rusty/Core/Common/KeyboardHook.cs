@@ -213,9 +213,13 @@ namespace IronAHK.Rusty
 
             internal void PreFilter()
             {
-                if ((options & Options.Backspace) == Options.Backspace && sequence.Length > 1)
+                int length = sequence.Length;
+
+                if ((options & Options.AutoTrigger) == Options.AutoTrigger)
+                    length--;
+
+                if ((options & Options.Backspace) == Options.Backspace && length > 0)
                 {
-                    int length = sequence.Length - 1;
                     var buf = new StringBuilder(backspace.Length * length);
 
                     for (int i = 0; i < length; i++)
