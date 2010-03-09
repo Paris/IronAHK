@@ -62,8 +62,9 @@ namespace IronAHK.Scripting
             delim[0] = Multicast;
             Spaces.CopyTo(delim, 1);
             string[] parts = code.Split(delim, 2);
+
             if (parts.Length != 2)
-                throw new ParseException(ExFlowArgReq);
+                parts = new[] { parts[0], string.Empty };
 
             parts[1] = StripComment(parts[1]).Trim(Spaces);
 
