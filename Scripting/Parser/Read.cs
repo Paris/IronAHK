@@ -184,9 +184,6 @@ namespace IronAHK.Scripting
                                 case "ENDCHARS":
                                     HotstringEndChars = parts[1];
                                     break;
-                                case "NEWCHARS":
-                                    HotstringNewChars = parts[1];
-                                    break;
                                 default:
                                     next = false;
                                     break;

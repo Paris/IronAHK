@@ -37,7 +37,6 @@ namespace IronAHK.Scripting
         bool WinActivateForce = WinActivateForceDefault;
         bool HotstringNoMouse = false;
         string HotstringEndChars = string.Empty;
-        string HotstringNewChars = string.Empty;
         string HotstringNewOptions = string.Empty;
         bool LTrimForced = false;
 
