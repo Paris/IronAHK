@@ -55,7 +55,11 @@ namespace IronAHK.Scripting
                 invoke = (CodeMethodInvokeExpression)InternalMethods.Hotstring;
                 invoke.Parameters.Add(new CodePrimitiveExpression(parts[0].Substring(mode.Length)));
                 invoke.Parameters.Add(new CodePrimitiveExpression(name));
-                invoke.Parameters.Add(new CodePrimitiveExpression(mode.Substring(1, mode.Length - 2)));
+
+                string options = mode.Substring(1, mode.Length - 2);
+                if (!string.IsNullOrEmpty(HotstringNewOptions))
+                    options = string.Concat(HotstringNewOptions, SingleSpace.ToString(), options);
+                invoke.Parameters.Add(new CodePrimitiveExpression(options));
             }
             else
             {
