@@ -413,6 +413,9 @@ namespace IronAHK.Rusty
 
                 if (hotstrings.Count > 0)
                 {
+                    if (key == Keys.Back && history.Length > 0)
+                        history.Remove(history.Length - 1, 1);
+
                     char letter = Letter(key);
 
                     if (letter != 0)
