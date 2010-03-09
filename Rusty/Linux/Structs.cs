@@ -50,7 +50,61 @@ namespace IronAHK.Rusty
             SpaceBar = 65,
             LowerLetter = 24,     // q on qwerty
             UpperLetter = 58,     // m 
-            BackSpace = 22
+            BackSpace = 22,
+            Return = 36,
+            // Missing: "Menu key"
+            
+            F1 = 67,
+            F2 = 68,
+            F3 = 69,
+            F4 = 70,
+            F5 = 71,
+            F6 = 72,
+            F7 = 73,
+            F8 = 74,
+            F9 = 75,
+            F10 = 76,
+            // Missing: F11
+            F12 = 96,
+            
+            Escape = 9,        
+            Tab = 23,
+            CapsLock = 66,
+            Tilde = 49,
+            Backslash = 51,
+            
+            // Missing: PrintScrn
+            ScrollLock = 78,
+            Pause = 127,
+            Insert = 118,
+            Delete = 119,
+            Home = 110,
+            End = 115,
+            PageUp = 112,
+            PageDown = 117,
+            NumLock = 77,
+            
+            Slash = 61,
+            Dot = 60,
+            Comma = 59,
+            Quote = 48,
+            Semicolon = 47,
+            OpenSquareBracket = 34,
+            CloseSquareBracket = 35,
+            Dash = 20,
+            Equals = 21,
+            
+            NumpadSlash = 106,
+            NumpadAsterisk = 63,
+            NumpadMinus = 82,
+            NumpadPlus = 86,
+            NumpadEnter = 104,
+            NumpadDot = 91,
+            
+            Left = 113,
+            Right = 114,
+            Up = 111,
+            Down = 116
         }
 
         internal enum EventMasks : long
