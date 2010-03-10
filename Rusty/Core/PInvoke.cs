@@ -287,20 +287,27 @@ namespace IronAHK.Rusty
         }
 
         /// <summary>
-        /// Creates a machine-code address that when called, redirects the call to a function in the script.
+        /// Converts a local function to a native function pointer.
         /// </summary>
-        /// <param name="FunctionName">A function's name, which must be enclosed in quotes if it is a literal string. This function is called automatically whenever Address is called. The function also receives the parameters that were passed to Address.</param>
-        /// <param name="Options">
-        /// <para>Specify zero or more of the following words. Separate each option from the next with a space (e.g. "C Fast").</para>
-        /// <para>Fast or F: Avoids starting a new thread each time FunctionName is called. Although this performs much better, it must be avoided whenever the thread from which Address is called varies (e.g. when the callback is triggered by an incoming message). This is because FunctionName will be able to change global settings such as ErrorLevel, A_LastError, and the last-found window for whichever thread happens to be running at the time it is called. For more information, see Remarks.</para>
-        /// <para>CDecl or C : Makes Address conform to the "C" calling convention. This is typically omitted because the standard calling convention is much more common for callbacks.</para>
-        /// </param>
-        /// <param name="ParamCount">The number of parameters that Address's caller will pass to it. If entirely omitted, it defaults to the number of mandatory parameters in the definition of FunctionName. In either case, ensure that the caller passes exactly this number of parameters.</param>
-        /// <param name="EventInfo">An integer between 0 and 4294967295 that FunctionName will see in A_EventInfo whenever it is called via this Address. This is useful when FunctionName is called by more than one Address. If omitted, it defaults to Address. Note: Unlike other global settings, the current thread's A_EventInfo is not disturbed by the fast mode.</param>
-        /// <returns>Upon success, RegisterCallback() returns a numeric address that may be called by DllCall() or anything else capable of calling a machine-code function. Upon failure, it returns an empty string. Failure occurs when FunctionName: 1) does not exist; 2) accepts too many or too few parameters according to ParamCount; or 3) accepts any ByRef parameters.</returns>
-        public static int RegisterCallback(string FunctionName, string Options, string ParamCount, string EventInfo)
+        /// <param name="FunctionName">The name of the function.</param>
+        /// <param name="Ignored">Unused legacy parameters.</param>
+        /// <returns>An integer address to the function callable by unmanaged code.</returns>
+        public static long RegisterCallback(string FunctionName, object[] Ignored)
         {
-            return 0;
+            var method = FindLocalMethod(FunctionName);
+
+            if (method == null)
+                return 0;
+
+            try
+            {
+                var dlg = Delegate.CreateDelegate(typeof(GenericFunction), method);
+                return Marshal.GetFunctionPointerForDelegate(dlg).ToInt64();
+            }
+            catch (Exception)
+            {
+                return 0;
+            }
         }
 
         /// <summary>
