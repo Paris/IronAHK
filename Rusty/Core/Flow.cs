@@ -45,14 +45,13 @@ namespace IronAHK.Rusty
         }
 
         /// <summary>
-        /// Returns true if <paramref name="FunctionName"/> exists in the script as a function.
+        /// Checks if a function is defined.
         /// </summary>
-        /// <param name="FunctionName"></param>
-        /// <returns></returns>
+        /// <param name="FunctionName">The name of a function.</param>
+        /// <returns><c>true</c> if the specified function exists in the current scope, <c>false</c> otherwise.</returns>
         public static bool IsFunc(string FunctionName)
         {
-            // TODO: check function names in local scope
-            return false;
+            return FindLocalMethod(FunctionName) != null;
         }
 
         /// <summary>
