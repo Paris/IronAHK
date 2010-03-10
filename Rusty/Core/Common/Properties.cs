@@ -38,6 +38,8 @@ namespace IronAHK.Rusty
 
         static bool suspended = false;
 
+        static EventHandler onExit = null;
+
         #region Statics
 
         [ThreadStatic]

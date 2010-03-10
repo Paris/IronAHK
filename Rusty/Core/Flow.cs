@@ -66,12 +66,38 @@ namespace IronAHK.Rusty
         }
 
         /// <summary>
-        /// Specifies a subroutine to run automatically when the program exits.
+        /// Specifies a label to run automatically when the application exits.
         /// </summary>
-        /// <param name="Label">If omitted, the script is returned to its normal exit behavior. Otherwise, specify the name of the label whose contents will be executed (as a new thread) when the script exits by any means.</param>
+        /// <param name="Label">The name of a label. Leave blank to remove an existing label, if any.</param>
         public static void OnExit(string Label)
         {
-            throw new NotImplementedException();
+            error = 0;
+
+            if (onExit != null)
+            {
+                AppDomain.CurrentDomain.ProcessExit -= onExit;
+                onExit = null;
+            }
+
+            if (string.IsNullOrEmpty(Label))
+                return;
+
+            string name = LabelMethodName(Label);
+            var method = FindLocalMethod(name);
+
+            if (method == null)
+            {
+                error = 1;
+                return;
+            }
+
+            var handler = new EventHandler(delegate(object sender, EventArgs e)
+            {
+                method.Invoke(null, new object[] { new object[] { } });
+            });
+
+            AppDomain.CurrentDomain.ProcessExit += handler;
+            onExit = handler;
         }
 
         /// <summary>
