@@ -12,11 +12,16 @@ namespace IronAHK.Rusty
         /// <summary>
         /// Prevents the current thread from being interrupted by other threads.
         /// </summary>
-        /// <param name="Mode"></param>
+        /// <param name="Mode">
+        /// <list type="bullet">
+        /// <item><term>On</term>: <description>give the current thread the highest priority.</description></item>
+        /// <item><term>Off</term>: <description>resets the current thread priority to normal.</description></item>
+        /// </list>
+        /// </param>
         public static void Critical(string Mode)
         {
-            System.Threading.Thread.CurrentThread.Priority = Mode == null ?
-                ThreadPriority.Highest : ThreadPriority.Normal;
+            bool on = OnOff(Mode) ?? true;
+            System.Threading.Thread.CurrentThread.Priority = on ? ThreadPriority.Highest : ThreadPriority.Normal;
         }
 
         /// <summary>
