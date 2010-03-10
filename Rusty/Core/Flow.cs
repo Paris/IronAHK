@@ -82,8 +82,7 @@ namespace IronAHK.Rusty
             if (string.IsNullOrEmpty(Label))
                 return;
 
-            string name = LabelMethodName(Label);
-            var method = FindLocalMethod(name);
+            var method = FindLocalRoutine(Label);
 
             if (method == null)
             {
