@@ -400,6 +400,14 @@ namespace IronAHK.Rusty
         }
 
         /// <summary>
+        /// <c>1</c> if the current thread is marked as critical, <c>0</c> otherwise.
+        /// </summary>
+        public static int A_IsCritical
+        {
+            get { return System.Threading.Thread.CurrentThread.Priority == System.Threading.ThreadPriority.Highest ? 1 : 0; }
+        }
+
+        /// <summary>
         /// <code>true</code> if the script is suspended, <code>false</code> otherwise;
         /// </summary>
         public static bool A_IsSuspended
