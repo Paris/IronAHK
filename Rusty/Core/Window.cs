@@ -285,7 +285,10 @@ namespace IronAHK.Rusty
         public static void PostMessage(int Msg, int wParam, int lParam, string Control, string WinTitle, string WinText, string ExcludeTitle, string ExcludeText)
         {
             if (Environment.OSVersion.Platform != PlatformID.Win32NT)
+            {
+                error = 0;
                 return;
+            }
 
             IntPtr hwnd = Windows.FindWindow(WinTitle, WinText, ExcludeTitle, ExcludeText, Control);
             error = Windows.PostMessage(hwnd, (uint)Msg, new IntPtr(wParam), new IntPtr(lParam)) ? 0 : 1;
@@ -308,7 +311,10 @@ namespace IronAHK.Rusty
         public static void SendMessage(int Msg, int wParam, int lParam, string Control, string WinTitle, string WinText, string ExcludeTitle, string ExcludeText)
         {
             if (Environment.OSVersion.Platform != PlatformID.Win32NT)
+            {
+                error = 0;
                 return;
+            }
 
             IntPtr hwnd = Windows.FindWindow(WinTitle, WinText, ExcludeTitle, ExcludeText, Control);
             error = Windows.SendMessage(hwnd, (uint)Msg, new IntPtr(wParam), new IntPtr(lParam)).ToInt32();
