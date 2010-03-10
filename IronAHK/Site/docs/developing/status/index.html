@@ -11,32 +11,57 @@ table.list td + td + td { padding-left: 1em; }
 -->
 </style>
 <script type="text/javascript" src="../../main.js" defer="defer"></script>
+<script type="text/javascript" defer="defer">
+<!--
+function statusreport() {
+	var e = document.getElementById("commands").getElementsByTagName("img"), c = [0, 0, 0, 0, 0], i;
+	for (i = 0; i < e.length; i++) {
+		var s = e[i].src.match(/(\w+)\.\w+$/), x = 1;
+		switch (s[1]) { case 'error': x = 2; break; case 'cross': x = 3; break; case 'delete': x = 4; break; }
+		c[0]++; c[x]++;
+	}
+	for (i = 0; i < c.length; i++) {
+		e = document.getElementById("x" + i);
+		if (!e) { continue; }
+		var v = Math.round(c[i] / c[0] * 100) + "%";
+		if (e.textContent) { e.textContent = v; } else { e.innerHTML = v; }
+	}
+}
+
+if (window.addEventListener) { window.addEventListener("load", statusreport, false); }
+else if (window.attachEvent) { window.attachEvent("onload", statusreport); }
+//-->
+</script>
 </head>
 <body>
 <h1>Status</h1>
 <div id="page">
   <h2 id="roadmap">Commands</h2>
   <p><strong>Legend</strong></p>
-  <table class="list">
+  <table class="list" id="status">
     <tr>
       <td>Working</td>
       <td><img src="../../../images/tick.png" width="16" height="16" alt="" /></td>
+      <td id="x1">&nbsp;</td>
     </tr>
     <tr>
       <td>Untested</td>
       <td><img src="../../../images/error.png" width="16" height="16" alt="" /></td>
+      <td id="x2">&nbsp;</td>
     </tr>
     <tr>
       <td>Not working</td>
       <td><img src="../../../images/cross.png" width="16" height="16" alt="" /></td>
+      <td id="x3">&nbsp;</td>
     </tr>
     <tr>
       <td>Obsolete</td>
       <td><img src="../../../images/delete.png" width="16" height="16" alt="" /></td>
+      <td id="x4">&nbsp;</td>
     </tr>
   </table>
   <p>&nbsp;</p>
-  <table class="list">
+  <table class="list" id="commands">
     <tr>
       <td><a href="../../commands/abs/">Abs</a></td>
       <td><img src="../../../images/tick.png" width="16" height="16" alt="" /></td>
