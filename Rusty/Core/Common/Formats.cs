@@ -12,6 +12,11 @@ namespace IronAHK.Rusty
 {
     partial class Core
     {
+        static MethodInfo FindLocalRoutine(string name)
+        {
+            return FindLocalMethod(LabelMethodName(name));
+        }
+
         static MethodInfo FindLocalMethod(string name)
         {
             var stack = new StackTrace(false).GetFrames();

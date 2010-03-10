@@ -1,4 +1,5 @@
 using System;
+using System.Reflection;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -188,9 +189,14 @@ namespace IronAHK.Rusty
         public static void Sort(ref string VarName, params string[] Options)
         {
             var opts = KeyValues(string.Join(",", Options), true, new char[] { 'f' });
-            
+            MethodInfo function = null;
+
             if (opts.ContainsKey('f'))
-                throw new NotSupportedException(); // UNDONE: dynamic function calling for sort
+            {
+                function = FindLocalRoutine(opts['f']);
+                if (function == null)
+                    return;
+            }
 
             char split = '\n';
 
@@ -276,7 +282,21 @@ namespace IronAHK.Rusty
 
             Array.Sort(list, delegate(string x, string y)
             {
-                if (x == y)
+                if (function != null)
+                {
+                    object value = null;
+
+                    try { value = function.Invoke(null, new object[] { new object[] { x, y } }); }
+                    catch (Exception) { }
+
+                    int result;
+
+                    if (value is string && int.TryParse((string)value, out result))
+                        return result;
+
+                    return 0;
+                }
+                else if (x == y)
                     return 0;
                 else if (random)
                     return rand.Next(-1, 2);
