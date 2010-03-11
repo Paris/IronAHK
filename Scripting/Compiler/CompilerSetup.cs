@@ -26,7 +26,7 @@ namespace IronAHK.Scripting
         
         public void LinkTo(string file)
         {
-            LinkingTo = File.Exists(file) ? Assembly.LoadFrom(file) : Assembly.LoadWithPartialName(Path.GetFileNameWithoutExtension(file));
+            LinkingTo = File.Exists(file) ? Assembly.LoadFrom(file) : Assembly.Load(Path.GetFileNameWithoutExtension(file));
                 
             MineTypes(LinkingTo);
         }
@@ -46,11 +46,11 @@ namespace IronAHK.Scripting
             AName = new AssemblyName(name);
             ABuilder = AppDomain.CurrentDomain.DefineDynamicAssembly(AName, AssemblyBuilderAccess.RunAndSave, dir);
 
+            foreach (var type in new[] { typeof(Rusty.Core), typeof(Script) })
+                MineMethods(type);
+
             foreach (string assembly in Options.ReferencedAssemblies)
-            {
-                ABuilder.DefineDynamicModule(Path.GetFileName(assembly));
                 LinkTo(assembly);
-            }
         }
 
         void MineTypes(Assembly Asm)

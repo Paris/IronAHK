@@ -167,14 +167,8 @@ namespace IronAHK
             #region Compile
 
             var ahk = new IACodeProvider();
-
             self = Path.GetDirectoryName(Path.GetFullPath(self));
-            const string ext = ".dll";
-
             var options = new CompilerParameters();
-            options.ReferencedAssemblies.Add(Path.Combine(self, typeof(IronAHK.Rusty.Core).Namespace + ext));
-            options.ReferencedAssemblies.Add(Path.Combine(self, typeof(IACodeProvider).Namespace + ext));
-
             bool reflect = exe == null;
 
             if (!reflect)
