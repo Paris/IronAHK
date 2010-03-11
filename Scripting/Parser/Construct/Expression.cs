@@ -224,10 +224,10 @@ namespace IronAHK.Scripting
                         {
                             var passed = ParseMultiExpression(paren.ToArray());
                             invoke.Parameters.AddRange(passed);
-                            invokes.Add(invoke);
                         }
 
                         parts[i] = invoke;
+                        invokes.Add(invoke);
                     }
                     #endregion
                     #region Assignments
