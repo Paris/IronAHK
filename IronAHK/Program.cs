@@ -117,6 +117,12 @@ namespace IronAHK
                                 return Message(ErrorOutputUnspecified, ExitInvalidFunction);
                             break;
 
+                        case "VERSION":
+                        case "V":
+                            string vers = string.Format("{0} {1}",
+                                typeof(Program).Namespace, Assembly.GetExecutingAssembly().GetName().Version.ToString());
+                            return Message(vers, ExitSuccess);
+
                         case "HELP":
                         case "?":
                             string txt = string.Format("Usage: {0} [{1}gui] [{1}out filename] <source file>",
