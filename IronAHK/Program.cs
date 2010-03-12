@@ -52,8 +52,8 @@ namespace IronAHK
                 switch (option[0])
                 {
                     case '/':
-                        if (Path.DirectorySeparatorChar == '/')
-                            goto case '-';
+                        if (Path.DirectorySeparatorChar == option[0])
+                            goto default;
                         option = option.Substring(1);
                         break;
 
