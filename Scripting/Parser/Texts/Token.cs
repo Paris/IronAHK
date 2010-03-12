@@ -212,6 +212,8 @@ namespace IronAHK.Scripting
                         return false;
                     else if (z < code.Length && code[i] == code[y] && code[z] == Equal)
                         return false;
+                    else if (IsOperator(code.Substring(i, 1)))
+                        return false;
                 }
 
                 string pre = code.Substring(0, i).TrimEnd(Spaces);
