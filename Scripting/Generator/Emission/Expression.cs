@@ -30,6 +30,8 @@ namespace IronAHK.Scripting
                 EmitTernary((CodeTernaryOperatorExpression)expr);
             else if (expr is CodeVariableReferenceExpression)
                 EmitVariableReference((CodeVariableReferenceExpression)expr);
+            else if (expr is CodeArgumentReferenceExpression)
+                EmitArgumentReference((CodeArgumentReferenceExpression)expr);
             else if (expr is CodeFieldReferenceExpression)
                 EmitFieldReference((CodeFieldReferenceExpression)expr);
             else if (expr is CodeTypeReferenceExpression)
@@ -198,6 +200,11 @@ namespace IronAHK.Scripting
         void EmitVariableReference(CodeVariableReferenceExpression var)
         {
             writer.Write(var.VariableName);
+        }
+
+        void EmitArgumentReference(CodeArgumentReferenceExpression arg)
+        {
+            writer.Write(arg.ParameterName);
         }
 
         void EmitAssignment(CodeAssignStatement assign)
