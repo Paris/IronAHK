@@ -258,29 +258,48 @@ namespace IronAHK.Scripting
             var name = var.QualifiedName;
 
             if (name is CodePrimitiveExpression)
-            {
-                writer.Write((string)(((CodePrimitiveExpression)name).Value));
-            }
+                EmitComplexReference((CodePrimitiveExpression)name);
             else if (name is CodeArrayCreateExpression)
-            {
-                var array = (CodeArrayCreateExpression)name;
-
-                foreach (CodeExpression part in array.Initializers)
-                {
-                    if (part is CodePrimitiveExpression)
-                        EmitPrimitive((CodePrimitiveExpression)part);
-                    else if (part is CodeComplexVariableReferenceExpression)
-                    {
-                        writer.Write(Parser.Resolve);
-                        EmitComplexReference((CodeComplexVariableReferenceExpression)part);
-                        writer.Write(Parser.Resolve);
-                    }
-                    else
-                        throw new ArgumentException("var");
-                }
-            }
+                EmitComplexReference((CodeArrayCreateExpression)name);
+            else if (name is CodeMethodInvokeExpression)
+                EmitComplexReference((CodeMethodInvokeExpression)name);
             else
-                throw new ArgumentException("var");
+                throw new ArgumentOutOfRangeException();
+        }
+
+        void EmitComplexReference(CodePrimitiveExpression var)
+        {
+            if (var.Value is string)
+                writer.Write((string)var.Value);
+            else
+                throw new ArgumentOutOfRangeException();
+        }
+
+        void EmitComplexReference(CodeArrayCreateExpression var)
+        {
+            foreach (CodeExpression part in var.Initializers)
+            {
+                if (part is CodePrimitiveExpression)
+                    EmitComplexReference((CodePrimitiveExpression)part);
+                else if (part is CodeComplexVariableReferenceExpression)
+                {
+                    writer.Write(Parser.Resolve);
+                    EmitComplexReference((CodeComplexVariableReferenceExpression)part);
+                    writer.Write(Parser.Resolve);
+                }
+                else if (part is CodeMethodInvokeExpression)
+                    EmitComplexReference((CodeMethodInvokeExpression)part);
+                else
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
+
+        void EmitComplexReference(CodeMethodInvokeExpression var)
+        {
+            if (var.Method.MethodName == Parser.InternalMethods.Concat.MethodName && var.Parameters.Count == 1)
+                EmitComplexReference((CodeArrayCreateExpression)var.Parameters[0]);
+            else
+                throw new ArgumentOutOfRangeException();
         }
 
         #endregion
