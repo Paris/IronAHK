@@ -212,17 +212,10 @@ namespace IronAHK.Scripting
 
                 #region Statement
 
-                if (codeTrim.Length == 0)
+                if (codeTrim.Length == 0 || IsCommentLine(codeTrim))
                     continue;
 
-                code = code.Trim(Spaces);
-                Translate(ref code);
-
-                if (code.Length == 0)
-                    continue;
-                else if (IsCommentLine(code))
-                    continue;
-                if (IsContinuationLine(code))
+                if (IsContinuationLine(codeTrim))
                 {
                     if (list.Count == 0)
                         throw new ParseException(ExUnexpected, line);
@@ -234,7 +227,13 @@ namespace IronAHK.Scripting
                     list[i].Code = buf.ToString();
                 }
                 else
-                    list.Add(new CodeLine(name, line, code));
+                {
+                    code = codeTrim;
+                    Translate(ref code);
+
+                    if (code.Length != 0)
+                        list.Add(new CodeLine(name, line, code));
+                }
 
                 #endregion
             }
