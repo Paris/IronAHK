@@ -64,7 +64,9 @@ namespace IronAHK.Scripting
                     main.Statements.Add(run);
                 }
 
-                ResolveLocalInvokes();
+                while (invokes.Count != 0)
+                    StdLib();
+
                 foreach (CodeMemberMethod method in methods.Values)
                     container.Members.Add(method);
 

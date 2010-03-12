@@ -1,6 +1,9 @@
 ﻿using System;
 using System.CodeDom;
 using System.Collections.Generic;
+using System.IO;
+using System.Reflection;
+using System.Text;
 
 namespace IronAHK.Scripting
 {
@@ -38,34 +41,80 @@ namespace IronAHK.Scripting
 
         #region Resolve
 
-        void ResolveLocalInvokes()
+        void StdLib()
         {
+            #region Paths
+
+            var search = new StringBuilder();
+
+            search.Append(Environment.GetEnvironmentVariable(LibEnv));
+            search.Append(Path.PathSeparator);
+            search.Append(Path.Combine(Assembly.GetExecutingAssembly().Location, LibDir));
+
+            if (Environment.OSVersion.Platform == PlatformID.Win32NT)
+            {
+                search.Append(Path.PathSeparator);
+                search.Append(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), Path.Combine("AutoHotkey", LibDir)));
+            }
+            else if (Path.DirectorySeparatorChar == '/' && Environment.OSVersion.Platform == PlatformID.Unix)
+            {
+                search.Append(Path.PathSeparator);
+                search.Append("/usr/" + LibDir + "/" + LibExt);
+                search.Append(Path.PathSeparator);
+                search.Append("/usr/local/" + LibDir + "/" + LibExt);
+                search.Append(Path.PathSeparator);
+                search.Append(Path.Combine(Environment.GetEnvironmentVariable("HOME"), Path.Combine(LibDir, LibExt)));
+            }
+
+            var paths = search.ToString().Split(new[] { Path.PathSeparator }, StringSplitOptions.RemoveEmptyEntries);
+            search = null;
+
+            #endregion
+
             foreach (var invoke in invokes)
             {
-                string name = LocalMethodName(invoke.Method.MethodName);
+                string name = invoke.Method.MethodName;
 
-                if (name == null)
+                if (invoke.Method.TargetObject != null || IsLocalMethodReference(name))
                     continue;
 
-                invoke.Method.MethodName = name;
+                MethodInfo core;
 
-                var obj = new CodeArrayCreateExpression();
-                obj.Size = invoke.Parameters.Count;
-                obj.CreateType = new CodeTypeReference(typeof(object));
-                obj.Initializers.AddRange(invoke.Parameters);
-                invoke.Parameters.Clear();
-                invoke.Parameters.Add(obj);
+                try { core = typeof(Rusty.Core).GetMethod(name, BindingFlags.Public | BindingFlags.Static | BindingFlags.IgnoreCase); }
+                catch (AmbiguousMatchException) { continue; }
+
+                if (core != null)
+                    continue;
+
+                int z = name.IndexOf(LibSeperator);
+
+                if (z != -1)
+                    name = name.Substring(0, z);
+
+                foreach (string dir in paths)
+                {
+                    if (!Directory.Exists(dir))
+                        continue;
+
+                    string file = Path.Combine(dir, string.Concat(name, ".", LibExt));
+
+                    if (File.Exists(file))
+                    {
+                        Parse(new StreamReader(file), Path.GetFileName(file));
+                        return;
+                    }
+                }
             }
 
             invokes.Clear();
         }
 
-        string LocalMethodName(string name)
+        bool IsLocalMethodReference(string name)
         {
             foreach (var method in methods)
                 if (method.Key.Equals(name, StringComparison.OrdinalIgnoreCase))
-                    return method.Key;
-            return null;
+                    return true;
+            return false;
         }
 
         #endregion

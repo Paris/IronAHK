@@ -11,6 +11,11 @@ namespace IronAHK.Scripting
         const char Reserved = '\0';
         readonly char[] Spaces = { CR, LF, SingleSpace, '\t', '\xA0' };
 
+        const string LibEnv = "AHKLIBPATH";
+        const string LibDir = "lib";
+        const string LibExt = "ahk";
+        const char LibSeperator = '_';
+
         internal const char StringBound = '"';
         internal const char ParenOpen = '(';
         internal const char ParenClose = ')';
