@@ -75,7 +75,16 @@ namespace IronAHK.Scripting
             {
                 string name = invoke.Method.MethodName;
 
-                if (invoke.Method.TargetObject != null || IsLocalMethodReference(name))
+                if (IsLocalMethodReference(name))
+                {
+                    var obj = new CodeArrayCreateExpression { Size = invoke.Parameters.Count, CreateType = new CodeTypeReference(typeof(object)) };
+                    obj.Initializers.AddRange(invoke.Parameters);
+                    invoke.Parameters.Clear();
+                    invoke.Parameters.Add(obj);
+                    continue;
+                }
+
+                if (invoke.Method.TargetObject != null)
                     continue;
 
                 MethodInfo core;
