@@ -112,7 +112,7 @@ namespace IronAHK.Scripting
             var method = LocalMethod(name);
             method.Attributes = MemberAttributes.Static | MemberAttributes.AccessMask;
 
-            var block = new CodeBlock(line, method.Name, method.Statements, CodeBlock.BlockKind.Function);
+            var block = new CodeBlock(line, method.Name, method.Statements, CodeBlock.BlockKind.Function, blocks.Count == 0 ? null : blocks.Peek());
             block.Type = blockType;
             CloseTopSingleBlock();
             blocks.Push(block);

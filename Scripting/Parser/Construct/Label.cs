@@ -25,7 +25,7 @@ namespace IronAHK.Scripting
                 last.Statements.Add(LocalLabelInvoke(name));
 
             var method = LocalMethod(name);
-            var block = new CodeBlock(line, method.Name, method.Statements, CodeBlock.BlockKind.Label)
+            var block = new CodeBlock(line, method.Name, method.Statements, CodeBlock.BlockKind.Label, blocks.Count == 0 ? null : blocks.Peek())
             {
                 Type = CodeBlock.BlockType.Within,
                 Name = realname

@@ -38,7 +38,7 @@ namespace IronAHK.Scripting
                         case BlockOpen:
                             if (blocks.Count == 0)
                             {
-                                block = new CodeBlock(lines[i], Scope, new CodeStatementCollection(), CodeBlock.BlockKind.Dummy);
+                                block = new CodeBlock(lines[i], Scope, new CodeStatementCollection(), CodeBlock.BlockKind.Dummy, blocks.Count == 0 ? null : blocks.Peek());
                                 CloseTopSingleBlock();
                                 blocks.Push(block);
                             }
@@ -170,6 +170,7 @@ namespace IronAHK.Scripting
             CloseTopSingleBlocks();
             CloseTopLabelBlock();
             CloseTopSingleBlocks();
+            CloseSingleLoopBlocks();
 
             if (blocks.Count > 0)
                 throw new ParseException(ExUnclosedBlock, blocks.Peek().Line);
