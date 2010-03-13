@@ -42,7 +42,7 @@ namespace IronAHK.Setup
             string target = string.Format("%ProgramFiles{2}%{0}{1}", Path.DirectorySeparatorChar, name, x64 ? "64Folder" : string.Empty);
             string version = System.IO.File.ReadAllText(string.Format("{1}{0}..{0}..{0}version.txt", Path.DirectorySeparatorChar, path)).Trim();
             string docroot = Path.GetFullPath(string.Format("{1}{0}..{0}..{0}Site{0}docs", Path.DirectorySeparatorChar, path));
-            string shortcut = string.Format("%ProgramMenu%{0}{1}", Path.DirectorySeparatorChar, name);
+            const string shortcut = "%ProgramMenu%";
             const string extension = "ia";
 
             var project = new Project();
@@ -59,10 +59,6 @@ namespace IronAHK.Setup
             n = 0;
             var docs = RecurseFolder(docroot);
 
-            foreach (var file in docs.Files)
-                if (file.Id.EndsWith("index.html"))
-                    file.Shortcuts = new[] { new FileShortcut("Documentation", shortcut) };
-
             project.Dirs = new[]
             {
                 new Dir(target,
@@ -72,7 +68,7 @@ namespace IronAHK.Setup
                         new FileShortcut(name, shortcut),
                         new FileAssociation(extension) { ContentType = "text/plain", Description= name + " Script", Arguments = "\"%1\" %*", Icon = null }
                         ),
-                    new WixSharp.File("license.txt", new FileShortcut("License", shortcut)),
+                    new WixSharp.File("license.txt"),
                     docs)
             };
 
@@ -81,7 +77,6 @@ namespace IronAHK.Setup
                 new RegValue(RegistryHive.ClassesRoot, "." + extension, "PerceivedType", "text")
             };
 
-            // TODO: add installer path to HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths
             // TODO: add installer compile option for file association
 
             string wixbin = Path.GetFullPath(string.Format("..{0}..{0}WixSharp{0}Wix_bin{0}bin", Path.DirectorySeparatorChar));
