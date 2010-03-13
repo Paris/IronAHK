@@ -77,8 +77,6 @@ namespace IronAHK.Setup
                 new RegValue(RegistryHive.ClassesRoot, "." + extension, "PerceivedType", "text")
             };
 
-            // TODO: add installer compile option for file association
-
             string wixbin = Path.GetFullPath(string.Format("..{0}..{0}WixSharp{0}Wix_bin{0}bin", Path.DirectorySeparatorChar));
             Compiler.WixLocation = wixbin;
 
@@ -117,6 +115,21 @@ namespace IronAHK.Setup
         {
             if (ext)
                 return;
+
+            foreach (var e in document.Descendants("Extension"))
+            {
+                if (!e.HasElements || !e.HasAttributes)
+                    continue;
+
+                var open = e.Element("Verb");
+                var compile = new XElement(open.Name);
+                compile.Add(open.Attribute("TargetFile"));
+                compile.Add(new XAttribute("Id", "Compile"));
+                compile.Add(new XAttribute("Command", "Compile"));
+                compile.Add(new XAttribute("Argument", "/out ! " + open.Attribute("Argument").Value));
+                e.Add(compile);
+                break;
+            }
 
             XNamespace wi = "http://schemas.microsoft.com/wix/2006/wi";
             foreach (var e in document.Descendants(wi + "Package"))
