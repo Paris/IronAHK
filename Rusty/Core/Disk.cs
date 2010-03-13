@@ -547,69 +547,6 @@ namespace IronAHK.Rusty
         }
 
         /// <summary>
-        /// Displays a standard dialog that allows the user to open or save file(s).
-        /// </summary>
-        /// <param name="OutputVar">The name of the variable in which to store the filename(s) selected by the user. This will be made blank if the user cancels the dialog (i.e. does not wish to select a file).</param>
-        /// <param name="Options">
-        /// <para>If omitted, it will default to zero, which is the same as having none of the options below.</para>
-        /// <para>M: Multi-select. Specify the letter M to allow the user to select more than one file via shift-click, control-click, or other means. M may optionally be followed by a number as described below (for example, both M and M1 are valid). To extract the individual files, see the example at the bottom of this page.</para>
-        /// <para>S: Save button. Specify the letter S to cause the dialog to always contain a Save button instead of an Open button. S may optionally be followed by a number (or sum of numbers) as described below (for example, both S and S24 are valid).</para>
-        /// <para>Even if M and S are absent, the following numbers can be used. To put more than one of them into effect, add them up. For example, to use 8 and 16, specify the number 24.</para>
-        /// <list type="">
-        /// <item>1: File Must Exist</item>
-        /// <item>2: Path Must Exist</item>
-        /// <item>8: Prompt to Create New File</item>
-        /// <item>16: Prompt to OverWrite File</item>
-        /// <item>32 [v1.0.43.09+]: Shortcuts (.lnk files) are selected as-is rather than being resolved to their targets. This option also prevents navigation into a folder via a folder shortcut.</item>
-        /// </list>
-        /// <para>If the "Prompt to Overwrite" option is present without the "Prompt to Create" option, the dialog will contain a Save button rather than an Open button. This behavior is due to a quirk in Windows.</para>
-        /// </param>
-        /// <param name="RootDir">
-        /// <para>If present, this parameter contains one or both of the following:</para>
-        /// <para>RootDir: The root (starting) directory, which is assumed to be a subfolder in %A_WorkingDir% if an absolute path is not specified. If omitted or blank, the starting directory will be a default that might depend on the OS version (in WinNT/2k/XP and beyond, it will likely be the directory most recently selected by the user during a prior use of FileSelectFile). In v1.0.43.10+, a CLSID such as ::{20d04fe0-3aea-1069-a2d8-08002b30309d} (i.e. My Computer) may also be specified, in which case any subdirectory present after the CLSID should end in a backslash (otherwise, the string after the last backslash will be interpreted as the default filename, below).</para>
-        /// <para>Filename: The default filename to initially show in the dialog's edit field. Only the naked filename (with no path) will be shown. To ensure that the dialog is properly shown, ensure that no illegal characters are present (such as /&lt;|:").</para>
-        /// </param>
-        /// <param name="Prompt">Text displayed in the window to instruct the user what to do. If omitted or blank, it will default to "Select File - %A_SCRIPTNAME%" (i.e. the name of the current script).</param>
-        /// <param name="Filter">
-        /// <para>Indicates which types of files are shown by the dialog.</para>
-        /// <para>Example: Documents (*.txt)
-        /// Example: Audio (*.wav; *.mp2; *.mp3)</para>
-        /// <para>If omitted, the filter defaults to All Files (*.*). An option for Text Documents (*.txt) will also be available in the dialog's "files of type" menu.</para>
-        /// <para>Otherwise, the filter uses the indicated string but also provides an option for All Files (*.*) in the dialog's "files of type" drop-down list. To include more than one file extension in the filter, separate them with semicolons as illustrated in the example above.</para>
-        /// </param>
-        public static void FileSelectFile(out string OutputVar, string Options, string RootDir, string Prompt, string Filter)
-        {
-            OutputVar = null;
-        }
-
-        /// <summary>
-        /// Displays a standard dialog that allows the user to select a folder.
-        /// </summary>
-        /// <param name="OutputVar">The name of the variable in which to store the user's selected folder. This will be made blank if the user cancels the dialog (i.e. does not wish to select a folder). If the user selects a root directory (such as C:\), OutputVar will contain a trailing backslash. If this is undesirable, remove it as follows:
-        /// <code>FileSelectFolder, Folder
-        /// Folder := RegExReplace(Folder, "\\$")  ; Removes the trailing backslash, if present.</code>
-        /// </param>
-        /// <param name="StartingFolder">
-        /// <para>If blank or omitted, the dialog's initial selection will be the user's My Documents folder (or possibly My Computer). A CLSID folder such as ::{20d04fe0-3aea-1069-a2d8-08002b30309d} (i.e. My Computer) may be specified start navigation at a specific special folder.</para>
-        /// <para>Otherwise, the most common usage of this parameter is an asterisk followed immediately by the absolute path of the drive or folder to be initially selected. For example, *C:\ would initially select the C drive. Similarly, *C:\My Folder would initially select that particular folder.</para>
-        /// <para>The asterisk indicates that the user is permitted to navigate upward (closer to the root) from the starting folder. Without the asterisk, the user would be forced to select a folder inside StartingFolder (or StartingFolder itself). One benefit of omitting the asterisk is that StartingFolder is initially shown in a tree-expanded state, which may save the user from having to click the first plus sign.</para>
-        /// <para>If the asterisk is present, upward navigation may optionally be restricted to a folder other than Desktop. This is done by preceding the asterisk with the absolute path of the uppermost folder followed by exactly one space or tab. In the following example, the user would not be allowed to navigate any higher than C:\My Folder (but the initial selection would be C:\My Folder\Projects):
-        /// <code>C:\My Folder *C:\My Folder\Projects</code></para>
-        /// </param>
-        /// <param name="Options">
-        /// <para>One of the following numbers:</para>
-        /// <para>0: The options below are all disabled (except on Windows 2000, where the "make new folder" button might appear anyway).</para>
-        /// <para>1 (default): A button is provided that allows the user to create new folders. However, the button will not be present on Windows 95/98/NT.</para>
-        /// <para>Add 2 to the above number to provide an edit field that allows the user to type the name of a folder. For example, a value of 3 for this parameter provides both an edit field and a "make new folder" button.</para>
-        /// <para>If the user types an invalid folder name in the edit field, OutputVar will be set to the folder selected in the navigation tree rather than what the user entered, at least on Windows XP.</para>
-        /// </param>
-        /// <param name="Prompt">Text displayed in the window to instruct the user what to do. If omitted or blank, it will default to "Select Folder - %A_SCRIPTNAME%" (i.e. the name of the current script).</param>
-        public static void FileSelectFolder(out string OutputVar, string StartingFolder, string Options, string Prompt)
-        {
-            OutputVar = null;
-        }
-
-        /// <summary>
         /// Changes the attributes of one or more files or folders. Wildcards are supported.
         /// </summary>
         /// <param name="Attributes">The attributes to change (see Remarks).</param>
