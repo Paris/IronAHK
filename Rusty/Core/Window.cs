@@ -418,7 +418,8 @@ namespace IronAHK.Rusty
             if (Environment.OSVersion.Platform != PlatformID.Win32NT)
                 return 0;
 
-            IntPtr hwnd = Windows.GetActiveWindow();
+            IntPtr hwnd = Windows.GetForegroundWindow();
+
             return (hwnd == Windows.FindWindow(WinTitle, WinText, ExcludeTitle, ExcludeText)
                 ? hwnd : IntPtr.Zero).ToInt32();
         }
