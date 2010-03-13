@@ -44,6 +44,19 @@ namespace IronAHK.Rusty
 
         #region Statics
 
+        #region RunAs
+
+        [ThreadStatic]
+        static string runUser;
+
+        [ThreadStatic]
+        static System.Security.SecureString runPassword;
+
+        [ThreadStatic]
+        static string runDomain;
+
+        #endregion
+
         [ThreadStatic]
         static int? _ControlDelay;
 
