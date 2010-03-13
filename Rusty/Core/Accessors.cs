@@ -417,11 +417,21 @@ namespace IronAHK.Rusty
         }
 
         /// <summary>
-        /// The current delay set by <see cref="SetKeyDelay"/>.
+        /// The delay that will occur after each keystroke sent by <see cref="Send"/> and <see cref="ControlSend"/>.
         /// </summary>
         public static int A_KeyDelay
         {
-            get { return _KeyDelay ?? 10; }
+            get { return _KeyDelay ?? 0; }
+            set { _KeyDelay = value; }
+        }
+
+        /// <summary>
+        /// The delay between the press of a key and before its release, used with <see cref="A_KeyDelay"/>.
+        /// </summary>
+        public static int A_KeyPressDuration
+        {
+            get { return _KeyPressDuration ?? 0; }
+            set { _KeyPressDuration = value; }
         }
 
         /// <summary>
