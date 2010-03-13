@@ -140,6 +140,15 @@ namespace IronAHK.Rusty
 
             bool UseErrorLevel = false;
 
+            if (!string.IsNullOrEmpty(runUser))
+                prc.StartInfo.UserName = runUser;
+
+            if (!string.IsNullOrEmpty(runDomain))
+                prc.StartInfo.Domain = runDomain;
+
+            if (runPassword != null || runPassword.Length != 0)
+                prc.StartInfo.Password = runPassword;
+
             switch ((ShowMode).Trim().Substring(2, 1).ToLowerInvariant().ToCharArray()[0])
             {
                 case 'x': prc.StartInfo.WindowStyle = ProcessWindowStyle.Maximized; break;
@@ -167,14 +176,26 @@ namespace IronAHK.Rusty
         }
 
         /// <summary>
-        /// Specifies a set of user credentials to use for all subsequent uses of Run and RunWait. Requires Windows 2000/XP or later.
+        /// Specifies a set of user credentials to use for all subsequent uses of <see cref="Run"/> and <see cref="RunWait"/>.
         /// </summary>
-        /// <param name="User">If this and the other parameters are all omitted, the RunAs feature will be turned off, which restores Run and RunWait to their default behavior. Otherwise, this is the username under which new processes will be created.</param>
-        /// <param name="Password">User's password.</param>
-        /// <param name="Domain">User's domain. To use a local account, leave this blank. If that fails to work, try using @YourComputerName.</param>
+        /// <param name="User">The username.</param>
+        /// <param name="Password">The password.</param>
+        /// <param name="Domain">The user domain.</param>
+        /// <remarks>Leave all parameters blank to use no credentials.</remarks>
         public static void RunAs(string User, string Password, string Domain)
         {
-            // TODO: RunAs
+            runUser = User;
+            runDomain = Domain;
+
+            if (string.IsNullOrEmpty(Password))
+                runPassword = null;
+            else
+            {
+                runPassword = new System.Security.SecureString();
+                foreach (char sym in Password)
+                    runPassword.AppendChar(sym);
+                runPassword.MakeReadOnly();
+            }
         }
 
         /// <summary>
