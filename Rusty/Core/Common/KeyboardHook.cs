@@ -71,7 +71,6 @@ namespace IronAHK.Rusty
                 this.extra = extra;
                 this.options = options;
                 this.proc = proc;
-                this.precondition = precondition;
                 enabled = true;
             }
 
