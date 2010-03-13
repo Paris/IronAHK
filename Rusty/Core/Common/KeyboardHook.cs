@@ -57,6 +57,7 @@ namespace IronAHK.Rusty
             Keys keys, extra;
             Options options;
             GenericFunction proc;
+            GenericFunction precondition;
             bool enabled;
 
             [Flags]
@@ -70,6 +71,7 @@ namespace IronAHK.Rusty
                 this.extra = extra;
                 this.options = options;
                 this.proc = proc;
+                this.precondition = precondition;
                 enabled = true;
             }
 
@@ -96,6 +98,12 @@ namespace IronAHK.Rusty
                 set { proc = value; }
             }
 
+            public GenericFunction Precondition
+            {
+                get { return precondition; }
+                set { precondition = value; }
+            }
+
             public bool Enabled
             {
                 get { return enabled; }
@@ -103,6 +111,15 @@ namespace IronAHK.Rusty
             }
 
             #endregion
+
+            public bool Condition()
+            {
+                if (precondition == null)
+                    return true;
+
+                var result = precondition.Invoke(new object[] { });
+                return result is bool ? (bool)result : result != null;
+            }
 
             public static HotkeyDefinition Parse(string sequence)
             {
@@ -398,7 +415,7 @@ namespace IronAHK.Rusty
 
                 pressed[key] = down;
 
-                var exec = new List<GenericFunction>();
+                var exec = new List<HotkeyDefinition>();
 
                 foreach (var hotkey in hotkeys)
                 {
@@ -406,14 +423,20 @@ namespace IronAHK.Rusty
                     bool up = (hotkey.EnabledOptions & HotkeyDefinition.Options.Up) == HotkeyDefinition.Options.Up;
 
                     if (hotkey.Enabled && match && HasModifiers(hotkey) && up != down)
-                        exec.Add(hotkey.Proc);
+                        exec.Add(hotkey);
 
                     if (match && (hotkey.EnabledOptions & HotkeyDefinition.Options.PassThrough) != HotkeyDefinition.Options.PassThrough)
                         block = true;
                 }
 
-                foreach (var proc in exec)
-                    new Thread(new ThreadStart(delegate() { proc(new object[] { }); })).Start();
+                new Thread(new ThreadStart(delegate()
+                {
+                    foreach (var hotkey in exec)
+                    {
+                        if (hotkey.Condition())
+                            hotkey.Proc(new object[] { });
+                    }
+                })).Start();
 
             next:
 
