@@ -53,7 +53,7 @@ namespace IronAHK.Scripting
                         CodeExpression condition = ParseFlowParameter(parts[1], true, out blockOpen, false);
                         CodeConditionStatement ifelse = new CodeConditionStatement { Condition = condition };
 
-                        var block = new CodeBlock(line, Scope, ifelse.TrueStatements, CodeBlock.BlockKind.IfElse);
+                        var block = new CodeBlock(line, Scope, ifelse.TrueStatements, CodeBlock.BlockKind.IfElse, blocks.Count == 0 ? null : blocks.Peek());
                         block.Type = blockOpen ? CodeBlock.BlockType.Within : CodeBlock.BlockType.Expect;
                         CloseTopSingleBlock();
                         blocks.Push(block);
@@ -73,7 +73,7 @@ namespace IronAHK.Scripting
                             lines.Insert(index + 1, new CodeLine(lines[index].FileName, lines[index].LineNumber, next));
 
                         var type = parts.Length > 1 && parts[1][0] == BlockOpen ? CodeBlock.BlockType.Within : CodeBlock.BlockType.Expect;
-                        var block = new CodeBlock(lines[index], Scope, elses.Pop(), CodeBlock.BlockKind.IfElse) { Type = type };
+                        var block = new CodeBlock(lines[index], Scope, elses.Pop(), CodeBlock.BlockKind.IfElse, blocks.Count == 0 ? null : blocks.Peek()) { Type = type };
                         CloseTopSingleBlock();
                         blocks.Push(block);
                     }
@@ -196,15 +196,12 @@ namespace IronAHK.Scripting
                         loop.IncrementStatement = new CodeCommentStatement(string.Empty); // for C# display
                         loop.TestExpression = condition;
 
-                        var block = new CodeBlock(line, Scope, loop.Statements, CodeBlock.BlockKind.Loop);
+                        var block = new CodeBlock(line, Scope, loop.Statements, CodeBlock.BlockKind.Loop, blocks.Count == 0 ? null : blocks.Peek(), InternalID, InternalID);
                         block.Type = blockOpen ? CodeBlock.BlockType.Within : CodeBlock.BlockType.Expect;
                         CloseTopSingleBlock();
                         blocks.Push(block);
 
-                        var label = new BreakLabels(InternalID, InternalID);
-                        breakLabels.Push(label);
-
-                        return new CodeStatement[] { loop, new CodeLabeledStatement(label.Break) };
+                        return new CodeStatement[] { loop, new CodeLabeledStatement(block.ExitLabel) };
                     }
 
                 case FlowWhile:
@@ -215,30 +212,29 @@ namespace IronAHK.Scripting
                         loop.TestExpression = condition;
                         loop.InitStatement = new CodeCommentStatement(string.Empty);
 
-                        var block = new CodeBlock(line, Scope, loop.Statements, CodeBlock.BlockKind.Loop);
+                        var block = new CodeBlock(line, Scope, loop.Statements, CodeBlock.BlockKind.Loop, blocks.Count == 0 ? null : blocks.Peek(), InternalID, InternalID);
                         block.Type = blockOpen ? CodeBlock.BlockType.Within : CodeBlock.BlockType.Expect;
                         CloseTopSingleBlock();
                         blocks.Push(block);
 
-                        var label = new BreakLabels(InternalID, InternalID);
-                        breakLabels.Push(label);
-
-                        return new CodeStatement[] { loop, new CodeLabeledStatement(label.Break) };
+                        return new CodeStatement[] { loop, new CodeLabeledStatement(block.ExitLabel) };
                     }
 
                 case FlowBreak:
                     if (parts.Length > 1)
                         throw new ParseException(ExFlowArgNotReq);
-                    if (breakLabels.Count == 0)
+                    string exit = PeekLoopLabel(true);
+                    if (exit == null)
                         throw new ParseException("Cannot break outside a loop");
-                    return new CodeStatement[] { new CodeGotoStatement(breakLabels.Peek().Break) };
+                    return new CodeStatement[] { new CodeGotoStatement(exit) };
 
                 case FlowContinue:
                     if (parts.Length > 1)
                         throw new ParseException(ExFlowArgNotReq);
-                    if (breakLabels.Count == 0)
+                    string cont = PeekLoopLabel(false);
+                    if (cont == null)
                         throw new ParseException("Cannot continue outside a loop");
-                    return new CodeStatement[] { new CodeGotoStatement(breakLabels.Peek().Continue) };
+                    return new CodeStatement[] { new CodeGotoStatement(cont) };
 
                 #endregion
 

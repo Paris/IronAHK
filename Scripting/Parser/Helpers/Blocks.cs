@@ -6,19 +6,61 @@ namespace IronAHK.Scripting
     partial class Parser
     {
         Stack<CodeBlock> blocks = new Stack<CodeBlock>();
+        Stack<CodeBlock> singleLoops = new Stack<CodeBlock>();
         Stack<CodeStatementCollection> elses = new Stack<CodeStatementCollection>();
-        Stack<BreakLabels> breakLabels = new Stack<BreakLabels>();
 
-        void CloseTopSingleBlock()
+        string PeekLoopLabel(bool exit)
         {
-            if (blocks.Count != 0 && blocks.Peek().IsSingle)
-                blocks.Pop();
+            if (blocks.Count == 0)
+                return null;
+
+            CodeBlock parent = blocks.Peek();
+
+            while (parent != null)
+            {
+                if (parent.Kind == CodeBlock.BlockKind.Loop)
+                    return exit ? parent.ExitLabel : parent.EndLabel;
+
+                parent = parent.Parent;
+            }
+
+            return null;
+        }
+
+        void CloseBlock(Stack<CodeBlock> stack)
+        {
+            var top = stack.Pop();
+            if (top.EndLabel != null)
+                top.Statements.Add(new CodeLabeledStatement(top.EndLabel));
+        }
+
+        void CloseSingleLoopBlocks()
+        {
+            while (singleLoops.Count != 0)
+                CloseBlock(singleLoops);
+        }
+
+        bool CloseTopSingleBlock()
+        {
+            if (blocks.Count == 0)
+                return false;
+
+            if (blocks.Peek().IsSingle)
+            {
+                var top = blocks.Pop();
+
+                if (top.Kind == CodeBlock.BlockKind.Loop)
+                    singleLoops.Push(top);
+
+                return true;
+            }
+
+            return false;
         }
 
         void CloseTopSingleBlocks()
         {
-            while (blocks.Count != 0 && blocks.Peek().IsSingle)
-                blocks.Pop();
+            while (CloseTopSingleBlock()) ;
         }
 
         CodeBlock CloseTopLabelBlock()
@@ -46,10 +88,7 @@ namespace IronAHK.Scripting
             if (top.IsSingle ? blocks.Count > top.Level : false)
                 goto end;
 
-            if (top.Kind == CodeBlock.BlockKind.Loop)
-                top.Statements.Add(new CodeLabeledStatement(breakLabels.Pop().Continue));
-
-            blocks.Pop();
+            CloseBlock(blocks);
 
         end:
             if (skip)
