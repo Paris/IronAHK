@@ -398,17 +398,22 @@ namespace IronAHK.Rusty
 
                 pressed[key] = down;
 
+                var exec = new List<GenericFunction>();
+
                 foreach (var hotkey in hotkeys)
                 {
                     bool match = hotkey.Keys == key;
                     bool up = (hotkey.EnabledOptions & HotkeyDefinition.Options.Up) == HotkeyDefinition.Options.Up;
 
                     if (hotkey.Enabled && match && HasModifiers(hotkey) && up != down)
-                        new Thread(new ThreadStart(delegate() { hotkey.Proc(new object[] { }); })).Start();
+                        exec.Add(hotkey.Proc);
 
                     if (match && (hotkey.EnabledOptions & HotkeyDefinition.Options.PassThrough) != HotkeyDefinition.Options.PassThrough)
                         block = true;
                 }
+
+                foreach (var proc in exec)
+                    new Thread(new ThreadStart(delegate() { proc(new object[] { }); })).Start();
 
             next:
 
@@ -438,22 +443,29 @@ namespace IronAHK.Rusty
 
                 #endregion
 
+                var expand = new List<HotstringDefinition>();
+
                 foreach (var hotstring in hotstrings)
                 {
                     if (hotstring.Enabled && HasConditions(hotstring))
                     {
-                        new Thread(new ThreadStart(delegate()
-                        {
-                            hotstring.PreFilter();
-                            hotstring.Proc(new object[] { });
-                            hotstring.PostFilter();
-                        })).Start();
+                        expand.Add(hotstring);
 
                         if ((hotstring.EnabledOptions & HotstringDefinition.Options.Reset) == HotstringDefinition.Options.Reset)
                             history.Length = 0;
 
                         block = true;
                     }
+                }
+
+                foreach (var hotstring in expand)
+                {
+                    new Thread(new ThreadStart(delegate()
+                    {
+                        hotstring.PreFilter(); // race condition
+                        hotstring.Proc(new object[] { });
+                        hotstring.PostFilter();
+                    })).Start();
                 }
 
                 return block;
