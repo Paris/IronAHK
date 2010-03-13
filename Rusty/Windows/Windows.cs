@@ -15,7 +15,7 @@ namespace IronAHK.Rusty
 
         public static IntPtr FindWindow(string WinTitle, string WinText, string ExcludeTitle, string ExcludeText)
         {
-            return FindAllWindows(WinText, WinText, ExcludeText, ExcludeText, string.Empty)[0];
+            return FindAllWindows(WinTitle, WinText, ExcludeText, ExcludeText, string.Empty)[0];
         }
 
         public static IntPtr FindWindow(string WinTitle, string WinText, string ExcludeTitle, string ExcludeText, string Control)
