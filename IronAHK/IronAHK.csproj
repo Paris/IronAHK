@@ -100,13 +100,14 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Site\docs\developing\status\index.html" />
+    <Content Include="Site\docs\images\cross.png" />
+    <Content Include="Site\docs\images\delete.png" />
+    <Content Include="Site\docs\images\error.png" />
+    <Content Include="Site\docs\images\tick.png" />
     <Content Include="Site\docs\main.js" />
     <Content Include="Site\forum\index.html" />
     <Content Include="Site\images\countdown.png" />
-    <Content Include="Site\images\cross.png" />
-    <Content Include="Site\images\delete.png" />
     <Content Include="Site\images\editor.png" />
-    <Content Include="Site\images\error.png" />
     <Content Include="Site\images\helloworld.png" />
     <Content Include="Site\images\helloworld_gtk.png" />
     <Content Include="Site\images\icon.png" />
@@ -129,7 +130,6 @@
     <Content Include="Site\images\computer.png" />
     <Content Include="Site\images\package.png" />
     <Content Include="Site\images\page_white_csharp.png" />
-    <Content Include="Site\images\tick.png" />
     <Content Include="Site\index.html" />
     <Content Include="Site\index2.html" />
     <Content Include="Site\robots.txt" />
