@@ -9,6 +9,121 @@ namespace IronAHK.Rusty
         // TODO: organise GUI.cs
 
         /// <summary>
+        /// Displays a standard dialog that allows the user to open or save files.
+        /// </summary>
+        /// <param name="OutputVar">The user selected files.</param>
+        /// <param name="Options">
+        /// <list type="bullet">
+        /// <item><term>M</term>: <description>allow muliple files to be selected.</description></item>
+        /// <item><term>S</term>: <description>show a save as dialog rather than a file open dialog.</description></item>
+        /// <item><term>1</term>: <description>only allow existing file or directory paths.</description></item>
+        /// <item><term>8</term>: <description>prompt to create files.</description></item>
+        /// <item><term>16:</term>: <description>prompt to overwrite files.</description></item>
+        /// <item><term>32</term>: <description>follow the target of a shortcut rather than using the shortcut file itself.</description></item>
+        /// </list>
+        /// </param>
+        /// <param name="RootDir">The file path to initially select.</param>
+        /// <param name="Prompt">Text displayed in the window to instruct the user what to do.</param>
+        /// <param name="Filter">Indicates which types of files are shown by the dialog, e.g. <c>Audio (*.wav; *.mp2; *.mp3)</c>.</param>
+        public static void FileSelectFile(out string OutputVar, string Options, string RootDir, string Prompt, string Filter)
+        {
+            bool save = false, multi = false, check = false, create = false, overwite = false, shortcuts = false;
+
+            Options = Options.ToUpperInvariant();
+
+            if (Options.Contains("M"))
+            {
+                Options = Options.Replace("M", string.Empty);
+                multi = true;
+            }
+
+            if (Options.Contains("S"))
+            {
+                Options = Options.Replace("S", string.Empty);
+                save = true;
+            }
+
+            int result;
+
+            if (int.TryParse(Options.Trim(), out result))
+            {
+                if ((result & 1) == 1 || (result & 2) == 2)
+                    check = true;
+
+                if ((result & 8) == 8)
+                    create = true;
+
+                if ((result & 16) == 16)
+                    overwite = true;
+
+                if ((result & 32) == 32)
+                    shortcuts = true;
+            }
+
+            error = 0;
+            OutputVar = null;
+
+            if (save)
+            {
+                var saveas = new SaveFileDialog { CheckPathExists = check, CreatePrompt = create, OverwritePrompt = overwite, DereferenceLinks = shortcuts, Filter = Filter };
+
+                if (saveas.ShowDialog() == DialogResult.OK)
+                    OutputVar = saveas.FileName;
+                else
+                    error = 1;
+            }
+            else
+            {
+                var open = new OpenFileDialog { Multiselect = multi, CheckFileExists = check, DereferenceLinks = shortcuts, Filter = Filter };
+
+                if (open.ShowDialog() == DialogResult.OK)
+                    OutputVar = multi ? string.Join("\n", open.FileNames) : open.FileName;
+                else
+                    error = 1;
+            }
+        }
+
+        /// <summary>
+        /// Displays a standard dialog that allows the user to select a folder.
+        /// </summary>
+        /// <param name="OutputVar">The user selected folder.</param>
+        /// <param name="StartingFolder">An asterisk followed by a path to initially select a folder, can be left blank for none.</param>
+        /// <param name="Options">
+        /// <list type="bullet">
+        /// <item><term>1</term>: <description>show a new folder button in the dialog.</description></item>
+        /// </list>
+        /// </param>
+        /// <param name="Prompt">Text displayed in the window to instruct the user what to do.</param>
+        public static void FileSelectFolder(out string OutputVar, string StartingFolder, int Options, string Prompt)
+        {
+            var select = new FolderBrowserDialog();
+
+            select.ShowNewFolderButton = (Options & 1) == 1;
+
+            if (!string.IsNullOrEmpty(Prompt))
+                select.Description = Prompt;
+
+            StartingFolder = StartingFolder.Trim();
+
+            if (StartingFolder.Length > 2 && StartingFolder[0] == '*')
+                select.SelectedPath = StartingFolder.Substring(1);
+            else if (StartingFolder.Length != 0)
+            {
+                // TODO: convert CLSID to special folder enumeration for folder select dialog
+            }
+
+            error = 0;
+
+            if (select.ShowDialog() == DialogResult.OK)
+                OutputVar = select.SelectedPath;
+            else
+            {
+                OutputVar = string.Empty;
+                error = 1;
+            }
+        }
+
+        /// <summary>
         /// Creates and manages windows and controls. Such windows can be used as data entry forms or custom user interfaces.
         /// </summary>
         /// <param name="Command"></param>
