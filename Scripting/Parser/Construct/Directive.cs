@@ -1,4 +1,5 @@
-﻿
+﻿using System.CodeDom;
+
 namespace IronAHK.Scripting
 {
     partial class Parser
@@ -68,7 +69,10 @@ namespace IronAHK.Scripting
                 sub = new string[] { split[0].Trim(Spaces), split.Length > 1 ? split[1].Trim(Spaces) : string.Empty };
             }
 
-            switch (parts[0].Substring(1).ToUpperInvariant())
+            string cmd = parts[0].Substring(1);
+            const string res = "__IFWIN\0";
+
+            switch (cmd.ToUpperInvariant())
             {
                 case "CLIPBOARDTIMEOUT":
                     ClipboardTimeout = numeric ? value : ClipboardTimeoutDefault;
@@ -89,21 +93,29 @@ namespace IronAHK.Scripting
                 case "IFWINACTIVE":
                     IfWinActive_WinTitle = sub[0];
                     IfWinActive_WinText = sub[1];
-                    break;
+                    goto case res;
 
                 case "IFWINEXIST":
                     IfWinExist_WinTitle = sub[0];
                     IfWinExist_WinText = sub[1];
-                    break;
+                    goto case res;
 
                 case "IFWINNOTACTIVE":
                     IfWinNotExist_WinTitle = sub[0];
                     IfWinNotActive_WinText = sub[1];
-                    break;
+                    goto case res;
 
                 case "IFWINNOTEXIST":
                     IfWinNotExist_WinTitle = sub[0];
                     IfWinNotExist_WinText = sub[1];
+                    goto case res;
+
+                case res:
+                    var cond = (CodeMethodInvokeExpression)InternalMethods.Hotkey;
+                    cond.Parameters.Add(new CodePrimitiveExpression(cmd));
+                    cond.Parameters.Add(new CodePrimitiveExpression(sub[0]));
+                    cond.Parameters.Add(new CodePrimitiveExpression(sub[1]));
+                    prepend.Add(cond);
                     break;
 
                 case "LTRIM":

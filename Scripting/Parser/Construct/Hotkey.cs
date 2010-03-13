@@ -1,11 +1,14 @@
 ﻿using System;
 using System.CodeDom;
 using System.Collections.Generic;
+using System.Text;
 
 namespace IronAHK.Scripting
 {
     partial class Parser
     {
+        Dictionary<string, string> conditionIds = null;
+
         CodeMethodReturnStatement ParseHotkey(List<CodeLine> lines, int index)
         {
             string code = lines[index].Code;
@@ -27,7 +30,11 @@ namespace IronAHK.Scripting
             if (hotstring)
                 parts[0] = string.Concat(mode, parts[0]);
 
+            
             string name = Script.LabelMethodName(parts[0]);
+            string cond = HotkeyConditionId();
+            if (cond.Length != 0)
+                name += "_" + cond;
             PushLabel(lines[index], name, parts[0], false);
 
             if (parts.Length > 0 && !IsEmptyStatement(parts[1]))
@@ -73,5 +80,33 @@ namespace IronAHK.Scripting
 
             return new CodeMethodReturnStatement();
         }
+
+        #region Conditional
+
+        string HotkeyConditionId()
+        {
+            const string sep = ".";
+
+            if (conditionIds == null)
+            {
+                conditionIds = new Dictionary<string, string>();
+                conditionIds.Add(sep + sep + sep + sep + sep + sep + sep, string.Empty);
+            }
+
+            var criteria = string.Concat(
+                IfWinActive_WinTitle, sep, IfWinActive_WinText, sep,
+                IfWinExist_WinTitle, sep, IfWinExist_WinText, sep,
+                IfWinNotActive_WinTitle, sep, IfWinNotActive_WinText, sep,
+                IfWinNotExist_WinTitle, sep, IfWinNotExist_WinText);
+
+            if (conditionIds.ContainsKey(criteria))
+                return conditionIds[criteria];
+
+            string id = InternalID;
+            conditionIds.Add(criteria, id);
+            return id;
+        }
+
+        #endregion
     }
 }

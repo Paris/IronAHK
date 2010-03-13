@@ -26,6 +26,35 @@ namespace IronAHK.Rusty
         /// </param>
         public static void Hotkey(string KeyName, string Label, string Options)
         {
+            #region Conditions
+
+            int win = -1;
+
+            switch (KeyName.ToLowerInvariant())
+            {
+                case Keyword_IfWinActive: win = 0; break;
+                case Keyword_IfWinExist: win = 1; break;
+                case Keyword_IfWinNotActive: win = 2; break;
+                case Keyword_IfWinNotExit: win = 3; break;
+            }
+
+            if (win != -1)
+            {
+                var cond = new string[4, 2];
+
+                cond[win, 0] = Label; // title
+                cond[win, 1] = Options; // text
+
+                keyCondition = new GenericFunction(delegate(object[] args)
+                {
+                    return HotkeyPrecondition(cond);
+                });
+                
+                return;
+            }
+
+            #endregion
+
             #region Initialise
 
             if (keyboardHook == null)
@@ -94,6 +123,9 @@ namespace IronAHK.Rusty
 
             string id = KeyName;
 
+            if (keyCondition != null)
+                id += "_" + keyCondition.GetHashCode().ToString("X");
+
             if (hotkeys.ContainsKey(id))
             {
                 if (enabled == null)
@@ -116,6 +148,7 @@ namespace IronAHK.Rusty
                     if (method == null)
                         throw new ArgumentNullException();
                     key.Proc = (GenericFunction)Delegate.CreateDelegate(typeof(GenericFunction), method);
+                    key.Precondition = keyCondition;
                 }
                 catch (Exception)
                 {
@@ -130,6 +163,27 @@ namespace IronAHK.Rusty
             }
 
             #endregion
+        }
+
+        static bool HotkeyPrecondition(string[,] win)
+        {
+            if (!string.IsNullOrEmpty(win[0, 0]) || !string.IsNullOrEmpty(win[0, 1]))
+                if (WinActive(win[0, 0], win[0, 1], string.Empty, string.Empty) == 0)
+                    return false;
+
+            if (!string.IsNullOrEmpty(win[1, 0]) || !string.IsNullOrEmpty(win[1, 1]))
+                if (WinExist(win[1, 0], win[1, 1], string.Empty, string.Empty) == 0)
+                    return false;
+
+            if (!string.IsNullOrEmpty(win[2, 0]) || !string.IsNullOrEmpty(win[2, 1]))
+                if (WinActive(win[2, 0], win[2, 1], string.Empty, string.Empty) != 0)
+                    return false;
+
+            if (!string.IsNullOrEmpty(win[3, 0]) || !string.IsNullOrEmpty(win[3, 1]))
+                if (WinExist(win[3, 0], win[3, 1], string.Empty, string.Empty) != 0)
+                    return false;
+
+            return true;
         }
 
         /// <summary>

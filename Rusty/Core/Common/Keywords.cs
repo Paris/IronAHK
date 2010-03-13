@@ -318,5 +318,10 @@ namespace IronAHK.Rusty
         const char Keyword_HotstringOmitEnding = 'O';
         const char Keyword_HotstringReset = 'Z';
         const char Keyword_HotstringOff = '0';
+
+        const string Keyword_IfWinActive = "ifwinactive";
+        const string Keyword_IfWinNotActive = "ifwinnotactive";
+        const string Keyword_IfWinExist = "ifwinexist";
+        const string Keyword_IfWinNotExit = "ifwinnotexist";
     }
 }

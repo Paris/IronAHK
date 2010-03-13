@@ -30,6 +30,8 @@ namespace IronAHK.Rusty
         static Dictionary<string, HotkeyDefinition> hotkeys = null;
         static Dictionary<string, HotstringDefinition> hotstrings = null;
 
+        static GenericFunction keyCondition = null;
+
         static Dictionary<string, object> variables = null;
 
         static Dictionary<string, System.Timers.Timer> timers = new Dictionary<string, System.Timers.Timer>();
