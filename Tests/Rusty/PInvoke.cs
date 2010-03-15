@@ -5,6 +5,8 @@ namespace IronAHK.Tests
 {
     partial class Rusty
     {
+        // TODO: prinvoke tests
+
         [Test, Category("PInvoke")]
         public void Address()
         {
