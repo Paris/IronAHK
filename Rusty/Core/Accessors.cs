@@ -1125,7 +1125,11 @@ namespace IronAHK.Rusty
         public static string A_WorkingDir
         {
             get { return Environment.CurrentDirectory; }
-            set { Environment.CurrentDirectory = value; }
+            set
+            {
+                if (!string.IsNullOrEmpty(value))
+                    Environment.CurrentDirectory = value;
+            }
         }
 
         /// <summary>
