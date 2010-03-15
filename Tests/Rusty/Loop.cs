@@ -5,6 +5,8 @@ namespace IronAHK.Tests
 {
     partial class Rusty
     {
+        // TODO: loop tests
+
         [Test, Category("Loop")]
         public void Loop()
         {
