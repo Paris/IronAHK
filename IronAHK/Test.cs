@@ -27,7 +27,7 @@ namespace IronAHK
             const string output = "test.exe";
             const string test = "pass.ahk";
 
-            string directory = string.Format("..{0}..{0}..{0}Tests{0}Scripting{0}Code", Path.DirectorySeparatorChar);
+            string directory = string.Format("..{0}..{0}..{0}Tests{0}Code", Path.DirectorySeparatorChar);
             string select = Path.Combine(directory, "select.txt");
             string source = null;
 
