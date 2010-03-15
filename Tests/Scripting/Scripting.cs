@@ -10,7 +10,7 @@ namespace IronAHK.Tests
     [TestFixture, Category("Scripting")]
     public partial class Scripting
     {
-        string path = string.Format("..{0}..{0}Scripting{0}Code{0}", Path.DirectorySeparatorChar.ToString());
+        string path = string.Format("..{0}..{0}Code{0}", Path.DirectorySeparatorChar.ToString());
         const string ext = ".ahk";
 
         bool TestScript(string source)
