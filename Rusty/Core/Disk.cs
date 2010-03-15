@@ -439,43 +439,131 @@ namespace IronAHK.Rusty
         }
 
         /// <summary>
-        /// Reads a file's text into a variable.
+        /// Read the contents of a file.
         /// </summary>
-        /// <param name="OutputVar">The name of the variable in which to store the retrieved text. OutputVar will be made blank if a problem occurs such as the file being "in use" or not existing (in which case ErrorLevel is set to 1). It will also be made blank if Filename is an empty file (in which case ErrorLevel is set to 0).</param>
+        /// <param name="OutputVar">The name of the variable in which to store the retrieved content.</param>
         /// <param name="Filename">
-        /// <para>The name of the file to read, which is assumed to be in %A_WorkingDir% if an absolute path isn't specified.</para>
-        /// <para>Options: Zero or more of the following strings may be also be present immediately before the name of the file. Separate each option from the next with a single space or tab. For example: *t *m5000 C:\Log Files\200601.txt</para>
-        /// <para>*c: Load a ClipboardAll file. All other options are ignored when *c is present.</para>
-        /// <para>*m1024: If this option is omitted, the entire file is loaded unless the file is larger than 1 GB, in which case it is not loaded at all. Otherwise, replace 1024 with a decimal or hexadecimal number of bytes between 1 and 1073741824 (1 GB). If the file is larger than this, only its leading part is loaded. Note: This might result in the last line ending in a naked carriage return (`r) rather than `r`n.</para>
-        /// <para>*t: Replaces any/all occurrences of carriage return &amp; linefeed (`r`n) with linefeed (`n). However, this translation reduces performance and is usually not necessary. For example, text containing `r`n is already in the right format to be added to a Gui Edit control. Similarly, FileAppend detects the presence of `r`n when it opens a new file; it knows to write each `r`n as-is rather than translating it to `r`r`n. Finally, the following parsing loop will work correctly regardless of whether each line ends in `r`n or just `n: Loop, parse, MyFileContents, `n, `r</para>
+        /// <para>The file path, optionally preceded by one or more of the following options:</para>
+        /// <list type="bullet">
+        /// <item><term>*c</term>: <description>treat the source as binary rather than text, <paramref name="OutputVar"/> will be a byte array.</description></item>
+        /// <item><term>*m<c>n</c></term>: <description>stop reading at <c>n</c> bytes.</description></item>
+        /// <item><term>*t</term>: <description>replace all occurrences of <c>`r`n</c> with <c>`n</c>. This option is ignored in binary mode.</description></item>
+        /// </list>
         /// </param>
-        public static void FileRead(out string OutputVar, string Filename)
+        public static void FileRead(out object OutputVar, string Filename)
         {
-            string path = Filename;
-            bool lf = false;
-            int pos = 0, cut = -1, size = -1;
+            #region Variables
 
-            while (0 != (pos = path.IndexOf('*')))
+            OutputVar = null;
+            error = 0;
+
+            if (string.IsNullOrEmpty(Filename))
             {
-                switch (path.Substring(pos, 1))
-                {
-                    //case "c": binary = true; break;
-                    case "t": lf = true; break;
-                    case "m":
-                        int n, i = 0;
-                        while (int.TryParse(path.Substring(++i + pos, 1), out n)) ;
-                        size = int.Parse(path.Substring(pos, i)); // CHECK if not pos+1
-                        break;
-                }
-                cut = pos;
+                error = 1;
+                return;
             }
 
-            OutputVar = (new StreamReader(cut == -1 ? path : path.Substring(cut))).ReadToEnd();
-            if (size != -1)
-                OutputVar = (OutputVar).Substring(0, size * 1024 * 1024);
+            #endregion
 
-            if (lf)
-                OutputVar = (OutputVar).Replace("\r\n", "\n");
+            #region Options
+
+            bool binary = false, nocrlf = false;
+            int i, max = -1;
+
+            while ((i = Filename.IndexOf('*')) != -1)
+            {
+                int n = i + 1;
+
+                if (n == Filename.Length)
+                {
+                    Filename = i == 0 ? string.Empty : Filename.Substring(0, i);
+                    break;
+                }
+
+                char mode = Filename[n++];
+
+                switch (mode)
+                {
+                    case 'c':
+                    case 'C':
+                        binary = true;
+                        break;
+
+                    case 't':
+                    case 'T':
+                        nocrlf = true;
+                        break;
+
+                    case 'm':
+                    case 'M':
+                        int s = n;
+                        while (n < Filename.Length && char.IsDigit(Filename, n))
+                            n++;
+                        if (s < n)
+                            max = int.Parse(Filename.Substring(s, n - s));
+                        break;
+                }
+
+                if (n == Filename.Length)
+                    Filename = Filename.Substring(0, n);
+                else if (i == 0)
+                    Filename = Filename.Substring(n);
+                else
+                    Filename = Filename.Substring(0, i) + Filename.Substring(n);
+            }
+
+            if (max == 0)
+                return;
+
+            if (Filename.Length == 0)
+            {
+                error = 1;
+                return;
+            }
+
+            #endregion
+
+            #region Read
+
+            if (binary)
+            {
+                try
+                {
+                    if (max == -1)
+                        OutputVar = File.ReadAllBytes(Filename);
+                    else
+                        OutputVar = new BinaryReader(File.OpenRead(Filename)).ReadBytes(max);
+                }
+                catch (Exception)
+                {
+                    error = 1;
+                    return;
+                }
+            }
+            else
+            {
+                string text;
+
+                try
+                {
+                    text = File.ReadAllText(Filename);
+                }
+                catch (Exception)
+                {
+                    error = 1;
+                    return;
+                }
+
+                if (max != -1)
+                    text = text.Substring(0, max);
+
+                if (nocrlf)
+                    text = text.Replace("\r\n", "\n");
+
+                OutputVar = text;
+            }
+
+            #endregion
         }
 
         /// <summary>
