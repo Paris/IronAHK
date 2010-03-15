@@ -9,9 +9,9 @@
 <body>
 <h1>Compiling</h1>
 <div id="page">
-  <p>Scripts can be compiled to executable binary (.exe) files and distributed without exposing the original <a href="../../autohotkey/#security">source code</a>.</p>
-  <p>At present this is only possible via command line, i.e. the following compiles <code>script.ahk</code> to <code>example.exe</code>.</p>
-  <pre class="code">ironahk.exe /out example.exe script.ahk</pre>
+  <p>Scripts can be compiled to executable binary (.exe) files and distributed without exposing the original source code.</p>
+  <p>To compile via commad line use the following arguments:</p>
+  <pre class="code">ironahk /out example.exe script.ahk</pre>
   <h3 id="performance">Performance</h3>
   <p>Compiled binaries do not have the overhead of parsing syntax before execution and are therefore quicker to start up. Performance can be further improved with <a href="http://msdn.microsoft.com/en-us/library/6t9t5wcf.aspx">Ngen</a> on Windows or <a href="http://www.mono-project.com/AOT">Mono AOT</a>.</p>
   <h3 id="security">Security</h3>
