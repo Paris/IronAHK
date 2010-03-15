@@ -6,8 +6,7 @@ bindir=bin
 
 main=IronAHK
 outdir=$prefix/$libdir/$main
-stub=$prefix/$bindir/$main
-clone=$(dirname "$stub")/iak
+stub=$prefix/$bindir/$(echo $main | tr "[:upper:]" "[:lower:]")
 
 help() {
 	echo "$main setup script"
@@ -16,7 +15,7 @@ help() {
 	echo "Options:"
 	echo "	install: saves binaries under \"$prefix\""
 	echo "	uninstall: removes files added by installation"
-	echo "	help: shows this information"
+	echo "	help: displays this information"
 	echo
 	echo "Note: you can change the target directory by exporting the environment variable 'prefix'."
 }
@@ -29,12 +28,10 @@ case $1 in
 		echo "#!/bin/sh" > "$stub"
 		echo "exec mono \"$outdir/$main.exe\" \"$@\"" >> "$stub"
 		chmod 755 "$stub"
-		ln -s "$stub" "$clone"
 		echo "Installation complete"
 		;;
 	uninstall | remove)
 		rm -f "$stub"
-		rm -f "$clone"
 		rm -fr "$outdir"
 		echo "Remove complete"
 		;;
