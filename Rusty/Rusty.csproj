@@ -67,15 +67,17 @@
   <ItemGroup>
     <Compile Include="Core\Core.cs" />
     <Compile Include="Core\Disk.cs" />
+    <Compile Include="Core\Gui\Tips.cs" />
+    <Compile Include="Core\Gui\Dialogs.cs" />
     <Compile Include="Core\PInvoke.cs" />
     <Compile Include="Core\Environment.cs" />
     <Compile Include="Core\Flow.cs" />
     <Compile Include="Core\Common\Formats.cs" />
-    <Compile Include="Core\GUI\GUI.cs" />
-    <Compile Include="Core\GUI\ImageList.cs" />
-    <Compile Include="Core\GUI\ListView.cs" />
-    <Compile Include="Core\GUI\StatusBar.cs" />
-    <Compile Include="Core\GUI\TreeView.cs" />
+    <Compile Include="Core\Gui\Gui.cs" />
+    <Compile Include="Core\Gui\ImageList.cs" />
+    <Compile Include="Core\Gui\ListView.cs" />
+    <Compile Include="Core\Gui\StatusBar.cs" />
+    <Compile Include="Core\Gui\TreeView.cs" />
     <Compile Include="Core\Helpers.cs" />
     <Compile Include="Core\INI.cs" />
     <Compile Include="Core\JSON.cs" />
