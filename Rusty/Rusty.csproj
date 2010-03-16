@@ -67,17 +67,17 @@
   <ItemGroup>
     <Compile Include="Core\Core.cs" />
     <Compile Include="Core\Disk.cs" />
-    <Compile Include="Core\Gui\Tips.cs" />
-    <Compile Include="Core\Gui\Dialogs.cs" />
+    <Compile Include="Core\Gui_\Tips.cs" />
+    <Compile Include="Core\Gui_\Dialogs.cs" />
     <Compile Include="Core\PInvoke.cs" />
     <Compile Include="Core\Environment.cs" />
     <Compile Include="Core\Flow.cs" />
     <Compile Include="Core\Common\Formats.cs" />
-    <Compile Include="Core\Gui\Gui.cs" />
-    <Compile Include="Core\Gui\ImageList.cs" />
-    <Compile Include="Core\Gui\ListView.cs" />
-    <Compile Include="Core\Gui\StatusBar.cs" />
-    <Compile Include="Core\Gui\TreeView.cs" />
+    <Compile Include="Core\Gui_\Gui.cs" />
+    <Compile Include="Core\Gui_\ImageList.cs" />
+    <Compile Include="Core\Gui_\ListView.cs" />
+    <Compile Include="Core\Gui_\StatusBar.cs" />
+    <Compile Include="Core\Gui_\TreeView.cs" />
     <Compile Include="Core\Helpers.cs" />
     <Compile Include="Core\INI.cs" />
     <Compile Include="Core\JSON.cs" />
@@ -96,8 +96,8 @@
     <Compile Include="Core\String.cs" />
     <Compile Include="Core\Variables.cs" />
     <Compile Include="Core\Window.cs" />
-    <Compile Include="Extras\GUI\BaseGui.cs" />
-    <Compile Include="Extras\GUI\WinForms.cs" />
+    <Compile Include="Extras\Gui_\BaseGui.cs" />
+    <Compile Include="Extras\Gui_\WinForms.cs" />
     <Compile Include="Extras\SimpleJSON\SimpleJSON.cs" />
     <Compile Include="Core\Common\KeyboardHook.cs" />
     <Compile Include="Linux\Linux.cs" />
