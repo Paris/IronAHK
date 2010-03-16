@@ -1,5 +1,4 @@
-﻿using System.Drawing;
-using System.Windows.Forms;
+﻿using System;
 
 namespace IronAHK.Rusty
 {
@@ -16,8 +15,7 @@ namespace IronAHK.Rusty
         /// <param name="ResizeNonIcon"></param>
         public static void IL_Add(int ImageListID, string Filename, int IconNumber, bool ResizeNonIcon)
         {
-            if (Handles[ImageListID].GetType() == typeof(ImageList))
-                ((ImageList)Handles[ImageListID]).Images.Add(new Icon(Filename));
+            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -29,12 +27,7 @@ namespace IronAHK.Rusty
         /// <returns></returns>
         public static int IL_Create(string InitialCount, string GrowCount, int LargeIcons)
         {
-            ImageList il = new ImageList();
-            if (LargeIcons > 0)
-                il.ImageSize = new Size(48, 48);
-
-            Handles.Add(il);
-            return Handles.Count;
+            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -43,12 +36,7 @@ namespace IronAHK.Rusty
         /// <param name="ImageListID"></param>
         public static void IL_Destroy(int ImageListID)
         {
-            if (Handles[ImageListID].GetType() == typeof(ImageList))
-            {
-                ((ImageList)Handles[ImageListID]).Dispose();
-                Handles.RemoveAt(ImageListID);
-                error = 1;
-            }
+            throw new NotImplementedException();
         }
     }
 }

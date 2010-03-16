@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Windows.Forms;
 
 namespace IronAHK.Rusty
 {
@@ -16,11 +15,7 @@ namespace IronAHK.Rusty
         /// <returns></returns>
         public static int TV_Add(string Name, int ParentItemID, string Options)
         {
-            TreeNode child = new TreeNode(Name);
-
-            TreeNode.FromHandle(DefaultGUI.TreeView, new IntPtr(ParentItemID)).
-                Nodes.Add(child);
-            return child.Handle.ToInt32();
+            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -30,16 +25,7 @@ namespace IronAHK.Rusty
         /// <returns></returns>
         public static bool TV_Delete(int ItemID)
         {
-            try
-            {
-                TreeView tv = DefaultGUI.TreeView;
-                if (ItemID == 0)
-                    foreach (TreeNode item in tv.Nodes)
-                        item.Remove();
-                TreeNode.FromHandle(tv, (IntPtr)ItemID).Remove();
-                return true;
-            }
-            catch (Exception) { return false; }
+            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -49,12 +35,7 @@ namespace IronAHK.Rusty
         /// <returns></returns>
         public static int TV_GetChild(int ParentItemID)
         {
-            try
-            {
-                TreeView tv = DefaultGUI.TreeView;
-                return TreeNode.FromHandle(tv, (IntPtr)ParentItemID).FirstNode.Handle.ToInt32();
-            }
-            catch (Exception) { return 0; }
+            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -63,12 +44,7 @@ namespace IronAHK.Rusty
         /// <returns></returns>
         public static int TV_GetCount()
         {
-            try
-            {
-                TreeView tv = DefaultGUI.TreeView;
-                return tv.Nodes.Count;
-            }
-            catch (Exception) { return 0; }
+            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -79,44 +55,8 @@ namespace IronAHK.Rusty
         /// <returns></returns>
         public static int TV_GetNext(int? ItemID, string Checked_Full)
         {
-            try
-            {
-                TreeView tv = DefaultGUI.TreeView;
-                IntPtr handle = IntPtr.Zero;
-                if (ItemID == null)
-                    handle = tv.Nodes[0].Handle;
-                else
-                {
-                    TreeNode item = TreeNode.FromHandle(tv, (IntPtr)ItemID);
-                    string mode = " " + Checked_Full.ToLowerInvariant();
-                    bool full = mode.Contains(" f");
-                    if (mode.Contains(" c"))
-                        while (!item.Checked)
-                            item = full ? tv.Nodes[item.Index + 1] : item.NextNode;
-                    else item = full ? tv.Nodes[item.Index + 1] : item.NextNode;
-                    handle = item.Handle;
-                }
-
-                return handle.ToInt32();
-            }
-            catch (Exception) { return 0; }
+            throw new NotImplementedException();
         }
-
-        //public static int TV_Get(int ItemID, string Mode) // ?!?!
-        //{
-        //    try
-        //    {
-        //        TreeView tv = GUI.TreeView;
-        //        TreeNode item = TreeNode.FromHandle(tv, (IntPtr)ItemID);
-        //        string mode = " " + Mode.ToLowerInvariant();
-        //        if ((mode.Contains(" e") && !item.IsExpanded) ||
-        //            (mode.Contains(" c") && !item.Checked) ||
-        //            (mode.Contains(" b") && !item.NodeFont.Bold))
-        //            return 0;
-        //        else return item.Handle.ToInt32();
-        //    }
-        //    catch (Exception) { return 0; }
-        //}
 
         /// <summary>
         /// Returns the specified item's parent as an item ID. Items at the top level have no parent and thus return 0.
@@ -125,12 +65,7 @@ namespace IronAHK.Rusty
         /// <returns></returns>
         public static int TV_GetParent(int ItemID)
         {
-            try
-            {
-                TreeView tv = DefaultGUI.TreeView;
-                return TreeNode.FromHandle(tv, (IntPtr)ItemID).Parent.Handle.ToInt32();
-            }
-            catch (Exception) { return 0; }
+            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -140,12 +75,7 @@ namespace IronAHK.Rusty
         /// <returns></returns>
         public static int TV_GetPrev(int ItemID)
         {
-            try
-            {
-                TreeView tv = DefaultGUI.TreeView;
-                return TreeNode.FromHandle(tv, (IntPtr)ItemID).PrevNode.Handle.ToInt32();
-            }
-            catch (Exception) { return 0; }
+            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -154,12 +84,7 @@ namespace IronAHK.Rusty
         /// <returns></returns>
         public static int TV_GetSelection()
         {
-            try
-            {
-                TreeView tv = DefaultGUI.TreeView;
-                return tv.SelectedNode.Handle.ToInt32();
-            }
-            catch (Exception) { return 0; }
+            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -170,15 +95,7 @@ namespace IronAHK.Rusty
         /// <returns></returns>
         public static int TV_GetText(out string OutputVar, int ItemID)
         {
-            OutputVar = string.Empty;
-            try
-            {
-                TreeView tv = DefaultGUI.TreeView;
-                TreeNode item = TreeNode.FromHandle(tv, (IntPtr)ItemID);
-                OutputVar = item.Text;
-                return item.Handle.ToInt32();
-            }
-            catch (Exception) { return 0; }
+            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -190,14 +107,7 @@ namespace IronAHK.Rusty
         /// <returns></returns>
         public static int TV_Modify(int ItemID, string Options, string NewName)
         {
-            TreeNode node = TreeNode.FromHandle(DefaultGUI.TreeView, new IntPtr(ItemID));
-
-            if (NewName.Length != 0)
-                node.Name = NewName;
-
-            TV_NodeOptions(ref node, Options);
-
-            return node.Handle.ToInt32();
+            throw new NotImplementedException();
         }
     }
 }

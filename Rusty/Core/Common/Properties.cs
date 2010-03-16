@@ -6,7 +6,7 @@ namespace IronAHK.Rusty
 {
     partial class Core
     {
-        // TODO: organise Properties.cs
+        #region Delegates
 
         /// <summary>
         /// A function.
@@ -15,11 +15,15 @@ namespace IronAHK.Rusty
         /// <returns>A value.</returns>
         public delegate object GenericFunction(object[] args);
 
+        #endregion
+
+        #region Error
+
         [ThreadStatic]
-        static int error = 0;
+        static int error;
 
         /// <summary>
-        /// Indicates the success or failure of some of the command.
+        /// Indicates the success or failure of a command.
         /// </summary>
         static public int ErrorLevel
         {
@@ -27,24 +31,46 @@ namespace IronAHK.Rusty
             set { error = value; }
         }
 
-        static Dictionary<string, HotkeyDefinition> hotkeys = null;
-        static Dictionary<string, HotstringDefinition> hotstrings = null;
+        #endregion
 
-        static GenericFunction keyCondition = null;
+        #region Hooks
 
-        static Dictionary<string, object> variables = null;
+        static Dictionary<string, object> variables;
 
-        static Dictionary<string, System.Timers.Timer> timers = new Dictionary<string, System.Timers.Timer>();
+        static Dictionary<string, HotkeyDefinition> hotkeys;
 
-        static KeyboardHook keyboardHook = null;
+        static Dictionary<string, HotstringDefinition> hotstrings;
+
+        static GenericFunction keyCondition;
+
+        static KeyboardHook keyboardHook;
 
         static bool suspended = false;
 
-        static EventHandler onExit = null;
+        [ThreadStatic]
+        static int? _KeyDelay;
 
-        static Dictionary<string, BaseGui.Window> guis = null;
+        [ThreadStatic]
+        static int? _KeyPressDuration;
 
-        #region Statics
+        [ThreadStatic]
+        static int? _MouseDelay;
+
+        [ThreadStatic]
+        static int? _DefaultMouseSpeed;
+
+        #endregion
+
+        #region Guis
+
+        static Dictionary<string, BaseGui.Window> guis;
+
+        [ThreadStatic]
+        static string defaultGui;
+
+        static NotifyIcon Tray;
+
+        #endregion
 
         #region RunAs
 
@@ -59,8 +85,7 @@ namespace IronAHK.Rusty
 
         #endregion
 
-        [ThreadStatic]
-        static string defaultGui;
+        #region Windows
 
         [ThreadStatic]
         static int? _ControlDelay;
@@ -69,13 +94,23 @@ namespace IronAHK.Rusty
         static int? _WinDelay;
 
         [ThreadStatic]
-        static StringComparison? _StringCaseSense;
-
-        [ThreadStatic]
         static bool? _DetectHiddenText;
 
         [ThreadStatic]
         static bool? _DetectHiddenWindows;
+
+        [ThreadStatic]
+        static int? _TitleMatchMode;
+
+        [ThreadStatic]
+        static bool? _TitleMatchModeSpeed;
+
+        #endregion
+
+        #region Strings
+
+        [ThreadStatic]
+        static StringComparison? _StringCaseSense;
 
         [ThreadStatic]
         static string _FormatFloat;
@@ -84,55 +119,18 @@ namespace IronAHK.Rusty
         static char? _FormatInteger;
 
         [ThreadStatic]
-        static int? _KeyDelay;
-
-        [ThreadStatic]
-        static int? _KeyPressDuration;
-
-        [ThreadStatic]
-        static int? _MouseDelay;
-
-        [ThreadStatic]
-        static int? _DefaultMouseSpeed;
-
-        [ThreadStatic]
-        static int? _TitleMatchMode;
-
-        [ThreadStatic]
-        static bool? _TitleMatchModeSpeed;
-
-        [ThreadStatic]
         static string _UserAgent;
 
         #endregion
 
-        #region GUI
+        #region Misc
 
-        static Dictionary<int, GUI> GUIs;
+        static Dictionary<string, System.Timers.Timer> timers;
 
-        static NotifyIcon Tray;
-
-        [ThreadStatic]
-        static int _DefaultGUI;
-
-        static GUI DefaultGUI
-        {
-            get
-            {
-                if (GUIs == null)
-                {
-                    GUIs = new Dictionary<int, GUI>();
-                    _DefaultGUI = 1;
-                    GUIs.Add(_DefaultGUI, new GUI());
-                }
-                return GUIs[_DefaultGUI];
-            }
-        }
-
-        static List<object> Handles = new List<object>();
-
-        #endregion
+        static EventHandler onExit;
 
         const int LoopFrequency = 50;
+
+        #endregion
     }
 }
