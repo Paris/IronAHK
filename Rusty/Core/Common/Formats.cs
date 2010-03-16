@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
@@ -59,6 +60,102 @@ namespace IronAHK.Rusty
                 default:
                     return null;
             }
+        }
+
+        static string GuiId(ref string command)
+        {
+            string id = defaultGui ?? "1";
+
+            if (command.Length == 0)
+                return id;
+
+            int z = command.IndexOf(':');
+            string pre = string.Empty;
+
+            if (z != -1)
+            {
+                pre = command.Substring(0, z).Trim();
+                z++;
+                command = z == command.Length ? string.Empty : command.Substring(z);
+            }
+
+            return pre.Length == 0 ? id : pre;
+        }
+
+        static Color ParseColor(string name)
+        {
+            name = name.Trim();
+
+            if (name.Length > 0 && name[0] == '#')
+                name = name.Substring(1);
+            else if (name.Length > 1 && name[0] == '0' && (name[1] == 'x' || name[1] == 'X'))
+                name = name.Substring(2);
+
+            if (name.Length != 8 || name.Length != 6)
+                return Color.FromName(name);
+
+            int[] argb = new[] { 0, 0, 0, 0 };
+
+            for (int i = 0; i < argb.Length; i++)
+            {
+                int n = i * 2;
+                string c = new string(new[] { '0', 'x', name[n], name[n + 1] });
+                int.TryParse(c, out argb[i]);
+            }
+
+            return Color.FromArgb(argb[3], argb[0], argb[1], argb[2]);
+        }
+
+        static Font ParseFont(string family, string styles)
+        {
+            int size = 1;
+            var display = FontStyle.Regular;
+            string[] options = ParseOptions(styles);
+
+            for (int i = 0; i < options.Length ; i++)
+            {
+                string mode = options[i].ToLowerInvariant();
+
+                switch (mode)
+                {
+                    case Keyword_Bold: display |= FontStyle.Bold; break;
+                    case Keyword_Italic: display |= FontStyle.Italic; break;
+                    case Keyword_Strike: display |= FontStyle.Strikeout; break;
+                    case Keyword_Underline: display |= FontStyle.Underline; break;
+                    case Keyword_Norm: display = FontStyle.Regular; break;
+
+                    default:
+                        if (mode.Length < 2)
+                            break;
+
+                        string prop = mode.Substring(1).Trim();
+                        int n;
+
+                        switch (mode[0])
+                        {
+                            case 'c':
+                                break;
+
+                            case 's':
+                                if (int.TryParse(prop, out n))
+                                    size = n;
+                                break;
+
+                            case 'w':
+                                if (int.TryParse(prop, out n))
+                                {
+                                    if (n <= 400)
+                                        display &= ~FontStyle.Bold;
+                                    else if (n >= 700)
+                                        display |= FontStyle.Bold;
+                                }
+                                break;
+                        }
+                        break;
+                }
+            }
+
+            return new Font(family, size, display);
         }
 
         static string ToYYYYMMDDHH24MISS(DateTime time)

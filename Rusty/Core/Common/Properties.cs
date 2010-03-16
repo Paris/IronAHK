@@ -42,6 +42,8 @@ namespace IronAHK.Rusty
 
         static EventHandler onExit = null;
 
+        static Dictionary<string, BaseGui.Window> guis = null;
+
         #region Statics
 
         #region RunAs
@@ -56,6 +58,9 @@ namespace IronAHK.Rusty
         static string runDomain;
 
         #endregion
+
+        [ThreadStatic]
+        static string defaultGui;
 
         [ThreadStatic]
         static int? _ControlDelay;
