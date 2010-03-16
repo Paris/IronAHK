@@ -25,7 +25,7 @@ namespace IronAHK.Rusty
 
             public abstract void Add(Control control);
             public abstract void Show();
-            public abstract void Submit(bool hide);
+            public abstract Dictionary<string, string> Submit(bool hide);
             public abstract void Cancel();
             public abstract void Destroy();
             public abstract void Minimise();

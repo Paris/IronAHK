@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
@@ -52,12 +53,17 @@ namespace IronAHK.Rusty
                 form.Show();
             }
 
-            public override void Submit(bool hide)
+            public override Dictionary<string, string> Submit(bool hide)
             {
                 if (hide)
                     Cancel();
 
-                throw new NotImplementedException();
+                var table = new Dictionary<string, string>(Controls.Count);
+
+                foreach (var control in Controls)
+                    table.Add(control.Id, control.Contents);
+
+                return table;
             }
 
             public override void Cancel()
