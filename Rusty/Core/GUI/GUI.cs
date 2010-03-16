@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Drawing;
 using System.Reflection;
 using System.Windows.Forms;
 
@@ -124,7 +126,7 @@ namespace IronAHK.Rusty
         }
 
         /// <summary>
-        /// Creates and manages windows and controls. Such windows can be used as data entry forms or custom user interfaces.
+        /// Creates and manages windows and controls.
         /// </summary>
         /// <param name="Command"></param>
         /// <param name="Param2"></param>
@@ -132,7 +134,93 @@ namespace IronAHK.Rusty
         /// <param name="Param4"></param>
         public static void Gui(string Command, string Param2, string Param3, string Param4)
         {
+            if (guis == null)
+                guis = new Dictionary<string, BaseGui.Window>();
 
+            string id = GuiId(ref Command);
+
+            if (!guis.ContainsKey(id))
+                guis.Add(id, new WinForms.Window());
+
+            switch (Command.ToLowerInvariant())
+            {
+                case Keyword_Add:
+                    // TODO: create new control
+                    break;
+
+                case Keyword_Show:
+                    guis[id].Show();
+                    break;
+
+                case Keyword_Submit:
+                    guis[id].Submit(!Keyword_NoHide.Equals(Param2, StringComparison.OrdinalIgnoreCase));
+                    break;
+
+                case Keyword_Cancel:
+                case Keyword_Hide:
+                    guis[id].Cancel();
+                    break;
+
+                case Keyword_Destroy:
+                    guis[id].Destroy();
+                    guis.Remove(id);
+                    break;
+
+                case Keyword_Font:
+                    guis[id].Font = ParseFont(Param3, Param2);
+                    break;
+
+                case Keyword_Color:
+                    guis[id].WindowColour = Keyword_Default.Equals(Param2, StringComparison.OrdinalIgnoreCase) ? Color.Transparent : ParseColor(Param2);
+                    guis[id].ControlColour = Keyword_Default.Equals(Param3, StringComparison.OrdinalIgnoreCase) ? Color.Transparent : ParseColor(Param3);
+                    break;
+
+                case Keyword_Margin:
+                    {
+                        int d, x = guis[id].Margin.X, y = guis[id].Margin.Y;
+
+                        if (int.TryParse(Param2, out d))
+                            x = d;
+
+                        if (int.TryParse(Param3, out d))
+                            y = d;
+
+                        guis[id].Margin = new System.Drawing.Point(x, y);
+                    }
+                    break;
+
+                case Keyword_Menu:
+                    break;
+
+                case Keyword_Minimize:
+                    guis[id].Minimise();
+                    break;
+
+                case Keyword_Maximize:
+                    guis[id].Maximise();
+                    break;
+
+                case Keyword_Restore:
+                    guis[id].Restore();
+                    break;
+
+                case Keyword_Flash:
+                    guis[id].Flash();
+                    break;
+
+                case Keyword_Default:
+                    defaultGui = id;
+                    break;
+
+                default:
+                    {
+                        foreach (string option in ParseOptions(Param2))
+                        {
+                            // TODO: gui options
+                        }
+                    }
+                    break;
+            }
         }
 
         /// <summary>
