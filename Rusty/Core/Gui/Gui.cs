@@ -88,7 +88,7 @@ namespace IronAHK.Rusty
                     break;
 
                 case Keyword_Flash:
-                    guis[id].Flash();
+                    guis[id].Flash(OnOff(Param2) ?? true);
                     break;
 
                 case Keyword_Default:
