@@ -4,7 +4,7 @@ namespace IronAHK.Rusty
     /// <summary>
     /// Serialize JSON strings.
     /// </summary>
-    static partial class SimpleJSON
+    static partial class SimpleJson
     {
         #region Tokens
 

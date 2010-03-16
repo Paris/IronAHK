@@ -4,7 +4,7 @@ using System.Text;
 
 namespace IronAHK.Rusty
 {
-    partial class SimpleJSON
+    partial class SimpleJson
     {
         /// <summary>
         /// Convert a JSON string to a dictionary of string key and object value pairs.
