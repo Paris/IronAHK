@@ -54,9 +54,9 @@
     <Compile Include="Rusty\Window.cs" />
     <Compile Include="Rusty\Registery.cs" />
     <Compile Include="Rusty\Keyboard.cs" />
-    <Compile Include="Rusty\Json_.cs" />
+    <Compile Include="Rusty\Json.cs" />
     <Compile Include="Rusty\Flow.cs" />
-    <Compile Include="Rusty\Ini_.cs" />
+    <Compile Include="Rusty\Ini.cs" />
     <Compile Include="Rusty\Variables.cs" />
     <Compile Include="Rusty\Loop.cs" />
     <Compile Include="Rusty\Math.cs" />

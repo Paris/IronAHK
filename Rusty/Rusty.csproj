@@ -79,8 +79,8 @@
     <Compile Include="Core\Gui\StatusBar.cs" />
     <Compile Include="Core\Gui\TreeView.cs" />
     <Compile Include="Core\Helpers.cs" />
-    <Compile Include="Core\Ini_.cs" />
-    <Compile Include="Core\Json_.cs" />
+    <Compile Include="Core\Ini.cs" />
+    <Compile Include="Core\Json.cs" />
     <Compile Include="Core\Keyboard.cs" />
     <Compile Include="Core\Common\Keywords.cs" />
     <Compile Include="Core\Loop.cs" />
@@ -98,13 +98,13 @@
     <Compile Include="Core\Window.cs" />
     <Compile Include="Extras\Gui\BaseGui.cs" />
     <Compile Include="Extras\Gui\WinForms.cs" />
-    <Compile Include="Extras\SimpleJson_\SimpleJSON.cs" />
+    <Compile Include="Extras\SimpleJson\SimpleJSON.cs" />
     <Compile Include="Core\Common\KeyboardHook.cs" />
     <Compile Include="Linux\Linux.cs" />
     <Compile Include="Linux\PlatformInvokes.cs" />
     <Compile Include="Linux\Structs.cs" />
-    <Compile Include="Extras\SimpleJson_\Decode.cs" />
-    <Compile Include="Extras\SimpleJson_\Encode.cs" />
+    <Compile Include="Extras\SimpleJson\Decode.cs" />
+    <Compile Include="Extras\SimpleJson\Encode.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Windows\KeyboardHook.cs" />
     <Compile Include="Windows\Misc.cs" />
