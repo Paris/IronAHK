@@ -31,7 +31,7 @@ namespace IronAHK.Rusty
             public abstract void Minimise();
             public abstract void Maximise();
             public abstract void Restore();
-            public abstract void Flash();
+            public abstract void Flash(bool off);
 
             #region Controls
 

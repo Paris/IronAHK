@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Drawing;
+using System.Runtime.InteropServices;
+using System.Windows.Forms;
 
 namespace IronAHK.Rusty
 {
@@ -28,6 +30,16 @@ namespace IronAHK.Rusty
 
         public new class Window : BaseGui.Window
         {
+            Form form;
+
+            public Window()
+            {
+                form = new Form();
+            }
+
+            [DllImport("user32.dll")]
+            static extern bool FlashWindow(IntPtr hWnd, bool bInvert);
+
             #region Methods
 
             public override void Add(BaseGui.Control control)
@@ -37,42 +49,46 @@ namespace IronAHK.Rusty
 
             public override void Show()
             {
-                throw new NotImplementedException();
+                form.Show();
             }
 
             public override void Submit(bool hide)
             {
+                if (hide)
+                    Cancel();
+
                 throw new NotImplementedException();
             }
 
             public override void Cancel()
             {
-                throw new NotImplementedException();
+                form.Hide();
             }
 
             public override void Destroy()
             {
-                throw new NotImplementedException();
+                form.Dispose();
             }
 
             public override void Minimise()
             {
-                throw new NotImplementedException();
+                form.WindowState = FormWindowState.Minimized;
             }
 
             public override void Maximise()
             {
-                throw new NotImplementedException();
+                form.WindowState = FormWindowState.Minimized;
             }
 
             public override void Restore()
             {
-                throw new NotImplementedException();
+                form.WindowState = FormWindowState.Normal;
             }
 
-            public override void Flash()
+            public override void Flash(bool off)
             {
-                throw new NotImplementedException();
+                if (Environment.OSVersion.Platform == PlatformID.Win32NT)
+                    FlashWindow(form.Handle, off);
             }
 
             #region Controls
