@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Windows.Forms;
 
 namespace IronAHK.Rusty
 {
@@ -15,17 +14,7 @@ namespace IronAHK.Rusty
         /// <returns></returns>
         public static int LV_Add(string Options, string[] FieldN)
         {
-            try
-            {
-                ListViewItem row = new ListViewItem();
-                foreach (string field in FieldN)
-                    row.SubItems.Add(field);
-                LV_RowOptions(ref row, Options);
-
-                DefaultGUI.ListView.Items.Add(row);
-                return row.Index + 1;
-            }
-            catch (Exception) { return 0; }
+            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -35,12 +24,7 @@ namespace IronAHK.Rusty
         /// <returns></returns>
         public static bool LV_Delete(int RowNumber)
         {
-            try
-            {
-                DefaultGUI.ListView.Items[RowNumber].Remove();
-                return true;
-            }
-            catch (Exception) { return false; }
+            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -50,12 +34,7 @@ namespace IronAHK.Rusty
         /// <returns></returns>
         public static bool LV_DeleteCol(int ColumnNumber)
         {
-            try
-            {
-                DefaultGUI.ListView.Columns.RemoveAt(ColumnNumber);
-                return true;
-            }
-            catch (Exception) { return false; }
+            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -65,12 +44,7 @@ namespace IronAHK.Rusty
         /// <returns></returns>
         public static int LV_GetCount(string Type)
         {
-            Type = Type.ToLowerInvariant();
-            if (Type == Keyword_Selected || (Type.Length == 1 && Type[0] == Keyword_Selected[0]))
-                return DefaultGUI.ListView.SelectedItems.Count;
-            else if (Type == Keyword_Column || (Type.Length == 1 && Type[0] == Keyword_Column[0]))
-                return DefaultGUI.ListView.Columns.Count;
-            else throw new ArgumentOutOfRangeException(); // graceful error instead?
+            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -81,19 +55,7 @@ namespace IronAHK.Rusty
         /// <returns></returns>
         public static int LV_GetNext(int StartingRowNumber, string Mode)
         {
-            ListView lv = DefaultGUI.ListView;
-            var opts = ParseKeys(Mode);
-            bool check = opts.Contains("c") || opts.Contains("checked");
-            bool focus = opts.Contains("f") || opts.Contains("focused");
-
-            for (int i = StartingRowNumber; i < lv.Items.Count; i++)
-            {
-                ListViewItem item = lv.Items[i];
-                if ((check && item.Checked) && (focus && item.Focused))
-                    return i;
-            }
-
-            return 0;
+            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -105,17 +67,7 @@ namespace IronAHK.Rusty
         /// <returns></returns>
         public static bool LV_GetText(out string OutputVar, int RowNumber, int ColumnNumber)
         {
-            try
-            {
-                ListView lv = DefaultGUI.ListView;
-                OutputVar = RowNumber < 1 ? lv.Columns[ColumnNumber].Text : lv.Items[RowNumber].SubItems[ColumnNumber - 1].Text;
-                return true;
-            }
-            catch (Exception)
-            {
-                OutputVar = null;
-                return false;
-            }
+            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -126,7 +78,7 @@ namespace IronAHK.Rusty
         /// <param name="ColN"></param>
         public static void LV_Insert(string RowNumber, string Options, string[] ColN)
         {
-
+            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -138,11 +90,7 @@ namespace IronAHK.Rusty
         /// <returns></returns>
         public static int LV_InsertCol(int ColumnNumber, string Options, string ColumnTitle)
         {
-            ListView lv = DefaultGUI.ListView;
-            ColumnHeader col = new ColumnHeader();
-            LV_ColOptions(ref col, Options);
-            lv.Columns.Insert(ColumnNumber - 1, col);
-            return ColumnNumber;
+            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -155,7 +103,7 @@ namespace IronAHK.Rusty
         /// <param name="Mode"></param>
         public static void LV_Modify(string RowNumber, string Options, string NewCol1, string NewCol2, string Mode)
         {
-
+            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -167,16 +115,7 @@ namespace IronAHK.Rusty
         /// <returns></returns>
         public static int LV_ModifyCol(int ColumnNumber, string Options, string ColumnTitle)
         {
-            try
-            {
-                ListView lv = DefaultGUI.ListView;
-                if (ColumnTitle.Length != 0)
-                    lv.Columns[ColumnNumber].Text = ColumnTitle;
-                ColumnHeader col = lv.Columns[ColumnNumber];
-                LV_ColOptions(ref col, Options);
-                return 1;
-            }
-            catch (Exception) { return 0; }
+            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -189,7 +128,7 @@ namespace IronAHK.Rusty
         /// <param name="Mode"></param>
         public static void LV_SetImageList(int ImageListID, string Mode)
         {
-
+            throw new NotImplementedException();
         }
     }
 }

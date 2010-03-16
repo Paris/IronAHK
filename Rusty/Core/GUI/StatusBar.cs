@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Drawing;
-using System.Windows.Forms;
 
 namespace IronAHK.Rusty
 {
@@ -17,9 +15,7 @@ namespace IronAHK.Rusty
         /// <returns></returns>
         public static int SB_SetIcon(string Filename, int IconNumber, int PartNumber)
         {
-            Icon ico = Icon.ExtractAssociatedIcon(Filename);
-            DefaultGUI.StatusBar.Panels[PartNumber].Icon = ico;
-            return ico.Handle.ToInt32();
+            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -28,8 +24,7 @@ namespace IronAHK.Rusty
         /// <param name="WidthN"></param>
         public static void SB_SetParts(int[] WidthN)
         {
-            for (int i = 0; i < WidthN.Length; i++)
-                DefaultGUI.StatusBar.Panels[i].Width = WidthN[i];
+            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -41,16 +36,7 @@ namespace IronAHK.Rusty
         /// <returns></returns>
         public static bool SB_SetText(string NewText, int PartNumber, int Style)
         {
-            try
-            {
-                StatusBarPanel sb = DefaultGUI.StatusBar.Panels[PartNumber - 1];
-                sb.Text = NewText;
-                sb.BorderStyle = Style == 1 ? StatusBarPanelBorderStyle.None :
-                    Style == 2 ? StatusBarPanelBorderStyle.Raised :
-                    StatusBarPanelBorderStyle.None;
-                return true;
-            }
-            catch (Exception) { return false; }
+            throw new NotImplementedException();
         }
     }
 }
