@@ -36,7 +36,12 @@ namespace IronAHK.Rusty
                     break;
 
                 case Keyword_Submit:
-                    guis[id].Submit(!Keyword_NoHide.Equals(Param2, StringComparison.OrdinalIgnoreCase));
+                    {
+                        var table = guis[id].Submit(!Keyword_NoHide.Equals(Param2, StringComparison.OrdinalIgnoreCase));
+
+                        foreach (string key in table.Keys)
+                            SetEnv("." + key, table[key]); // TODO: variable scoping with gui,submit
+                    }
                     break;
 
                 case Keyword_Cancel:
