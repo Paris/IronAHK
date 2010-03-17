@@ -136,8 +136,12 @@ namespace IronAHK.Scripting
             else if(T == typeof(decimal))
             {
                 Debug("Pushing decimal : "+((decimal) Value));
-                Generator.Emit(OpCodes.Ldc_R4, ((float) ((decimal) Value)));
-                Generated = typeof(float);
+                
+                // HACK:  push real decimals without downcasting
+                // i.e. new decimal(decimal.GetBits((decimal)Value));
+                
+                Generator.Emit(OpCodes.Ldc_R8, ((double)((decimal)Value)));
+                Generated = typeof(double);
             }
             else if (T == typeof(object[]))
             {
@@ -162,7 +166,7 @@ namespace IronAHK.Scripting
             else if(T == typeof(double))
             {
                 Debug("Pushing double: "+((double) Value));
-                Generator.Emit(OpCodes.Ldc_R4, ((float) ((double) Value)));
+                Generator.Emit(OpCodes.Ldc_R8, ((float) ((double) Value)));
                 Generated = typeof(double);
             }
             else

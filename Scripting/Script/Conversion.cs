@@ -12,6 +12,8 @@ namespace IronAHK.Scripting
         {
             if (input is decimal)
                 return (decimal)input;
+            else if (input is double)
+                return (decimal)(double)input;
             else if (input is float)
                 return (decimal)(float)input;
             else if (input is long)
@@ -34,6 +36,8 @@ namespace IronAHK.Scripting
                 return (long)input;
             else if (input is decimal)
                 return (long)(decimal)input;
+            else if (input is double)
+                return (long)(double)input;
             else if (input is float)
                 return (long)(float)input;
             else if (input is int)
@@ -54,6 +58,8 @@ namespace IronAHK.Scripting
                 return (int)input;
             else if (input is decimal)
                 return (int)(decimal)input;
+            else if (input is double)
+                return (int)(double)input;
             else if (input is float)
                 return (int)(float)input;
             else if (input is long)
@@ -76,7 +82,7 @@ namespace IronAHK.Scripting
                 return false;
             else if (input is string)
                 return !string.IsNullOrEmpty((string)input);
-            else if (input is decimal || input is float || input is long || input is int)
+            else if (input is decimal || input is float || input is double || input is long || input is int)
                 return ForceDecimal(input) != 0;
 
             return false;
@@ -88,7 +94,9 @@ namespace IronAHK.Scripting
                 return string.Empty;
             else if (input is string)
                 return (string)input;
-            else if (IsNumeric(input) || input is bool)
+            else if (input is bool)
+                return (bool)input ? "1" : "0";
+            else if (IsNumeric(input))
                 return input.ToString();
 
             var type = input.GetType();
