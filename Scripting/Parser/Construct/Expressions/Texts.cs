@@ -54,7 +54,8 @@ namespace IronAHK.Scripting
                         }
                     }
 
-                    var parts = id.ToString().Split(Concatenate);
+                    string seq = id.ToString();
+                    var parts = IsPrimativeObject(seq) ? new[] { seq } : seq.Split(Concatenate);
 
                     if (parts[0].Length != 0)
                         list.Add(parts[0]);
