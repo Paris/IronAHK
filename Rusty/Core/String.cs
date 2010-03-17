@@ -178,7 +178,8 @@ namespace IronAHK.Rusty
             }
             int total = exp.Matches(Haystack, StartingPos).Count;
             OutputVarCount = Math.Min(Limit, total);
-            return exp.Replace(Haystack, Replacement, Limit, StartingPos);
+            string replaced = exp.Replace(Haystack, Replacement, Limit == 0 ? int.MaxValue : Limit, StartingPos);
+            return replaced;
         }
 
         /// <summary>
