@@ -172,10 +172,8 @@ namespace IronAHK.Scripting
         {
             if (result is bool)
                 return (bool)result;
-            else if (result is decimal || result is long || result is int)
-                return ((decimal)result) != 0;
-            else if(result is float)
-                return ((float)result) != 0;
+            else if (IsNumeric(result))
+                return ForceDecimal(result) != 0;
             else if (result is string)
                 return !string.IsNullOrEmpty((string)result);
             else
@@ -203,7 +201,7 @@ namespace IronAHK.Scripting
 
         static bool IsNumeric(object value)
         {
-            return value is int || value is float || value is decimal;
+            return value is int || value is float || value is double || value is decimal;
         }
 
         #endregion
