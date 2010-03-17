@@ -418,7 +418,7 @@ namespace IronAHK.Rusty
         public static void StringLower(out string OutputVar, string InputVar, string Title)
         {
             OutputVar = Title.Length == 1 && Title.ToLowerInvariant()[0] == 't' ?
-                CultureInfo.CurrentCulture.TextInfo.ToTitleCase(InputVar) : InputVar.ToUpperInvariant();
+                CultureInfo.CurrentCulture.TextInfo.ToTitleCase(InputVar) : InputVar.ToLowerInvariant();
         }
 
         /// <summary>
