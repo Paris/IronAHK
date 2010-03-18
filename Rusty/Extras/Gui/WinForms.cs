@@ -36,6 +36,7 @@ namespace IronAHK.Rusty
             public Window()
             {
                 form = new Form();
+                form.StartPosition = FormStartPosition.Manual;
             }
 
             [DllImport("user32.dll")]
@@ -48,9 +49,21 @@ namespace IronAHK.Rusty
                 throw new NotImplementedException();
             }
 
+            public override void Draw(string title)
+            {
+                form.Size = Size;
+                form.Location = Location;
+                form.Text = title;
+            }
+
             public override void Show()
             {
                 form.Show();
+            }
+
+            public override void AutoSize()
+            {
+                form.AutoSize = true;
             }
 
             public override Dictionary<string, string> Submit(bool hide)

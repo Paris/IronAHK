@@ -24,7 +24,9 @@ namespace IronAHK.Rusty
             #region Methods
 
             public abstract void Add(Control control);
+            public abstract void Draw(string title);
             public abstract void Show();
+            public abstract void AutoSize();
             public abstract Dictionary<string, string> Submit(bool hide);
             public abstract void Cancel();
             public abstract void Destroy();
@@ -221,6 +223,8 @@ namespace IronAHK.Rusty
 
             List<Control> controls = new List<Control>();
 
+            Size size;
+            Point location;
             Font font;
             Color windowColour, controlColour;
             Point margin;
@@ -234,6 +238,18 @@ namespace IronAHK.Rusty
             public List<Control> Controls
             {
                 get { return controls; }
+            }
+
+            public Size Size
+            {
+                get { return size; }
+                set { size = value; }
+            }
+
+            public Point Location
+            {
+                get { return location; }
+                set { location = value; }
             }
 
             public Font Font

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Windows.Forms;
 
 namespace IronAHK.Rusty
 {
@@ -32,7 +33,100 @@ namespace IronAHK.Rusty
                     break;
 
                 case Keyword_Show:
-                    guis[id].Show();
+                    {
+                        bool center = false, cX = false, cY = false, auto = false, min = false, max = false, restore = false, noactivate = false, na = false, hide = false;
+                        int?[] pos = { null, null, null, null };
+
+                        foreach (string option in ParseOptions(Param2))
+                        {
+                            string mode = option.ToLowerInvariant();
+                            int select = -1;
+
+                            switch (mode[0])
+                            {
+                                case 'w': select = 0; break;
+                                case 'h': select = 1; break;
+                                case 'x': select = 2; break;
+                                case 'y': select = 3; break;
+                            }
+
+                            if (select == -1)
+                            {
+                                switch (mode)
+                                {
+                                    case Keyword_Center: center = true; break;
+                                    case Keyword_AutoSize: auto = true; break;
+                                    case Keyword_Maximize: max = true; break;
+                                    case Keyword_Minimize: min = true; break;
+                                    case Keyword_Restore: restore = true; break;
+                                    case Keyword_NoActivate: noactivate = true; break;
+                                    case Keyword_NA: na = true; break;
+                                    case Keyword_Hide: hide = true; break;
+                                }
+                            }
+                            else
+                            {
+                                mode = mode.Substring(1);
+                                int n;
+
+                                if (mode.Equals(Keyword_Center, StringComparison.OrdinalIgnoreCase))
+                                {
+                                    if (select == 2)
+                                        cX = true;
+                                    else
+                                        cY = true;
+                                }
+                                else if (mode.Length != 0 && int.TryParse(mode, out n))
+                                    pos[select] = n;
+                            }
+                        }
+
+                        if (auto)
+                            guis[id].AutoSize();
+                        else
+                        {
+                            var size = guis[id].Size;
+
+                            if (pos[0] != null)
+                                size.Width = (int)pos[0];
+                            if (pos[1] != null)
+                                size.Height = (int)pos[1];
+
+                            guis[id].Size = size;
+                        }
+
+                        var location = guis[id].Location;
+
+                        if (pos[2] != null)
+                            location.X = (int)pos[2];
+                        if (pos[3] != null)
+                            location.Y = (int)pos[3];
+
+                        var screen = Screen.PrimaryScreen.Bounds;
+
+                        if (center)
+                            cX = cY = true;
+
+                        if (cX)
+                            location.X = (screen.Width - guis[id].Size.Width) / 2 + screen.X;
+                        if (cY)
+                            location.Y = (screen.Height - guis[id].Size.Height) / 2 + screen.Y;
+
+                        guis[id].Location = location;
+
+                        guis[id].Draw(Param3);
+
+                        if (min)
+                            guis[id].Minimise();
+                        else if (max)
+                            guis[id].Maximise();
+                        else if (restore)
+                            guis[id].Restore();
+                        else if (hide)
+                            guis[id].Cancel();
+                        else
+                            guis[id].Show();
+                    }
                     break;
 
                 case Keyword_Submit:
