@@ -92,7 +92,8 @@ namespace IronAHK.Rusty
 
             var handler = new EventHandler(delegate(object sender, EventArgs e)
             {
-                method.Invoke(null, new object[] { new object[] { } });
+                try { method.Invoke(null, new object[] { new object[] { } }); }
+                catch (Exception) { }
             });
 
             AppDomain.CurrentDomain.ProcessExit += handler;
