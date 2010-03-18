@@ -196,9 +196,81 @@ namespace IronAHK.Rusty
 
                 default:
                     {
-                        foreach (string option in ParseOptions(Param2))
+                        foreach (string option in ParseOptions(Command))
                         {
-                            // TODO: gui options
+                            bool on = option[0] != '-';
+                            string mode = option;
+
+                            if (mode[0] == '+' || mode[0] == '-')
+                                mode = mode.Substring(1);
+
+                            if (mode.Length == 0)
+                                continue;
+
+                            mode = mode.ToLowerInvariant();
+
+                            switch (mode)
+                            {
+                                case Keyword_AlwaysOnTop: guis[id].AlwaysOnTop = on; break;
+                                case Keyword_Border: guis[id].Border = on; break;
+                                case Keyword_Caption: guis[id].Caption = on; break;
+                                case Keyword_Disabled: guis[id].Enabled = !on; break;
+                                case Keyword_LastFound: guis[id].LastFound = on; break;
+                                case Keyword_LastFoundExist: guis[id].LastFoundExist = on; break;
+                                case Keyword_MaximizeBox: guis[id].MaximiseBox = on; break;
+                                case Keyword_MinimizeBox: guis[id].MinimiseBox = on; break;
+                                case Keyword_OwnDialogs: guis[id].OwnDialogs = on; break;
+                                case Keyword_Owner: guis[id].Owner = on; break;
+                                case Keyword_Resize: guis[id].Resize = on; break;
+                                case Keyword_SysMenu: guis[id].SysMenu = on; break;
+                                case Keyword_Theme: guis[id].Theme = on; break;
+                                case Keyword_ToolWindow: guis[id].ToolWindow = on; break;
+
+                                default:
+                                    string arg;
+                                    string[] parts;
+                                    int n;
+                                    Size size;
+                                    if (mode.StartsWith(Keyword_Delimiter))
+                                    {
+                                        arg = mode.Substring(Keyword_Delimiter.Length);
+                                        if (arg.Length > 0)
+                                            guis[id].Delimieter = arg[0];
+                                    }
+                                    else if (mode.StartsWith(Keyword_Label))
+                                    {
+                                        arg = mode.Substring(Keyword_Label.Length);
+                                        if (arg.Length > 0)
+                                            guis[id].Label = arg;
+                                    }
+                                    else if (mode.StartsWith(Keyword_MinSize))
+                                    {
+                                        arg = mode.Substring(Keyword_MinSize.Length);
+                                        parts = arg.Split(new[] { 'x', 'X', '*' }, 2);
+                                        size = guis[id].MinimumSize;
+
+                                        if (parts.Length > 0 && int.TryParse(parts[0], out n))
+                                            size.Width = n;
+                                        if (parts.Length > 1 && int.TryParse(parts[1], out n))
+                                            size.Height = n;
+
+                                        guis[id].MinimumSize = size;
+                                    }
+                                    else if (mode.StartsWith(Keyword_MaxSize))
+                                    {
+                                        arg = mode.Substring(Keyword_MaxSize.Length);
+                                        parts = arg.Split(new[] { 'x', 'X', '*' }, 2);
+                                        size = guis[id].MaximumSize;
+
+                                        if (parts.Length > 0 && int.TryParse(parts[0], out n))
+                                            size.Width = n;
+                                        if (parts.Length > 1 && int.TryParse(parts[1], out n))
+                                            size.Height = n;
+
+                                        guis[id].MaximumSize = size;
+                                    }
+                                    break;
+                            }
                         }
                     }
                     break;
