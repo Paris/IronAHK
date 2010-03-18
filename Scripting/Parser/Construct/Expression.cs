@@ -205,6 +205,8 @@ namespace IronAHK.Scripting
                             else
                                 throw new ParseException("Invalid function name");
                         }
+                        else
+                            CheckPersistent(name);
 
                         int n = i + 1;
                         var paren = Dissect(parts, n, Set(parts, i));

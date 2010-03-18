@@ -57,7 +57,7 @@ namespace IronAHK.Scripting
                 for (int i = main.Statements.Count - 1; i > r - 1; i--)
                     main.Statements.RemoveAt(i);
                
-                if (prepend.Count > 0)
+                if (persistent || prepend.Count > 0)
                 {
                     prepend.Clear();
                     var run = new CodeExpressionStatement((CodeMethodInvokeExpression)InternalMethods.ApplicationRun);
