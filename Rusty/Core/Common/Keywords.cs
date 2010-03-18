@@ -300,6 +300,10 @@ namespace IronAHK.Rusty
         const string Keyword_Up = "up";
         const string Keyword_Down = "down";
         const string Keyword_Toggle = "toggle";
+        const string Keyword_Edit = "edit";
+        const string Keyword_Hotkey = "hotkey";
+        const string Keyword_Progress = "progress";
+        const string Keyword_WebBrowser = "webbrowser";
 
         const char Keyword_ModifierWin = '#';
         const char Keyword_ModifierAlt = '!';
