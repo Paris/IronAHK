@@ -17,6 +17,7 @@ namespace IronAHK.Scripting
 
             var invoke = new CodeMethodInvokeExpression();
             invoke.Method = new CodeMethodReferenceExpression(null, name);
+            CheckPersistent(name);
 
             if (parts.Length > 1 && parts[1].Length != 0)
             {
