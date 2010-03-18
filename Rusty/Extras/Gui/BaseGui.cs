@@ -228,8 +228,25 @@ namespace IronAHK.Rusty
             Font font;
             Color windowColour, controlColour;
             Point margin;
-            Size minSize;
             Menu menu;
+
+            bool alwaysontop = false;
+            bool border = false;
+            bool caption = true;
+            char delimiter = '|';
+            bool enabled = true;
+            string label = "Gui";
+            bool lastfound = false;
+            bool lastfoundexist = false;
+            bool maxbox = true;
+            bool minbox = true;
+            Size minsize, maxsize;
+            bool owndialogs = false;
+            bool owner = false;
+            bool resize = true;
+            bool sysmenu = true;
+            bool theme = true;
+            bool toolwindow = false;
 
             #endregion
 
@@ -276,16 +293,118 @@ namespace IronAHK.Rusty
                 set { margin = value; }
             }
 
-            public Size MinimumSize
-            {
-                get { return minSize; }
-                set { minSize = value; }
-            }
-
             public Menu Menu
             {
                 get { return menu; }
                 set { menu = value; }
+            }
+
+            public bool AlwaysOnTop
+            {
+                get { return alwaysontop; }
+                set { alwaysontop = value; }
+            }
+
+            public bool Border
+            {
+                get { return border; }
+                set { border = value; }
+            }
+
+            public bool Caption
+            {
+                get { return caption; }
+                set { caption = value; }
+            }
+
+            public char Delimieter
+            {
+                get { return delimiter; }
+                set { delimiter = value; }
+            }
+
+            public bool Enabled
+            {
+                get { return enabled; }
+                set { enabled = value; }
+            }
+
+            public string Label
+            {
+                get { return label; }
+                set { label = value; }
+            }
+
+            public bool LastFound
+            {
+                get { return lastfound; }
+                set { lastfound = value; }
+            }
+
+            public bool LastFoundExist
+            {
+                get { return lastfoundexist; }
+                set { lastfoundexist = value; }
+            }
+
+            public bool MinimiseBox
+            {
+                get { return minbox; }
+                set { minbox = value; }
+            }
+
+            public bool MaximiseBox
+            {
+                get { return maxbox; }
+                set { maxbox = value; }
+            }
+
+            public Size MinimumSize
+            {
+                get { return minsize; }
+                set { minsize = value; }
+            }
+
+            public Size MaximumSize
+            {
+                get { return maxsize; }
+                set { maxsize = value; }
+            }
+
+            public bool OwnDialogs
+            {
+                get { return owndialogs; }
+                set { owndialogs = value; }
+            }
+
+            public bool Owner
+            {
+                get { return owner; }
+                set { owner = value; }
+            }
+
+            public bool Resize
+            {
+                get { return resize; }
+                set { resize = value; }
+            }
+
+            public bool SysMenu
+            {
+                get { return sysmenu; }
+                set { sysmenu = value; }
+            }
+
+            public bool Theme
+            {
+                get { return theme; }
+                set { theme = value; }
+            }
+
+            public bool ToolWindow
+            {
+                get { return toolwindow; }
+                set { toolwindow = value; }
             }
 
             #endregion

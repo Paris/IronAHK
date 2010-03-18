@@ -54,6 +54,30 @@ namespace IronAHK.Rusty
                 form.Size = Size;
                 form.Location = Location;
                 form.Text = title;
+                form.Enabled = Enabled;
+                form.MaximizeBox = MaximiseBox;
+                form.MinimizeBox = MinimiseBox;
+                form.MinimumSize = MinimumSize;
+                form.MaximumSize = MaximumSize;
+
+                if (Resize)
+                    form.FormBorderStyle = ToolWindow ? FormBorderStyle.SizableToolWindow : FormBorderStyle.Sizable;
+                else
+                    form.FormBorderStyle = ToolWindow ? FormBorderStyle.FixedToolWindow : (Border ? FormBorderStyle.Fixed3D : FormBorderStyle.FixedSingle);
+
+                if (!Caption)
+                    form.FormBorderStyle = FormBorderStyle.None;
+
+                if (!SysMenu)
+                {
+                    form.FormBorderStyle = FormBorderStyle.FixedDialog;
+                    form.MinimizeBox = form.MaximizeBox = false;
+                }
+
+                form.TopMost = AlwaysOnTop;
+
+                if (Theme)
+                    Application.EnableVisualStyles();
             }
 
             public override void Show()
