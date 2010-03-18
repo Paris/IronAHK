@@ -22,7 +22,7 @@ namespace IronAHK.Rusty
         {
             var stack = new StackTrace(false).GetFrames();
 
-            for (int i = 0; i < 3; i++)
+            for (int i = 0; i < Math.Min(4, stack.Length); i++)
             {
                 var type = stack[i].GetMethod().DeclaringType;
                 var list = type.GetMethods();
