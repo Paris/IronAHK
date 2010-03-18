@@ -36,6 +36,11 @@ namespace IronAHK.Rusty
             public Window()
             {
                 form = new Form();
+                Font = form.Font;
+                Location = form.Location;
+                Size = form.Size;
+                WindowColour = form.BackColor;
+                ControlColour = form.ForeColor;
                 form.StartPosition = FormStartPosition.Manual;
             }
 
@@ -46,7 +51,9 @@ namespace IronAHK.Rusty
 
             public override void Add(BaseGui.Control control)
             {
-                throw new NotImplementedException();
+                form.Controls.Add((System.Windows.Forms.Control)control.NativeComponent);
+                control.Draw();
+                form.PerformLayout();
             }
 
             public override void Draw(string title)
@@ -138,102 +145,102 @@ namespace IronAHK.Rusty
 
             public override BaseGui.Text CreateText()
             {
-                return new Text();
+                return new Text { Parent = this };
             }
 
             public override BaseGui.Edit CreateEdit()
             {
-                return new Edit();
+                return new Edit { Parent = this };
             }
 
             public override BaseGui.UpDown CreateUpDown()
             {
-                return new UpDown();
+                return new UpDown { Parent = this };
             }
 
             public override BaseGui.Picture CreatePicture()
             {
-                return new Picture();
+                return new Picture { Parent = this };
             }
 
             public override BaseGui.Button CreateButton()
             {
-                return new Button();
+                return new Button { Parent = this };
             }
 
             public override BaseGui.Checkbox CreateCheckbox()
             {
-                return new Checkbox();
+                return new Checkbox { Parent = this };
             }
 
             public override BaseGui.Radio CreateRadio()
             {
-                return new Radio();
+                return new Radio { Parent = this };
             }
 
             public override BaseGui.DropDownList CreateDropDownList()
             {
-                return new DropDownList();
+                return new DropDownList { Parent = this };
             }
 
             public override BaseGui.ComboBox CreateComboBox()
             {
-                return new ComboBox();
+                return new ComboBox { Parent = this };
             }
 
             public override BaseGui.ListBox CreateListBox()
             {
-                return new ListBox();
+                return new ListBox { Parent = this };
             }
 
             public override BaseGui.ListView CreateListView()
             {
-                return new ListView();
+                return new ListView { Parent = this };
             }
 
             public override BaseGui.TreeView CreateTreeView()
             {
-                return new TreeView();
+                return new TreeView { Parent = this };
             }
 
             public override BaseGui.Hotkey CreateHotkey()
             {
-                return new Hotkey();
+                return new Hotkey { Parent = this };
             }
 
             public override BaseGui.DateTime CreateDateTime()
             {
-                return new DateTime();
+                return new DateTime { Parent = this };
             }
 
             public override BaseGui.MonthCal CreateMonthCal()
             {
-                return new MonthCal();
+                return new MonthCal { Parent = this };
             }
 
             public override BaseGui.Slider CreateSider()
             {
-                return new Slider();
+                return new Slider { Parent = this };
             }
 
             public override BaseGui.Progress CreateProgress()
             {
-                return new Progress();
+                return new Progress { Parent = this };
             }
 
             public override BaseGui.GroupBox CreateGroupBox()
             {
-                return new GroupBox();
+                return new GroupBox { Parent = this };
             }
 
             public override BaseGui.Tab CreateTab()
             {
-                return new Tab();
+                return new Tab { Parent = this };
             }
 
             public override BaseGui.WebBrowser CreateWebBrowser()
             {
-                return new WebBrowser();
+                return new WebBrowser { Parent = this };
             }
 
             #endregion
@@ -276,21 +283,34 @@ namespace IronAHK.Rusty
 
         static void ApplyStyles(System.Windows.Forms.Control control, BaseGui.Control information)
         {
+            if (!information.Size.IsEmpty && information.Size.Height == 0)
+                information.Size = new Size(information.Size.Width, (int)information.Parent.Font.GetHeight());
+
+            control.Text = information.Contents;
             control.Enabled = information.Enabled;
             control.Location = information.Location;
             control.Size = information.Size;
             control.TabStop = information.TabStop;
             control.Visible = information.Visible;
-            
+
             if (information.Transparent)
                 control.BackColor = Color.Transparent;
         }
 
         public new class Text : BaseGui.Text
         {
+            public Text()
+            {
+                NativeComponent = new Label { AutoSize = true };
+            }
+
             public override void Draw()
             {
-                throw new NotImplementedException();
+                var text = (Label)NativeComponent;
+                ApplyStyles(text, this);
+                text.BorderStyle = Border ? BorderStyle.FixedSingle : BorderStyle.None;
+                text.AutoSize = Size.IsEmpty;
+                text.Show();
             }
         }
 

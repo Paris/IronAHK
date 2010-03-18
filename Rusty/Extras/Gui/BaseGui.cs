@@ -418,6 +418,7 @@ namespace IronAHK.Rusty
         {
             public abstract void Draw();
 
+            object native;
             Window parent;
             Point location;
             Size size;
@@ -438,6 +439,12 @@ namespace IronAHK.Rusty
             bool background = true;
             bool border = false;
             bool theme = true;
+
+            public object NativeComponent
+            {
+                get { return native; }
+                set { native = value; }
+            }
 
             public Window Parent
             {

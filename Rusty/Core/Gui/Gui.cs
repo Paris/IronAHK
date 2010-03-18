@@ -28,9 +28,88 @@ namespace IronAHK.Rusty
 
             switch (Command.ToLowerInvariant())
             {
+                #region Add
+
                 case Keyword_Add:
-                    // TODO: create new control
+                    {
+                        switch (Param2.ToLowerInvariant())
+                        {
+                            case Keyword_Text:
+                                {
+                                    var text = guis[id].CreateText();
+                                    text.Contents = Param4;
+                                    GuiApplyStyles(text, Param3);
+                                    guis[id].Add(text);
+                                }
+                                break;
+
+                            case Keyword_Edit:
+                                break;
+
+                            case Keyword_UpDown:
+                                break;
+
+                            case Keyword_Picture:
+                                break;
+
+                            case Keyword_Button:
+                                break;
+
+                            case Keyword_CheckBox:
+                                break;
+
+                            case Keyword_Radio:
+                                break;
+
+                            case Keyword_DropDownList:
+                            case Keyword_DDL:
+                                break;
+
+                            case Keyword_ComboBox:
+                                break;
+
+                            case Keyword_ListBox:
+                                break;
+
+                            case Keyword_ListView:
+                                break;
+
+                            case Keyword_TreeView:
+                                break;
+
+                            case Keyword_Hotkey:
+                                break;
+
+                            case Keyword_DateTime:
+                                break;
+
+                            case Keyword_MonthCal:
+                                break;
+
+                            case Keyword_Slider:
+                                break;
+
+                            case Keyword_Progress:
+                                break;
+
+                            case Keyword_GroupBox:
+                                break;
+
+                            case Keyword_Tab:
+                                break;
+
+                            case Keyword_StatusBar:
+                                break;
+
+                            case Keyword_WebBrowser:
+                                break;
+                        }
+                    }
                     break;
+
+                #endregion
+
+                #region Show
 
                 case Keyword_Show:
                     {
@@ -129,6 +208,10 @@ namespace IronAHK.Rusty
                     }
                     break;
 
+                #endregion
+
+                #region Misc.
+
                 case Keyword_Submit:
                     {
                         var table = guis[id].Submit(!Keyword_NoHide.Equals(Param2, StringComparison.OrdinalIgnoreCase));
@@ -193,6 +276,10 @@ namespace IronAHK.Rusty
                 case Keyword_Default:
                     defaultGui = id;
                     break;
+
+                #endregion
+
+                #region Options
 
                 default:
                     {
@@ -274,7 +361,134 @@ namespace IronAHK.Rusty
                         }
                     }
                     break;
+
+                #endregion
             }
+        }
+
+        static string GuiApplyStyles(BaseGui.Control control, string styles)
+        {
+            string[] opts = ParseOptions(styles), excess = new string[opts.Length];
+
+            for (int i = 0; i < opts.Length; i++)
+            {
+                string mode = opts[i].ToLowerInvariant();
+
+                bool on = mode[0] != '-';
+                if (mode[0] == '+' || mode[0] == '-')
+                    mode = mode.Substring(1);
+
+                if (mode.Length == 0)
+                    continue;
+
+                string arg = mode.Substring(1);
+                int n;
+
+                switch (mode)
+                {
+                    case Keyword_Left:
+                        control.Alignment = ContentAlignment.MiddleLeft;
+                        break;
+
+                    case Keyword_Center:
+                        control.Alignment = ContentAlignment.MiddleCenter;
+                        break;
+
+                    case Keyword_Right:
+                        control.Alignment = ContentAlignment.MiddleRight;
+                        break;
+
+                    case Keyword_AltSubmit:
+                        control.AltSubmit = on;
+                        break;
+
+                    case Keyword_Background:
+                        control.Background = on;
+                        break;
+
+                    case Keyword_Border:
+                        control.Border = on;
+                        break;
+
+                    case Keyword_Enabled:
+                        control.Enabled = on;
+                        break;
+
+                    case Keyword_Disabled:
+                        control.Enabled = !on;
+                        break;
+
+                    case Keyword_HScroll:
+                        control.HorizontalScroll = on;
+                        break;
+
+                    case Keyword_VScroll:
+                        control.VerticalScroll = on;
+                        break;
+
+                    case Keyword_TabStop:
+                        control.TabStop = on;
+                        break;
+
+                    case Keyword_Theme:
+                        control.Theme = on;
+                        break;
+
+                    case Keyword_Transparent:
+                        control.Transparent = on;
+                        break;
+
+                    case Keyword_Visible:
+                    case Keyword_Vis:
+                        control.Visible = on;
+                        break;
+
+                    case Keyword_Wrap:
+                        control.Wrap = on;
+                        break;
+
+                    default:
+                        switch (mode[0])
+                        {
+                            case 'x':
+                                if (int.TryParse(arg, out n))
+                                    control.Location = new Point(n, control.Location.Y);
+                                break;
+
+                            case 'y':
+                                if (int.TryParse(arg, out n))
+                                    control.Location = new Point(control.Location.X, n);
+                                break;
+
+                            case 'w':
+                                if (int.TryParse(arg, out n))
+                                    control.Size = new Size(n, control.Size.Height);
+                                break;
+
+                            case 'h':
+                                if (int.TryParse(arg, out n))
+                                    control.Size = new Size(control.Size.Width, n);
+                                break;
+
+                            case 'r':
+                                if (control.Parent != null && control.Parent.Font != null && int.TryParse(arg, out n))
+                                    control.Size = new Size(control.Size.Width, (int)(n * control.Parent.Font.GetHeight()));
+                                break;
+
+                            case 'c':
+                                if (arg.Length != 0)
+                                    control.Colour = ParseColor(arg);
+                                break;
+
+                            case 'v':
+                                control.Id = arg;
+                                break;
+                        }
+                        break;
+                }
+            }
+
+            return string.Join(Keyword_Spaces[0].ToString(), excess);
         }
 
         /// <summary>
