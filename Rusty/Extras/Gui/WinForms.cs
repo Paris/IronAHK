@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
@@ -332,9 +333,29 @@ namespace IronAHK.Rusty
 
         public new class Picture : BaseGui.Picture
         {
+            public Picture()
+            {
+                NativeComponent = new PictureBox();
+            }
+
             public override void Draw()
             {
-                throw new NotImplementedException();
+                var pic = (PictureBox)NativeComponent;
+
+                if (Size.IsEmpty)
+                {
+                    try
+                    {
+                        var image = Image.FromFile(Contents);
+                        Size = image.Size;
+                    }
+                    catch (FileNotFoundException) { }
+                }
+
+                ApplyStyles(pic, this);
+                pic.ImageLocation = Contents;
+                pic.BorderStyle = Border ? BorderStyle.FixedSingle : BorderStyle.None;
+                pic.Show();
             }
         }
 

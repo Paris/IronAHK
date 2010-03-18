@@ -50,6 +50,13 @@ namespace IronAHK.Rusty
                                 break;
 
                             case Keyword_Picture:
+                            case Keyword_Pic:
+                                {
+                                    var pic = guis[id].CreatePicture();
+                                    pic.Contents = Param4;
+                                    GuiApplyStyles(pic, Param3);
+                                    guis[id].Add(pic);
+                                }
                                 break;
 
                             case Keyword_Button:
