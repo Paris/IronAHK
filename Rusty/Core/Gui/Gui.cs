@@ -380,6 +380,7 @@ namespace IronAHK.Rusty
             for (int i = 0; i < opts.Length; i++)
             {
                 string mode = opts[i].ToLowerInvariant();
+                bool append = false;
 
                 bool on = mode[0] != '-';
                 if (mode[0] == '+' || mode[0] == '-')
@@ -483,19 +484,28 @@ namespace IronAHK.Rusty
                                 break;
 
                             case 'c':
-                                if (arg.Length != 0)
+                                if (arg.Length != 0 && !mode.StartsWith(Keyword_Check, StringComparison.OrdinalIgnoreCase))
                                     control.Colour = ParseColor(arg);
+                                else
+                                    append = true;
                                 break;
 
                             case 'v':
                                 control.Id = arg;
                                 break;
+
+                            default:
+                                append = true;
+                                break;
                         }
                         break;
                 }
+
+                if (append)
+                    excess[i] = opts[i];
             }
 
-            return string.Join(Keyword_Spaces[0].ToString(), excess);
+            return string.Join(Keyword_Spaces[1].ToString(), excess).Trim();
         }
 
         /// <summary>
