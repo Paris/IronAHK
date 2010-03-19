@@ -693,7 +693,16 @@ namespace IronAHK.Rusty
             }
         }
 
-        public abstract class Radio : Checkbox { }
+        public abstract class Radio : Checkbox
+        {
+            bool state;
+
+            public bool Checked
+            {
+                get { return state; }
+                set { state = value; }
+            }
+        }
 
         public abstract class DropDownList : Control
         {

@@ -60,12 +60,81 @@ namespace IronAHK.Rusty
                                 break;
 
                             case Keyword_Button:
+                                {
+                                    var button = guis[id].CreateButton();
+                                    button.Contents = Param4;
+                                    GuiApplyStyles(button, Param3);
+                                    guis[id].Add(button);
+                                }
                                 break;
 
                             case Keyword_CheckBox:
+                                {
+                                    var check = guis[id].CreateCheckbox();
+                                    check.Contents = Param4;
+                                    check.State = CheckState.Unchecked;
+                                    string opts = GuiApplyStyles(check, Param3);
+
+                                    foreach (string opt in ParseOptions(opts))
+                                    {
+                                        switch (opt.ToLowerInvariant())
+                                        {
+                                            case Keyword_Check3:
+                                            case Keyword_CheckedGray:
+                                                check.State = CheckState.Indeterminate;
+                                                break;
+
+                                            case Keyword_Checked:
+                                                check.State = CheckState.Checked;
+                                                break;
+
+                                            default:
+                                                if (opt.StartsWith(Keyword_Checked, StringComparison.OrdinalIgnoreCase))
+                                                {
+                                                    string arg = opt.Substring(Keyword_Checked.Length).Trim();
+                                                    int n;
+
+                                                    if (int.TryParse(arg, out n))
+                                                        check.State = n == -1 ? CheckState.Indeterminate : n == 1 ? CheckState.Checked : CheckState.Unchecked;
+                                                }
+                                                break;
+                                        }
+                                    }
+
+                                    guis[id].Add(check);
+                                }
                                 break;
 
                             case Keyword_Radio:
+                                {
+                                    var radio = guis[id].CreateRadio();
+                                    radio.Contents = Param4;
+                                    radio.Checked = false;
+                                    string opts = GuiApplyStyles(radio, Param3);
+
+                                    foreach (string opt in ParseOptions(opts))
+                                    {
+                                        switch (opt.ToLowerInvariant())
+                                        {
+                                            case Keyword_Checked:
+                                                radio.Checked = true;
+                                                break;
+
+                                            default:
+                                                if (opt.StartsWith(Keyword_Checked, StringComparison.OrdinalIgnoreCase))
+                                                {
+                                                    string arg = opt.Substring(Keyword_Checked.Length).Trim();
+                                                    int n;
+
+                                                    if (int.TryParse(arg, out n))
+                                                        radio.Checked = n == 1;
+                                                }
+                                                break;
+                                        }
+                                    }
+
+                                    guis[id].Add(radio);
+                                }
                                 break;
 
                             case Keyword_DropDownList:
@@ -100,6 +169,12 @@ namespace IronAHK.Rusty
                                 break;
 
                             case Keyword_GroupBox:
+                                {
+                                    var group = guis[id].CreateGroupBox();
+                                    group.Contents = Param4;
+                                    GuiApplyStyles(group, Param3);
+                                    guis[id].Add(group);
+                                }
                                 break;
 
                             case Keyword_Tab:
