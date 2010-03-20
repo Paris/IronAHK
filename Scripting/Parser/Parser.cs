@@ -60,7 +60,7 @@ namespace IronAHK.Scripting
                 if (persistent || prepend.Count > 0)
                 {
                     prepend.Clear();
-                    var run = new CodeExpressionStatement((CodeMethodInvokeExpression)InternalMethods.ApplicationRun);
+                    var run = new CodeExpressionStatement((CodeMethodInvokeExpression)InternalMethods.Run);
                     main.Statements.Add(run);
                 }
 
@@ -81,6 +81,7 @@ namespace IronAHK.Scripting
         public Parser()
         {
             main.CustomAttributes.Add(new CodeAttributeDeclaration(new CodeTypeReference(typeof(STAThreadAttribute))));
+            main.Statements.Add((CodeMethodInvokeExpression)InternalMethods.Init);
             methods.Add(mainScope, main);
         }
 

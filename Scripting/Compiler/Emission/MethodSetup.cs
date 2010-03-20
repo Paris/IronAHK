@@ -68,17 +68,6 @@ namespace IronAHK.Scripting
             ConstructorInfo StatThreadConstructor = typeof(System.STAThreadAttribute).GetConstructor(Type.EmptyTypes);
             CustomAttributeBuilder Attribute = new CustomAttributeBuilder(StatThreadConstructor, new object[] {});
             Method.SetCustomAttribute(Attribute);
-
-            //Assembly Winforms = Assembly.LoadWithPartialName("System.Windows.Forms");
-            const string WinForms = "System.Windows.Forms";
-            Assembly Winforms = Assembly.Load(WinForms + ", Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089");
-            Type Application = Winforms.GetType(WinForms + ".Application");
-
-            if (Application == null)
-                return;
-
-            MethodInfo Enable = Application.GetMethod("EnableVisualStyles");
-            Generator.Emit(OpCodes.Call, Enable);
         }
 
         [Conditional("DEBUG")]
