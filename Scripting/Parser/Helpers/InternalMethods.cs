@@ -144,14 +144,19 @@ namespace IronAHK.Scripting
 
             #region Misc
 
+            public static MethodReference Init
+            {
+                get { return new MethodReference(typeof(Script), "Init"); }
+            }
+
+            public static MethodReference Run
+            {
+                get { return new MethodReference(typeof(Script), "Run"); }
+            }
+
             public static MethodReference Concat
             {
                 get { return new MethodReference(typeof(string), "Concat", new Type[] { typeof(string[]) }); }
-            }
-
-            public static MethodReference ApplicationRun
-            {
-                get { return new MethodReference(typeof(System.Windows.Forms.Application), "Run", Type.EmptyTypes); }
             }
 
             #endregion
