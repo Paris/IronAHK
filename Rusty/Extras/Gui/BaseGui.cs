@@ -55,6 +55,7 @@ namespace IronAHK.Rusty
             public abstract Slider CreateSider();
             public abstract Progress CreateProgress();
             public abstract GroupBox CreateGroupBox();
+            public abstract StatusBar CreateStatusBar();
             public abstract Tab CreateTab();
             public abstract WebBrowser CreateWebBrowser();
 

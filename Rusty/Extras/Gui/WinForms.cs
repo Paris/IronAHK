@@ -239,6 +239,11 @@ namespace IronAHK.Rusty
                 return new Tab { Parent = this };
             }
 
+            public override BaseGui.StatusBar CreateStatusBar()
+            {
+                return new StatusBar { Parent = this };
+            }
+
             public override BaseGui.WebBrowser CreateWebBrowser()
             {
                 return new WebBrowser { Parent = this };
@@ -515,9 +520,22 @@ namespace IronAHK.Rusty
 
         public new class StatusBar : BaseGui.StatusBar
         {
+            public StatusBar()
+            {
+                NativeComponent = new System.Windows.Forms.StatusStrip();
+            }
+
             public override void Draw()
             {
-                throw new NotImplementedException();
+                var status = (System.Windows.Forms.StatusStrip)NativeComponent;
+
+                if (status.Items.Count == 0)
+                    status.Items.Add(Contents);
+                else
+                    status.Items[0].Text = Contents;
+
+                ApplyStyles(status, this);
+                status.Show();
             }
         }
 
