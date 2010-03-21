@@ -181,6 +181,12 @@ namespace IronAHK.Rusty
                                 break;
 
                             case Keyword_StatusBar:
+                                {
+                                    var status = guis[id].CreateStatusBar();
+                                    status.Contents = Param4;
+                                    GuiApplyStyles(status, Param3);
+                                    guis[id].Add(status);
+                                }
                                 break;
 
                             case Keyword_WebBrowser:
