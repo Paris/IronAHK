@@ -228,7 +228,8 @@ namespace IronAHK
 #if DEBUG
                 catch (TargetInvocationException e)
                 {
-                    Console.Error.WriteLine(e.ToString());
+                    Console.WriteLine();
+                    Console.WriteLine(e.InnerException.ToString());
                     throw;
                 }
 #endif
