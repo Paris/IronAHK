@@ -216,6 +216,9 @@ namespace IronAHK
 
             if (reflect)
             {
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+
                 try
                 {
                     if (results.CompiledAssembly == null)
