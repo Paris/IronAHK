@@ -537,6 +537,48 @@ namespace IronAHK.Rusty
                 ApplyStyles(status, this);
                 status.Show();
             }
+
+            public override void SetText(int part, string text)
+            {
+                var status = (System.Windows.Forms.StatusStrip)NativeComponent;
+
+                if (part < status.Items.Count)
+                {
+                    status.Items[part].Text = text;
+                    return;
+                }
+
+                for (int m = status.Items.Count - 1, i = 0; i < m; i++)
+                    status.Items.Add(string.Empty);
+
+                status.Items.Add(text);
+            }
+
+            public override void SetParts(params int[] width)
+            {
+                var status = (System.Windows.Forms.StatusStrip)NativeComponent;
+
+                if (width.Length == 0)
+                {
+                    status.Items.Clear();
+                    return;
+                }
+
+                for (int m = status.Items.Count, i = 0; i < width.Length; i++)
+                {
+                    if (i >= m)
+                        status.Items.Add(string.Empty);
+                    status.Items[i].Width = width[i];
+                }
+           } 
+
+            public override void SetIcon(int part, Image icon)
+            {
+                var status = (System.Windows.Forms.StatusStrip)NativeComponent;
+
+                if (part < status.Items.Count)
+                    status.Items[part].Image = icon;
+            }
         }
 
         public new class WebBrowser : BaseGui.WebBrowser

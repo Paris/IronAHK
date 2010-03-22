@@ -249,6 +249,8 @@ namespace IronAHK.Rusty
             bool theme = true;
             bool toolwindow = false;
 
+            StatusBar statusBar;
+
             #endregion
 
             #region Accessors
@@ -406,6 +408,12 @@ namespace IronAHK.Rusty
             {
                 get { return toolwindow; }
                 set { toolwindow = value; }
+            }
+
+            public StatusBar StatusBar
+            {
+                get { return statusBar; }
+                set { statusBar = value; }
             }
 
             #endregion
@@ -1152,7 +1160,12 @@ namespace IronAHK.Rusty
             }
         }
 
-        public abstract class StatusBar : Text { }
+        public abstract class StatusBar : Text
+        {
+            public abstract void SetText(int part, string text);
+            public abstract void SetParts(params int[] width);
+            public abstract void SetIcon(int part, Image icon);
+        }
 
         public abstract class WebBrowser : Text { }
 

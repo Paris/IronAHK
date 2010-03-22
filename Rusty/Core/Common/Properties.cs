@@ -68,6 +68,18 @@ namespace IronAHK.Rusty
         [ThreadStatic]
         static string defaultGui;
 
+        static BaseGui.Window DefaultGui
+        {
+            get
+            {
+                if (guis == null)
+                    return null;
+
+                string key = defaultGui ?? "1";
+                return guis.ContainsKey(key) ? guis[key] : null;
+            }
+        }
+
         static NotifyIcon Tray;
 
         #endregion
