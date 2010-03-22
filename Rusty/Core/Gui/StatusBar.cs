@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 
 namespace IronAHK.Rusty
 {
@@ -12,10 +13,20 @@ namespace IronAHK.Rusty
         /// <param name="Filename"></param>
         /// <param name="IconNumber"></param>
         /// <param name="PartNumber"></param>
-        /// <returns></returns>
-        public static int SB_SetIcon(string Filename, int IconNumber, int PartNumber)
+        public static void SB_SetIcon(string Filename, int IconNumber, int PartNumber)
         {
-            throw new NotImplementedException();
+            PartNumber--;
+
+            if (PartNumber < 0 || PartNumber > 256)
+                return;
+
+            var gui = DefaultGui;
+
+            if (gui == null || gui.StatusBar == null)
+                return;
+
+            var icon = Image.FromFile(Filename);
+            gui.StatusBar.SetIcon(PartNumber, icon);
         }
 
         /// <summary>
@@ -24,7 +35,12 @@ namespace IronAHK.Rusty
         /// <param name="WidthN"></param>
         public static void SB_SetParts(int[] WidthN)
         {
-            throw new NotImplementedException();
+            var gui = DefaultGui;
+
+            if (gui == null || gui.StatusBar == null)
+                return;
+
+            gui.StatusBar.SetParts(WidthN);
         }
 
         /// <summary>
@@ -33,10 +49,19 @@ namespace IronAHK.Rusty
         /// <param name="NewText"></param>
         /// <param name="PartNumber"></param>
         /// <param name="Style"></param>
-        /// <returns></returns>
-        public static bool SB_SetText(string NewText, int PartNumber, int Style)
+        public static void SB_SetText(string NewText, int PartNumber, int Style)
         {
-            throw new NotImplementedException();
+            PartNumber--;
+
+            if (PartNumber < 0 || PartNumber > 256)
+                return;
+
+            var gui = DefaultGui;
+
+            if (gui == null || gui.StatusBar == null)
+                return;
+
+            gui.StatusBar.SetText(PartNumber, NewText);
         }
     }
 }

@@ -186,6 +186,7 @@ namespace IronAHK.Rusty
                                     status.Contents = Param4;
                                     GuiApplyStyles(status, Param3);
                                     guis[id].Add(status);
+                                    guis[id].StatusBar = status;
                                 }
                                 break;
 
