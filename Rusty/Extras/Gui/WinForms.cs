@@ -40,6 +40,7 @@ namespace IronAHK.Rusty
                 Font = form.Font;
                 Location = form.Location;
                 Size = form.Size;
+                Margin = new Point(form.Margin.Left, form.Margin.Top);
                 WindowColour = form.BackColor;
                 ControlColour = form.ForeColor;
                 form.StartPosition = FormStartPosition.Manual;
@@ -53,6 +54,7 @@ namespace IronAHK.Rusty
             public override void Add(BaseGui.Control control)
             {
                 form.Controls.Add((System.Windows.Forms.Control)control.NativeComponent);
+                control.Parent.Controls.Add(control);
                 control.Draw();
                 form.PerformLayout();
             }
@@ -291,6 +293,22 @@ namespace IronAHK.Rusty
         {
             if (!information.Size.IsEmpty && information.Size.Height == 0)
                 information.Size = new Size(information.Size.Width, (int)information.Parent.Font.GetHeight());
+
+            if (information.Location.IsEmpty)
+            {
+                int n = information.Parent.Controls.Count - 1;
+
+                if (n == 0)
+                    information.Location = information.Parent.Margin;
+                else
+                {
+                    var last = information.Parent.Controls[n - 1];
+                    var component = (System.Windows.Forms.Control)information.NativeComponent;
+                    var location = last.Location;
+                    location.Y += last.Size.Height + component.Padding.Bottom;
+                    information.Location = location;
+                }
+            }
 
             control.Text = information.Contents;
             control.Enabled = information.Enabled;
