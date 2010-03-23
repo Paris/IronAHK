@@ -541,23 +541,10 @@ namespace IronAHK.Rusty
                         switch (mode[0])
                         {
                             case 'x':
-                                if (int.TryParse(arg, out n))
-                                    control.Location = new Point(n, control.Location.Y);
-                                break;
-
                             case 'y':
-                                if (int.TryParse(arg, out n))
-                                    control.Location = new Point(control.Location.X, n);
-                                break;
-
                             case 'w':
-                                if (int.TryParse(arg, out n))
-                                    control.Size = new Size(n, control.Size.Height);
-                                break;
-
                             case 'h':
-                                if (int.TryParse(arg, out n))
-                                    control.Size = new Size(control.Size.Width, n);
+                                GuiControlMove(mode, control);
                                 break;
 
                             case 'r':
@@ -588,6 +575,105 @@ namespace IronAHK.Rusty
             }
 
             return string.Join(Keyword_Spaces[1].ToString(), excess).Trim();
+        }
+
+        static void GuiControlMove(string mode, BaseGui.Control control)
+        {
+            if (mode.Length < 2)
+                return;
+
+            bool alt = false, offset = false;
+            string arg;
+            int d;
+
+            switch (mode[0])
+            {
+                case 'x':
+                case 'X':
+                    {
+                        offset = true;
+                        int x = 0;
+
+                        switch (mode[1])
+                        {
+                            case 's':
+                            case 'S':
+                                // TODO: sectional positioning for gui controls
+                                break;
+
+                            case 'm':
+                            case 'M':
+                                x = alt ? control.Parent.Margin.Y : control.Parent.Margin.X;
+                                break;
+
+                            case '+':
+                                {
+                                    int n = control.Parent.Controls.Count - 2;
+
+                                    if (n < 0)
+                                        return;
+
+                                    var s = control.Parent.Controls[n].Location;
+                                    x = alt ? s.Y : s.X;
+                                }
+                                break;
+
+                            default:
+                                offset = false;
+                                break;
+                        }
+
+                        arg = mode.Substring(offset ? 2 : 1);
+
+                        if (!int.TryParse(arg, out d))
+                            return;
+
+                        d += x;
+
+                        if (alt)
+                            control.Location = new Point(control.Location.X, d);
+                        else
+                            control.Location = new Point(d, control.Location.Y);
+                    }
+                    break;
+
+                case 'y':
+                case 'Y':
+                    alt = true;
+                    goto case 'x';
+
+                case 'w':
+                case 'W':
+                    {
+                        offset = mode[1] == 'p' || mode[1] == 'P';
+                        arg = mode.Substring(offset ? 2 : 1);
+
+                        if (!int.TryParse(arg, out d))
+                            return;
+
+                        if (offset)
+                        {
+                            int n = control.Parent.Controls.Count - 2;
+                            
+                            if (n < 0)
+                                return;
+
+                            var s = control.Parent.Controls[n].Size;
+                            d += alt ? s.Height : s.Width;
+                        }
+
+                        if (alt)
+                            control.Size = new Size(control.Size.Width, d);
+                        else
+                            control.Size = new Size(d, control.Size.Height);
+                    }
+                    break;
+
+                case 'h':
+                case 'H':
+                    alt = true;
+                    goto case 'w';
+            }
         }
 
         /// <summary>
