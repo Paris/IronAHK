@@ -105,21 +105,22 @@ namespace IronAHK.Scripting
                     {
                         bool blockOpen = false;
                         CodeMethodInvokeExpression iterator;
-                        bool skip = false;
+                        bool skip = true;
                         bool checkBrace = true;
 
                         #region Loop types
                         if (parts.Length > 1)
                         {
-                            switch (parts[1].ToUpperInvariant())
+                            string[] sub = parts[1].Split(new[] { Multicast }, 2);
+                            sub = new[] { sub[0].Trim(), sub.Length > 1 ? sub[1].Trim() : string.Empty };
+
+                            switch (sub[0].ToUpperInvariant())
                             {
                                 case "READ":
-                                    skip = true;
                                     iterator = (CodeMethodInvokeExpression)InternalMethods.LoopRead;
                                     break;
 
                                 case "PARSE":
-                                    skip = true;
                                     checkBrace = false;
                                     iterator = (CodeMethodInvokeExpression)InternalMethods.LoopParse;
                                     break;
@@ -134,15 +135,22 @@ namespace IronAHK.Scripting
                                 case "HKCR":
                                 case "HKEY_CURRENT_CONFIG":
                                 case "HKCC":
-                                    skip = true;
                                     iterator = (CodeMethodInvokeExpression)InternalMethods.LoopRegistry;
+                                    break;
+
+                                case "EACH":
+                                    iterator = (CodeMethodInvokeExpression)InternalMethods.LoopEach;
                                     break;
 
                                 default:
                                     // TODO: file and normal loops
+                                    skip = false;
                                     iterator = (CodeMethodInvokeExpression)InternalMethods.Loop;
                                     break;
                             }
+
+                            if (skip)
+                                parts[1] = sub[1];
 
                             if (checkBrace)
                             {
@@ -157,21 +165,11 @@ namespace IronAHK.Scripting
                                 }
                             }
 
-                            if (parts.Length > 1)
-                            {
-                                string args = parts[1];
+                            if (skip && parts[1].Length == 0)
+                                throw new ParseException("Loop type must have an argument");
 
-                                if (skip)
-                                {
-                                    int z = args.IndexOf(Multicast);
-                                    if (z == -1)
-                                        throw new ParseException("Loop type must have an argument");
-                                    args = args.Substring(z);
-                                }
-
-                                foreach (string arg in SplitCommandParameters(args))
-                                    iterator.Parameters.Add(ParseCommandParameter(arg));
-                            }
+                            foreach (string arg in SplitCommandParameters(parts[1]))
+                                iterator.Parameters.Add(ParseCommandParameter(arg));
                         }
                         else
                         {

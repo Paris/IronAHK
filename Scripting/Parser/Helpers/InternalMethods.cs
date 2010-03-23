@@ -72,6 +72,11 @@ namespace IronAHK.Scripting
                 get { return new MethodReference(typeof(Core), "LoopRegistry"); }
             }
 
+            public static MethodReference LoopEach
+            {
+                get { return new MethodReference(typeof(Core), "LoopEach"); }
+            }
+
             #endregion
 
             #region Operators

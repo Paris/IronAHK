@@ -471,9 +471,9 @@ namespace IronAHK.Rusty
         #region Loops
 
         /// <summary>
-        /// Contains the contents of the current substring (field) from InputVar.
+        /// The current element of a loop.
         /// </summary>
-        public static string A_LoopField
+        public static object A_LoopField
         {
             get
             {
@@ -484,8 +484,52 @@ namespace IronAHK.Rusty
 
                 for (int i = stack.Length - 1; i > -1; i--)
                 {
-                    if (stack[i].type == LoopType.Parse)
-                        return stack[i].result;
+                    switch (stack[i].type)
+                    {
+                        case LoopType.Parse:
+                            return stack[i].result;
+
+                        case LoopType.Each:
+                            {
+                                if (!(stack[i].result is object[]))
+                                    return null;
+
+                                var pair = (object[])stack[i].result;
+                                return pair.Length > 0 ? pair[1] : null;
+                            }
+                    }
+                }
+
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// The current object key in an each-loop.
+        /// </summary>
+        public static object A_LoopKey
+        {
+            get
+            {
+                if (loops.Count == 0)
+                    return null;
+
+                var stack = loops.ToArray();
+
+                for (int i = stack.Length - 1; i > -1; i--)
+                {
+                    switch (stack[i].type)
+                    {
+
+                        case LoopType.Each:
+                            {
+                                if (!(stack[i].result is object[]))
+                                    return null;
+
+                                var pair = (object[])stack[i].result;
+                                return pair[0];
+                            }
+                    }
                 }
 
                 return null;
