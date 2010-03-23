@@ -76,7 +76,7 @@ namespace IronAHK.Scripting
                     return new CodePrimitiveExpression(line);
 
                 case "a_linefile":
-                    return new CodePrimitiveExpression(fileName);
+                    return new CodePrimitiveExpression(System.IO.Path.GetFullPath(fileName));
 
                 case "a_thisfunc":
                     return new CodePrimitiveExpression(Scope);
