@@ -1,6 +1,7 @@
 ﻿using System;
 using System.CodeDom;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Text;
@@ -10,6 +11,7 @@ namespace IronAHK.Scripting
     partial class Parser
     {
         List<CodeMethodInvokeExpression> invokes = new List<CodeMethodInvokeExpression>();
+        const string invokeCommand = "IsCommand";
 
         #region DOM
 
@@ -93,7 +95,10 @@ namespace IronAHK.Scripting
                 catch (AmbiguousMatchException) { continue; }
 
                 if (core != null)
+                {
+                    FixDirectionalParameters(core, invoke);
                     continue;
+                }
 
                 int z = name.IndexOf(LibSeperator);
 
@@ -116,6 +121,38 @@ namespace IronAHK.Scripting
             }
 
             invokes.Clear();
+        }
+
+        [Conditional("LEGACY")]
+        void FixDirectionalParameters(MethodInfo core, CodeMethodInvokeExpression invoke)
+        {
+            if (!(invoke.UserData.Contains(invokeCommand) && invoke.UserData[invokeCommand] is bool && (bool)invoke.UserData[invokeCommand]))
+                return;
+
+            var param = core.GetParameters();
+            int c = Math.Min(invoke.Parameters.Count, param.Length);
+
+            for (int i = 0; i < c; i++)
+            {
+                if (!(param[i].IsOut || param[i].ParameterType.IsByRef))
+                    continue;
+
+                if (invoke.Parameters[i] is CodeExpression)
+                {
+                    invoke.Parameters[i] = VarId((CodeExpression)invoke.Parameters[i]);
+                    continue;
+                }
+
+                if (!(invoke.Parameters[i] is CodePrimitiveExpression))
+                    continue;
+
+                object value = ((CodePrimitiveExpression)invoke.Parameters[i]).Value;
+
+                if (value is string)
+                    invoke.Parameters[i] = VarId((string)value);
+                else
+                    invoke.Parameters[i] = VarId((CodeExpression)value);
+            }
         }
 
         bool IsLocalMethodReference(string name)
