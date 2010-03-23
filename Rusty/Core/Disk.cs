@@ -764,7 +764,12 @@ namespace IronAHK.Rusty
         public static void SplitPath(string InputVar, out string OutFileName, out string OutDir, out string OutExtension, out string OutNameNoExt, out string OutDrive)
         {
             try { InputVar = Path.GetFullPath(InputVar); }
-            catch (Exception) { error = 1; }
+            catch (Exception)
+            {
+                error = 1;
+                OutFileName = OutDir = OutExtension = OutNameNoExt = OutDrive = null;
+                return;
+            }
 
             OutFileName = Path.GetFileName(InputVar);
             OutDir = Path.GetDirectoryName(InputVar);
