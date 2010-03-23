@@ -12,13 +12,21 @@ namespace IronAHK.Rusty
 
         static Stack<LoopInfo> loops = new Stack<LoopInfo>();
 
-        enum LoopType { Normal, Registry, Directory, Parse, File }
+        enum LoopType
+        {
+            Normal,
+            Registry,
+            Directory,
+            Parse,
+            File,
+            Each,
+        }
 
         class LoopInfo
         {
             public int index = -1;
             public LoopType type = LoopType.Normal;
-            public string result = null;
+            public object result;
         }
 
         /// <summary>
@@ -254,6 +262,48 @@ namespace IronAHK.Rusty
             yield break;
 
             // TODO: registry loop
+        }
+
+        /// <summary>
+        /// Retrieves each element of an array with its key if any.
+        /// </summary>
+        /// <param name="array">An array or object.</param>
+        /// <returns>The current element.</returns>
+        public static IEnumerable LoopEach(object array)
+        {
+            if (array == null)
+                yield break;
+
+            var info = new LoopInfo { type = LoopType.Each };
+            loops.Push(info);
+
+            var type = array.GetType();
+
+            if (typeof(IDictionary).IsAssignableFrom(type))
+            {
+                var dictionary = (IDictionary)array;
+
+                foreach (var key in dictionary.Keys)
+                {
+                    info.result = new[] { key, dictionary[key] };
+                    info.index++;
+                    yield return info.result;
+                }
+            }
+            else if (typeof(IEnumerable).IsAssignableFrom(type))
+            {
+                var enumerator = ((IEnumerable)array).GetEnumerator();
+                enumerator.MoveNext();
+
+                while (enumerator.MoveNext())
+                {
+                    info.result = new[] { null, enumerator.Current };
+                    info.index++;
+                    yield return info.result;
+                }
+            }
+
+            loops.Pop();
         }
     }
 }
