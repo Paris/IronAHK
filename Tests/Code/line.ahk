@@ -2,7 +2,7 @@
 If A_LineNumber != 2
 	FileAppend, fail, *
 
-SplitPath, %A_LineFile%, %name% ; this is invalid syntax
+SplitPath, %A_LineFile%, name
 If name != line.ahk
 	FileAppend, fail, *
 
