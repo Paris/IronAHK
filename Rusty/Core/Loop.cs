@@ -293,7 +293,6 @@ namespace IronAHK.Rusty
             else if (typeof(IEnumerable).IsAssignableFrom(type))
             {
                 var enumerator = ((IEnumerable)array).GetEnumerator();
-                enumerator.MoveNext();
 
                 while (enumerator.MoveNext())
                 {
