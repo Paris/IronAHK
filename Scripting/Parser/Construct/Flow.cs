@@ -220,9 +220,9 @@ namespace IronAHK.Scripting
 
                 case FlowBreak:
                     int b = 1;
-                    parts[1] = StripCommentSingle(parts[1]);
                     if (parts.Length > 1)
                     {
+                        parts[1] = StripCommentSingle(parts[1]);
                         if (!int.TryParse(parts[1], out b) || b < 1)
                             throw new ParseException("Break parameter must be a static integer greater than zero.");
                     }
@@ -233,9 +233,9 @@ namespace IronAHK.Scripting
 
                 case FlowContinue:
                     int c = 1;
-                    parts[1] = StripCommentSingle(parts[1]);
                     if (parts.Length > 1)
                     {
+                        parts[1] = StripCommentSingle(parts[1]);
                         if (!int.TryParse(parts[1], out c) || c < 1)
                             throw new ParseException("Continue parameter must be a static integer greater than zero.");
                     }
