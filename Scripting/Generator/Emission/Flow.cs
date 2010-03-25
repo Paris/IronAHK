@@ -36,13 +36,15 @@ namespace IronAHK.Scripting
 
                 writer.Write(Parser.FlowElse);
 
-                if (options.ElseOnClosing)
-                    writer.Write(Parser.SingleSpace);
-                else
-                    WriteSpace();
-
                 if (cond.FalseStatements.Count > 1)
+                {
+                    if (options.ElseOnClosing)
+                        writer.Write(Parser.SingleSpace);
+                    else
+                        WriteSpace();
+
                     writer.Write(Parser.BlockOpen);
+                }
 
                 depth++;
                 EmitStatements(cond.FalseStatements);
