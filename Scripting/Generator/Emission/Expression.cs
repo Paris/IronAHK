@@ -392,7 +392,8 @@ namespace IronAHK.Scripting
 
         bool IsInternalType(CodeTypeReferenceExpression type)
         {
-            return type.Type.BaseType == typeof(Rusty.Core).FullName;
+            string name = type.Type.BaseType;
+            return name == typeof(Rusty.Core).FullName || name == typeof(Script).FullName;
         }
 
         #endregion
