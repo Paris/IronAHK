@@ -219,17 +219,27 @@ namespace IronAHK.Scripting
                     }
 
                 case FlowBreak:
+                    int b = 1;
+                    parts[1] = StripCommentSingle(parts[1]);
                     if (parts.Length > 1)
-                        throw new ParseException(ExFlowArgNotReq);
-                    string exit = PeekLoopLabel(true);
+                    {
+                        if (!int.TryParse(parts[1], out b) || b < 1)
+                            throw new ParseException("Break parameter must be a static integer greater than zero.");
+                    }
+                    string exit = PeekLoopLabel(true, b);
                     if (exit == null)
                         throw new ParseException("Cannot break outside a loop");
                     return new CodeStatement[] { new CodeGotoStatement(exit) };
 
                 case FlowContinue:
+                    int c = 1;
+                    parts[1] = StripCommentSingle(parts[1]);
                     if (parts.Length > 1)
-                        throw new ParseException(ExFlowArgNotReq);
-                    string cont = PeekLoopLabel(false);
+                    {
+                        if (!int.TryParse(parts[1], out c) || c < 1)
+                            throw new ParseException("Continue parameter must be a static integer greater than zero.");
+                    }
+                    string cont = PeekLoopLabel(false, c);
                     if (cont == null)
                         throw new ParseException("Cannot continue outside a loop");
                     return new CodeStatement[] { new CodeGotoStatement(cont) };
