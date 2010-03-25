@@ -195,6 +195,7 @@ namespace IronAHK.Scripting
                 case NotTxt:
                 case OrTxt:
                 case AndTxt:
+                case IsTxt:
                     return true;
 
                 default:
