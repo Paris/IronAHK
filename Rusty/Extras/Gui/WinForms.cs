@@ -37,6 +37,7 @@ namespace IronAHK.Rusty
             public Window()
             {
                 form = new Form();
+                form.SuspendLayout();
                 Font = form.Font;
                 Location = form.Location;
                 Size = form.Size;
@@ -56,7 +57,6 @@ namespace IronAHK.Rusty
                 form.Controls.Add((System.Windows.Forms.Control)control.NativeComponent);
                 control.Parent.Controls.Add(control);
                 control.Draw();
-                form.PerformLayout();
             }
 
             public override void Draw(string title)
@@ -88,6 +88,8 @@ namespace IronAHK.Rusty
 
                 if (Theme)
                     Application.EnableVisualStyles();
+
+                form.ResumeLayout(true);
             }
 
             public override void Show()
