@@ -224,7 +224,7 @@ namespace IronAHK.Scripting
                             return typeof(IDictionary).IsAssignableFrom(type);
 
                         case Array:
-                            return typeof(IEnumerable).IsAssignableFrom(type);
+                            return type.IsArray;
                     }
                     string var = ForceString(subject);
                     switch (test)
