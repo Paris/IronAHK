@@ -94,6 +94,8 @@ namespace IronAHK.Scripting
                 return string.Empty;
             else if (input is string)
                 return (string)input;
+            else if (input is char)
+                return ((char)input).ToString();
             else if (input is bool)
                 return (bool)input ? "1" : "0";
             else if (IsNumeric(input))
