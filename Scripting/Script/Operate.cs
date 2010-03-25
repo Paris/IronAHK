@@ -48,6 +48,8 @@ namespace IronAHK.Scripting
 
             TernaryA,
             TernaryB,
+
+            Is,
         };
 
         public static object Operate(Operator op, object left, object right)
@@ -121,6 +123,9 @@ namespace IronAHK.Scripting
                 case Operator.ValueInequality:
                     MatchTypes(ref left, ref right);
                     return left == null ? right != null : !left.Equals(right);
+
+                case Operator.Is:
+                    return IfLegacy(left, "is", ForceString(right));
 
                 default:
                     throw new ArgumentOutOfRangeException();

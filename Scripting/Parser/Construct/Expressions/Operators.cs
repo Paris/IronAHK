@@ -214,6 +214,9 @@ namespace IronAHK.Scripting
 
                         case OrTxt:
                             return Script.Operator.BooleanOr;
+
+                        case IsTxt:
+                            return Script.Operator.Is;
                     }
                     throw new ArgumentOutOfRangeException();
             }
@@ -269,6 +272,7 @@ namespace IronAHK.Scripting
                 case Script.Operator.LessThan:
                 case Script.Operator.GreaterThanOrEqual:
                 case Script.Operator.LessThanOrEqual:
+                case Script.Operator.Is:
                     return -8;
 
                 case Script.Operator.ValueEquality:
