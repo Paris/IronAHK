@@ -9,7 +9,7 @@ namespace IronAHK.Scripting
         Stack<CodeBlock> singleLoops = new Stack<CodeBlock>();
         Stack<CodeStatementCollection> elses = new Stack<CodeStatementCollection>();
 
-        string PeekLoopLabel(bool exit)
+        string PeekLoopLabel(bool exit, int n)
         {
             if (blocks.Count == 0)
                 return null;
@@ -19,6 +19,9 @@ namespace IronAHK.Scripting
             while (parent != null)
             {
                 if (parent.Kind == CodeBlock.BlockKind.Loop)
+                    n--;
+
+                if (n < 1)
                     return exit ? parent.ExitLabel : parent.EndLabel;
 
                 parent = parent.Parent;
