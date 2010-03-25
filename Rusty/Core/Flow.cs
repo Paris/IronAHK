@@ -25,23 +25,22 @@ namespace IronAHK.Rusty
         }
 
         /// <summary>
-        /// Exits the current thread.
+        /// Exits the current thread or the entire application if non-persistent.
         /// </summary>
-        /// <param name="ExitCode">An integer that is returned to its caller when the program exits.</param>
+        /// <param name="ExitCode">An integer that is returned to the caller.</param>
         public static void Exit(int ExitCode)
         {
             Environment.ExitCode = ExitCode;
-            Application.ExitThread();
+            System.Threading.Thread.CurrentThread.Abort();
         }
 
         /// <summary>
-        /// Terminates the script unconditionally.
+        /// Terminates the application unconditionally.
         /// </summary>
-        /// <param name="ExitCode">An integer that is returned to its caller when the program exits.</param>
+        /// <param name="ExitCode">An integer that is returned to the caller.</param>
         public static void ExitApp(int ExitCode)
         {
-            Environment.ExitCode = ExitCode;
-            Application.Exit();
+            Environment.Exit(ExitCode);
         }
 
         /// <summary>
