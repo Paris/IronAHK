@@ -7,6 +7,7 @@ namespace IronAHK.Scripting
         void EmitConditionStatement(CodeConditionStatement cond)
         {
             writer.Write(Parser.FlowIf);
+            writer.Write(Parser.SingleSpace);
             writer.Write(Parser.ParenOpen);
             EmitExpression(cond.Condition);
             writer.Write(Parser.ParenClose);
