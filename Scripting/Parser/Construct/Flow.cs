@@ -392,20 +392,23 @@ namespace IronAHK.Scripting
             }
 
             var invoke = (CodeMethodInvokeExpression)InternalMethods.IfLegacy;
-            invoke.Parameters.Add(new CodePrimitiveExpression(parts[0]));
+            invoke.Parameters.Add(VarId(parts[0]));
+            parts[1] = parts[1].ToLowerInvariant();
 
-            switch (parts[1].ToLowerInvariant())
+            switch (parts[1])
             {
                 case BetweenTxt:
                 case InTxt:
                 case ContainsTxt:
                 case IsTxt:
-                    invoke.Parameters.Add(ParseCommandParameter(parts[2]));
+                    invoke.Parameters.Add(new CodePrimitiveExpression(parts[1]));
                     break;
 
                 default:
                     throw new ArgumentOutOfRangeException();
             }
+
+            invoke.Parameters.Add(ParseCommandParameter(parts[2]));
 
             if (not)
             {

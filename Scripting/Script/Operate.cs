@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 
 namespace IronAHK.Scripting
 {
@@ -180,9 +181,148 @@ namespace IronAHK.Scripting
                 return result != null;
         }
 
-        public static bool IfLegacy(object var, string test)
+        public static bool IfLegacy(object subject, string op, string test)
         {
             // TODO: if [not] {between,in,contains,is}
+
+            const string Between = "between";
+            const string In = "in";
+            const string Contains = "contains";
+            const string Is = "is";
+
+            const string Integer = "integer";
+            const string Float = "float";
+            const string Number = "number";
+            const string Digit = "digit";
+            const string Xdigit = "xdigit";
+            const string Alpha = "alpha";
+            const string Upper = "upper";
+            const string Lower = "lower";
+            const string Alnum = "alnum";
+            const string Space = "space";
+            const string Time = "time";
+            const string Object = "object";
+            const string Array = "array";
+
+            switch (op)
+            {
+                case Parser.BetweenTxt:
+                    break;
+
+                case Parser.InTxt:
+                    break;
+
+                case Parser.ContainsTxt:
+                    break;
+
+                case Parser.IsTxt:
+                    test = test.ToLowerInvariant();
+                    var type = subject.GetType();
+                    switch (test)
+                    {
+                        case Object:
+                            return typeof(IDictionary).IsAssignableFrom(type);
+
+                        case Array:
+                            return typeof(IEnumerable).IsAssignableFrom(type);
+                    }
+                    string var = ForceString(subject);
+                    switch (test)
+                    {
+                        case Integer:
+                        case Number:
+                            var = var.Trim().TrimStart(new[] { '+', '-' });
+                            goto case Xdigit;
+
+                        case Xdigit:
+                            if (var.Length > 3 && var[0] == '0' && (var[1] == 'x' || var[1] == 'X'))
+                                var = var.Substring(2);
+                            break;
+                    }
+                    switch (test)
+                    {
+                        case Float:
+                            if (!var.Contains("."))
+                                return false;
+                            goto case Number;
+
+                        case Number:
+                            {
+                                bool dot = false;
+
+                                foreach (char sym in var)
+                                {
+                                    if (sym == '.')
+                                    {
+                                        if (dot)
+                                            return false;
+                                        dot = true;
+                                    }
+                                    else if (!char.IsDigit(sym))
+                                        return false;
+                                }
+
+                                return true;
+                            }
+                            break;
+
+                        case Digit:
+                            foreach (char sym in var)
+                                if (!char.IsDigit(sym))
+                                    return false;
+                            return true;
+
+                        case Integer:
+                        case Xdigit:
+                            {
+                                foreach (char sym in var)
+                                    if (!(char.IsDigit(sym) || (sym > 'a' - 1 && sym < 'f' + 1) || (sym > 'A' - 1 && sym < 'F' + 1)))
+                                        return false;
+                                return true;
+                            }
+                            break;
+
+                        case Alpha:
+                            foreach (char sym in var)
+                                if (!char.IsLetter(sym))
+                                    return false;
+                            return true;
+
+                        case Upper:
+                            foreach (char sym in var)
+                                if (!char.IsUpper(sym))
+                                    return false;
+                            return true;
+
+                        case Lower:
+                            foreach (char sym in var)
+                                if (!char.IsLower(sym))
+                                    return false;
+                            return true;
+
+                        case Alnum:
+                            foreach (char sym in var)
+                                if (!char.IsLetterOrDigit(sym))
+                                    return false;
+                            return true;
+
+                        case Space:
+                            foreach (char sym in var)
+                                if (!char.IsWhiteSpace(sym))
+                                    return false;
+                            return true;
+
+                        case Time:
+                            if (!IsNumeric(var))
+                                return false;
+                            return ForceLong(var) < 99991231125959;
+
+                        default:
+                            return false;
+                    }
+                    break;
+            }
+
             return true;
         }
 
