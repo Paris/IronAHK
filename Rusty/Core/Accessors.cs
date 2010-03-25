@@ -482,7 +482,7 @@ namespace IronAHK.Rusty
 
                 var stack = loops.ToArray();
 
-                for (int i = stack.Length - 1; i > -1; i--)
+                for (int i = 0; i < stack.Length; i++)
                 {
                     switch (stack[i].type)
                     {
@@ -516,7 +516,7 @@ namespace IronAHK.Rusty
 
                 var stack = loops.ToArray();
 
-                for (int i = stack.Length - 1; i > -1; i--)
+                for (int i = 0; i < stack.Length; i++)
                 {
                     switch (stack[i].type)
                     {
