@@ -217,8 +217,16 @@ namespace IronAHK.Scripting
                                         goto case BlockOpen;
                                     }
                                     j--;
-                                    if (j < code.Length && !IsSpace(code[j]))
-                                        throw new ParseException(ExUnexpected);
+                                    if (j < code.Length)
+                                    {
+                                        if (code[j] == BlockClose)
+                                        {
+                                            json = true;
+                                            goto case BlockClose;
+                                        }
+                                        else if (!IsSpace(code[j]))
+                                            throw new ParseException(ExUnexpected);
+                                    }
                                     return list;
 
                                 case BlockClose:
