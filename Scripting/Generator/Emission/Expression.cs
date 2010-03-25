@@ -59,6 +59,16 @@ namespace IronAHK.Scripting
                     EmitExpression(invoke.Parameters[0]);
                     return;
                 }
+                else if (name == Parser.InternalMethods.IfLegacy.MethodName && invoke.Parameters.Count == 3 &&
+                    invoke.Parameters[1] is CodePrimitiveExpression && (((CodePrimitiveExpression)invoke.Parameters[1]).Value as string) == Parser.IsTxt)
+                {
+                    EmitExpression(invoke.Parameters[0]);
+                    writer.Write(Parser.SingleSpace);
+                    writer.Write(Parser.IsTxt);
+                    writer.Write(Parser.SingleSpace);
+                    EmitExpression(invoke.Parameters[2]);
+                    return;
+                }
                 else if (name == Parser.InternalMethods.Operate.MethodName && invoke.Parameters.Count == 3)
                 {
                     EmitExpression(invoke.Parameters[1]);
@@ -107,7 +117,7 @@ namespace IronAHK.Scripting
                     for (int i = 0; i < parts.Length; i++)
                         parts[i] = ((CodeArrayCreateExpression)invoke.Parameters[i]).Initializers;
 
-                    bool first =true;
+                    bool first = true;
 
                     for (int i = 0; i < parts[0].Count; i++)
                     {
