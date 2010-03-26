@@ -194,6 +194,8 @@ namespace IronAHK.Scripting
             const string In = "in";
             const string Contains = "contains";
             const string Is = "is";
+            const char Delimiter = ',';
+            const string And = "and";
 
             const string Integer = "integer";
             const string Float = "float";
@@ -209,18 +211,40 @@ namespace IronAHK.Scripting
             const string Object = "object";
             const string Array = "array";
 
+            string var = ForceString(subject);
+
             switch (op)
             {
-                case Parser.BetweenTxt:
-                    break;
+                case Between:
+                    {
+                        int z = var.IndexOf(And, StringComparison.OrdinalIgnoreCase);
 
-                case Parser.InTxt:
-                    break;
+                        if (z == -1)
+                            z = var.Length;
 
-                case Parser.ContainsTxt:
-                    break;
+                        decimal low = decimal.MinValue, high = int.MaxValue;
 
-                case Parser.IsTxt:
+                        if (decimal.TryParse(var.Substring(0, z), out low) && decimal.TryParse(var.Substring(z + And.Length), out high))
+                        {
+                            decimal d = ForceDecimal(subject);
+                            return d >= low && d <= high;
+                        }
+                    }
+                    return false;
+
+                case In:
+                    foreach (string sub in test.Split(Delimiter))
+                        if (var.Equals(sub, StringComparison.OrdinalIgnoreCase))
+                            return true;
+                    return false;
+
+                case Contains:
+                    foreach (string sub in test.Split(Delimiter))
+                        if (var.IndexOf(sub, StringComparison.OrdinalIgnoreCase) != -1)
+                            return true;
+                    return false;
+
+                case Is:
                     test = test.ToLowerInvariant();
                     var type = subject.GetType();
                     switch (test)
@@ -231,7 +255,6 @@ namespace IronAHK.Scripting
                         case Array:
                             return type.IsArray;
                     }
-                    string var = ForceString(subject);
                     switch (test)
                     {
                         case Integer:
@@ -269,7 +292,6 @@ namespace IronAHK.Scripting
 
                                 return true;
                             }
-                            break;
 
                         case Digit:
                             foreach (char sym in var)
@@ -285,7 +307,6 @@ namespace IronAHK.Scripting
                                         return false;
                                 return true;
                             }
-                            break;
 
                         case Alpha:
                             foreach (char sym in var)
@@ -325,7 +346,6 @@ namespace IronAHK.Scripting
                         default:
                             return false;
                     }
-                    break;
             }
 
             return true;
