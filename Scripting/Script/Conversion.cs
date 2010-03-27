@@ -123,6 +123,12 @@ namespace IronAHK.Scripting
                     buffer.Append(Parser.StringBound);
                     buffer.Append(Parser.AssignPre);
 
+                    if (dictionary[key] == null)
+                    {
+                        buffer.Append(Parser.NullTxt);
+                        continue;
+                    }
+
                     var subtype = dictionary[key].GetType();
                     bool obj = subtype.IsArray || typeof(IDictionary).IsAssignableFrom(subtype);
 

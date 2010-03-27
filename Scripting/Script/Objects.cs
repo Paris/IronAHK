@@ -154,7 +154,12 @@ namespace IronAHK.Scripting
                 var dictionary = (IDictionary)item;
 
                 if (dictionary.Contains(name))
-                    dictionary[name] = value;
+                {
+                    if (value == null)
+                        dictionary.Remove(name);
+                    else
+                        dictionary[name] = value;
+                }
                 else
                     dictionary.Add(name, value);
             }
