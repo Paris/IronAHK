@@ -246,14 +246,17 @@ namespace IronAHK.Scripting
 
                 case Is:
                     test = test.ToLowerInvariant();
-                    var type = subject.GetType();
-                    switch (test)
+                    if (subject != null)
                     {
-                        case Object:
-                            return typeof(IDictionary).IsAssignableFrom(type);
+                        var type = subject.GetType();
+                        switch (test)
+                        {
+                            case Object:
+                                return typeof(IDictionary).IsAssignableFrom(type);
 
-                        case Array:
-                            return type.IsArray;
+                            case Array:
+                                return type.IsArray;
+                        }
                     }
                     switch (test)
                     {
