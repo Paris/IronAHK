@@ -206,6 +206,56 @@ namespace IronAHK.Rusty
                                 break;
 
                             case Keyword_Progress:
+                                {
+                                    var progress = guis[id].CreateProgress();
+                                    progress.Contents = Param4;
+                                    string opts = GuiApplyStyles(progress, Param3);
+
+                                    foreach (string opt in ParseOptions(opts))
+                                    {
+                                        bool on = opt[0] != '-';
+                                        string mode = opt.Substring(!on || opt[0] == '+' ? 1 : 0).ToLowerInvariant();
+
+                                        switch (mode)
+                                        {
+                                            case Keyword_Smooth: progress.Smooth = on; break;
+                                            case Keyword_Vertical: progress.Vertical = on; break;
+
+                                            default:
+                                                if (mode.StartsWith(Keyword_Range))
+                                                {
+                                                    mode = mode.Substring(Keyword_Range.Length);
+                                                    int z = mode.IndexOf('-');
+                                                    string a = mode, b;
+
+                                                    if (z == -1)
+                                                        b = string.Empty;
+                                                    else
+                                                    {
+                                                        a = mode.Substring(0, z);
+                                                        z++;
+                                                        b = z == mode.Length ? string.Empty : mode.Substring(z);
+                                                    }
+
+                                                    int x, y;
+
+                                                    if (int.TryParse(a, out x) && int.TryParse(b, out y))
+                                                    {
+                                                        progress.RangeMinimum = x;
+                                                        progress.RangeMaximum = y;
+                                                    }
+                                                }
+                                                else if (mode.StartsWith(Keyword_Background))
+                                                {
+                                                    mode = mode.Substring(Keyword_Background.Length);
+                                                    progress.BackgroundColor = ParseColor(mode);
+                                                }
+                                                break;
+                                        }
+                                    }
+
+                                    guis[id].Add(progress);
+                                }
                                 break;
 
                             case Keyword_GroupBox:

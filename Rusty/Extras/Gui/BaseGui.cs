@@ -1118,6 +1118,7 @@ namespace IronAHK.Rusty
 
         public abstract class Progress : Control
         {
+            Color back;
             int rangeMin = 0, rangeMax = 100;
             bool smooth = true;
             bool vertical = false;
@@ -1144,6 +1145,12 @@ namespace IronAHK.Rusty
             {
                 get { return vertical; }
                 set { vertical = value; }
+            }
+
+            public Color BackgroundColor
+            {
+                get { return back; }
+                set { back = value; }
             }
         }
 

@@ -529,9 +529,25 @@ namespace IronAHK.Rusty
 
         public new class Progress : BaseGui.Progress
         {
+            public Progress()
+            {
+                NativeComponent = new ProgressBar();
+            }
+
             public override void Draw()
             {
-                throw new NotImplementedException();
+                var progress = (ProgressBar)NativeComponent;
+                ApplyStyles(progress, this);
+                if (Size.IsEmpty)
+                    progress.Size = new Size((int)(progress.Parent.Font.Size * 15), (int)(progress.Parent.Font.Size * 2));
+                progress.BackColor = BackgroundColor;
+                progress.Minimum = RangeMinimum;
+                progress.Maximum = RangeMaximum;
+                int n;
+                if (int.TryParse(Contents, out n))
+                    progress.Value = n;
+                progress.AutoSize = Size.IsEmpty;
+                progress.Show();
             }
         }
 
