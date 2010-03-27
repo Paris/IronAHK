@@ -314,6 +314,7 @@ namespace IronAHK.Rusty
         const char Keyword_HotkeyIgnoreModifiers = '*';
         const char Keyword_HotkeyPassThrough = '~';
         const char Keyword_HotkeyCombination = '&';
+        const char Keyword_HotkeyNoRecurse = '$';
 
         const char Keyword_HotstringAuto = '*';
         const char Keyword_HotstringNested = '?';

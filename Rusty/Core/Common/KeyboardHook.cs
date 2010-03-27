@@ -165,6 +165,8 @@ namespace IronAHK.Rusty
                         case Keyword_HotkeyIgnoreModifiers: options |= Options.IgnoreModifiers; break;
                         case Keyword_HotkeyPassThrough: options |= Options.PassThrough; break;
 
+                        case Keyword_HotkeyNoRecurse: continue;
+
                         default:
                             if (i > 0)
                                 sequence = sequence.Substring(i);
