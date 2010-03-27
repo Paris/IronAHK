@@ -122,6 +122,7 @@ namespace IronAHK.Rusty
             finally { }
 
             string id = KeyName;
+            key.Name = id;
 
             if (keyCondition != null)
                 id += "_" + keyCondition.GetHashCode().ToString("X");
@@ -227,7 +228,7 @@ namespace IronAHK.Rusty
             }
 
             var options = HotstringDefinition.ParseOptions(Options);
-            var key = new HotstringDefinition(Sequence, proc) { Enabled = true, EnabledOptions = options };
+            var key = new HotstringDefinition(Sequence, proc) { Name = Sequence, Enabled = true, EnabledOptions = options };
             hotstrings.Add(Sequence, key);
             keyboardHook.Add(key);
 
