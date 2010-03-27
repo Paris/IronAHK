@@ -304,6 +304,7 @@ namespace IronAHK.Rusty
         const string Keyword_Hotkey = "hotkey";
         const string Keyword_Progress = "progress";
         const string Keyword_WebBrowser = "webbrowser";
+        const string Keyword_WantTab = "wanttab";
 
         const char Keyword_ModifierWin = '#';
         const char Keyword_ModifierAlt = '!';

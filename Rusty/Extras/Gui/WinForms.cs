@@ -342,9 +342,30 @@ namespace IronAHK.Rusty
 
         public new class Edit : BaseGui.Edit
         {
+            public Edit()
+            {
+                NativeComponent = new TextBox();
+            }
+
             public override void Draw()
             {
-                throw new NotImplementedException();
+                var edit = (TextBox)NativeComponent;
+                ApplyStyles(edit, this);
+                if (Size.IsEmpty)
+                {
+                    float w = 5 + edit.CreateGraphics().MeasureString(Contents, edit.Font).Width;
+                    edit.Size = new Size((int)w, edit.Size.Height);
+                }
+                edit.MaxLength = Limit < 0 ? int.MaxValue : Limit;
+                edit.CharacterCasing = Lowercase ? CharacterCasing.Lower : Uppercase ? CharacterCasing.Upper : CharacterCasing.Normal;
+                edit.Multiline = Multi;
+                if (Password)
+                    edit.PasswordChar = '●';
+                edit.ReadOnly = ReadOnly;
+                edit.AcceptsReturn = WantReturn;
+                edit.WordWrap = Wrap;
+                edit.AcceptsTab = WantTab;
+                edit.Show();
             }
         }
 
