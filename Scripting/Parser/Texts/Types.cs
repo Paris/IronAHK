@@ -82,6 +82,20 @@ namespace IronAHK.Scripting
             if (string.IsNullOrEmpty(code))
                 return true;
 
+            switch (code.ToLowerInvariant())
+            {
+                case TrueTxt:
+                    result = true;
+                    return true;
+
+                case FalseTxt:
+                    result = false;
+                    return true;
+
+                case NullTxt:
+                    return true;
+            }
+
             // Mono incorrectly determines "." as a numeric value
             if (code.Length == 1 && code[0] == Concatenate)
                 return false;
