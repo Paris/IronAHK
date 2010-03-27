@@ -580,6 +580,7 @@ namespace IronAHK.Rusty
             int limit = -1;
             bool lowercase = false;
             bool multi = false;
+            bool number = false;
             bool password = false;
             int tabstops = -1;
             bool uppercase = false;
@@ -593,7 +594,7 @@ namespace IronAHK.Rusty
                 set { limit = value; }
             }
 
-            public bool LowerCase
+            public bool Lowercase
             {
                 get { return lowercase; }
                 set { lowercase = value; }
@@ -603,6 +604,12 @@ namespace IronAHK.Rusty
             {
                 get { return multi; }
                 set { multi = value; }
+            }
+
+            public bool Number
+            {
+                get { return number; }
+                set { number = value; }
             }
 
             public bool Password

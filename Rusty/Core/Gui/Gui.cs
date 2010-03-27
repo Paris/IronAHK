@@ -44,6 +44,46 @@ namespace IronAHK.Rusty
                                 break;
 
                             case Keyword_Edit:
+                                {
+                                    var edit = guis[id].CreateEdit();
+                                    edit.Contents = Param4;
+                                    string opts = GuiApplyStyles(edit, Param3);
+
+                                    foreach (string opt in ParseOptions(opts))
+                                    {
+                                        bool on = opt[0] != '-';
+                                        string mode = opt.Substring(!on || opt[0] == '+' ? 1 : 0).ToLowerInvariant();
+
+                                        switch (mode)
+                                        {
+                                            case Keyword_Limit:
+                                                if (!on)
+                                                    edit.Limit = int.MaxValue;
+                                                break;
+
+                                            case Keyword_Lowercase: edit.Lowercase = on; break;
+                                            case Keyword_Multi: edit.Multi = on; break;
+                                            case Keyword_Number: edit.Number = on; break;
+                                            case Keyword_Password: edit.Password = on; break;
+                                            case Keyword_Readonly: edit.ReadOnly = on; break;
+                                            case Keyword_Uppercase: edit.Uppercase = on; break;
+                                            case Keyword_WantCtrlA: edit.WantCtrlA = on; break;
+                                            case Keyword_WantReturn: edit.WantReturn = on; break;
+                                            case Keyword_WantTab: edit.WantTab = on; break;
+                                            case Keyword_Wrap: edit.Wrap = on; break;
+
+                                            default:
+                                                int n;
+                                                if (mode.StartsWith(Keyword_Limit) && int.TryParse(mode.Substring(Keyword_Limit.Length), out n))
+                                                    edit.Limit = n;
+                                                else if (mode[0] == 't' && int.TryParse(mode.Substring(1), out n))
+                                                        edit.TabStops = n;
+                                                break;
+                                        }
+                                    }
+
+                                    guis[id].Add(edit);
+                                }
                                 break;
 
                             case Keyword_UpDown:
