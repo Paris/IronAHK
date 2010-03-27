@@ -59,6 +59,7 @@ namespace IronAHK.Rusty
             GenericFunction proc;
             GenericFunction precondition;
             bool enabled;
+            string name;
 
             [Flags]
             public enum Options { None = 0, IgnoreModifiers = 1, PassThrough = 2, Up = 4 }
@@ -107,6 +108,12 @@ namespace IronAHK.Rusty
             {
                 get { return enabled; }
                 set { enabled = value; }
+            }
+
+            public string Name
+            {
+                get { return name; }
+                set { name = value; }
             }
 
             #endregion
@@ -206,6 +213,11 @@ namespace IronAHK.Rusty
                 object value = Enum.Parse(typeof(Keys), name, true);
                 return value == null ? Keys.None : (Keys)value;
             }
+
+            public override string ToString()
+            {
+                return name;
+            }
         }
 
         internal class HotstringDefinition
@@ -215,6 +227,7 @@ namespace IronAHK.Rusty
             Options options;
             GenericFunction proc;
             bool enabled;
+            string name;
 
             const string backspace = "{BS}";
 
@@ -281,6 +294,12 @@ namespace IronAHK.Rusty
                 set { enabled = value; }
             }
 
+            public string Name
+            {
+                get { return name; }
+                set { name = value; }
+            }
+
             public static Options ParseOptions(string mode)
             {
                 var options = Options.Backspace;
@@ -316,6 +335,11 @@ namespace IronAHK.Rusty
 
                 return options;
             }
+
+            public override string ToString()
+            {
+                return name;
+            }
         }
 
         #endregion
@@ -327,9 +351,31 @@ namespace IronAHK.Rusty
             List<HotkeyDefinition> hotkeys;
             List<HotstringDefinition> hotstrings;
             Dictionary<Keys, bool> pressed;
+            string current, previous;
+            int currentTime, priorTime;
 
             StringBuilder history;
             const int retention = 1024;
+
+            public string CurrentHotkey
+            {
+                get { return current; }
+            }
+
+            public string PriorHotkey
+            {
+                get { return previous; }
+            }
+
+            public int CurrentHotkeyTime
+            {
+                get { return currentTime; }
+            }
+
+            public int PriorHotkeyTime
+            {
+                get { return priorTime; }
+            }
 
             #endregion
 
@@ -434,6 +480,11 @@ namespace IronAHK.Rusty
                 {
                     foreach (var hotkey in exec)
                     {
+                        priorTime = currentTime;
+                        currentTime = Environment.TickCount;
+                        previous = current;
+                        current = hotkey.ToString();
+
                         if (hotkey.Condition())
                             hotkey.Proc(new object[] { });
                     }
@@ -486,6 +537,11 @@ namespace IronAHK.Rusty
                 {
                     new Thread(new ThreadStart(delegate()
                     {
+                        priorTime = currentTime;
+                        currentTime = Environment.TickCount;
+                        previous = current;
+                        current = hotstring.ToString();
+
                         hotstring.PreFilter(); // race condition
                         hotstring.Proc(new object[] { });
                         hotstring.PostFilter();

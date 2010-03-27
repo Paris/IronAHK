@@ -813,11 +813,11 @@ namespace IronAHK.Rusty
         }
 
         /// <summary>
-        /// Same as above except for the previous hotkey. It will be blank if none.
+        /// The key name of the previously executed hotkey or hotstring.
         /// </summary>
         public static string A_PriorHotkey
         {
-            get { return null; }
+            get { return keyboardHook == null ? null : keyboardHook.PriorHotkey; }
         }
 
         /// <summary>
@@ -1012,12 +1012,11 @@ namespace IronAHK.Rusty
         }
 
         /// <summary>
-        /// <para>The key name of the most recently executed hotkey or hotstring (blank if none), e.g. #z. This value will change if the current thread is interrupted by another hotkey, so be sure to copy it into another variable immediately if you need the original value for later use in a subroutine.</para>
-        /// <para>When a hotkey is first created -- either by the Hotkey command or a double-colon label in the script -- its key name and the ordering of its modifier symbols becomes the permanent name of that hotkey. See also: A_ThisLabel</para>
+        /// The key name of the most recently executed hotkey or hotstring.
         /// </summary>
         public static string A_ThisHotkey
         {
-            get { return null; }
+            get { return keyboardHook == null ? null : keyboardHook.CurrentHotkey; }
         }
 
         /// <summary>
@@ -1077,19 +1076,19 @@ namespace IronAHK.Rusty
         }
 
         /// <summary>
-        /// The number of milliseconds that have elapsed since A_PriorHotkey was pressed. It will be -1 whenever A_PriorHotkey is blank.
+        /// Time in ms that have elapsed since <see cref="A_PriorHotkey"/> was pressed. It will be -1 whenever <see cref="A_PriorHotkey"/> is blank.
         /// </summary>
-        public static string A_TimeSincePriorHotkey
+        public static int A_TimeSincePriorHotkey
         {
-            get { return null; }
+            get { return keyboardHook == null || keyboardHook.PriorHotkey == null ? -1 : Environment.TickCount - keyboardHook.PriorHotkeyTime; }
         }
 
         /// <summary>
-        /// The number of milliseconds that have elapsed since A_ThisHotkey was pressed. It will be -1 whenever A_ThisHotkey is blank.
+        /// Time in ms that have elapsed since <see cref="A_ThisHotkey"/> was pressed. It will be -1 whenever <see cref="A_ThisHotkey"/> is blank.
         /// </summary>
-        public static string A_TimeSinceThisHotkey
+        public static int A_TimeSinceThisHotkey
         {
-            get { return null; }
+            get { return keyboardHook == null || keyboardHook.CurrentHotkey == null ? -1 : Environment.TickCount - keyboardHook.CurrentHotkeyTime; }
         }
 
         /// <summary>
