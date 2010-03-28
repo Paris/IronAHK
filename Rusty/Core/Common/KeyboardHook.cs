@@ -210,8 +210,41 @@ namespace IronAHK.Rusty
 
             static Keys ParseKey(string name)
             {
-                object value = Enum.Parse(typeof(Keys), name, true);
-                return value == null ? Keys.None : (Keys)value;
+                object value = Keys.None;
+
+                // TODO: SC and VK key codes
+
+                try
+                {
+                    Enum.Parse(typeof(Keys), name, true);
+                }
+                catch (ArgumentException)
+                {
+                    switch (name.ToLowerInvariant())
+                    {
+                        case "esc": value = Keys.Escape; break;
+                        case "backspace": value = Keys.Back; break;
+                        case "bs": value = Keys.Back; break;
+                        case "del": value = Keys.Delete; break;
+                        case "ins": value = Keys.Insert; break;
+                        case "pgup": value = Keys.PageUp; break;
+                        case "pgdown": value = Keys.PageDown; break;
+                        case "scrolllock": value = Keys.Scroll; break;
+                        case "appskey": value = Keys.Apps; break;
+                        case "ctrl": value = Keys.Control; break;
+                        case "lcontrol": value = Keys.LControlKey; break;
+                        case "lctrl": value = Keys.LControlKey; break;
+                        case "rcontrol": value = Keys.RControlKey; break;
+                        case "rctrl": value = Keys.RControlKey; break;
+                        case "lshift": value = Keys.LShiftKey; break;
+                        case "rshift": value = Keys.RShiftKey; break;
+                        case "lalt": value = Keys.LMenu; break;
+                        case "ralt": value = Keys.RMenu; break;
+                        case "break": value = Keys.Pause; break;
+                    }
+                }
+
+                return (Keys)value;
             }
 
             public override string ToString()
