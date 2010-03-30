@@ -5,56 +5,56 @@ namespace IronAHK.Rusty
 {
     partial class Core
     {
-        // TODO: organise Ini.cs
+        // TODO: cross platform Ini commands
 
         /// <summary>
         /// Deletes a value from a standard format .ini file.
         /// </summary>
-        /// <param name="Filename">The name of the .ini file.</param>
-        /// <param name="Section">The section name in the .ini file, which is the heading phrase that appears in square brackets (do not include the brackets in this parameter).</param>
-        /// <param name="Key">The key name in the .ini file. If omitted, the entire Section will be deleted.</param>
-        public static void IniDelete(string Filename, string Section, string Key)
+        /// <param name="filename">The name of the file.</param>
+        /// <param name="section">The section name, which is the heading phrase that appears in square brackets.</param>
+        /// <param name="key">The key name. If omitted, the entire <paramref name="section"/> will be deleted.</param>
+        public static void IniDelete(string filename, string section, string key)
         {
             if (Environment.OSVersion.Platform != PlatformID.Win32NT)
                 return;
 
-            error = Windows.WritePrivateProfileString(Section, Key.Length == 0 ? null : Key, null, Filename) ? 0 : 1;
+            error = Windows.WritePrivateProfileString(section, key.Length == 0 ? null : key, null, filename) ? 0 : 1;
         }
 
         /// <summary>
         /// Reads a value from a standard format .ini file.
         /// </summary>
-        /// <param name="OutputVar">The name of the variable in which to store the retrieved value. If the value cannot be retrieved, the variable is set to the value indicated by the Default parameter (described below).</param>
-        /// <param name="Filename">The name of the .ini file.</param>
-        /// <param name="Section">The section name in the .ini file, which is the heading phrase that appears in square brackets (do not include the brackets in this parameter).</param>
-        /// <param name="Key">The key name in the .ini file.</param>
-        /// <param name="Default">The value to store in <paramref name="OutputVar"/> if the requested <paramref name="Key"/> is not found.</param>
-        public static void IniRead(out string OutputVar, string Filename, string Section, string Key, string Default)
+        /// <param name="output">The variable to store the result.</param>
+        /// <param name="filename">The name of the file.</param>
+        /// <param name="section">The section name, which is the heading phrase that appears in square brackets.</param>
+        /// <param name="key">The key name.</param>
+        /// <param name="error">The value to store in <paramref name="output"/> if the specified <paramref name="key"/> is not found.</param>
+        public static void IniRead(out string output, string filename, string section, string key, string error)
         {
-            OutputVar = null;
+            output = null;
 
             if (Environment.OSVersion.Platform != PlatformID.Win32NT)
                 return;
 
             StringBuilder buf = new StringBuilder(char.MaxValue);
-            Windows.GetPrivateProfileString(Section, Key, Default, buf, (uint)buf.Capacity, Filename);
-            OutputVar = buf.ToString();
+            Windows.GetPrivateProfileString(section, key, error, buf, (uint)buf.Capacity, filename);
+            output = buf.ToString();
         }
 
         /// <summary>
         /// Writes a value to a standard format .ini file.
         /// </summary>
-        /// <param name="Value">The string or number that will be written to the right of Key's equal sign (=).</param>
-        /// <param name="Filename">The name of the .ini file.</param>
-        /// <param name="Section">The section name in the .ini file, which is the heading phrase that appears in square brackets (do not include the brackets in this parameter).</param>
-        /// <param name="Key">The key name in the .ini file.</param>
-        /// <remarks>ErrorLevel is set to 1 if there was a problem or 0 otherwise.</remarks>
-        public static void IniWrite(string Value, string Filename, string Section, string Key)
+        /// <param name="value">The string or number that will be written to the right of <paramref name="key"/>'s equal sign (=).</param>
+        /// <param name="filename">The name of the file.</param>
+        /// <param name="section">The section name, which is the heading phrase that appears in square brackets.</param>
+        /// <param name="key">The key name.</param>
+        /// <remarks><see cref="ErrorLevel"/> is set to <c>1</c> if there was a problem or <c>0</c> otherwise.</remarks>
+        public static void IniWrite(string value, string filename, string section, string key)
         {
             if (Environment.OSVersion.Platform != PlatformID.Win32NT)
                 return;
 
-            error = Windows.WritePrivateProfileString(Section, Key, Value, Filename) ? 0 : 1;
+            error = Windows.WritePrivateProfileString(section, key, value, filename) ? 0 : 1;
         }
     }
 }
