@@ -162,15 +162,15 @@ namespace IronAHK.Rusty
 
             #region Handlers
 
-            public EventHandler<ClosedArgs> Closed;
+            public event EventHandler<ClosedArgs> ClosedEvent;
 
-            public EventHandler<EscapedArgs> Escaped;
+            public event EventHandler<EscapedArgs> EscapedEvent;
 
-            public EventHandler<ResizedArgs> Resized;
+            public event EventHandler<ResizedArgs> ResizedEvent;
 
-            public EventHandler<ContextMenuArgs> ContextMenu;
+            public event EventHandler<ContextMenuArgs> ContextMenuEvent;
 
-            public EventHandler<DroppedFilesArgs> DroppedFiles;
+            public event EventHandler<DroppedFilesArgs> DroppedFilesEvent;
 
             #endregion
 
@@ -178,7 +178,7 @@ namespace IronAHK.Rusty
 
             protected virtual void OnClosed(ClosedArgs e)
             {
-                var handler = Closed;
+                var handler = ClosedEvent;
 
                 if (handler != null)
                     handler(this, e);
@@ -186,7 +186,7 @@ namespace IronAHK.Rusty
 
             protected virtual void OnEscaped(EscapedArgs e)
             {
-                var handler = Escaped;
+                var handler = EscapedEvent;
 
                 if (handler != null)
                     handler(this, e);
@@ -194,7 +194,7 @@ namespace IronAHK.Rusty
 
             protected virtual void OnResized(ResizedArgs e)
             {
-                var handler = Resized;
+                var handler = ResizedEvent;
 
                 if (handler != null)
                     handler(this, e);
@@ -202,7 +202,7 @@ namespace IronAHK.Rusty
 
             protected virtual void OnContextMenu(ContextMenuArgs e)
             {
-                var handler = ContextMenu;
+                var handler = ContextMenuEvent;
 
                 if (handler != null)
                     handler(this, e);
@@ -210,7 +210,7 @@ namespace IronAHK.Rusty
 
             protected virtual void OnDroppedFiles(DroppedFilesArgs e)
             {
-                var handler = DroppedFiles;
+                var handler = DroppedFilesEvent;
 
                 if (handler != null)
                     handler(this, e);
