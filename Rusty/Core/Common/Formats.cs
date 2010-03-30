@@ -467,18 +467,20 @@ namespace IronAHK.Rusty
             }
         }
 
-        static Regex ParseRegEx(string exp)
+        static Regex ParseRegEx(string exp, bool reverse)
         {
             var mod = new Regex("^[imsxADJUXPS`nra]\\)");
             var res = mod.Match(exp);
+            var opts = reverse ? RegexOptions.RightToLeft : RegexOptions.None;
 
             if (res.Success)
             {
                 string seq = res.Groups[0].Value;
-                return new Regex(exp.Substring(res.Length), ToRegexOptions(seq.Substring(0, seq.Length - 1)));
+                opts |= ToRegexOptions(seq.Substring(0, seq.Length - 1));
+                return new Regex(exp.Substring(res.Length), opts);
             }
             else
-                return new Regex(exp);
+                return new Regex(exp, opts);
         }
 
         static void LV_RowOptions(ref ListViewItem row, string options)
