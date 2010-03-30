@@ -8,14 +8,14 @@ namespace IronAHK.Rusty
         /// <summary>
         /// Converts a JSON encoded string into an associative array.
         /// </summary>
-        /// <param name="Source">The string to decode.</param>
-        /// <returns>An associative array via a dictionary of string key and object value pairs.</returns>
-        public static Dictionary<string, object> JsonDecode(string Source)
+        /// <param name="source">The string to decode.</param>
+        /// <returns>An associative array.</returns>
+        public static Dictionary<string, object> JsonDecode(string source)
         {
             try
             {
                 error = 0;
-                return SimpleJson.Decode(Source);
+                return SimpleJson.Decode(source);
             }
             catch (Exception)
             {
@@ -25,13 +25,13 @@ namespace IronAHK.Rusty
         }
 
         /// <summary>
-        /// Returns a string containing the JSON representation of <paramref name="Data"/>.
+        /// Returns a string containing the JSON representation of <paramref name="data"/>.
         /// </summary>
-        /// <param name="Data">The associative array to encode.</param>
+        /// <param name="data">The associative array to encode.</param>
         /// <returns>A JSON encoded string.</returns>
-        public static string JsonEncode(Dictionary<string, object> Data)
+        public static string JsonEncode(Dictionary<string, object> data)
         {
-            return SimpleJson.Encode(Data);
+            return SimpleJson.Encode(data);
         }
     }
 }
