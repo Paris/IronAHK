@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
 using System.Timers;
@@ -143,10 +144,14 @@ namespace IronAHK.Rusty
             if (state == null && mode.Equals(Keyword_Toggle, StringComparison.OrdinalIgnoreCase))
                 state = !(thread.ThreadState == System.Threading.ThreadState.Suspended || thread.ThreadState == System.Threading.ThreadState.SuspendRequested);
 
+#pragma warning disable 618
+
             if (state == true)
                 thread.Suspend();
             else if (state == false)
                 thread.Resume();
+
+#pragma warning restore 618
 
             // UNDONE: correct handling of pause on underlying thread
 
@@ -176,6 +181,9 @@ namespace IronAHK.Rusty
         /// <param name="priority">A value between 0 and 4 inclusive to indicate the priority of the timer's thread.</param>
         public static void SetTimer(string label, string mode, int priority)
         {
+            if (timers == null)
+                timers = new Dictionary<string, System.Timers.Timer>();
+
             switch (mode.ToLowerInvariant())
             {
                 case Keyword_On:

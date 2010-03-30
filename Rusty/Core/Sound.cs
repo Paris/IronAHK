@@ -40,7 +40,7 @@ namespace IronAHK.Rusty
         /// Retrieves the wave output volume for a sound device.
         /// </summary>
         /// <param name="output">The variable to store the result.</param>
-        /// <param name="DeviceNumber">If this parameter is omitted, it defaults to 1 (the first sound device),
+        /// <param name="device">If this parameter is omitted, it defaults to 1 (the first sound device),
         /// which is usually the system's default device for recording and playback.
         /// Specify a higher value to operate upon a different sound device.</param>
         public static void SoundGetWaveVolume(out int output, int device)

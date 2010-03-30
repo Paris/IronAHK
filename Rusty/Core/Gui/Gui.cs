@@ -292,7 +292,7 @@ namespace IronAHK.Rusty
 
                 case Keyword_Show:
                     {
-                        bool center = false, cX = false, cY = false, auto = false, min = false, max = false, restore = false, noactivate = false, na = false, hide = false;
+                        bool center = false, cX = false, cY = false, auto = false, min = false, max = false, restore = false, hide = false;
                         int?[] pos = { null, null, null, null };
 
                         foreach (string option in ParseOptions(Param2))
@@ -317,8 +317,8 @@ namespace IronAHK.Rusty
                                     case Keyword_Maximize: max = true; break;
                                     case Keyword_Minimize: min = true; break;
                                     case Keyword_Restore: restore = true; break;
-                                    case Keyword_NoActivate: noactivate = true; break;
-                                    case Keyword_NA: na = true; break;
+                                    case Keyword_NoActivate: break;
+                                    case Keyword_NA: break;
                                     case Keyword_Hide: hide = true; break;
                                 }
                             }

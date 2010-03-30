@@ -32,7 +32,7 @@ namespace IronAHK.Rusty
         /// Retrieves an environment variable.
         /// </summary>
         /// <param name="output">The variable to store the result.</param>
-        /// <param name="EnvVarName">The name of the environment variable to retrieve.</param>
+        /// <param name="name">The name of the environment variable to retrieve.</param>
         public static void EnvGet(out string output, string name)
         {
             output = Environment.GetEnvironmentVariable(name);
