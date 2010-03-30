@@ -9,63 +9,63 @@ namespace IronAHK.Rusty
         /// <summary>
         /// Assigns the specified value to a variable.
         /// </summary>
-        /// <param name="Name">The prefixed name of the variable in which to store <paramref name="Value"/>.</param>
-        /// <param name="Value">The string or number to store.</param>
-        /// <returns>The value set.</returns>
-        public static object SetEnv(string Name, object Value)
+        /// <param name="name">The prefixed name of the variable in which to store <paramref name="value"/>.</param>
+        /// <param name="value">The value to store.</param>
+        /// <returns>The new contents of the variable.</returns>
+        public static object SetEnv(string name, object value)
         {
-            var method = GetReservedVariableReference(Name, true);
+            var method = GetReservedVariableReference(name, true);
 
             if (method != null)
             {
-                try { method.Invoke(null, new object[] { Value }); }
+                try { method.Invoke(null, new object[] { value }); }
                 catch (ArgumentException)
                 {
                     error = 1;
                     return null;
                 }
-                return GetReservedVariableReference(Name, false).Invoke(null, new object[] { });
+                return GetReservedVariableReference(name, false).Invoke(null, new object[] { });
             }
 
-            Name = NormaliseVariableName(Name);
+            name = NormaliseVariableName(name);
 
             lock (variables)
             {
-                bool exists = variables.ContainsKey(Name);
+                bool exists = variables.ContainsKey(name);
 
-                if (Value == null)
+                if (value == null)
                 {
                     if (!exists)
-                        variables.Remove(Name);
+                        variables.Remove(name);
                 }
                 else
                 {
                     if (exists)
-                        variables[Name] = Value;
+                        variables[name] = value;
                     else
-                        variables.Add(Name, Value);
+                        variables.Add(name, value);
                 }
             }
 
-            return Value;
+            return value;
         }
 
         /// <summary>
-        /// Resolve a variable.
+        /// Returns the contents of a variable.
         /// </summary>
-        /// <param name="Name">Name of variable.</param>
-        /// <returns>Corresponding value.</returns>
-        public static object GetEnv(string Name)
+        /// <param name="name">The name of the variable.</param>
+        /// <returns>The contents of the variable.</returns>
+        public static object GetEnv(string name)
         {
-            Name = NormaliseVariableName(Name);
+            name = NormaliseVariableName(name);
 
             lock (variables)
             {
-                if (variables != null && variables.ContainsKey(Name))
-                    return variables[Name];
+                if (variables != null && variables.ContainsKey(name))
+                    return variables[name];
             }
 
-            var method = GetReservedVariableReference(Name, false);
+            var method = GetReservedVariableReference(name, false);
             return method == null ? null : method.Invoke(null, new object[] { });
         }
 
@@ -81,7 +81,7 @@ namespace IronAHK.Rusty
         {
             const string A_ = "A_";
             int z = name.LastIndexOf('.');
-            
+
             if (z != -1)
             {
                 z++;
