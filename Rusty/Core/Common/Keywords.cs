@@ -307,6 +307,14 @@ namespace IronAHK.Rusty
         const string Keyword_WantTab = "wanttab";
         const string Keyword_Smooth = "smooth";
         const string Keyword_Vertical = "vertical";
+        const string Keyword_ShortDate = "shortdate";
+        const string Keyword_LongDate = "longdate";
+        const string Keyword_YearMonth = "yearmonth";
+        const string Keyword_YDay = "yday";
+        const string Keyword_YDay0 = "yday0";
+        const string Keyword_WDay = "wday";
+        const string Keyword_YWeek = "yweek";
+        const string Keyword_Random = "random";
 
         const char Keyword_ModifierWin = '#';
         const char Keyword_ModifierAlt = '!';
