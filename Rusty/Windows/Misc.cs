@@ -44,9 +44,6 @@ namespace IronAHK.Rusty
         [DllImport("winmm.dll")]
         public static extern int waveOutSetVolume(IntPtr hwo, uint dwVolume);
 
-        [DllImport("kernel32.dll")]
-        public static extern bool Beep(uint dwFreq, uint dwDuration);
-
         #endregion
 
         #region Hooks
