@@ -5,117 +5,158 @@ namespace IronAHK.Rusty
 {
     partial class Core
     {
-        // TODO: organise Sound.cs
-
         /// <summary>
         /// Emits a tone from the PC speaker.
         /// </summary>
-        /// <param name="Frequency">The frequency of the sound. It should be a number between 37 and 32767. If omitted, the frequency will be 523.</param>
-        /// <param name="Duration">The duration of the sound, in milliseconds . If omitted, the duration will be 150.</param>
-        public static void SoundBeep(int Frequency, int Duration)
+        /// <param name="frequency">The frequency of the sound which should be between 37 and 32767.
+        /// If omitted, the frequency will be 523.</param>
+        /// <param name="duration">The duration of the sound in ms. If omitted, the duration will be 150.</param>
+        public static void SoundBeep(int frequency, int duration)
         {
-            if (Environment.OSVersion.Platform == PlatformID.Win32NT)
-                Windows.Beep((uint)Frequency, (uint)Duration);
-            else SystemSounds.Beep.Play();
+            if (frequency == 0)
+                frequency = 523;
+
+            if (duration == 0)
+                duration = 150;
+
+            Console.Beep(frequency, duration);
         }
 
         /// <summary>
-        /// Retrieves various settings from a sound device (master mute, master volume, etc.)
+        /// Retrieves various settings from a sound device.
         /// </summary>
-        /// <param name="OutputVar">The name of the variable in which to store the retrieved setting, which is either a floating point number between 0 and 100 (inclusive) or the word ON or OFF (used only for ControlTypes ONOFF, MUTE, MONO, LOUDNESS, STEREOENH, and BASSBOOST). The variable will be made blank if there was a problem retrieving the setting. The format of the floating point number, such as its decimal places, is determined by SetFormat.</param>
-        /// <param name="ComponentType">
-        /// <para>If omitted or blank, it defaults to the word MASTER. Otherwise, it can be one of the following words: MASTER (synonymous with SPEAKERS), DIGITAL, LINE, MICROPHONE, SYNTH, CD, TELEPHONE, PCSPEAKER, WAVE, AUX, ANALOG, HEADPHONES, or N/A. If the sound device lacks the specified ComponentType, ErrorLevel will indicate the problem.</para>
-        /// <para>The component labled Auxiliary in some mixers might be accessible as ANALOG rather than AUX.</para>
-        /// <para>If a device has more than one instance of ComponentType (two of type LINE, for example), usually the first contains the playback settings and the second contains the recording  To access an instance other than the first, append a colon and a number to this parameter. For example: Analog:2 is the second instance of the analog component.</para>
-        /// </param>
-        /// <param name="ControlType">If omitted or blank, it defaults to VOLUME. Otherwise, it can be one of the following words: VOLUME (or VOL), ONOFF, MUTE, MONO, LOUDNESS, STEREOENH, BASSBOOST, PAN, QSOUNDPAN, BASS, TREBLE, EQUALIZER, or the number of a valid control type (see soundcard analysis script). If the specified ComponentType lacks the specified ControlType, ErrorLevel will indicate the problem.</param>
-        /// <param name="DeviceNumber">If this parameter is omitted, it defaults to 1 (the first sound device), which is usually the system's default device for recording and playback. Specify a number higher than 1 to operate upon a different sound device. This parameter can be an expression.</param>
-        public static void SoundGet(out string OutputVar, string ComponentType, string ControlType, string DeviceNumber)
+        /// <param name="output"></param>
+        /// <param name="component"></param>
+        /// <param name="control"></param>
+        /// <param name="device"></param>
+        public static void SoundGet(out string output, string component, string control, string device)
         {
-            OutputVar = null;
+            // TODO: SoundGet
+
+            output = null;
         }
 
         /// <summary>
         /// Retrieves the wave output volume for a sound device.
         /// </summary>
-        /// <param name="OutputVar">The name of the variable in which to store the retrieved volume level, which is a floating point number between 0 and 100 inclusive. The variable will be made blank if there was a problem retrieving the volume. The format of the floating point number, such as its decimal places, is determined by SetFormat.</param>
-        /// <param name="DeviceNumber">If this parameter is omitted, it defaults to 1 (the first sound device), which is usually the system's default device for recording and playback. Specify a number higher than 1 to operate upon a different sound device.</param>
-        public static void SoundGetWaveVolume(out int OutputVar, int DeviceNumber)
+        /// <param name="output">The variable to store the result.</param>
+        /// <param name="DeviceNumber">If this parameter is omitted, it defaults to 1 (the first sound device),
+        /// which is usually the system's default device for recording and playback.
+        /// Specify a higher value to operate upon a different sound device.</param>
+        public static void SoundGetWaveVolume(out int output, int device)
         {
-            OutputVar = default(int);
+            output = 0;
 
             if (Environment.OSVersion.Platform != PlatformID.Win32NT)
                 return;
 
             uint vol = 0;
-            Windows.waveOutGetVolume(new IntPtr(DeviceNumber), out vol);
-            OutputVar = (int)vol;
+            Windows.waveOutGetVolume(new IntPtr(device), out vol);
+            output = (int)vol;
+
+            // UNDONE: cross platform SoundGetWaveVolume
         }
 
         /// <summary>
         /// Plays a sound, video, or other supported file type.
         /// </summary>
-        /// <param name="Filename">
-        /// <para>The name of the file to be played, which is assumed to be in %A_WorkingDir% if an absolute path isn't specified.</para>
-        /// <para>To produce standard system sounds, specify an asterisk followed by a number as shown below. Note: thewait parameter has no effect in this mode.</para>
-        /// <list type="">
-        /// <item>*-1: Simple beep. If the sound card is not available, the sound is generated using the speaker.</item>
-        /// <item>*16: Hand (stop/error)</item>
-        /// <item>*32: Question</item>
-        /// <item>*48: Exclamation</item>
-        /// <item>*64: Asterisk (info)</item>
+        /// <param name="filename">
+        /// <para>The name of the file to be played.</para>
+        /// <para>To produce standard system sounds, specify an asterisk followed by a number as shown below.</para>
+        /// <list type="bullet">
+        /// <item><term>*-1</term>: <description>simple beep</description></item>
+        /// <item><term>*16</term>: <description>hand (stop/error)</description></item>
+        /// <item><term>*32</term>: <description>question</description></item>
+        /// <item><term>*48</term>: <description>exclamation</description></item>
+        /// <item><term>*64</term>: <description>asterisk (info)</description></item>
         /// </list>
         /// </param>
-        /// <param name="wait">
-        /// <para>If omitted, the script's current thread will move on to the next commmand(s) while the file is playing. To avoid this, specify 1 or the word WAIT, which causes the current thread to wait until the file is finished playing before continuing. Even while waiting, new threads can be launched via hotkey, custom menu item, or timer.</para>
-        /// <para>Known limitation: If the WAIT parameter is omitted, the OS might consider the playing file to be "in use" until the script closes or until another file is played (even a nonexistent file).</para>
-        /// </param>
-        public static void SoundPlay(string Filename, string wait)
+        /// <param name="wait"><c>true</c> to block the current thread until the sound has finished playing, false otherwise.</param>
+        /// <remarks><see cref="ErrorLevel"/> is set to <c>1</c> if an error occured, <c>0</c> otherwise.</remarks>
+        public static void SoundPlay(string filename, bool wait)
         {
+            error = 0;
 
+            if (filename.Length > 1 && filename[0] == '*')
+            {
+                int n;
+
+                if (!int.TryParse(filename.Substring(1), out n))
+                {
+                    error = 1;
+                    return;
+                }
+
+                switch (n)
+                {
+                    case -1: SystemSounds.Beep.Play(); break;
+                    case 16: SystemSounds.Hand.Play(); break;
+                    case 32: SystemSounds.Question.Play(); break;
+                    case 48: SystemSounds.Exclamation.Play(); break;
+                    case 64: SystemSounds.Asterisk.Play(); break;
+                    default: error = 1; break;
+                }
+
+                return;
+            }
+
+            try
+            {
+                var sound = new SoundPlayer(filename);
+
+                if (wait)
+                    sound.PlaySync();
+                else
+                    sound.Play();
+            }
+            catch (Exception)
+            {
+                error = 1;
+            }
         }
 
         /// <summary>
-        /// Changes various settings of a sound device (master mute, master volume, etc.)
+        /// Changes various settings of a sound device.
         /// </summary>
-        /// <param name="NewSetting">
-        /// <para>Percentage number between -100 and 100 inclusive (it can be a floating point number or expression). If the number begins with a plus or minus sign, the current setting will be adjusted up or down by the indicated amount. Otherwise, the setting will be set explicitly to the level indicated by NewSetting.</para>
-        /// <para>For ControlTypes with only two possible settings -- namely ONOFF, MUTE, MONO, LOUDNESS, STEREOENH, and BASSBOOST -- any positive number will turn on the setting and a zero will turn it off. However, if the number begins with a plus or minus sign, the setting will be toggled (set to the opposite of its current state).</para>
-        /// </param>
-        /// <param name="ComponentType">
-        /// <para>If omitted or blank, it defaults to the word MASTER. Otherwise, it can be one of the following words: MASTER (synonymous with SPEAKERS), DIGITAL, LINE, MICROPHONE, SYNTH, CD, TELEPHONE, PCSPEAKER, WAVE, AUX, ANALOG, HEADPHONES, or N/A. If the sound device lacks the specified ComponentType, ErrorLevel will indicate the problem.</para>
-        /// <para>The component labeled Auxiliary in some mixers might be accessible as ANALOG rather than AUX.</para>
-        /// <para>If a device has more than one instance of ComponentType (two of type LINE, for example), usually the first contains the playback settings and the second contains the recording  To access an instance other than the first, append a colon and a number to this parameter. For example: Analog:2 is the second instance of the analog component.</para>
-        /// </param>
-        /// <param name="ControlType">If omitted or blank, it defaults to VOLUME. Otherwise, it can be one of the following words: VOLUME (or VOL), ONOFF, MUTE, MONO, LOUDNESS, STEREOENH, BASSBOOST, PAN, QSOUNDPAN, BASS, TREBLE, EQUALIZER, or the number of a valid control type (see soundcard analysis script). If the specified ComponentType lacks the specified ControlType, ErrorLevel will indicate the problem.</param>
-        /// <param name="DeviceNumber">If this parameter is omitted, it defaults to 1 (the first sound device), which is usually the system's default device for recording and playback. Specify a number higher than 1 to operate upon a different sound device. This parameter can be an expression.</param>
-        public static void SoundSet(string NewSetting, string ComponentType, string ControlType, string DeviceNumber)
+        /// <param name="setting"></param>
+        /// <param name="component"></param>
+        /// <param name="control"></param>
+        /// <param name="device"></param>
+        public static void SoundSet(string setting, string component, string control, string device)
         {
-
+            // TODO: SoundSet
         }
 
         /// <summary>
         /// Changes the wave output volume for a sound device.
         /// </summary>
-        /// <param name="Percent">Percentage number between -100 and 100 inclusive (it can be a floating point number or an expression). If the number begins with a plus or minus sign, the current volume level will be adjusted up or down by the indicated amount. Otherwise, the volume will be set explicitly to the level indicated by Percent.</param>
-        /// <param name="DeviceNumber">If this parameter is omitted, it defaults to 1 (the first sound device), which is usually the system's default device for recording and playback. Specify a number higher than 1 to operate upon a different sound device.</param>
-        public static void SoundSetWaveVolume(string Percent, int DeviceNumber)
+        /// <param name="percent">Percentage number between -100 and 100 inclusive.
+        /// If the number begins with a plus or minus sign, the current volume level will be adjusted up or down by the indicated amount.</param>
+        /// <param name="device">If this parameter is omitted, it defaults to 1 (the first sound device),
+        /// which is usually the system's default device for recording and playback.</param>
+        public static void SoundSetWaveVolume(string percent, int device)
         {
             if (Environment.OSVersion.Platform != PlatformID.Win32NT)
                 return;
 
-            IntPtr dev = new IntPtr(DeviceNumber);
+            if (string.IsNullOrEmpty(percent))
+                percent = "0";
+
+            IntPtr dev = new IntPtr(device);
             uint vol;
 
-            char p = Percent[0];
+            char p = percent[0];
             if (p == '+' || p == '-')
             {
                 Windows.waveOutGetVolume(dev, out vol);
-                vol = (uint)(vol * double.Parse(Percent.Substring(1)) / 100);
+                vol = (uint)(vol * double.Parse(percent.Substring(1)) / 100);
             }
-            else vol = (uint)(0xfffff * (double.Parse(Percent) / 100));
+            else
+                vol = (uint)(0xfffff * (double.Parse(percent) / 100));
 
             Windows.waveOutSetVolume(dev, vol);
+
+            // TODO: cross platform SoundSetWaveVolume
         }
     }
 }
