@@ -8,15 +8,16 @@ namespace IronAHK.Rusty
         /// <summary>
         /// Waits until the clipboard contains data.
         /// </summary>
-        /// <param name="SecondsToWait">If omitted, the command will wait indefinitely. Otherwise, it will wait no longer than this many seconds</param>
-        /// <param name="AnyType"><c>false</c> to wait specifically for text or files to appear, otherwise wait for data of any kind.</param>
-        public static void ClipWait(double SecondsToWait, bool AnyType)
+        /// <param name="timeout">If omitted, the command will wait indefinitely.
+        /// Otherwise, it will wait no longer than this many seconds</param>
+        /// <param name="type"><c>false</c> to wait specifically for text or files to appear, otherwise wait for data of any kind.</param>
+        public static void ClipWait(double timeout, bool type)
         {
-            int frequency = 100, time = (int)(SecondsToWait * 1000);
+            int frequency = 100, time = (int)(timeout * 1000);
 
             for (int i = 0; i < time; i += frequency)
             {
-                if ((!AnyType && Clipboard.ContainsText()) || Clipboard.ContainsData(DataFormats.WaveAudio))
+                if ((!type && Clipboard.ContainsText()) || Clipboard.ContainsData(DataFormats.WaveAudio))
                 {
                     error = 0;
                     return;
@@ -30,21 +31,21 @@ namespace IronAHK.Rusty
         /// <summary>
         /// Retrieves an environment variable.
         /// </summary>
-        /// <param name="OutputVar">The name of the variable in which to store the string.</param>
+        /// <param name="output">The variable to store the result.</param>
         /// <param name="EnvVarName">The name of the environment variable to retrieve.</param>
-        public static void EnvGet(out string OutputVar, string EnvVarName)
+        public static void EnvGet(out string output, string name)
         {
-            OutputVar = Environment.GetEnvironmentVariable(EnvVarName);
+            output = Environment.GetEnvironmentVariable(name);
         }
 
         /// <summary>
         /// Writes a value to a variable contained in the environment.
         /// </summary>
-        /// <param name="EnvVar">Name of the environment variable to use, e.g. <c>PATH</c>.</param>
-        /// <param name="Value">Value to set the environment variable to.</param>
-        public static void EnvSet(string EnvVar, string Value)
+        /// <param name="name">Name of the environment variable to use, e.g. <c>PATH</c>.</param>
+        /// <param name="value">Value to set the environment variable to.</param>
+        public static void EnvSet(string name, string value)
         {
-            Environment.SetEnvironmentVariable(EnvVar, Value);
+            Environment.SetEnvironmentVariable(name, value);
         }
 
         /// <summary>
@@ -63,12 +64,14 @@ namespace IronAHK.Rusty
         /// <summary>
         /// Retrieves screen resolution, multi-monitor info, dimensions of system objects, and other system properties.
         /// </summary>
-        /// <param name="OutputVar">The variable in which to store the result.</param>
-        /// <param name="Command"></param>
-        /// <param name="Param"></param>
-        public static void SysGet(out string OutputVar, string Command, string Param)
+        /// <param name="output">The variable to store the result.</param>
+        /// <param name="command"></param>
+        /// <param name="param"></param>
+        public static void SysGet(out string output, string command, string param)
         {
-            OutputVar = null;
+            // TODO: sysget command
+
+            output = null;
         }
     }
 }
