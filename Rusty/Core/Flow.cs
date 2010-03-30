@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.Threading;
 using System.Timers;
 using System.Windows.Forms;
@@ -7,68 +8,66 @@ namespace IronAHK.Rusty
 {
     partial class Core
     {
-        // TODO: organise Flow.cs
-
         /// <summary>
         /// Prevents the current thread from being interrupted by other threads.
         /// </summary>
-        /// <param name="Mode">
+        /// <param name="mode">
         /// <list type="bullet">
         /// <item><term>On</term>: <description>give the current thread the highest priority.</description></item>
         /// <item><term>Off</term>: <description>resets the current thread priority to normal.</description></item>
         /// </list>
         /// </param>
-        public static void Critical(string Mode)
+        public static void Critical(string mode)
         {
-            bool on = OnOff(Mode) ?? true;
+            bool on = OnOff(mode) ?? true;
             System.Threading.Thread.CurrentThread.Priority = on ? ThreadPriority.Highest : ThreadPriority.Normal;
         }
 
         /// <summary>
-        /// Exits the current thread or the entire application if non-persistent.
+        /// Exits the current thread or the entire program if non-persistent.
         /// </summary>
-        /// <param name="ExitCode">An integer that is returned to the caller.</param>
-        public static void Exit(int ExitCode)
+        /// <param name="exitCode">An integer that is returned to the caller.</param>
+        public static void Exit(int exitCode)
         {
-            Environment.ExitCode = ExitCode;
+            Environment.ExitCode = exitCode;
             System.Threading.Thread.CurrentThread.Abort();
         }
 
         /// <summary>
-        /// Terminates the application unconditionally.
+        /// Terminates the program unconditionally.
         /// </summary>
-        /// <param name="ExitCode">An integer that is returned to the caller.</param>
-        public static void ExitApp(int ExitCode)
+        /// <param name="exitCode">An integer that is returned to the caller.</param>
+        public static void ExitApp(int exitCode)
         {
-            Environment.Exit(ExitCode);
+            Environment.Exit(exitCode);
         }
 
         /// <summary>
         /// Checks if a function is defined.
         /// </summary>
-        /// <param name="FunctionName">The name of a function.</param>
+        /// <param name="name">The name of a function.</param>
         /// <returns><c>true</c> if the specified function exists in the current scope, <c>false</c> otherwise.</returns>
-        public static bool IsFunc(string FunctionName)
+        public static bool IsFunction(string name)
         {
-            return FindLocalMethod(FunctionName) != null;
+            return FindLocalMethod(name) != null;
         }
 
         /// <summary>
         /// Checks if a label is defined.
         /// </summary>
-        /// <param name="LabelName">The name of a label.</param>
+        /// <param name="name">The name of a label.</param>
         /// <returns><c>true</c> if the specified label exists in the current scope, <c>false</c> otherwise.</returns>
-        public static bool IsLabel(string LabelName)
+        public static bool IsLabel(string name)
         {
-            string method = LabelMethodName(LabelName);
+            string method = LabelMethodName(name);
             return FindLocalMethod(method) != null;
         }
 
         /// <summary>
-        /// Specifies a label to run automatically when the application exits.
+        /// Specifies a label to run automatically when the program exits.
         /// </summary>
-        /// <param name="Label">The name of a label. Leave blank to remove an existing label, if any.</param>
-        public static void OnExit(string Label)
+        /// <param name="label">The name of a label. Leave blank to remove an existing label, if any.</param>
+        public static void OnExit(string label)
         {
             error = 0;
 
@@ -78,10 +77,10 @@ namespace IronAHK.Rusty
                 onExit = null;
             }
 
-            if (string.IsNullOrEmpty(Label))
+            if (string.IsNullOrEmpty(label))
                 return;
 
-            var method = FindLocalRoutine(Label);
+            var method = FindLocalRoutine(label);
 
             if (method == null)
             {
@@ -100,46 +99,59 @@ namespace IronAHK.Rusty
         }
 
         /// <summary>
-        /// Specifies a function to call automatically when the script receives the specified message.
+        /// Specifies a function to call automatically when the program receives the specified message.
         /// </summary>
-        /// <param name="MsgNumber">The number of the message to monitor or query, which should be between 0 and 4294967295 (0xFFFFFFFF). If you do not wish to monitor a system message (that is, one below 0x400), it is best to choose a number greater than 4096 (0x1000) to the extent you have a choice. This reduces the chance of interfering with messages used internally by current and future versions of AutoHotkey.</param>
-        /// <param name="FunctionName">A function's name, which must be enclosed in quotes if it is a literal string. This function will be called automatically when the script receives MsgNumber. Omit this parameter and the next one to retrieve the name of the function currently monitoring MsgNumber (blank if none). Specify an empty string ("") or an empty variable to turn off the monitoring of MsgNumber.</param>
-        /// <param name="MaxThreads">This integer is normally omitted, in which case the monitor function is limited to one thread at a time. This is usually best because otherwise, the script would process messages out of chronological order whenever the monitor function interrupts itself. Therefore, as an alternative to MaxThreads, consider using Critical as described below.</param>
-        public static void OnMessage(string MsgNumber, string FunctionName, string MaxThreads)
+        /// <param name="number">The number of the message to monitor.</param>
+        /// <param name="function">The name of a function to call whenever the specified message is received.</param>
+        /// <param name="maxThreads">The maximum number of concurrent threads to launch per message number.</param>
+        public static void OnMessage(string number, string function, string maxThreads)
         {
-
+            // TODO: onmessage
         }
 
         /// <summary>
         /// Sends a string to the debugger (if any) for display.
         /// </summary>
-        /// <param name="Text">The text to send to the debugger for display. This text may include linefeed characters (`n) to start new lines. In addition, a single long line can be broken up into several shorter ones by means of a continuation section.</param>
-        public static void OutputDebug(string Text)
+        /// <param name="text">The text to send to the debugger for display.</param>
+        public static void OutputDebug(string text)
         {
             if (Environment.OSVersion.Platform == PlatformID.Win32NT)
-                Windows.OutputDebugString(Text);
+                Windows.OutputDebugString(text);
         }
 
         /// <summary>
-        /// Pauses the programs's current thread.
+        /// Pauses the current thread.
         /// </summary>
-        /// <param name="Mode">
-        /// <para>If blank or omitted, it defaults to <c>Toggle</c>. Otherwise, specify one of the following words:</para>
+        /// <param name="mode">
         /// <list type="bullet">
-        /// <item><term>Toggle</term>: <description>pauses the current thread unless the thread beneath it is paused, in which case the underlying thread is unpaused.</description></item>
+        /// <item><term>Toggle</term> (default): <description>pauses the current thread unless the thread beneath it is paused, in which case the underlying thread is unpaused.</description></item>
         /// <item><term>On</term>: <description>pauses the current thread.</description></item>
-        /// <item><term>Off</term>: <description>if the thread beneath the current thread is paused, it will be in an unpaused state when resumed. Otherwise, the command has no effect.</description></item>
+        /// <item><term>Off</term>: <description>if the thread beneath the current thread is paused, it will be in an unpaused state when resumed.</description></item>
         /// </list>
         /// </param>
-        /// <param name="OperateOnUnderlyingThread">
+        /// <param name="parentThread">
         /// <list type="bullet">
         /// <item><term>0</term>: <description>pause the current thread.</description></item>
         /// <item><term>1</term>: <description>marks the thread beneath the current thread as paused so that when it resumes, it will finish the command it was running (if any) and then enter a paused state. If there is no thread beneath the current thread, the program itself is paused, which prevents timers from running.</description></item>
         /// </list>
         /// </param>
-        public static void Pause(string Mode, bool OperateOnUnderlyingThread)
+        public static void Pause(string mode, bool parentThread)
         {
-            throw new NotImplementedException();
+            var thread = System.Threading.Thread.CurrentThread;
+            var state = OnOff(mode);
+
+            if (state == null && mode.Equals(Keyword_Toggle, StringComparison.OrdinalIgnoreCase))
+                state = !(thread.ThreadState == System.Threading.ThreadState.Suspended || thread.ThreadState == System.Threading.ThreadState.SuspendRequested);
+
+            if (state == true)
+                thread.Suspend();
+            else if (state == false)
+                thread.Resume();
+
+            // UNDONE: correct handling of pause on underlying thread
+
+            if (parentThread)
+                thread.Join();
         }
 
         /// <summary>
@@ -153,32 +165,32 @@ namespace IronAHK.Rusty
         /// <summary>
         /// Calls a function automatically at every specified interval.
         /// </summary>
-        /// <param name="Label">Name of the label to call.</param>
-        /// <param name="Mode">
+        /// <param name="label">Name of the label to call.</param>
+        /// <param name="mode">
         /// <list type="bullet">
         /// <item><term>On</term>: <description>enables a previously disabled timer or creates a new one at 250ms intervals.</description></item>
         /// <item><term>Off</term>: <description>disables an existing timer.</description></item>
         /// <item><term>Period</term>: <description>creates a new timer at the specified interval in milliseconds. If this value is negative the timer will only run once.</description></item>
         /// </list>
         /// </param>
-        /// <param name="Priority">A value between 0 and 4 inclusive to indicate the priority of the timer's thread.</param>
-        public static void SetTimer(string Label, string Mode, int Priority)
+        /// <param name="priority">A value between 0 and 4 inclusive to indicate the priority of the timer's thread.</param>
+        public static void SetTimer(string label, string mode, int priority)
         {
-            switch (Mode.ToLowerInvariant())
+            switch (mode.ToLowerInvariant())
             {
                 case Keyword_On:
-                    if (timers.ContainsKey(Label))
+                    if (timers.ContainsKey(label))
                     {
-                        timers[Label].Start();
+                        timers[label].Start();
                         return;
                     }
                     else
-                        Mode = "250";
+                        mode = "250";
                     break;
 
                 case Keyword_Off:
-                    if (timers.ContainsKey(Label))
-                        timers[Label].Stop();
+                    if (timers.ContainsKey(label))
+                        timers[label].Stop();
                     else
                         error = 1;
                     return;
@@ -186,7 +198,7 @@ namespace IronAHK.Rusty
 
             int interval = 250;
 
-            if (!string.IsNullOrEmpty(Mode) && !int.TryParse(Mode, out interval))
+            if (!string.IsNullOrEmpty(mode) && !int.TryParse(mode, out interval))
             {
                 error = 2;
                 return;
@@ -199,32 +211,32 @@ namespace IronAHK.Rusty
             if (once)
                 interval = -interval;
 
-            if (timers.ContainsKey(Label))
-                timers[Label].Interval = interval;
+            if (timers.ContainsKey(label))
+                timers[label].Interval = interval;
             else
-                timers.Add(Label, timer);
+                timers.Add(label, timer);
 
             if (once)
-                timers.Remove(Label);
+                timers.Remove(label);
 
             timer.Interval = interval;
 
-            var priority = System.Threading.ThreadPriority.Normal;
+            var level = System.Threading.ThreadPriority.Normal;
 
-            if (Priority > -1 && Priority < 5)
-                priority = (System.Threading.ThreadPriority)Priority;
+            if (priority > -1 && priority < 5)
+                level = (System.Threading.ThreadPriority)priority;
 
-            var method = FindLocalMethod(Label);
+            var method = FindLocalMethod(label);
 
             timer.Elapsed += new ElapsedEventHandler(delegate(object s, ElapsedEventArgs e)
             {
-                System.Threading.Thread.CurrentThread.Priority = priority;
+                System.Threading.Thread.CurrentThread.Priority = level;
 
                 try { method.Invoke(null, new object[] { new object[] { } }); }
                 catch (Exception)
                 {
                     timer.Stop();
-                    timers.Remove(Label);
+                    timers.Remove(label);
                     timer.Dispose();
                 }
 
@@ -244,20 +256,21 @@ namespace IronAHK.Rusty
         /// <param name="Delay">The amount of time to pause in milliseconds.</param>
         public static void Sleep(int Delay)
         {
-            const int step = 10;
-            Delay /= step;
+            System.Threading.Thread.CurrentThread.Join(Delay);
 
-            for (int i = 0; i < Delay; i++)
+            int stop = Environment.TickCount + Delay;
+
+            while (Environment.TickCount < stop)
             {
                 Application.DoEvents();
-                System.Threading.Thread.Sleep(step);
+                System.Threading.Thread.Sleep(10);
             }
         }
 
         /// <summary>
         /// Disables or enables all or selected hotkeys.
         /// </summary>
-        /// <param name="Mode">
+        /// <param name="mode">
         /// <list type="bullet">
         /// <item><term>On</term>: <description>suspends all hotkeys.</description></item>
         /// <item><term>Off</term>: <description>re-enables all hotkeys.</description></item>
@@ -265,18 +278,23 @@ namespace IronAHK.Rusty
         /// <item><term>Permit</term>: <description>marks the current subroutine as being exempt from suspension.</description></item>
         /// </list>
         /// </param>
-        public static void Suspend(string Mode)
+        public static void Suspend(string mode)
         {
+            var state = OnOff(mode);
 
+            if (state == null && mode.Equals(Keyword_Toggle, StringComparison.OrdinalIgnoreCase))
+                suspended = !suspended;
+            else
+                suspended = (bool)state;
+
+            // UNDONE: permit mode for suspend
         }
 
         /// <summary>
-        /// Sets the priority or interruptibility of threads. It can also temporarily disable all timers.
+        /// This method is obsolete, use <see cref="Critical"/>.
         /// </summary>
-        /// <param name="Setting"></param>
-        /// <param name="P2"></param>
-        /// <param name="P3"></param>
-        public static void Thread(string Setting, string P2, string P3)
+        [Obsolete, Conditional("LEGACY")]
+        public static void Thread()
         {
 
         }
