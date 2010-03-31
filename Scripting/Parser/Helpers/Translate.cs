@@ -328,9 +328,24 @@ namespace IronAHK.Scripting
 
                 #region Strings
 
-                // TODO: convert legacy StringGetPos command to StrPos()?
-                //case "stringgetpos":
-                //    break;
+                // HACK: convert L/R paramter for legacy StringGetPos command
+                case "stringgetpos":
+                    if (parts.Length < 3)
+                        throw new ParseException(ExTooFewParams);
+                    replaced.Append(parts[0].Trim(StringBound));
+                    replaced.Append(AssignPre);
+                    replaced.Append(Equal);
+                    replaced.Append("InStr");
+                    replaced.Append(ParenOpen);
+                    replaced.Append(parts[1]);
+                    replaced.Append(Multicast);
+                    replaced.Append(parts[2]);
+                    replaced.Append(Multicast);
+                    replaced.Append(FalseTxt);
+                    replaced.Append(Multicast);
+                    replaced.Append(parts.Length > 4 ? parts[4] : "0");
+                    replaced.Append(ParenClose);
+                    break;
 
                 case "stringleft":
                     if (parts.Length < 3)
