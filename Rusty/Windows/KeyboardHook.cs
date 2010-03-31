@@ -16,6 +16,7 @@ namespace IronAHK.Rusty
             const int WH_KEYBOARD_LL = 13;
             const int WM_KEYDOWN = 0x0100;
             const int WM_KEYUP = 0x0101;
+            const int WM_SYSKEYDOWN = 0x0104;
             LowLevelKeyboardProc proc;
             IntPtr hookId = IntPtr.Zero;
 
@@ -50,7 +51,7 @@ namespace IronAHK.Rusty
             IntPtr HookCallback(int nCode, IntPtr wParam, IntPtr lParam)
             {
                 bool block = false;
-                bool pressed = wParam == (IntPtr)WM_KEYDOWN;
+                bool pressed = wParam == (IntPtr)WM_KEYDOWN || wParam == (IntPtr)WM_SYSKEYDOWN;
 
                 if (nCode >= 0 && pressed || wParam == (IntPtr)WM_KEYUP)
                 {
