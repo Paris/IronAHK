@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading;
@@ -262,8 +262,6 @@ namespace IronAHK.Rusty
             bool enabled;
             string name;
 
-            const string backspace = "{BS}";
-
             [Flags]
             public enum Options { None = 0, AutoTrigger = 1, Nested = 2, Backspace = 4, CaseSensitive = 8, OmitEnding = 16, Raw = 32, Reset = 64 }
 
@@ -273,30 +271,6 @@ namespace IronAHK.Rusty
                 this.proc = proc;
 
                 endchars = "-()[]{}:;'\"/\\,.?!\n \t";
-            }
-
-            internal void PreFilter()
-            {
-                int length = sequence.Length;
-
-                if ((options & Options.AutoTrigger) == Options.AutoTrigger)
-                    length--;
-
-                if ((options & Options.Backspace) == Options.Backspace && length > 0)
-                {
-                    var buf = new StringBuilder(backspace.Length * length);
-
-                    for (int i = 0; i < length; i++)
-                        buf.Append(backspace);
-
-                    Send(buf.ToString());
-                }
-            }
-
-            internal void PostFilter()
-            {
-                if ((options & Options.OmitEnding) == Options.OmitEnding && (options & Options.AutoTrigger) != Options.AutoTrigger)
-                    Send(backspace);
             }
 
             public string Sequence
@@ -565,7 +539,7 @@ namespace IronAHK.Rusty
                         block = true;
                     }
                 }
-
+                
                 foreach (var hotstring in expand)
                 {
                     new Thread(new ThreadStart(delegate()
@@ -575,9 +549,9 @@ namespace IronAHK.Rusty
                         previous = current;
                         current = hotstring.ToString();
 
-                        hotstring.PreFilter(); // race condition
+                        PreFilter(hotstring); // race condition
                         hotstring.Proc(new object[] { });
-                        hotstring.PostFilter();
+                        PostFilter(hotstring);
                     })).Start();
                 }
 
@@ -626,10 +600,10 @@ namespace IronAHK.Rusty
                 {
                     if (history.Length < hotstring.Sequence.Length + 1)
                         return false;
-
+                    
                     if (hotstring.EndChars.IndexOf(history[history.Length - 1]) == -1)
                         return false;
-
+                                        
                     if (!history.Substring(x--, hotstring.Sequence.Length).Equals(hotstring.Sequence, compare))
                         return false;
                 }
@@ -642,12 +616,38 @@ namespace IronAHK.Rusty
             }
 
             #endregion
+            
+            #region Filtering
+
+            internal void PreFilter(HotstringDefinition target)
+            {
+                int length = target.Sequence.Length;
+
+                if ((target.EnabledOptions & HotstringDefinition.Options.AutoTrigger) == HotstringDefinition.Options.AutoTrigger)
+                    length--;
+
+                if ((target.EnabledOptions & HotstringDefinition.Options.Backspace) == HotstringDefinition.Options.Backspace && length > 0)
+                    SendBackspace(length+1);
+            }
+
+            internal void PostFilter(HotstringDefinition target)
+            {
+                if ((target.EnabledOptions & HotstringDefinition.Options.OmitEnding) == HotstringDefinition.Options.OmitEnding && 
+                    (target.EnabledOptions & HotstringDefinition.Options.AutoTrigger) != HotstringDefinition.Options.AutoTrigger)
+                    SendBackspace(1);
+            }
+            
+            #endregion
 
             #region Abstract methods
 
             protected abstract void RegisterHook();
 
             protected abstract void DeregisterHook();
+            
+            protected internal abstract void SendHotstring(string sequence);
+            
+            protected abstract void SendBackspace(int length);
 
             #endregion
         }
