@@ -55,22 +55,9 @@ namespace IronAHK.Rusty
 
             #endregion
 
-            #region Initialise
-
-            if (keyboardHook == null)
-            {
-                if (Environment.OSVersion.Platform == PlatformID.Win32NT)
-                    keyboardHook = new Windows.KeyboardHook();
-                else
-                    keyboardHook = new Linux.KeyboardHook();
-            }
-
-            if (hotkeys == null)
-                hotkeys = new Dictionary<string, HotkeyDefinition>();
-
-            #endregion
-
             #region Options
+
+            InitKeyboardHook();
 
             bool? enabled = true;
             bool error = false;
@@ -344,14 +331,16 @@ namespace IronAHK.Rusty
         /// <param name="Keys">The sequence of keys to send.</param>
         public static void Send(string Keys)
         {
-            if (suspended)
-                keyboardHook.SendHotstring(Keys);
-            else
-            {
-                suspended = true;
-                keyboardHook.SendHotstring(Keys);
+            InitKeyboardHook();
+
+            bool change = !suspended;
+
+            suspended = true;
+
+            keyboardHook.Send(Keys);
+
+            if (change)
                 suspended = false;
-            }
         }
 
         /// <summary>

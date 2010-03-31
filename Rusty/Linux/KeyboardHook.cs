@@ -139,7 +139,7 @@ namespace IronAHK.Rusty
             #region Hotstrings
             
             // Simulate a number of backspaces
-            protected override void SendBackspace (int length)
+            protected override void Backspace (int length)
             {
                 for(int i = 0; i < length; i++)
                 {
@@ -148,7 +148,7 @@ namespace IronAHK.Rusty
                 }
             }
             
-            protected internal override void SendHotstring(string Sequence)
+            protected internal override void Send(string Sequence)
             {
                 foreach(char C in Sequence)
                 {
