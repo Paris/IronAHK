@@ -1,7 +1,8 @@
-﻿using System;
+using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
+using System.Text;
 
 namespace IronAHK.Rusty
 {
@@ -18,6 +19,8 @@ namespace IronAHK.Rusty
             LowLevelKeyboardProc proc;
             IntPtr hookId = IntPtr.Zero;
 
+            const string backspace = "{BS}";
+
             protected override void RegisterHook()
             {
                 proc = HookCallback;
@@ -27,6 +30,21 @@ namespace IronAHK.Rusty
             protected override void DeregisterHook()
             {
                 UnhookWindowsHookEx(hookId);
+            }
+            
+            protected override void SendBackspace (int length)
+            {
+                StringBuilder Buf = new StringBuilder(backspace.Length * length);
+                
+                for(int i = 0; i < length; i++)
+                    Buf.Append("{BS}");
+                
+                SendHotstring(Buf.ToString());
+            }
+            
+            protected internal override void SendHotstring (string keys)
+            {
+                SendKeys.SendWait(keys);
             }
 
             IntPtr HookCallback(int nCode, IntPtr wParam, IntPtr lParam)
