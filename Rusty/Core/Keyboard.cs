@@ -202,7 +202,7 @@ namespace IronAHK.Rusty
                 if (Environment.OSVersion.Platform == PlatformID.Win32NT)
                     keyboardHook = new Windows.KeyboardHook();
                 else
-                    throw new NotImplementedException(); // TODO: Linux hotkeys
+                    keyboardHook = new Linux.KeyboardHook();
             }
 
             if (hotstrings == null)
@@ -345,11 +345,11 @@ namespace IronAHK.Rusty
         public static void Send(string Keys)
         {
             if (suspended)
-                SendKeys.SendWait(Keys);
+                keyboardHook.SendHotstring(Keys);
             else
             {
                 suspended = true;
-                SendKeys.SendWait(Keys);
+                keyboardHook.SendHotstring(Keys);
                 suspended = false;
             }
         }
