@@ -332,15 +332,7 @@ namespace IronAHK.Rusty
         public static void Send(string Keys)
         {
             InitKeyboardHook();
-
-            bool change = !suspended;
-
-            suspended = true;
-
             keyboardHook.Send(Keys);
-
-            if (change)
-                suspended = false;
         }
 
         /// <summary>

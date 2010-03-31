@@ -7,7 +7,7 @@ namespace IronAHK.Rusty
     partial class Windows
     {
         [DllImport("user32.dll")]
-        public static extern uint SendInput(uint nInputs, ref INPUT pInputs, int cbSize);
+        public static extern uint SendInput(uint nInputs, INPUT[] pInputs, int cbSize);
 
         [DllImport("user32.dll")]
         public static extern IntPtr GetMessageExtraInfo();
@@ -47,17 +47,31 @@ namespace IronAHK.Rusty
             public ushort wParamH;
         }
 
-        [StructLayout(LayoutKind.Explicit)]
         public struct INPUT
         {
-            [FieldOffset(0)]
-            public int type;
-            [FieldOffset(4)]
-            public MOUSEINPUT mi;
-            [FieldOffset(4)]
-            public KEYBDINPUT ki;
-            [FieldOffset(4)]
-            public HARDWAREINPUT hi;
+            public uint type;
+            public INPUTDATA i;
         }
+
+        [StructLayout(LayoutKind.Explicit)]
+        public struct INPUTDATA
+        {
+            [FieldOffset(0)]
+            public MOUSEINPUT m;
+
+            [FieldOffset(0)]
+            public KEYBDINPUT k;
+
+            [FieldOffset(0)]
+            public HARDWAREINPUT h;
+        }
+
+        public const int INPUT_MOUSE = 0;
+        public const int INPUT_KEYBOARD = 1;
+        public const int INPUT_HARDWARE = 2;
+
+        public const int KEYEVENTF_EXTENDEDKEY = 1;
+        public const int KEYEVENTF_KEYUP = 2;
+        public const int KEYEVENTF_UNICODE = 4;
     }
 }
