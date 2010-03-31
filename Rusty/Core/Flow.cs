@@ -48,7 +48,7 @@ namespace IronAHK.Rusty
         /// </summary>
         /// <param name="name">The name of a function.</param>
         /// <returns><c>true</c> if the specified function exists in the current scope, <c>false</c> otherwise.</returns>
-        public static bool IsFunction(string name)
+        public static bool IsFunc(string name)
         {
             return FindLocalMethod(name) != null;
         }
