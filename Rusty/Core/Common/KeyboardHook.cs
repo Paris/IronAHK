@@ -216,7 +216,7 @@ namespace IronAHK.Rusty
 
                 try
                 {
-                    Enum.Parse(typeof(Keys), name, true);
+                    value = Enum.Parse(typeof(Keys), name, true);
                 }
                 catch (ArgumentException)
                 {
