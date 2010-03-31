@@ -475,7 +475,7 @@ namespace IronAHK.Rusty
 
                 foreach (var hotkey in hotkeys)
                 {
-                    bool match = (hotkey.Keys & key) == key;
+                    bool match = (hotkey.Keys & ~Keys.Modifiers) == key;
                     bool up = (hotkey.EnabledOptions & HotkeyDefinition.Options.Up) == HotkeyDefinition.Options.Up;
 
                     if (hotkey.Enabled && match && HasModifiers(hotkey) && up != down)
