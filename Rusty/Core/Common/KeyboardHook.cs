@@ -145,6 +145,7 @@ namespace IronAHK.Rusty
                             switch (sequence[i])
                             {
                                 case Keyword_ModifierWin: extra = Keys.LWin; break;
+                                case Keyword_ModifierAlt: extra = Keys.LMenu; break;
                                 case Keyword_ModifierCtrl: extra = Keys.LControlKey; break;
                                 case Keyword_ModifierShift: extra = Keys.LShiftKey; break;
                                 default: throw new ArgumentException();
@@ -158,6 +159,7 @@ namespace IronAHK.Rusty
                             switch (sequence[i])
                             {
                                 case Keyword_ModifierWin: extra = Keys.RWin; break;
+                                case Keyword_ModifierAlt: extra = Keys.RMenu; break;
                                 case Keyword_ModifierCtrl: extra = Keys.RControlKey; break;
                                 case Keyword_ModifierShift: extra = Keys.RShiftKey; break;
                                 default: throw new ArgumentException();
@@ -567,7 +569,7 @@ namespace IronAHK.Rusty
                     return true;
 
                 bool[,] modifiers = { 
-                                       { (hotkey.Keys & Keys.Alt) == Keys.Alt , pressed[Keys.Alt] },
+                                       { (hotkey.Keys & Keys.Alt) == Keys.Alt, pressed[Keys.Alt] || pressed[Keys.LMenu] || pressed[Keys.RMenu] },
                                        { (hotkey.Keys & Keys.Control) == Keys.Control, pressed[Keys.Control] || pressed[Keys.LControlKey] || pressed[Keys.RControlKey] },
                                        { (hotkey.Keys & Keys.Shift) == Keys.Shift, pressed[Keys.Shift] || pressed[Keys.LShiftKey] || pressed[Keys.RShiftKey] }
                                    };
