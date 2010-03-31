@@ -550,10 +550,21 @@ namespace IronAHK.Rusty
                         currentTime = Environment.TickCount;
                         previous = current;
                         current = hotstring.ToString();
+                        int length = hotstring.Sequence.Length;
 
-                        PreFilter(hotstring); // race condition
+                        if ((hotstring.EnabledOptions & HotstringDefinition.Options.AutoTrigger) == HotstringDefinition.Options.AutoTrigger)
+                            length--;
+
+                        // UNDONE: potential race condition, backspacing hotstring definition while another one is sending its replacement text
+
+                        if ((hotstring.EnabledOptions & HotstringDefinition.Options.Backspace) == HotstringDefinition.Options.Backspace && length > 0)
+                            Backspace(length + 1);
+
                         hotstring.Proc(new object[] { });
-                        PostFilter(hotstring);
+
+                        if ((hotstring.EnabledOptions & HotstringDefinition.Options.OmitEnding) == HotstringDefinition.Options.OmitEnding &&
+                            (hotstring.EnabledOptions & HotstringDefinition.Options.AutoTrigger) != HotstringDefinition.Options.AutoTrigger)
+                            Backspace(1);
                     })).Start();
                 }
 
@@ -618,28 +629,6 @@ namespace IronAHK.Rusty
             }
 
             #endregion
-            
-            #region Filtering
-
-            internal void PreFilter(HotstringDefinition target)
-            {
-                int length = target.Sequence.Length;
-
-                if ((target.EnabledOptions & HotstringDefinition.Options.AutoTrigger) == HotstringDefinition.Options.AutoTrigger)
-                    length--;
-
-                if ((target.EnabledOptions & HotstringDefinition.Options.Backspace) == HotstringDefinition.Options.Backspace && length > 0)
-                    SendBackspace(length+1);
-            }
-
-            internal void PostFilter(HotstringDefinition target)
-            {
-                if ((target.EnabledOptions & HotstringDefinition.Options.OmitEnding) == HotstringDefinition.Options.OmitEnding && 
-                    (target.EnabledOptions & HotstringDefinition.Options.AutoTrigger) != HotstringDefinition.Options.AutoTrigger)
-                    SendBackspace(1);
-            }
-            
-            #endregion
 
             #region Abstract methods
 
@@ -647,9 +636,9 @@ namespace IronAHK.Rusty
 
             protected abstract void DeregisterHook();
             
-            protected internal abstract void SendHotstring(string sequence);
+            protected internal abstract void Send(string keys);
             
-            protected abstract void SendBackspace(int length);
+            protected abstract void Backspace(int n);
 
             #endregion
         }
