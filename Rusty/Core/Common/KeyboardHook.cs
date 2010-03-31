@@ -164,7 +164,7 @@ namespace IronAHK.Rusty
                             }
                             break;
 
-                        case Keyword_ModifierWin: keys |= Keys.LWin; break;
+                        case Keyword_ModifierWin: extra = Keys.LWin; break;
                         case Keyword_ModifierAlt: keys |= Keys.Alt; break;
                         case Keyword_ModifierCtrl: keys |= Keys.Control; break;
                         case Keyword_ModifierShift: keys |= Keys.Shift; break;
