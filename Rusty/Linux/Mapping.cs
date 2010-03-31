@@ -8,9 +8,26 @@ namespace IronAHK.Rusty
     {
         public partial class KeyboardHook : Core.KeyboardHook
         {
+            private struct CachedKey
+            {
+                public uint Sym;
+                public bool Shift;
+                
+                public CachedKey(uint Sym, bool Shift)
+                {
+                    this.Sym = Sym;
+                    this.Shift = Shift;
+                }
+                
+                public CachedKey(Keys Sym, bool Shift) : this((uint) Sym, Shift)
+                {
+                }
+            }
+            
             public void SetupMapping()
             {
                 Mapping = new Dictionary<Keys, WF.Keys>();
+                Cache = new Dictionary<char, CachedKey>();
                 
                 Mapping.Add(Keys.LeftAlt, WF.Keys.LMenu);
                 Mapping.Add(Keys.RightAlt, WF.Keys.RMenu);
@@ -80,6 +97,27 @@ namespace IronAHK.Rusty
                 Mapping.Add(Keys.NumpadEnter, WF.Keys.None);
                 Mapping.Add(Keys.NumpadPlus, WF.Keys.None);
                 Mapping.Add(Keys.NumpadMinus, WF.Keys.None);
+                
+                #region Cache
+                // Add keys to the cache that can not be looked up with XLookupKeysym
+                
+                // HACK: I'm not sure these will work on other keyboard layouts.
+                Cache.Add('(', new CachedKey(Keys.OpenParens, true));
+                Cache.Add(')', new CachedKey(Keys.CloseParens, true));
+                Cache.Add('[', new CachedKey(Keys.OpenSquareBracket, true));
+                Cache.Add(']', new CachedKey(Keys.CloseSquareBracket, true));
+                Cache.Add('=', new CachedKey(Keys.Equals, true));
+                Cache.Add('-', new CachedKey(Keys.Dash, true));
+                Cache.Add('!', new CachedKey(Keys.ExMark, true));
+                Cache.Add('@', new CachedKey(Keys.At, true));
+                Cache.Add('#', new CachedKey(Keys.Hash, true));
+                Cache.Add('$', new CachedKey(Keys.Dollar, true));
+                Cache.Add('%', new CachedKey(Keys.Percent, true));
+                Cache.Add('^', new CachedKey(Keys.Circumflex, true));
+                Cache.Add('&', new CachedKey(Keys.Ampersand, true));
+                Cache.Add('*', new CachedKey(Keys.Asterisk, true));
+                
+                #endregion
             }
         }
     }
