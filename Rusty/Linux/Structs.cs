@@ -91,6 +91,17 @@ namespace IronAHK.Rusty
             Semicolon = 47,
             OpenSquareBracket = 34,
             CloseSquareBracket = 35,
+            
+            ExMark = 10,
+            At = 11,
+            Hash = 12,
+            Dollar = 13,
+            Percent = 14,
+            Circumflex = 15,
+            Ampersand = 16,
+            Asterisk = 17,
+            OpenParens = 18,
+            CloseParens = 19,
             Dash = 20,
             Equals = 21,
             

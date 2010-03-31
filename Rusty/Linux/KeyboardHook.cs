@@ -19,6 +19,7 @@ namespace IronAHK.Rusty
             StringBuilder Dummy = new StringBuilder(); // Somehow needed to get strings from native X11
             Thread Listener;
             
+            Dictionary<char, CachedKey> Cache;
             Dictionary<Keys, WF.Keys> Mapping;
             
             protected override void RegisterHook()
@@ -134,6 +135,58 @@ namespace IronAHK.Rusty
                 }
                 else return WF.Keys.None;
             }
+             
+            #region Hotstrings
+            
+            // Simulate a number of backspaces
+            protected override void SendBackspace (int length)
+            {
+                for(int i = 0; i < length; i++)
+                {
+                    X11.XTestFakeKeyEvent(Display, (uint) Keys.BackSpace, true, 0);
+                    X11.XTestFakeKeyEvent(Display, (uint) Keys.BackSpace, false, 0);
+                }
+            }
+            
+            protected internal override void SendHotstring(string Sequence)
+            {
+                foreach(char C in Sequence)
+                {
+                    CachedKey Key = LookupKeycode(C);
+                    
+                    // If it is an upper case character, hold the shift key...
+                    if(char.IsUpper(C) || Key.Shift)
+                        X11.XTestFakeKeyEvent(Display, (uint) Keys.LeftShift, true, 0);
+                    
+                    // Fake a key event. Note that some programs filter this kind of events.
+                    X11.XTestFakeKeyEvent(Display, Key.Sym, true, 0);
+                    X11.XTestFakeKeyEvent(Display, Key.Sym, false, 0);
+                    
+                    // ...and release it later on
+                    if(char.IsUpper(C) || Key.Shift)
+                        X11.XTestFakeKeyEvent(Display, (uint) Keys.LeftShift, false, 0);
+                }
+            }
+            
+            CachedKey LookupKeycode(char Code)
+            {
+                // If we have a cache value, return that
+                if(Cache.ContainsKey(Code))
+                    return Cache[Code];
+                
+                // First look up the KeySym (XK_* in X11/keysymdef.h)
+                uint KeySym = X11.XStringToKeysym(Code.ToString());
+                // Then look up the appropriate KeyCode
+                uint KeyCode = X11.XKeysymToKeycode(Display, KeySym);
+                
+                // Cache for later use
+                CachedKey Ret = new CachedKey(KeyCode, false);
+                Cache.Add(Code, Ret);
+                          
+                return Ret;
+            }            
+            
+            #endregion
         }
     }
 }
