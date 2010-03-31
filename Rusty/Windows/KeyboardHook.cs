@@ -17,8 +17,11 @@ namespace IronAHK.Rusty
             const int WM_KEYDOWN = 0x0100;
             const int WM_KEYUP = 0x0101;
             const int WM_SYSKEYDOWN = 0x0104;
+            const int VK_BACK = 0x08;
+            const int MAPVK_VK_TO_VSC = 0;
             LowLevelKeyboardProc proc;
             IntPtr hookId = IntPtr.Zero;
+            bool ignore = false;
 
             protected override void RegisterHook()
             {
@@ -31,25 +34,72 @@ namespace IronAHK.Rusty
                 UnhookWindowsHookEx(hookId);
             }
 
-            protected override void Backspace(int length)
-            {
-                const string backspace = "{BS}";
-                var buf = new StringBuilder(backspace.Length * length);
-
-                for (int i = 0; i < length; i++)
-                    buf.Append(backspace);
-
-                Send(buf.ToString());
-            }
-
             protected internal override void Send(string keys)
             {
-                SendKeys.SendWait(keys);
+                if (keys.Length == 0)
+                    return;
+
+                var seq = UTF8Encoding.ASCII.GetBytes(keys);
+                Send(seq);
+            }
+
+            void Send(byte[] seq)
+            {
+                var len = seq.Length * 2;
+                var inputs = new INPUT[len];
+
+                for (int i = 0; i < seq.Length; i++)
+                {
+                    uint flag = KEYEVENTF_UNICODE;
+
+                    if ((seq[i] & 0xff00) == 0xe000)
+                        flag |= KEYEVENTF_EXTENDEDKEY;
+
+                    var down = new INPUT { type = INPUT_KEYBOARD };
+                    down.i.k = new KEYBDINPUT { wScan = seq[i], dwFlags = flag };
+
+                    var up = new INPUT { type = INPUT_KEYBOARD };
+                    up.i.k = new KEYBDINPUT { wScan = seq[i], dwFlags = flag | KEYEVENTF_KEYUP };
+
+                    int x = i * 2;
+                    inputs[x] = down;
+                    inputs[x + 1] = up;
+                }
+
+                ignore = true;
+                var res = SendInput((uint)len, inputs, Marshal.SizeOf(typeof(INPUT)));
+                ignore = false;
+            }
+
+            protected override void Backspace(int length)
+            {
+                length *= 2;
+                var inputs = new INPUT[length];
+
+                for (int i = 0; i < length; i += 2)
+                {
+                    var down = new INPUT { type = INPUT_KEYBOARD };
+                    down.i.k = new KEYBDINPUT { wVk = VK_BACK };
+
+                    var up = new INPUT { type = INPUT_KEYBOARD };
+                    up.i.k = new KEYBDINPUT { wVk = VK_BACK, dwFlags = KEYEVENTF_KEYUP };
+
+                    inputs[i] = down;
+                    inputs[i + 1] = up;
+                }
+
+                ignore = true;
+                var res = SendInput((uint)length, inputs, Marshal.SizeOf(typeof(INPUT)));
+                ignore = false;
             }
 
             IntPtr HookCallback(int nCode, IntPtr wParam, IntPtr lParam)
             {
                 bool block = false;
+
+                if (ignore)
+                    goto chain;
+
                 bool pressed = wParam == (IntPtr)WM_KEYDOWN || wParam == (IntPtr)WM_SYSKEYDOWN;
 
                 if (nCode >= 0 && pressed || wParam == (IntPtr)WM_KEYUP)
@@ -58,6 +108,7 @@ namespace IronAHK.Rusty
                     block = KeyReceived((Keys)vkCode, pressed);
                 }
 
+            chain:
                 var next = CallNextHookEx(hookId, nCode, wParam, lParam);
                 return block ? new IntPtr(1) : next;
             }
