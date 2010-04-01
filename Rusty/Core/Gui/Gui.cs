@@ -194,6 +194,22 @@ namespace IronAHK.Rusty
                                 break;
 
                             case Keyword_Hotkey:
+                                {
+                                    var hotkey = guis[id].CreateHotkey();
+                                    hotkey.Contents = Param4;
+                                    string opts = GuiApplyStyles(hotkey, Param3);
+
+                                    foreach (string opt in ParseOptions(opts))
+                                    {
+                                        if (!opt.StartsWith(Keyword_Limit, StringComparison.OrdinalIgnoreCase))
+                                            continue;
+
+                                        int n;
+                                        hotkey.Limit = int.TryParse(opt.Substring(Keyword_Limit.Length), out n) ? n : 0;
+                                    }
+
+                                    guis[id].Add(hotkey);
+                                }
                                 break;
 
                             case Keyword_DateTime:
