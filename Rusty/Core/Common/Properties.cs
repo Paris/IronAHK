@@ -63,6 +63,9 @@ namespace IronAHK.Rusty
 
         #region Guis
 
+        [ThreadStatic]
+        static int eventinfo;
+
         static Dictionary<string, BaseGui.Window> guis;
 
         [ThreadStatic]
