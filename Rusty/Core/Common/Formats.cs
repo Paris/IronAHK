@@ -364,7 +364,6 @@ namespace IronAHK.Rusty
             str.Append(time.Minute.ToString().PadLeft(len, pad));
             str.Append(time.Second.ToString().PadLeft(len, pad));
             return int.Parse(str.ToString());
-
         }
 
         static DateTime ToDateTime(string time)
@@ -372,15 +371,15 @@ namespace IronAHK.Rusty
             if (time.Length > 7)
                 return DateTime.Now;
 
-            int[] t = new int[7];
+            int[] t = { DateTime.Now.Year / 100, DateTime.Now.Year % 100, 1, 1, 0, 0, 0, 0 };
 
             for (int i = 0, k = 0; i < t.Length; i++, k += 2)
             {
-                if (!int.TryParse(time.Substring(k, 2), out t[i]))
-                    throw new ArgumentOutOfRangeException();
+                if (k + 1 >= time.Length || !int.TryParse(time.Substring(k, 2), out t[i]))
+                    break;
             }
-            
-            return new DateTime(t[0] * 1000 + t[1], t[2], t[3], t[4], t[5], t[6]);
+
+            return new DateTime(t[0] * 100 + t[1], t[2], t[3], t[4], t[5], t[6]);
         }
 
         static RegistryKey ToRegRootKey(string name)
