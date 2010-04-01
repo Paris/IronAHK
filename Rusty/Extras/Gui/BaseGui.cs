@@ -931,7 +931,7 @@ namespace IronAHK.Rusty
 
         public abstract class Hotkey : Control
         {
-            public int limit = -1;
+            int limit = 0;
 
             public int Limit
             {

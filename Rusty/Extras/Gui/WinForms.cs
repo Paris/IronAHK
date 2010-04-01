@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Text;
 using System.Windows.Forms;
 
 namespace IronAHK.Rusty
@@ -521,9 +522,136 @@ namespace IronAHK.Rusty
 
         public new class Hotkey : BaseGui.Hotkey
         {
+            Keys key, mod;
+
+            public Hotkey()
+            {
+                var ctrl = new TextBox();
+                NativeComponent = ctrl;
+
+                ctrl.Multiline = false;
+                ctrl.ContextMenu = new ContextMenu();
+                key = mod = Keys.None;
+                ctrl.Text = Enum.GetName(typeof(Keys), key);
+
+                ctrl.KeyPress += new KeyPressEventHandler(delegate(object sender, KeyPressEventArgs e)
+                {
+                    e.Handled = true;
+                });
+
+                ctrl.KeyUp += new KeyEventHandler(delegate(object sender, KeyEventArgs e)
+                {
+                    if (e.KeyCode == Keys.None && e.Modifiers == Keys.None)
+                        key = Keys.None;
+                });
+
+                ctrl.KeyDown += new KeyEventHandler(delegate(object sender, KeyEventArgs e)
+                {
+                    if (e.KeyCode == Keys.Back || e.KeyCode == Keys.Delete)
+                        key = mod = Keys.None;
+                    else
+                    {
+                        key = e.KeyCode;
+                        mod = e.Modifiers;
+                        Validate();
+                    }
+
+                    SetText();
+                });
+            }
+
+            void Validate()
+            {
+                Keys[,] sym = { { Keys.Control, Keys.ControlKey }, { Keys.Shift, Keys.ShiftKey }, { Keys.Alt, Keys.Menu } };
+
+                for (int i = 0; i < 3; i++)
+                {
+                    if (key == sym[i, 1] && (mod & sym[i, 0]) == sym[i, 0])
+                        mod &= ~sym[i, 0];
+                }
+
+                if ((Limit & 1) == 1)
+                {
+                    if (mod == Keys.None)
+                        key = Keys.None;
+                }
+
+                if ((Limit & 2) == 2)
+                {
+                    if (mod == Keys.Shift)
+                        key = mod = Keys.None;
+                }
+
+                if ((Limit & 4) == 4)
+                {
+                    if (mod == Keys.Control)
+                        key = mod = Keys.None;
+                }
+
+                if ((Limit & 8) == 8)
+                {
+                    if (mod == Keys.Alt)
+                        key = mod = Keys.None;
+                }
+
+                if ((Limit & 16) == 16)
+                {
+                    if ((mod & Keys.Shift) == Keys.Shift && (mod & Keys.Control) == Keys.Control && (mod & Keys.Alt) != Keys.Alt)
+                        key = mod = Keys.None;
+                }
+
+                if ((Limit & 32) == 32)
+                {
+                    if ((mod & Keys.Shift) == Keys.Shift && (mod & Keys.Control) != Keys.Control && (mod & Keys.Control) == Keys.Alt)
+                        key = mod = Keys.None;
+                }
+
+                if ((Limit & 128) == 128)
+                {
+                    if ((mod & Keys.Shift) == Keys.Shift && (mod & Keys.Control) == Keys.Control && (mod & Keys.Control) == Keys.Alt)
+                        key = mod = Keys.None;
+                }
+            }
+
+            void SetText()
+            {
+                var ctrl = (TextBox)NativeComponent;
+                var buf = new StringBuilder(45);
+                const string sep = " + ";
+
+                if ((mod & Keys.Control) == Keys.Control)
+                {
+                    buf.Append(Enum.GetName(typeof(Keys), Keys.Control));
+                    buf.Append(sep);
+                }
+
+                if ((mod & Keys.Shift) == Keys.Shift)
+                {
+                    buf.Append(Enum.GetName(typeof(Keys), Keys.Shift));
+                    buf.Append(sep);
+                }
+
+                if ((mod & Keys.Alt) == Keys.Alt)
+                {
+                    buf.Append(Enum.GetName(typeof(Keys), Keys.Alt));
+                    buf.Append(sep);
+                }
+
+                buf.Append(key.ToString());
+                ctrl.Text = buf.ToString();
+            }
+
             public override void Draw()
             {
-                throw new NotImplementedException();
+                var ctrl = (TextBox)NativeComponent;
+                ApplyStyles(ctrl, this);
+                if (Size.IsEmpty)
+                {
+                    float w = 5 + ctrl.CreateGraphics().MeasureString(Contents, ctrl.Font).Width;
+                    ctrl.Size = new Size((int)w, ctrl.Size.Height);
+                }
+                SetText();
+                ctrl.Show();
             }
         }
 
