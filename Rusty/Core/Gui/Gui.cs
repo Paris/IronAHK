@@ -680,8 +680,13 @@ namespace IronAHK.Rusty
                                 break;
 
                             case 'r':
-                                if (control.Parent != null && control.Parent.Font != null && int.TryParse(arg, out n))
-                                    control.Size = new Size(control.Size.Width, (int)(n * control.Parent.Font.GetHeight()));
+                                if (int.TryParse(arg, out n))
+                                {
+                                    if (control.Parent != null && control.Parent.Font != null)
+                                        control.Size = new Size(control.Size.Width, (int)(n * control.Parent.Font.GetHeight()));
+                                }
+                                else
+                                    append = true;
                                 break;
 
                             case 'c':
