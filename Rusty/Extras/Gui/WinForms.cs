@@ -665,9 +665,27 @@ namespace IronAHK.Rusty
 
         public new class MonthCal : BaseGui.MonthCal
         {
+            public MonthCal()
+            {
+                NativeComponent = new MonthCalendar();
+            }
+
             public override void Draw()
             {
-                throw new NotImplementedException();
+                var cal = (MonthCalendar)NativeComponent;
+                ApplyStyles(cal, this);
+                cal.AutoSize = Size.IsEmpty;
+                cal.MaxSelectionCount = MultiSelect ? int.MaxValue : 1;
+                if (RangeMinimum != default(System.DateTime) && RangeMaximum != default(System.DateTime) && RangeMinimum < RangeMaximum)
+                    cal.SelectionRange = new SelectionRange(RangeMinimum, RangeMaximum);
+                cal.SelectionStart = RangeMinimum;
+                cal.ShowWeekNumbers = DisplayWeek;
+                cal.ShowTodayCircle = HightlightToday;
+                cal.ShowToday = DisplayToday;
+                long time;
+                if (long.TryParse(Contents, out time))
+                    cal.TodayDate = new System.DateTime(time);
+                cal.Show();
             }
         }
 

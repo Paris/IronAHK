@@ -216,6 +216,39 @@ namespace IronAHK.Rusty
                                 break;
 
                             case Keyword_MonthCal:
+                                {
+                                    var cal = guis[id].CreateMonthCal();
+                                    cal.Contents = ToDateTime(Param4).Ticks.ToString();
+                                    string opts = GuiApplyStyles(cal, Param3);
+
+                                    foreach (string opt in ParseOptions(opts))
+                                    {
+                                        bool on = opt[0] != '-';
+                                        string mode = opt.Substring(!on || opt[0] == '+' ? 1 : 0).ToLowerInvariant();
+
+                                        switch (mode)
+                                        {
+                                            case "4": cal.DisplayWeek = on; break;
+                                            case "8": cal.HightlightToday = !on; break;
+                                            case "16": cal.DisplayToday = !on; break;
+                                            case Keyword_Multi: cal.MultiSelect = on; break;
+
+                                            default:
+                                                if (mode.StartsWith(Keyword_Range, StringComparison.OrdinalIgnoreCase))
+                                                {
+                                                    string[] range = mode.Substring(Keyword_Range.Length).Split(new[] { '-' }, 2);
+
+                                                    cal.RangeMinimum = ToDateTime(range[0]);
+
+                                                    if (range.Length > 1)
+                                                        cal.RangeMaximum = ToDateTime(range[1]);
+                                                }
+                                                break;
+                                        }
+                                    }
+
+                                    guis[id].Add(cal);
+                                }
                                 break;
 
                             case Keyword_Slider:

@@ -988,10 +988,10 @@ namespace IronAHK.Rusty
         public abstract class MonthCal : Control
         {
             bool multi = false;
-            int rangeMin = 0, rangeMax = 100;
+            System.DateTime rangeMin, rangeMax;
             bool displayWeek = false;
-            bool highlightToday = false;
-            bool displayToday = false;
+            bool highlightToday = true;
+            bool displayToday = true;
 
             public bool MultiSelect
             {
@@ -999,13 +999,13 @@ namespace IronAHK.Rusty
                 set { multi = value; }
             }
 
-            public int RangeMinimum
+            public System.DateTime RangeMinimum
             {
                 get { return rangeMin; }
                 set { rangeMin = value; }
             }
 
-            public int RangeMaximum
+            public System.DateTime RangeMaximum
             {
                 get { return rangeMax; }
                 set { rangeMax = value; }
