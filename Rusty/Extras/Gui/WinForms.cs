@@ -45,6 +45,30 @@ namespace IronAHK.Rusty
                 WindowColour = form.BackColor;
                 ControlColour = form.ForeColor;
                 form.StartPosition = FormStartPosition.Manual;
+
+                form.FormClosed += new FormClosedEventHandler(delegate(object sender, FormClosedEventArgs e)
+                {
+                    OnClosed(new ClosedArgs());
+                });
+
+                form.KeyPress += new KeyPressEventHandler(delegate(object sender, KeyPressEventArgs e)
+                {
+                    if (e.KeyChar == (char)Keys.Escape)
+                        OnEscaped(new EscapedArgs());
+                });
+
+                form.Resize += new EventHandler(delegate(object sender, EventArgs e)
+                {
+                    int mode = 0;
+
+                    switch (form.WindowState)
+                    {
+                        case FormWindowState.Minimized: mode = 1; break;
+                        case FormWindowState.Maximized: mode = 2; break;
+                    }
+
+                    OnResized(new ResizedArgs(mode));
+                });
             }
 
             [DllImport("user32.dll")]

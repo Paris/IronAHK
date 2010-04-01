@@ -13,6 +13,21 @@ namespace IronAHK.Rusty
 {
     partial class Core
     {
+        static object SafeInvoke(string name, params object[] args)
+        {
+            var method = FindLocalRoutine(name);
+
+            if (method == null)
+                return null;
+
+            object value = null;
+
+            try { value = method.Invoke(null, new object[] { args }); }
+            catch (Exception) { }
+            
+            return value;
+        }
+
         static MethodInfo FindLocalRoutine(string name)
         {
             return FindLocalMethod(LabelMethodName(name));

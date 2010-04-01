@@ -176,9 +176,9 @@ namespace IronAHK.Rusty
         /// <item>GUI events, namely GuiContextMenu, GuiDropFiles, ListBox, ListView, TreeView, and StatusBar. If there is no additional information for an event, A_EventInfo contains 0.</item>
         /// </list>
         /// </summary>
-        public static string A_EventInfo
+        public static int A_EventInfo
         {
-            get { return null; }
+            get { return eventinfo; }
         }
 
         /// <summary>

@@ -158,11 +158,11 @@ namespace IronAHK.Rusty
         const string Keyword_MaxSize = "maxsize";
         const string Keyword_MinSize = "minsize";
         const string Keyword_OwnDialogs = "owndialogs";
-        const string Keyword_GuiEscape = "guiescape";
-        const string Keyword_GuiClose = "guiclose";
-        const string Keyword_GuiSize = "guisize";
-        const string Keyword_GuiContextMenu = "guicontextmenu";
-        const string Keyword_GuiDropFiles = "guidropfiles";
+        const string Keyword_GuiEscape = "escape";
+        const string Keyword_GuiClose = "close";
+        const string Keyword_GuiSize = "size";
+        const string Keyword_GuiContextMenu = "contextmenu";
+        const string Keyword_GuiDropFiles = "dropfiles";
         const string Keyword_TabStop = "tabstop";
         const string Keyword_Section = "section";
         const string Keyword_AltSubmit = "altsubmit";

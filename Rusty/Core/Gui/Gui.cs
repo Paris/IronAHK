@@ -24,7 +24,7 @@ namespace IronAHK.Rusty
             string id = GuiId(ref Command);
 
             if (!guis.ContainsKey(id))
-                guis.Add(id, new WinForms.Window());
+                guis.Add(id, GuiCreateWindow(id));
 
             switch (Command.ToLowerInvariant())
             {
@@ -543,6 +543,32 @@ namespace IronAHK.Rusty
 
                 #endregion
             }
+        }
+
+        static BaseGui.Window GuiCreateWindow(string name)
+        {
+            var win = new WinForms.Window();
+
+            if (name != "1")
+                win.Label = name + win.Label;
+
+            win.Closed += new EventHandler<BaseGui.Window.ClosedArgs>(delegate(object sender, BaseGui.Window.ClosedArgs e)
+            {
+                SafeInvoke(win.Label + Keyword_GuiClose);
+            });
+
+            win.Escaped += new EventHandler<BaseGui.Window.EscapedArgs>(delegate(object sender, BaseGui.Window.EscapedArgs e)
+            {
+                SafeInvoke(win.Label + Keyword_GuiEscape);
+            });
+
+            win.Resized += new EventHandler<BaseGui.Window.ResizedArgs>(delegate(object sender, BaseGui.Window.ResizedArgs e)
+            {
+                eventinfo = error = e.Mode;
+                SafeInvoke(win.Label + Keyword_GuiSize);
+            });
+
+            return win;
         }
 
         static string GuiApplyStyles(BaseGui.Control control, string styles)
