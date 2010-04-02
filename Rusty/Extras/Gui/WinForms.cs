@@ -788,9 +788,29 @@ namespace IronAHK.Rusty
 
         public new class Tab : BaseGui.Tab
         {
+            public Tab()
+            {
+                NativeComponent = new TabControl();
+            }
+
             public override void Draw()
             {
-                throw new NotImplementedException();
+                var tab = (TabControl)NativeComponent;
+                if (Size.IsEmpty)
+                    Size = new Size(270, 220); // UNDONE: relative automatic size for WinForms tab control
+                ApplyStyles(tab, this);
+                foreach (string page in Contents.Split(new[] { Parent.Delimieter }))
+                    tab.TabPages.Add(page);
+                switch (Align)
+                {
+                    case 0: tab.Alignment = TabAlignment.Top; break;
+                    case 1: tab.Alignment = TabAlignment.Left; break;
+                    case 2: tab.Alignment = TabAlignment.Right; break;
+                    case 3: tab.Alignment = TabAlignment.Bottom; break;
+                }
+                if (Choose > -1 && Choose < tab.TabPages.Count)
+                    tab.SelectedIndex = Choose - 1;
+                tab.Show();
             }
         }
 
