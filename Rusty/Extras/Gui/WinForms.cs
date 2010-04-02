@@ -502,7 +502,7 @@ namespace IronAHK.Rusty
                 else if (Lowercase)
                     Contents = Contents.ToLowerInvariant();
                 ddl.Items.AddRange(Contents.Split(new[] { Parent.Delimieter }));
-                if (Choose > -1 && Choose < ddl.Items.Count)
+                if (Choose > -1 && Choose <= ddl.Items.Count)
                     ddl.SelectedIndex = Choose - 1;
                 ddl.DropDownStyle = ComboBoxStyle.DropDownList;
                 ddl.Show();
@@ -545,7 +545,7 @@ namespace IronAHK.Rusty
                 ApplyStyles(listbox, this);
                 listbox.AutoSize = Size.IsEmpty;
                 listbox.Items.AddRange(Contents.Split(new[] { Parent.Delimieter }));
-                if (Choose > 0)
+                if (Choose > -1 && Choose <= listbox.Items.Count)
                     listbox.SelectedIndex = Choose - 1;
                 listbox.SelectionMode = MultiSelect ? SelectionMode.MultiExtended : ReadOnly ? SelectionMode.None : SelectionMode.One;
                 listbox.Sorted = Sort;
