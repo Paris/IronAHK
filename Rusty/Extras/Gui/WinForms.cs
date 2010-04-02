@@ -482,9 +482,30 @@ namespace IronAHK.Rusty
 
         public new class DropDownList : BaseGui.DropDownList
         {
+            public DropDownList()
+            {
+                NativeComponent = new System.Windows.Forms.ComboBox();
+            }
+
             public override void Draw()
             {
-                throw new NotImplementedException();
+                var ddl = (System.Windows.Forms.ComboBox)NativeComponent;
+                if (Size.IsEmpty)
+                {
+                    float w = 5 + ddl.CreateGraphics().MeasureString(Contents, ddl.Font).Width;
+                    Size = new Size((int)w, ddl.Size.Height);
+                }
+                ApplyStyles(ddl, this);
+                ddl.Sorted = Sort;
+                if (Uppercase)
+                    Contents = Contents.ToUpperInvariant();
+                else if (Lowercase)
+                    Contents = Contents.ToLowerInvariant();
+                ddl.Items.AddRange(Contents.Split(new[] { Parent.Delimieter }));
+                if (Choose > -1 && Choose < ddl.Items.Count)
+                    ddl.SelectedIndex = Choose - 1;
+                ddl.DropDownStyle = ComboBoxStyle.DropDownList;
+                ddl.Show();
             }
         }
 
