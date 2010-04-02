@@ -182,6 +182,25 @@ namespace IronAHK.Rusty
                                 break;
 
                             case Keyword_ComboBox:
+                                {
+                                    var combo = guis[id].CreateComboBox();
+                                    combo.Contents = Param4;
+                                    string opts = GuiApplyStyles(combo, Param3);
+
+                                    foreach (string opt in ParseOptions(opts))
+                                    {
+                                        bool on = opt[0] != '-';
+                                        string mode = opt.Substring(!on || opt[0] == '+' ? 1 : 0).ToLowerInvariant();
+
+                                        switch (mode)
+                                        {
+                                            case Keyword_Limit: combo.Limit = on; break;
+                                            case Keyword_Simple: combo.Simple = on; break;
+                                        }
+                                    }
+
+                                    guis[id].Add(combo);
+                                }
                                 break;
 
                             case Keyword_ListBox:

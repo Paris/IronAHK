@@ -490,9 +490,24 @@ namespace IronAHK.Rusty
 
         public new class ComboBox : BaseGui.ComboBox
         {
+            public ComboBox()
+            {
+                NativeComponent = new System.Windows.Forms.ComboBox();
+            }
+
             public override void Draw()
             {
-                throw new NotImplementedException();
+                var combo = (System.Windows.Forms.ComboBox)NativeComponent;
+                if (Size.IsEmpty)
+                {
+                    float w = 5 + combo.CreateGraphics().MeasureString(Contents, combo.Font).Width;
+                    Size = new Size((int)w, combo.Size.Height);
+                }
+                ApplyStyles(combo, this);
+                combo.Items.AddRange(Contents.Split(new[] { Parent.Delimieter }));
+                if (combo.Items.Count > 0)
+                    combo.SelectedIndex = 0;
+                combo.Show();
             }
         }
 
