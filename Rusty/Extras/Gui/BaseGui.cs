@@ -754,10 +754,10 @@ namespace IronAHK.Rusty
 
         public abstract class ComboBox : Control
         {
-            int limit = -1;
+            bool limit = false;
             bool simple = false;
 
-            public int Limit
+            public bool Limit
             {
                 get { return limit; }
                 set { limit = value; }
