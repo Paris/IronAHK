@@ -402,6 +402,42 @@ namespace IronAHK.Rusty
                                 break;
 
                             case Keyword_Tab:
+                            case Keyword_Tab2:
+                                {
+                                    var tab = guis[id].CreateTab();
+                                    tab.Contents = Param4;
+                                    string opts = GuiApplyStyles(tab, Param3);
+
+                                    foreach (string opt in ParseOptions(opts))
+                                    {
+                                        bool on = opt[0] != '-';
+                                        string mode = opt.Substring(!on || opt[0] == '+' ? 1 : 0).ToLowerInvariant();
+
+                                        switch (mode)
+                                        {
+                                            case Keyword_Background: tab.Background = on; break;
+                                            case Keyword_Buttons: tab.Buttons = on; break;
+                                            case Keyword_Top: tab.Align = 0; break;
+                                            case Keyword_Left: tab.Align = 1; break;
+                                            case Keyword_Right: tab.Align = 2; break;
+                                            case Keyword_Bottom: tab.Align = 3; break;
+                                            case Keyword_Wrap: tab.Wrap = on; break;
+
+                                            default:
+                                                if (mode.StartsWith(Keyword_Choose, StringComparison.OrdinalIgnoreCase))
+                                                {
+                                                    mode = mode.Substring(Keyword_Choose.Length);
+                                                    int n;
+
+                                                    if (int.TryParse(mode, out n))
+                                                        tab.Choose = n;
+                                                }
+                                                break;
+                                        }
+                                    }
+
+                                    guis[id].Add(tab);
+                                }
                                 break;
 
                             case Keyword_StatusBar:

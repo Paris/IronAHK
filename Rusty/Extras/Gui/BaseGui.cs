@@ -1174,6 +1174,7 @@ namespace IronAHK.Rusty
         {
             int choose = -1;
             bool buttons = false;
+            int align = 0;
 
             public int Choose
             {
@@ -1185,6 +1186,12 @@ namespace IronAHK.Rusty
             {
                 get { return buttons; }
                 set { buttons = value; }
+            }
+
+            public int Align
+            {
+                get { return align; }
+                set { align = value; }
             }
         }
 
