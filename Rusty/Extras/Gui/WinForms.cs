@@ -498,9 +498,22 @@ namespace IronAHK.Rusty
 
         public new class ListBox : BaseGui.ListBox
         {
+            public ListBox()
+            {
+                NativeComponent = new System.Windows.Forms.ListBox();
+            }
+
             public override void Draw()
             {
-                throw new NotImplementedException();
+                var listbox = (System.Windows.Forms.ListBox)NativeComponent;
+                ApplyStyles(listbox, this);
+                listbox.AutoSize = Size.IsEmpty;
+                listbox.Items.AddRange(Contents.Split(new[] { Parent.Delimieter }));
+                if (Choose > 0)
+                    listbox.SelectedIndex = Choose - 1;
+                listbox.SelectionMode = MultiSelect ? SelectionMode.MultiExtended : ReadOnly ? SelectionMode.None : SelectionMode.One;
+                listbox.Sorted = Sort;
+                listbox.Show();
             }
         }
 

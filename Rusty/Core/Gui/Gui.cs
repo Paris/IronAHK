@@ -185,6 +185,41 @@ namespace IronAHK.Rusty
                                 break;
 
                             case Keyword_ListBox:
+                                {
+                                    var listbox = guis[id].CreateListBox();
+                                    listbox.Contents = Param4;
+                                    string opts = GuiApplyStyles(listbox, Param3);
+
+                                    foreach (string opt in ParseOptions(opts))
+                                    {
+                                        bool on = opt[0] != '-';
+                                        string mode = opt.Substring(!on || opt[0] == '+' ? 1 : 0).ToLowerInvariant();
+
+                                        switch (mode)
+                                        {
+                                            case Keyword_Multi:
+                                            case "8":
+                                                listbox.MultiSelect = on;
+                                                break;
+
+                                            case Keyword_Readonly: listbox.ReadOnly = on; break;
+                                            case Keyword_Sort: listbox.Sort = on; break;
+
+                                            default:
+                                                if (mode.StartsWith(Keyword_Choose, StringComparison.OrdinalIgnoreCase))
+                                                {
+                                                    mode = mode.Substring(Keyword_Choose.Length);
+                                                    int n;
+
+                                                    if (int.TryParse(mode, out n))
+                                                        listbox.Choose = n;
+                                                }
+                                                break;
+                                        }
+                                    }
+
+                                    guis[id].Add(listbox);
+                                }
                                 break;
 
                             case Keyword_ListView:
@@ -723,7 +758,9 @@ namespace IronAHK.Rusty
                                 break;
 
                             case 'c':
-                                if (arg.Length != 0 && !mode.StartsWith(Keyword_Check, StringComparison.OrdinalIgnoreCase))
+                                if (arg.Length != 0 &&
+                                    !mode.StartsWith(Keyword_Check, StringComparison.OrdinalIgnoreCase) &&
+                                    !mode.StartsWith(Keyword_Choose, StringComparison.OrdinalIgnoreCase))
                                     control.Colour = ParseColor(arg);
                                 else
                                     append = true;

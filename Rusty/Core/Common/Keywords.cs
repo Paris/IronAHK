@@ -315,6 +315,7 @@ namespace IronAHK.Rusty
         const string Keyword_WDay = "wday";
         const string Keyword_YWeek = "yweek";
         const string Keyword_Random = "random";
+        const string Keyword_Sort = "sort";
 
         const char Keyword_ModifierWin = '#';
         const char Keyword_ModifierAlt = '!';
