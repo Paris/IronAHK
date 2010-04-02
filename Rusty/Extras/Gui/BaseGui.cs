@@ -775,6 +775,8 @@ namespace IronAHK.Rusty
             int choose = -1;
             bool sort = false;
             int tabstops = -1;
+            bool multi = false;
+            bool readOnly = false;
             bool exactheight = false;
 
             public int Choose
@@ -793,6 +795,18 @@ namespace IronAHK.Rusty
             {
                 get { return tabstops; }
                 set { tabstops = value; }
+            }
+
+            public bool MultiSelect
+            {
+                get { return multi; }
+                set { multi = value; }
+            }
+
+            public bool ReadOnly
+            {
+                get { return readOnly; }
+                set { readOnly = value; }
             }
 
             public bool ExactHeight
