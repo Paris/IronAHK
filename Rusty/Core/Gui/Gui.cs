@@ -179,6 +179,37 @@ namespace IronAHK.Rusty
 
                             case Keyword_DropDownList:
                             case Keyword_DDL:
+                                {
+                                    var ddl = guis[id].CreateDropDownList();
+                                    ddl.Contents = Param4;
+                                    string opts = GuiApplyStyles(ddl, Param3);
+
+                                    foreach (string opt in ParseOptions(opts))
+                                    {
+                                        bool on = opt[0] != '-';
+                                        string mode = opt.Substring(!on || opt[0] == '+' ? 1 : 0).ToLowerInvariant();
+
+                                        switch (mode)
+                                        {
+                                            case Keyword_Sort: ddl.Sort = on; break;
+                                            case Keyword_Uppercase: ddl.Uppercase = on; break;
+                                            case Keyword_Lowercase: ddl.Lowercase = on; break;
+
+                                            default:
+                                                if (mode.StartsWith(Keyword_Choose, StringComparison.OrdinalIgnoreCase))
+                                                {
+                                                    mode = mode.Substring(Keyword_Choose.Length);
+                                                    int n;
+
+                                                    if (int.TryParse(mode, out n))
+                                                        ddl.Choose = n;
+                                                }
+                                                break;
+                                        }
+                                    }
+
+                                    guis[id].Add(ddl);
+                                }
                                 break;
 
                             case Keyword_ComboBox:
