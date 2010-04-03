@@ -337,7 +337,11 @@ namespace IronAHK.Rusty
                 }
             }
 
-            control.Text = information.Contents;
+            try
+            {
+                control.Text = information.Contents;
+            }
+            catch (Exception) { }
             control.Enabled = information.Enabled;
             control.Location = information.Location;
             control.Size = information.Size;
@@ -879,9 +883,19 @@ namespace IronAHK.Rusty
 
         public new class WebBrowser : BaseGui.WebBrowser
         {
+            public WebBrowser()
+            {
+                NativeComponent = new System.Windows.Forms.WebBrowser();
+            }
+
             public override void Draw()
             {
-                throw new NotImplementedException();
+                var web = (System.Windows.Forms.WebBrowser)NativeComponent;
+                if (Size.IsEmpty)
+                    Size = web.PreferredSize;
+                ApplyStyles(web, this);
+                web.Navigate(Contents);
+                web.Show();
             }
         }
 
