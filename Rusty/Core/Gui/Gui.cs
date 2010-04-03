@@ -451,6 +451,12 @@ namespace IronAHK.Rusty
                                 break;
 
                             case Keyword_WebBrowser:
+                                {
+                                    var web = guis[id].CreateWebBrowser();
+                                    web.Contents = Param4;
+                                    GuiApplyStyles(web, Param3);
+                                    guis[id].Add(web);
+                                }
                                 break;
                         }
                     }
