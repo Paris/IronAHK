@@ -398,9 +398,17 @@ namespace IronAHK.Rusty
 
         public new class UpDown : BaseGui.UpDown
         {
+            public UpDown()
+            {
+                NativeComponent = new NumericUpDown();
+            }
+
             public override void Draw()
             {
-                throw new NotImplementedException();
+                var updown = (NumericUpDown)NativeComponent;
+                ApplyStyles(updown, this);
+                // UNDONE: WinForms UpDown properties
+                updown.Show();
             }
         }
 

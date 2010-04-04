@@ -655,6 +655,8 @@ namespace IronAHK.Rusty
             int rangeMin = 0, rangeMax = 100;
             bool isolated = false;
             bool formatted = true;
+            bool left = false;
+            bool thousands = false;
             Edit buddy;
 
             public bool Horizontal
@@ -691,6 +693,18 @@ namespace IronAHK.Rusty
             {
                 get { return buddy; }
                 set { buddy = value; }
+            }
+
+            public bool Left
+            {
+                get { return left; }
+                set { left = value; }
+            }
+
+            public bool ThousandsSeperator
+            {
+                get { return thousands; }
+                set { thousands = value; }
             }
         }
 

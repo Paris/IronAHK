@@ -87,6 +87,42 @@ namespace IronAHK.Rusty
                                 break;
 
                             case Keyword_UpDown:
+                                {
+                                    var updown = guis[id].CreateUpDown();
+                                    updown.Contents = Param4;
+                                    string opts = GuiApplyStyles(updown, Param3);
+
+                                    foreach (string opt in ParseOptions(opts))
+                                    {
+                                        bool on = opt[0] != '-';
+                                        string mode = opt.Substring(!on || opt[0] == '+' ? 1 : 0).ToLowerInvariant();
+
+                                        switch (mode)
+                                        {
+                                            case Keyword_Horz: updown.Horizontal = on; break;
+                                            case Keyword_Left: updown.Left = on; break;
+                                            case Keyword_Wrap: updown.Wrap = on; break;
+                                            case "16": updown.Isolated = on; break;
+                                            case "0x80": updown.ThousandsSeperator = on; break;
+
+                                            default:
+                                                if (mode.StartsWith(Keyword_Range))
+                                                {
+                                                    string[] range = mode.Substring(Keyword_Range.Length).Split(new[] { '-' }, 2);
+                                                    int n;
+
+                                                    if (int.TryParse(range[0], out n))
+                                                        updown.RangeMinimum = n;
+
+                                                    if (range.Length > 1 && int.TryParse(range[1], out n))
+                                                        updown.RangeMaximum = n;
+                                                }
+                                                break;
+                                        }
+                                    }
+
+                                    guis[id].Add(updown);
+                                }
                                 break;
 
                             case Keyword_Picture:
