@@ -337,6 +337,77 @@ namespace IronAHK.Rusty
                                 break;
 
                             case Keyword_Slider:
+                                {
+                                    var slider = guis[id].CreateSider();
+                                    slider.Contents = Param4;
+                                    string opts = GuiApplyStyles(slider, Param3);
+
+                                    foreach (string opt in ParseOptions(opts))
+                                    {
+                                        bool on = opt[0] != '-';
+                                        string mode = opt.Substring(!on || opt[0] == '+' ? 1 : 0).ToLowerInvariant();
+
+                                        switch (mode)
+                                        {
+                                            case Keyword_Center: slider.Rounded = on; break;
+                                            case Keyword_Invert: slider.Invert = on; break;
+                                            case Keyword_Left: slider.Left = on; break;
+                                            case Keyword_NoTicks: slider.Tick = !on; break;
+                                            case Keyword_Thick: slider.Thick = on; break;
+                                            case Keyword_Vertical: slider.Vertical = on; break;
+
+                                            default:
+                                                int n;
+                                                if (mode.StartsWith(Keyword_Line))
+                                                {
+                                                    mode = mode.Substring(Keyword_Line.Length);
+
+                                                    if (int.TryParse(mode, out n))
+                                                        slider.Line = n;
+                                                }
+                                                else if (mode.StartsWith(Keyword_Page))
+                                                {
+                                                    mode = mode.Substring(Keyword_Page.Length);
+
+                                                    if (int.TryParse(mode, out n))
+                                                        slider.Page = n;
+                                                }
+                                                else if (mode.StartsWith(Keyword_Range))
+                                                {
+                                                    mode = mode.Substring(Keyword_Range.Length);
+                                                    string[] parts = mode.Split(new[] { '-' }, 2);
+
+                                                    if (int.TryParse(parts[0], out n))
+                                                        slider.RangeMinimum = n;
+
+                                                    if (parts.Length > 1 && int.TryParse(parts[1], out n))
+                                                        slider.RangeMaximum = n;
+                                                }
+                                                else if (mode.StartsWith(Keyword_TickInterval))
+                                                {
+                                                    mode = mode.Substring(Keyword_TickInterval.Length);
+
+                                                    if (int.TryParse(mode, out n))
+                                                        slider.TickInterval = n;
+                                                }
+                                                else if (mode.StartsWith(Keyword_ToolTip))
+                                                {
+                                                    mode = mode.Substring(Keyword_ToolTip.Length);
+
+                                                    switch (mode)
+                                                    {
+                                                        case Keyword_Left: slider.ToolTip = 0; break;
+                                                        case Keyword_Right: slider.ToolTip = 1; break;
+                                                        case Keyword_Top: slider.ToolTip = 2; break;
+                                                        case Keyword_Bottom: slider.ToolTip = 3; break;
+                                                    }
+                                                }
+                                                break;
+                                        }
+                                    }
+
+                                    guis[id].Add(slider);
+                                }
                                 break;
 
                             case Keyword_Progress:

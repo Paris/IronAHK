@@ -744,9 +744,18 @@ namespace IronAHK.Rusty
 
         public new class Slider : BaseGui.Slider
         {
+            public Slider()
+            {
+                NativeComponent = new TrackBar();
+            }
+
             public override void Draw()
             {
-                throw new NotImplementedException();
+                var group = (TrackBar)NativeComponent;
+                ApplyStyles(group, this);
+                group.AutoSize = Size.IsEmpty;
+                // UNDONE: WinForms Slider properties
+                group.Show();
             }
         }
 

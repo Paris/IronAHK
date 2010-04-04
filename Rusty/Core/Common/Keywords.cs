@@ -317,6 +317,12 @@ namespace IronAHK.Rusty
         const string Keyword_Random = "random";
         const string Keyword_Sort = "sort";
         const string Keyword_Simple = "simple";
+        const string Keyword_Invert = "invert";
+        const string Keyword_Line = "line";
+        const string Keyword_NoTicks = "noticks";
+        const string Keyword_Thick = "thick";
+        const string Keyword_Page = "page";
+        const string Keyword_TickInterval = "tickinterval";
 
         const char Keyword_ModifierWin = '#';
         const char Keyword_ModifierAlt = '!';
