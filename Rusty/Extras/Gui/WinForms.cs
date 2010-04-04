@@ -342,6 +342,10 @@ namespace IronAHK.Rusty
                 control.Text = information.Contents;
             }
             catch (Exception) { }
+
+            if (information.Size.IsEmpty)
+                information.Size = control.PreferredSize;
+
             control.Enabled = information.Enabled;
             control.Location = information.Location;
             control.Size = information.Size;
@@ -364,7 +368,6 @@ namespace IronAHK.Rusty
                 var text = (Label)NativeComponent;
                 ApplyStyles(text, this);
                 text.BorderStyle = Border ? BorderStyle.FixedSingle : BorderStyle.None;
-                text.AutoSize = Size.IsEmpty;
                 text.Show();
             }
         }
@@ -380,11 +383,6 @@ namespace IronAHK.Rusty
             {
                 var edit = (TextBox)NativeComponent;
                 ApplyStyles(edit, this);
-                if (Size.IsEmpty)
-                {
-                    float w = 5 + edit.CreateGraphics().MeasureString(Contents, edit.Font).Width;
-                    edit.Size = new Size((int)w, edit.Size.Height);
-                }
                 edit.MaxLength = Limit < 0 ? int.MaxValue : Limit;
                 edit.CharacterCasing = Lowercase ? CharacterCasing.Lower : Uppercase ? CharacterCasing.Upper : CharacterCasing.Normal;
                 edit.Multiline = Multi;
@@ -445,7 +443,6 @@ namespace IronAHK.Rusty
             {
                 var button = (System.Windows.Forms.Button)NativeComponent;
                 ApplyStyles(button, this);
-                button.AutoSize = Size.IsEmpty;
                 button.Show();
             }
         }
@@ -461,7 +458,6 @@ namespace IronAHK.Rusty
             {
                 var check = (CheckBox)NativeComponent;
                 ApplyStyles(check, this);
-                check.AutoSize = Size.IsEmpty;
                 check.CheckState = State;
                 check.Show();
             }
@@ -478,7 +474,6 @@ namespace IronAHK.Rusty
             {
                 var radio = (RadioButton)NativeComponent;
                 ApplyStyles(radio, this);
-                radio.AutoSize = Size.IsEmpty;
                 radio.Checked = Checked;
                 radio.Show();
             }
@@ -494,11 +489,6 @@ namespace IronAHK.Rusty
             public override void Draw()
             {
                 var ddl = (System.Windows.Forms.ComboBox)NativeComponent;
-                if (Size.IsEmpty)
-                {
-                    float w = 5 + ddl.CreateGraphics().MeasureString(Contents, ddl.Font).Width;
-                    Size = new Size((int)w, ddl.Size.Height);
-                }
                 ApplyStyles(ddl, this);
                 ddl.Sorted = Sort;
                 if (Uppercase)
@@ -523,11 +513,6 @@ namespace IronAHK.Rusty
             public override void Draw()
             {
                 var combo = (System.Windows.Forms.ComboBox)NativeComponent;
-                if (Size.IsEmpty)
-                {
-                    float w = 5 + combo.CreateGraphics().MeasureString(Contents, combo.Font).Width;
-                    Size = new Size((int)w, combo.Size.Height);
-                }
                 ApplyStyles(combo, this);
                 combo.Items.AddRange(Contents.Split(new[] { Parent.Delimieter }));
                 if (combo.Items.Count > 0)
@@ -547,7 +532,6 @@ namespace IronAHK.Rusty
             {
                 var listbox = (System.Windows.Forms.ListBox)NativeComponent;
                 ApplyStyles(listbox, this);
-                listbox.AutoSize = Size.IsEmpty;
                 listbox.Items.AddRange(Contents.Split(new[] { Parent.Delimieter }));
                 if (Choose > -1 && Choose <= listbox.Items.Count)
                     listbox.SelectedIndex = Choose - 1;
@@ -698,11 +682,6 @@ namespace IronAHK.Rusty
             {
                 var ctrl = (TextBox)NativeComponent;
                 ApplyStyles(ctrl, this);
-                if (Size.IsEmpty)
-                {
-                    float w = 5 + ctrl.CreateGraphics().MeasureString(Contents, ctrl.Font).Width;
-                    ctrl.Size = new Size((int)w, ctrl.Size.Height);
-                }
                 SetText();
                 ctrl.Show();
             }
@@ -727,7 +706,6 @@ namespace IronAHK.Rusty
             {
                 var cal = (MonthCalendar)NativeComponent;
                 ApplyStyles(cal, this);
-                cal.AutoSize = Size.IsEmpty;
                 cal.MaxSelectionCount = MultiSelect ? int.MaxValue : 1;
                 if (RangeMinimum != default(System.DateTime) && RangeMaximum != default(System.DateTime) && RangeMinimum < RangeMaximum)
                     cal.SelectionRange = new SelectionRange(RangeMinimum, RangeMaximum);
@@ -753,7 +731,6 @@ namespace IronAHK.Rusty
             {
                 var group = (TrackBar)NativeComponent;
                 ApplyStyles(group, this);
-                group.AutoSize = Size.IsEmpty;
                 // UNDONE: WinForms Slider properties
                 group.Show();
             }
@@ -778,7 +755,6 @@ namespace IronAHK.Rusty
                 int n;
                 if (int.TryParse(Contents, out n))
                     progress.Value = n;
-                progress.AutoSize = Size.IsEmpty;
                 progress.Show();
             }
         }
@@ -794,7 +770,6 @@ namespace IronAHK.Rusty
             {
                 var group = (System.Windows.Forms.GroupBox)NativeComponent;
                 ApplyStyles(group, this);
-                group.AutoSize = Size.IsEmpty;
                 group.Show();
             }
         }
@@ -809,8 +784,6 @@ namespace IronAHK.Rusty
             public override void Draw()
             {
                 var tab = (TabControl)NativeComponent;
-                if (Size.IsEmpty)
-                    Size = new Size(270, 220); // UNDONE: relative automatic size for WinForms tab control
                 ApplyStyles(tab, this);
                 foreach (string page in Contents.Split(new[] { Parent.Delimieter }))
                     tab.TabPages.Add(page);
@@ -900,8 +873,6 @@ namespace IronAHK.Rusty
             public override void Draw()
             {
                 var web = (System.Windows.Forms.WebBrowser)NativeComponent;
-                if (Size.IsEmpty)
-                    Size = web.PreferredSize;
                 ApplyStyles(web, this);
                 web.Navigate(Contents);
                 web.Show();
