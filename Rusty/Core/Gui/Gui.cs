@@ -298,6 +298,48 @@ namespace IronAHK.Rusty
                                 break;
 
                             case Keyword_DateTime:
+                                {
+                                    var date = guis[id].CreateDateTime();
+                                    date.Contents = ToDateTime(Param4).Ticks.ToString();
+                                    string opts = GuiApplyStyles(date, Param3);
+
+                                    foreach (string opt in ParseOptions(opts))
+                                    {
+                                        bool on = opt[0] != '-';
+                                        string mode = opt.Substring(!on || opt[0] == '+' ? 1 : 0).ToLowerInvariant();
+
+                                        switch (mode)
+                                        {
+                                            case "1": date.UpDown = on; break;
+                                            case "2": date.Checklist = on; break;
+                                            case Keyword_Right: date.Right = on; break;
+                                            case Keyword_LongDate: date.LongDate = on; break;
+                                            case Keyword_Time: date.Time = on; break;
+
+                                            default:
+                                                if (mode.StartsWith(Keyword_Range))
+                                                {
+                                                    string[] range = mode.Substring(Keyword_Range.Length).Split(new[] { '-' }, 2);
+
+                                                    date.RangeMinimum = ToDateTime(range[0]);
+
+                                                    if (range.Length > 1)
+                                                        date.RangeMaximum = ToDateTime(range[1]);
+                                                }
+                                                else if (mode.StartsWith(Keyword_Choose))
+                                                {
+                                                    mode = mode.Substring(Keyword_Choose.Length);
+                                                    int n;
+
+                                                    if (int.TryParse(mode, out n))
+                                                        date.Choose = n;
+                                                }
+                                                break;
+                                        }
+                                    }
+
+                                    guis[id].Add(date);
+                                }
                                 break;
 
                             case Keyword_MonthCal:

@@ -958,9 +958,12 @@ namespace IronAHK.Rusty
         {
             string format;
             int choose = -1;
-            int rangeMin = 0, rangeMax = 100;
+            System.DateTime rangeMin, rangeMax;
             bool updown = false;
             bool checklist = false;
+            bool right = false;
+            bool longdate = false;
+            bool time = false;
 
             public string Format
             {
@@ -974,13 +977,13 @@ namespace IronAHK.Rusty
                 set { choose = value; }
             }
 
-            public int RangeMinimum
+            public System.DateTime RangeMinimum
             {
                 get { return rangeMin; }
                 set { rangeMin = value; }
             }
 
-            public int RangeMaximum
+            public System.DateTime RangeMaximum
             {
                 get { return rangeMax; }
                 set { rangeMax = value; }
@@ -996,6 +999,24 @@ namespace IronAHK.Rusty
             {
                 get { return checklist; }
                 set { checklist = value; }
+            }
+
+            public bool Right
+            {
+                get { return right; }
+                set { right = value; }
+            }
+
+            public bool LongDate
+            {
+                get { return longdate; }
+                set { longdate = value; }
+            }
+
+            public bool Time
+            {
+                get { return time; }
+                set { time = value; }
             }
         }
 
