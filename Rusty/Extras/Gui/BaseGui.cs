@@ -1047,14 +1047,16 @@ namespace IronAHK.Rusty
         public abstract class Slider : Control
         {
             Control buddy1, buddy2;
+            bool rounded = false;
             bool invert = false;
+            bool left = false;
             int line;
             bool tick = true;
             int page;
             int rangeMin = 0, rangeMax = 100;
             bool thick = false;
             int tickInterval;
-            bool tooltip = false;
+            int tooltip = -1;
             bool vertical;
 
             public Control Buddy1
@@ -1069,10 +1071,22 @@ namespace IronAHK.Rusty
                 set { buddy2 = value; }
             }
 
+            public bool Rounded
+            {
+                get { return rounded; }
+                set { rounded = value; }
+            }
+
             public bool Invert
             {
                 get { return invert; }
                 set { invert = value; }
+            }
+
+            public bool Left
+            {
+                get { return left; }
+                set { left = value; }
             }
 
             public int Line
@@ -1117,7 +1131,7 @@ namespace IronAHK.Rusty
                 set { tickInterval = value; }
             }
 
-            public bool ToolTip
+            public int ToolTip
             {
                 get { return tooltip; }
                 set { tooltip = value; }
