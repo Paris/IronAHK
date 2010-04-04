@@ -918,6 +918,7 @@ namespace IronAHK.Rusty
             ImageList imageList;
             bool lines = true;
             bool wantF2 = false;
+            bool readOnly = false;
 
             public bool Buttons
             {
@@ -947,6 +948,12 @@ namespace IronAHK.Rusty
             {
                 get { return wantF2; }
                 set { wantF2 = value; }
+            }
+
+            public bool ReadOnly
+            {
+                get { return readOnly; }
+                set { readOnly = value; }
             }
         }
 
