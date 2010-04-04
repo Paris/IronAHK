@@ -689,9 +689,17 @@ namespace IronAHK.Rusty
 
         public new class DateTime : BaseGui.DateTime
         {
+            public DateTime()
+            {
+                NativeComponent = new DateTimePicker();
+            }
+
             public override void Draw()
             {
-                throw new NotImplementedException();
+                var date = (DateTimePicker)NativeComponent;
+                ApplyStyles(date, this);
+                // UNDONE: WinForms DateTime properties
+                date.Show();
             }
         }
 
