@@ -830,6 +830,7 @@ namespace IronAHK.Rusty
             bool sort = false;
             bool sortDesc = false;
             bool wantF2 = false;
+            bool readOnly = false;
 
             public bool Checklist
             {
@@ -901,6 +902,12 @@ namespace IronAHK.Rusty
             {
                 get { return wantF2; }
                 set { wantF2 = value; }
+            }
+
+            public bool ReadOnly
+            {
+                get { return readOnly; }
+                set { readOnly = value; }
             }
         }
 

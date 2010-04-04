@@ -543,9 +543,20 @@ namespace IronAHK.Rusty
 
         public new class ListView : BaseGui.ListView
         {
+            public ListView()
+            {
+                NativeComponent = new System.Windows.Forms.ListView();
+            }
+
             public override void Draw()
             {
-                throw new NotImplementedException();
+                var lv = (System.Windows.Forms.ListView)NativeComponent;
+                ApplyStyles(lv, this);
+                // UNDONE: WinForms ListView properties
+                lv.View = View.Details;
+                foreach (string item in Contents.Split(new[] { Parent.Delimieter }, StringSplitOptions.RemoveEmptyEntries))
+                    lv.Columns.Add(item);
+                lv.Show();
             }
         }
 
