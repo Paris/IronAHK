@@ -273,6 +273,34 @@ namespace IronAHK.Rusty
                                 break;
 
                             case Keyword_ListView:
+                                {
+                                    var lv = guis[id].CreateListView();
+                                    lv.Contents = Param4;
+                                    string opts = GuiApplyStyles(lv, Param3);
+
+                                    foreach (string opt in ParseOptions(opts))
+                                    {
+                                        bool on = opt[0] != '-';
+                                        string mode = opt.Substring(!on || opt[0] == '+' ? 1 : 0).ToLowerInvariant();
+
+                                        switch (mode)
+                                        {
+                                            case Keyword_Checked: lv.Checklist = on; break;
+                                            case Keyword_Grid: lv.Grid = on; break;
+                                            case Keyword_Hdr: lv.Header = on; break;
+                                            case "lv0x10": lv.MovableColumns = on; break;
+                                            case "lv0x20": lv.ClickToSelect = on; break;
+                                            case Keyword_Multi: lv.MultiSelect = on; break;
+                                            case Keyword_NoSortHdr: lv.SortableHeader = !on; break;
+                                            case Keyword_Readonly: lv.ReadOnly = on; break;
+                                            case Keyword_Sort: lv.Sort = on; break;
+                                            case Keyword_SortDesc: lv.SortDesc = on; break;
+                                            case Keyword_WantF2: lv.WantF2 = on; break;
+                                        }
+                                    }
+
+                                    guis[id].Add(lv);
+                                }
                                 break;
 
                             case Keyword_TreeView:
