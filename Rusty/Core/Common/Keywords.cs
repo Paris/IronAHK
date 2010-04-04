@@ -323,6 +323,7 @@ namespace IronAHK.Rusty
         const string Keyword_Thick = "thick";
         const string Keyword_Page = "page";
         const string Keyword_TickInterval = "tickinterval";
+        const string Keyword_Horz = "horz";
 
         const char Keyword_ModifierWin = '#';
         const char Keyword_ModifierAlt = '!';
