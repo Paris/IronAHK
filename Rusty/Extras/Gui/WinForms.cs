@@ -562,9 +562,17 @@ namespace IronAHK.Rusty
 
         public new class TreeView : BaseGui.TreeView
         {
+            public TreeView()
+            {
+                NativeComponent = new System.Windows.Forms.TreeView();
+            }
+
             public override void Draw()
             {
-                throw new NotImplementedException();
+                var tree = (System.Windows.Forms.TreeView)NativeComponent;
+                ApplyStyles(tree, this);
+                // UNDONE: WinForms TreeView properties
+                tree.Show();
             }
         }
 

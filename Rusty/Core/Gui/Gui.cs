@@ -304,6 +304,38 @@ namespace IronAHK.Rusty
                                 break;
 
                             case Keyword_TreeView:
+                                {
+                                    var tree = guis[id].CreateTreeView();
+                                    tree.Contents = Param4;
+                                    string opts = GuiApplyStyles(tree, Param3);
+
+                                    foreach (string opt in ParseOptions(opts))
+                                    {
+                                        bool on = opt[0] != '-';
+                                        string mode = opt.Substring(!on || opt[0] == '+' ? 1 : 0).ToLowerInvariant();
+
+                                        switch (mode)
+                                        {
+                                            case Keyword_Buttons: tree.Buttons = on; break;
+                                            case Keyword_HScroll: tree.HorizontalScroll = on; break;
+                                            case Keyword_Lines: tree.Lines = on; break;
+                                            case Keyword_Readonly: tree.ReadOnly = on; break;
+                                            case Keyword_WantF2: tree.WantF2 = on; break;
+
+                                            default:
+                                                if (mode.StartsWith(Keyword_ImageList))
+                                                {
+                                                    mode = mode.Substring(Keyword_ImageList.Length);
+                                                    int n;
+
+                                                    // UNDONE: TreeView control ImageList
+                                                }
+                                                break;
+                                        }
+                                    }
+
+                                    guis[id].Add(tree);
+                                }
                                 break;
 
                             case Keyword_Hotkey:
