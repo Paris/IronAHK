@@ -12,7 +12,23 @@ namespace IronAHK.Rusty
         /// <summary>
         /// Creates and manages windows and controls.
         /// </summary>
-        /// <param name="Command"></param>
+        /// <param name="Command">
+        /// <list type="bullet">
+        /// <item><term>Add</term>: <description>creates controls.</description></item>
+        /// <item><term>Show</term>: <description>display or move the window.</description></item>
+        /// <item><term>Submit</term>: <description>saves user input.</description></item>
+        /// <item><term>Hide</term>: <description>hides the window.</description></item>
+        /// <item><term>Destroy</term>: <description>deletes the window.</description></item>
+        /// <item><term>Font</term>: <description>sets the default font style for subsequently created controls.</description></item>
+        /// <item><term>Color</term>: <description>sets the color for the window or controls.</description></item>
+        /// <item><term>Margin</term>: <description>sets the spacing used between the edges of the window and controls when an absolute position is unspecified.</description></item>
+        /// <item><term>Options</term>: <description>sets various options for the appearance and behaviour of the window.</description></item>
+        /// <item><term>Menu</term>: <description>associates a menu bar with the window.</description></item>
+        /// <item><term>Minimize/Maximize/Restore</term>: <description>performs the indicated operation on the window.</description></item>
+        /// <item><term>Flash</term>: <description>blinks the window in the task bar.</description></item>
+        /// <item><term>Default</term>: <description>changes the default window on the current thread.</description></item>
+        /// </list>
+        /// </param>
         /// <param name="Param2"></param>
         /// <param name="Param3"></param>
         /// <param name="Param4"></param>
@@ -1187,12 +1203,9 @@ namespace IronAHK.Rusty
         /// <summary>
         /// Makes a variety of changes to a control in a GUI window.
         /// </summary>
-        /// <param name="Command">See list below.</param>
-        /// <param name="ControlID">
-        /// <para>If the target control has an associated variable, specify the variable's name as the ControlID (this method takes precedence over the ones described next). For this reason, it is usually best to assign a variable to any control that will later be accessed via GuiControl or GuiControlGet, even if that control is not an input-capable type (such as GroupBox or Text).</para>
-        /// <para>Otherwise, ControlID can be either ClassNN (the classname and instance number of the control) or the name/text of the control, both of which can be determined via Window Spy. When using name/text, the matching behavior is determined by SetTitleMatchMode. Note: a picture control's file name (as it was specified at the time the control was created) may be used as its ControlID.</para>
-        /// </param>
-        /// <param name="Param3">This parameter is omitted except where noted in the list of sub-commands below.</param>
+        /// <param name="Command"></param>
+        /// <param name="ControlID"></param>
+        /// <param name="Param3"></param>
         public static void GuiControl(string Command, string ControlID, string Param3)
         {
 
@@ -1201,30 +1214,23 @@ namespace IronAHK.Rusty
         /// <summary>
         /// Retrieves various types of information about a control in a GUI window.
         /// </summary>
-        /// <param name="OutputVar">The name of the variable in which to store the result. If the command cannot complete (see ErrorLevel below), this variable is made blank.</param>
-        /// <param name="Sub_command">See list below.</param>
-        /// <param name="ControlID">
-        /// <para>If blank or omitted, it behaves as though the name of the output variable was specified. For example, GuiControlGet, MyEdit is the same as GuiControlGet, MyEdit,, MyEdit.</para>
-        /// <para>If the target control has an associated variable, specify the variable's name as the ControlID (this method takes precedence over the ones described next). For this reason, it is usually best to assign a variable to any control that will later be accessed via GuiControl or GuiControlGet, even if that control is not input-capable (such as GroupBox or Text).</para>
-        /// <para>Otherwise, ControlID can be either ClassNN (the classname and instance number of the control) or the name/text of the control, both of which can be determined via Window Spy. When using name/text, the matching behavior is determined by SetTitleMatchMode. Note: a picture control's file name (as it was specified at the time the control was created) may be used as its ControlID.</para>
-        /// </param>
-        /// <param name="Param4">This parameter is omitted except where noted in the list of sub-commands below.</param>
+        /// <param name="OutputVar"></param>
+        /// <param name="Sub_command"></param>
+        /// <param name="ControlID"></param>
+        /// <param name="Param4"></param>
         public static void GuiControlGet(out string OutputVar, string Sub_command, string ControlID, string Param4)
         {
             OutputVar = null;
         }
 
         /// <summary>
-        /// Creates, deletes, modifies and displays menus and menu items. Changes the tray icon and its tooltip. Controls whether the main window of a compiled script can be opened.
+        /// Creates, deletes, modifies and displays menus and menu items.
         /// </summary>
-        /// <param name="MenuName">
-        /// <para>It can be TRAY or the name of any custom menu. A custom menu is automatically created the first time its name is used with the Add command. For example: Menu, MyMenu, Add, Item1</para>
-        /// <para>Once created, a custom menu can be displayed with the Show command. It can also be attached as a submenu to one or more other menus via the Add command.</para>
-        /// </param>
-        /// <param name="Cmd">These 4 parameters are dependent on each other. See list below for the allowed combinations.</param>
-        /// <param name="P3">See <paramref name="Cmd"/>.</param>
-        /// <param name="P4">See <paramref name="Cmd"/>.</param>
-        /// <param name="P5">See <paramref name="Cmd"/>.</param>
+        /// <param name="MenuName"></param>
+        /// <param name="Cmd"></param>
+        /// <param name="P3"></param>
+        /// <param name="P4"></param>
+        /// <param name="P5"></param>
         public static void Menu(string MenuName, string Cmd, string P3, string P4, string P5)
         {
 
