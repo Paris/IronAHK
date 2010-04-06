@@ -188,8 +188,6 @@ namespace IronAHK.Scripting
 
         public static bool IfLegacy(object subject, string op, string test)
         {
-            // TODO: if [not] {between,in,contains,is}
-
             const string Between = "between";
             const string In = "in";
             const string Contains = "contains";
