@@ -18,6 +18,9 @@ namespace IronAHK.Rusty
         [DllImport("user32.dll")]
         public static extern short GetKeyState(int nVirtKey);
 
+        [DllImport("user32.dll")]
+        public static extern bool BlockInput(bool fBlockIt);
+
         [StructLayout(LayoutKind.Sequential)]
         public struct MOUSEINPUT
         {

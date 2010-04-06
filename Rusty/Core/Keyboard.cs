@@ -226,27 +226,17 @@ namespace IronAHK.Rusty
         /// Disables or enables the user's ability to interact with the computer via keyboard and mouse.
         /// </summary>
         /// <param name="Mode">
-        /// <para>Mode 1: One of the following words:</para>
-        /// <list type="">
-        /// <item>On: The user is prevented from interacting with the computer (mouse and keyboard input has no effect).</item>
-        /// <item>Off: Input is re-enabled.</item>
-        /// </list>
-        /// <para>Mode 2 (has no effect on Windows 9x): This mode operates independently of the other two. For example, BlockInput On will continue to block input until BlockInput Off is used, even if one of the below is also in effect.</para>
-        /// <list type="">
-        /// <item>Send: The user's keyboard and mouse input is ignored while a Send or SendRaw is in progress (the traditional SendEvent mode only). This prevents the user's keystrokes from disrupting the flow of simulated keystrokes. When the Send finishes, input is re-enabled (unless still blocked by a previous use of BlockInput On).</item>
-        /// <item>Mouse: The user's keyboard and mouse input is ignored while a Click, MouseMove, MouseClick, or MouseClickDrag is in progress (the traditional SendEvent mode only). This prevents the user's mouse movements and clicks from disrupting the simulated mouse events. When the mouse command finishes, input is re-enabled (unless still blocked by a previous use of BlockInput On).</item>
-        /// <item>SendAndMouse: A combination of the above two modes.</item>
-        /// <item>Default: Turns off both the Send and the Mouse modes, but does not change the current state of input blocking. For example, if BlockInput On is currently in effect, using BlockInput Default will not turn it off.</item>
-        /// </list>
-        /// <para>Mode 3 (has no effect on Windows 9x; requires v1.0.43.11+): This mode operates independently of the other two. For example, if BlockInput On and BlockInput MouseMove are both in effect, mouse movement will be blocked until both are turned off.</para>
-        /// <list type="">
-        /// <item>MouseMove: The mouse cursor will not move in response to the user's physical movement of the mouse (DirectInput applications are a possible exception). When a script first uses this command, the mouse hook is installed (if it is not already). In addition, the script becomes persistent, meaning that ExitApp should be used to terminate it. The mouse hook will stay installed until the next use of the Suspend or Hotkey command, at which time it is removed if not required by any hotkeys or hotstrings (see #Hotstring NoMouse).</item>
-        /// <item>MouseMoveOff: Allows the user to move the mouse cursor.</item>
+        /// <list type="bullet">
+        /// <item>On: the user is prevented from interacting with the computer (mouse and keyboard input has no effect).</item>
+        /// <item>Off: input is re-enabled.</item>
         /// </list>
         /// </param>
         public static void BlockInput(string Mode)
         {
+            bool state = OnOff(Mode) ?? false;
 
+            if (Environment.OSVersion.Platform == PlatformID.Win32NT)
+                Windows.BlockInput(state);
         }
 
         /// <summary>
