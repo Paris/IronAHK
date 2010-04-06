@@ -982,7 +982,7 @@ namespace IronAHK.Rusty
                 bool append = false;
 
                 bool on = mode[0] != '-';
-                if (mode[0] == '+' || mode[0] == '-')
+                if (!on || mode[0] == '+')
                     mode = mode.Substring(1);
 
                 if (mode.Length == 0)
