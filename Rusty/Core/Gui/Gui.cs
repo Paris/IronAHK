@@ -946,6 +946,8 @@ namespace IronAHK.Rusty
             }
         }
 
+        #region Helpers
+
         static BaseGui.Window GuiCreateWindow(string name)
         {
             var win = new WinForms.Window();
@@ -1200,6 +1202,22 @@ namespace IronAHK.Rusty
             }
         }
 
+        static BaseGui.Control GuiFindControl(string name)
+        {
+            var gui = DefaultGui;
+
+            if (gui == null)
+                return null;
+
+            foreach (var control in gui.Controls)
+                if (control.Id.Equals(name, StringComparison.OrdinalIgnoreCase))
+                    return control;
+
+            return null;
+        }
+
+        #endregion
+
         /// <summary>
         /// Makes a variety of changes to a control in a GUI window.
         /// </summary>
@@ -1208,6 +1226,11 @@ namespace IronAHK.Rusty
         /// <param name="Param3"></param>
         public static void GuiControl(string Command, string ControlID, string Param3)
         {
+            var ctrl = GuiFindControl(ControlID);
+
+            if (ctrl == null)
+                return;
+
 
         }
 
