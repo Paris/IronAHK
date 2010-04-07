@@ -119,6 +119,32 @@ namespace IronAHK.Rusty
             set { defaultTreeView = value; }
         }
 
+        [ThreadStatic]
+        static BaseGui.ListView defaultListView;
+
+        static BaseGui.ListView DefaultListView
+        {
+            get
+            {
+                if (defaultListView != null)
+                    return defaultListView;
+
+                var gui = DefaultGui;
+
+                if (gui == null)
+                    return null;
+
+                BaseGui.ListView lv = null;
+
+                foreach (var control in gui.Controls)
+                    if (typeof(BaseGui.ListView).IsAssignableFrom(control.GetType()))
+                        lv = (BaseGui.ListView)control;
+
+                return lv;
+            }
+            set { defaultListView = value; }
+        }
+
         static NotifyIcon Tray;
 
         #endregion

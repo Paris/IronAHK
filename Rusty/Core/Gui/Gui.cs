@@ -868,6 +868,17 @@ namespace IronAHK.Rusty
                     }
                     break;
 
+                case Keyword_ListView:
+                    {
+                        var list = GuiFindControl(Param2, guis[id]);
+
+                        if (list == null || !typeof(BaseGui.ListView).IsAssignableFrom(list.GetType()))
+                            DefaultListView = null;
+                        else
+                            DefaultListView = (BaseGui.ListView)list;
+                    }
+                    break;
+
                 #endregion
 
                 #region Options
