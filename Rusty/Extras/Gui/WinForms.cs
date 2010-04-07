@@ -84,6 +84,12 @@ namespace IronAHK.Rusty
                 control.Draw();
             }
 
+            public override void Remove(Control control)
+            {
+                form.Controls.Remove((System.Windows.Forms.Control)control.NativeComponent);
+                control.Parent.Controls.Remove(control);
+            }
+
             public override void Draw(string title)
             {
                 form.Size = Size;
@@ -169,6 +175,16 @@ namespace IronAHK.Rusty
             {
                 if (Environment.OSVersion.Platform == PlatformID.Win32NT)
                     FlashWindow(form.Handle, off);
+            }
+
+            public override void Focus(Control control)
+            {
+                ((System.Windows.Forms.Control)control.NativeComponent).Focus();
+            }
+
+            public override void ChangeFont(Control control)
+            {
+                ((System.Windows.Forms.Control)control.NativeComponent).Font = Font;
             }
 
             #region Controls
