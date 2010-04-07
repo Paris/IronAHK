@@ -15,7 +15,14 @@ namespace IronAHK.Rusty
         /// <returns></returns>
         public static int TV_Add(string Name, int ParentItemID, string Options)
         {
-            throw new NotImplementedException();
+            var tree = DefaultTreeView;
+
+            if (tree == null)
+                return 0;
+
+            int id = tree.Add(Name, ParentItemID);
+            tree.Modify(id, Options, null);
+            return id;
         }
 
         /// <summary>
@@ -25,7 +32,13 @@ namespace IronAHK.Rusty
         /// <returns></returns>
         public static bool TV_Delete(int ItemID)
         {
-            throw new NotImplementedException();
+            var tree = DefaultTreeView;
+
+            if (tree == null)
+                return false;
+
+            tree.Delete(ItemID);
+            return true;
         }
 
         /// <summary>
@@ -35,7 +48,12 @@ namespace IronAHK.Rusty
         /// <returns></returns>
         public static int TV_GetChild(int ParentItemID)
         {
-            throw new NotImplementedException();
+            var tree = DefaultTreeView;
+
+            if (tree == null)
+                return 0;
+
+            return tree.Child(ParentItemID);
         }
 
         /// <summary>
@@ -44,18 +62,28 @@ namespace IronAHK.Rusty
         /// <returns></returns>
         public static int TV_GetCount()
         {
-            throw new NotImplementedException();
+            var tree = DefaultTreeView;
+
+            if (tree == null)
+                return 0;
+
+            return tree.Count();
         }
 
         /// <summary>
         /// This has the following modes:
         /// </summary>
         /// <param name="ItemID"></param>
-        /// <param name="Checked_Full"></param>
+        /// <param name="Mode"></param>
         /// <returns></returns>
-        public static int TV_GetNext(int? ItemID, string Checked_Full)
+        public static int TV_GetNext(int ItemID, string Mode)
         {
-            throw new NotImplementedException();
+            var tree = DefaultTreeView;
+
+            if (tree == null)
+                return 0;
+
+            return tree.Next(ItemID, Mode);
         }
 
         /// <summary>
@@ -65,7 +93,12 @@ namespace IronAHK.Rusty
         /// <returns></returns>
         public static int TV_GetParent(int ItemID)
         {
-            throw new NotImplementedException();
+            var tree = DefaultTreeView;
+
+            if (tree == null)
+                return 0;
+
+            return tree.ParentOf(ItemID);
         }
 
         /// <summary>
@@ -75,7 +108,12 @@ namespace IronAHK.Rusty
         /// <returns></returns>
         public static int TV_GetPrev(int ItemID)
         {
-            throw new NotImplementedException();
+            var tree = DefaultTreeView;
+
+            if (tree == null)
+                return 0;
+
+            return tree.Previous(ItemID);
         }
 
         /// <summary>
@@ -84,7 +122,12 @@ namespace IronAHK.Rusty
         /// <returns></returns>
         public static int TV_GetSelection()
         {
-            throw new NotImplementedException();
+            var tree = DefaultTreeView;
+
+            if (tree == null)
+                return 0;
+
+            return tree.Selection();
         }
 
         /// <summary>
@@ -95,7 +138,14 @@ namespace IronAHK.Rusty
         /// <returns></returns>
         public static int TV_GetText(out string OutputVar, int ItemID)
         {
-            throw new NotImplementedException();
+            var tree = DefaultTreeView;
+            OutputVar = null;
+
+            if (tree == null)
+                return 0;
+
+            OutputVar = tree.Text(ItemID);
+            return 1;
         }
 
         /// <summary>
@@ -107,7 +157,12 @@ namespace IronAHK.Rusty
         /// <returns></returns>
         public static int TV_Modify(int ItemID, string Options, string NewName)
         {
-            throw new NotImplementedException();
+            var tree = DefaultTreeView;
+
+            if (tree == null)
+                return 0;
+
+            return tree.Modify(ItemID, Options, NewName);
         }
     }
 }
