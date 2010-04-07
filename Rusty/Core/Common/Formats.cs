@@ -79,7 +79,7 @@ namespace IronAHK.Rusty
 
         static string GuiId(ref string command)
         {
-            string id = defaultGui ?? "1";
+            string id = DefaultGuiId;
 
             if (command.Length == 0)
                 return id;
