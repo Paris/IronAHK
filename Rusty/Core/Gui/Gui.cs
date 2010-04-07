@@ -857,6 +857,17 @@ namespace IronAHK.Rusty
                     DefaultGuiId = id;
                     break;
 
+                case Keyword_TreeView:
+                    {
+                        var tree = GuiFindControl(Param2, guis[id]);
+
+                        if (tree == null || !typeof(BaseGui.TreeView).IsAssignableFrom(tree.GetType()))
+                            DefaultTreeView = null;
+                        else
+                            DefaultTreeView = (BaseGui.TreeView)tree;
+                    }
+                    break;
+
                 #endregion
 
                 #region Options
