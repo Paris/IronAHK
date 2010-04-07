@@ -71,6 +71,16 @@ namespace IronAHK.Rusty
         [ThreadStatic]
         static string defaultGui;
 
+        static string DefaultGuiId
+        {
+            get { return defaultGui ?? "1"; }
+            set
+            {
+                defaultGui = value;
+                defaultTreeView = null;
+            }
+        }
+
         static BaseGui.Window DefaultGui
         {
             get
@@ -78,7 +88,7 @@ namespace IronAHK.Rusty
                 if (guis == null)
                     return null;
 
-                string key = defaultGui ?? "1";
+                string key = DefaultGuiId;
                 return guis.ContainsKey(key) ? guis[key] : null;
             }
         }

@@ -854,7 +854,7 @@ namespace IronAHK.Rusty
                     break;
 
                 case Keyword_Default:
-                    defaultGui = id;
+                    DefaultGuiId = id;
                     break;
 
                 #endregion
@@ -1209,8 +1209,11 @@ namespace IronAHK.Rusty
 
         static BaseGui.Control GuiFindControl(string name)
         {
-            var gui = DefaultGui;
+            return GuiFindControl(name, DefaultGui);
+        }
 
+        static BaseGui.Control GuiFindControl(string name, BaseGui.Window gui)
+        {
             if (gui == null)
                 return null;
 
