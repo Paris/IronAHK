@@ -598,6 +598,95 @@ namespace IronAHK.Rusty
                 // UNDONE: WinForms TreeView properties
                 tree.Show();
             }
+
+            public override int Add(string text, int parent)
+            {
+                var tree = (System.Windows.Forms.TreeView)NativeComponent;
+                TreeNodeCollection id = tree.Nodes;
+
+                if (parent != 0 && parent > -1 && parent < tree.Nodes.Count)
+                    id = tree.Nodes[parent].Nodes;
+
+                return id.Add(text).Index;
+            }
+
+            public override int Modify(int id, string options, string text)
+            {
+                throw new NotImplementedException();
+            }
+
+            public override void Delete(int id)
+            {
+                var tree = (System.Windows.Forms.TreeView)NativeComponent;
+
+                if (id == 0)
+                    tree.Nodes.Clear();
+                else if (id > -1 && id < tree.Nodes.Count)
+                    tree.Nodes[id].Remove();
+            }
+
+            public override int Selection()
+            {
+                throw new NotImplementedException();
+            }
+
+            public override int Count()
+            {
+                var tree = (System.Windows.Forms.TreeView)NativeComponent;
+                return tree.Nodes.Count;
+            }
+
+            public override int ParentOf(int id)
+            {
+                var tree = (System.Windows.Forms.TreeView)NativeComponent;
+
+                if (id == 0)
+                    return 0;
+                else if (id > -1 && id < tree.Nodes.Count)
+                    return tree.Nodes[id].Parent.Index;
+
+                return 0;
+            }
+
+            public override int Child(int parent)
+            {
+                var tree = (System.Windows.Forms.TreeView)NativeComponent;
+
+                if (parent > -1 && parent < tree.Nodes.Count)
+                    return tree.Nodes[parent].Nodes[0].Index;
+
+                return 0;
+            }
+
+            public override int Previous(int id)
+            {
+                var tree = (System.Windows.Forms.TreeView)NativeComponent;
+
+                if (id > 0 && id < tree.Nodes.Count)
+                    return Math.Min(0, tree.Nodes[id].Nodes[0].Index - 1);
+
+                return 0;
+            }
+
+            public override int Next(int id, string mode)
+            {
+                throw new NotImplementedException();
+            }
+
+            public override string Text(int id)
+            {
+                var tree = (System.Windows.Forms.TreeView)NativeComponent;
+
+                if (id > -1 && id < tree.Nodes.Count)
+                    return tree.Nodes[id].Text;
+
+                return null;
+            }
+
+            public override int Get(int id, string mode)
+            {
+                throw new NotImplementedException();
+            }
         }
 
         public new class Hotkey : BaseGui.Hotkey

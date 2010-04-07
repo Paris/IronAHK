@@ -930,6 +930,18 @@ namespace IronAHK.Rusty
 
         public abstract class TreeView : Control
         {
+            public abstract int Add(string text, int parent);
+            public abstract int Modify(int id, string options, string text);
+            public abstract void Delete(int id);
+            public abstract int Selection();
+            public abstract int Count();
+            public abstract int ParentOf(int id);
+            public abstract int Child(int parent);
+            public abstract int Previous(int id);
+            public abstract int Next(int id, string mode);
+            public abstract string Text(int id);
+            public abstract int Get(int id, string mode);
+
             bool buttons = true;
             bool checklist = false;
             ImageList imageList;
