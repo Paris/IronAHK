@@ -1297,12 +1297,54 @@ namespace IronAHK.Rusty
         /// Retrieves various types of information about a control in a GUI window.
         /// </summary>
         /// <param name="OutputVar"></param>
-        /// <param name="Sub_command"></param>
+        /// <param name="Command"></param>
         /// <param name="ControlID"></param>
         /// <param name="Param4"></param>
-        public static void GuiControlGet(out string OutputVar, string Sub_command, string ControlID, string Param4)
+        public static void GuiControlGet(out object OutputVar, string Command, string ControlID, string Param4)
         {
             OutputVar = null;
+
+            var ctrl = GuiFindControl(ControlID);
+
+            if (ctrl == null)
+                return;
+
+            Command = Command.ToLowerInvariant();
+
+            switch (Command)
+            {
+                case Keyword_Text:
+                case "":
+                    OutputVar = ctrl.Contents;
+                    break;
+
+                case Keyword_Pos:
+                    {
+                        var loc = new Dictionary<string, object>();
+                        loc.Add("x", ctrl.Location.X);
+                        loc.Add("y", ctrl.Location.Y);
+                        loc.Add("w", ctrl.Size.Width);
+                        loc.Add("h", ctrl.Size.Height);
+                        OutputVar = loc;
+                    }
+                    break;
+
+                case Keyword_Focus:
+                case Keyword_Focus + "V":
+                    // UNDONE: get focued Gui control
+                    break;
+
+                case Keyword_Enabled:
+                    OutputVar = ctrl.Enabled ? 1 : 0;
+                    break;
+
+                case Keyword_Visible:
+                    OutputVar = ctrl.Visible ? 1 : 0;
+                    break;
+
+                case Keyword_Hwnd:
+                    break;
+            }
         }
 
         /// <summary>

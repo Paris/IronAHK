@@ -325,6 +325,7 @@ namespace IronAHK.Rusty
         const string Keyword_TickInterval = "tickinterval";
         const string Keyword_Horz = "horz";
         const string Keyword_MoveDraw = "movedraw";
+        const string Keyword_Hwnd = "hwnd";
 
         const char Keyword_ModifierWin = '#';
         const char Keyword_ModifierAlt = '!';
