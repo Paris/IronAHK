@@ -1103,6 +1103,11 @@ namespace IronAHK.Rusty
             return string.Join(Keyword_Spaces[1].ToString(), excess).Trim();
         }
 
+        static void GuiApplyExtendedStyles(BaseGui.Control control, string type, string styles)
+        {
+            // UNDONE: apply extended gui control styles
+        }
+
         static void GuiControlMove(string mode, BaseGui.Control control)
         {
             if (mode.Length < 2)
@@ -1231,7 +1236,61 @@ namespace IronAHK.Rusty
             if (ctrl == null)
                 return;
 
+            Command = Command.ToLowerInvariant();
 
+            switch (Command)
+            {
+                case Keyword_Text:
+                case "":
+                    ctrl.Contents = Param3;
+                    break;
+
+                case Keyword_Move:
+                case Keyword_MoveDraw:
+                    GuiControlMove(Param3, ctrl);
+                    break;
+
+                case Keyword_Focus:
+                    ctrl.Parent.Focus(ctrl);
+                    break;
+
+                case Keyword_Enable:
+                    ctrl.Enabled = true;
+                    break;
+
+                case Keyword_Disable:
+                    ctrl.Enabled = false;
+                    break;
+
+                case Keyword_Hide:
+                    ctrl.Visible = false;
+                    break;
+
+                case Keyword_Show:
+                    ctrl.Visible = true;
+                    break;
+
+                case Keyword_Delete:
+                    ctrl.Parent.Remove(ctrl);
+                    break;
+
+                case Keyword_Choose:
+                    // UNDONE: choose item for gui control
+                    break;
+
+                case Keyword_Font:
+                    ctrl.Parent.ChangeFont(ctrl);
+                    break;
+
+                default:
+                    int n;
+                    if (Command.StartsWith(Keyword_Enable) && int.TryParse(Command.Substring(Keyword_Enable.Length), out n) && (n == 1 || n == 0))
+                        ctrl.Enabled = n == 1;
+                    if (Command.StartsWith(Keyword_Disable) && int.TryParse(Command.Substring(Keyword_Disable.Length), out n) && (n == 1 || n == 0))
+                        ctrl.Enabled = n == 0;
+                    GuiApplyExtendedStyles(ctrl, ctrl.GetType().Name, Param3);
+                    break;
+            }
         }
 
         /// <summary>

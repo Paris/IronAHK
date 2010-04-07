@@ -24,6 +24,7 @@ namespace IronAHK.Rusty
             #region Methods
 
             public abstract void Add(Control control);
+            public abstract void Remove(Control control);
             public abstract void Draw(string title);
             public abstract void Show();
             public abstract void AutoSize();
@@ -34,6 +35,8 @@ namespace IronAHK.Rusty
             public abstract void Maximise();
             public abstract void Restore();
             public abstract void Flash(bool off);
+            public abstract void Focus(Control control);
+            public abstract void ChangeFont(Control control);
 
             #region Controls
 
