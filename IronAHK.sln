@@ -22,7 +22,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj", "{E205C525-E52F-4CB2-9216-4B60B0B8FEAB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Setup", "Setup\Setup.csproj", "{2ED27EA6-FC9E-49B4-B80F-2343FD070510}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Deploy", "Deploy\Deploy.csproj", "{2ED27EA6-FC9E-49B4-B80F-2343FD070510}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

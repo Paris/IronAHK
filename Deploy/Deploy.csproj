@@ -53,6 +53,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Program.cs" />
+    <Compile Include="Installer.cs" />
   </ItemGroup>
   <PropertyGroup>
     <PostBuildEvent>
