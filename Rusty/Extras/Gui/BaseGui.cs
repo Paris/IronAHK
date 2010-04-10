@@ -835,6 +835,17 @@ namespace IronAHK.Rusty
 
         public abstract class ListView : Control
         {
+            public abstract int Add(string options, params string[] fields);
+            public abstract int Insert(int row, string options, params string[] columns);
+            public abstract int Modify(int row, string options, params string[] columns);
+            public abstract int Delete(int row);
+            public abstract int ModifyColumn(int column, string options, string title);
+            public abstract int InsertColumn(int column, string options, string title);
+            public abstract int DeleteColumn(int column);
+            public abstract int CountColumn(string options);
+            public abstract int Next(int row, string options);
+            public abstract string Text(int row, int column);
+
             bool checklist = false;
             int count;
             bool grid = false;
