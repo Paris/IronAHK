@@ -582,6 +582,83 @@ namespace IronAHK.Rusty
                     lv.Columns.Add(item);
                 lv.Show();
             }
+
+            public override int Add(string options, params string[] fields)
+            {
+                var lv = (System.Windows.Forms.ListView)NativeComponent;
+                return lv.Items.Add(new ListViewItem(fields)).Index;
+            }
+
+            public override int Insert(int row, string options, params string[] columns)
+            {
+                var lv = (System.Windows.Forms.ListView)NativeComponent;
+
+                if (row < lv.Items.Count)
+                    return Add(options, columns);
+                else if (row > -1)
+                    return lv.Items.Insert(row, new ListViewItem(columns)).Index;
+
+                return 0;
+            }
+
+            public override int Modify(int row, string options, params string[] columns)
+            {
+                return 0;
+            }
+
+            public override int Delete(int row)
+            {
+                var lv = (System.Windows.Forms.ListView)NativeComponent;
+
+                if (row == 0)
+                    lv.Items.Clear();
+                else if (row > -1 && row < lv.Items.Count)
+                    lv.Items[row].Remove();
+                else
+                    return 0;
+
+                return 1;
+            }
+
+            public override int ModifyColumn(int column, string options, string title)
+            {
+                throw new NotImplementedException();
+            }
+
+            public override int InsertColumn(int column, string options, string title)
+            {
+                throw new NotImplementedException();
+            }
+
+            public override int DeleteColumn(int column)
+            {
+                throw new NotImplementedException();
+            }
+
+            public override int CountColumn(string options)
+            {
+                throw new NotImplementedException();
+            }
+
+            public override int Next(int row, string options)
+            {
+                throw new NotImplementedException();
+            }
+
+            public override string Text(int row, int column)
+            {
+                var lv = (System.Windows.Forms.ListView)NativeComponent;
+
+                if (row < 0 || row >= lv.Items.Count)
+                    return null;
+
+                var sub = lv.Items[row].SubItems;
+
+                if (column < 0 || column > sub.Count)
+                    return null;
+
+                return sub[column].Text;
+            }
         }
 
         public new class TreeView : BaseGui.TreeView
