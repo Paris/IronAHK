@@ -1,31 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Xml.Linq;
 using Microsoft.Win32;
 using WixSharp;
 
-[assembly: CLSCompliant(true)]
-
 namespace IronAHK.Setup
 {
-    static class Program
+    partial class Program
     {
         static bool x64, ext;
         static int n;
-
-        static void Main(string[] args)
-        {
-            x64 = false;
-            Build();
-            x64 = true;
-            Build();
-
-#if DEBUG
-            Console.Read();
-#endif
-        }
 
         static void Build()
         {
