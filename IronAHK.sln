@@ -1,6 +1,6 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 10.00
-# Visual Studio 2008
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual C# Express 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rusty", "Rusty\Rusty.csproj", "{818030A8-5FFE-4CA1-8248-0940C72EA47A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IronAHK", "IronAHK\IronAHK.csproj", "{66E074FB-EBF4-4A58-8BE6-D4A2D688F5E3}"
@@ -11,13 +11,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Scripting", "Scripting\Scripting.csproj", "{D7C6B1FD-2247-40A4-8DAB-199F3B8084E0}"
 	ProjectSection(ProjectDependencies) = postProject
 		{818030A8-5FFE-4CA1-8248-0940C72EA47A} = {818030A8-5FFE-4CA1-8248-0940C72EA47A}
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{51290663-19A1-4ADA-8D9E-351EF396A8FB}"
-	ProjectSection(SolutionItems) = preProject
-		license.txt = license.txt
-		make.bat = make.bat
-		Makefile = Makefile
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj", "{E205C525-E52F-4CB2-9216-4B60B0B8FEAB}"

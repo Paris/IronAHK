@@ -25,11 +25,11 @@ GOTO :eof
 
 :vs
 IF DEFINED VSSETVARS GOTO :eof
-IF NOT DEFINED VS90COMNTOOLS (
-	ECHO Visual Studio 9.0 is not installed.
+IF NOT DEFINED VS100COMNTOOLS (
+	ECHO Visual Studio 2010 is not installed.
 	EXIT 1
 )
-CALL "%VS90COMNTOOLS%\vsvars32.bat" >NUL
+CALL "%VS100COMNTOOLS%\vsvars32.bat" >NUL
 SET VSSETVARS=1
 GOTO :eof
 
