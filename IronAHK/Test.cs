@@ -7,8 +7,8 @@ namespace IronAHK
 {
     static partial class Program
     {
-        [DllImport("Kernel32.dll")]
-        static extern bool AllocConsole();
+        [Conditional("DEBUG"), DllImport("kernel32.dll")]
+        static extern void AllocConsole();
 
         [Conditional("DEBUG")]
         static void Start(ref string[] args)
