@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 
 [assembly: CLSCompliant(true)]
 
@@ -13,9 +14,12 @@ namespace IronAHK.Setup
             AppBundle();
             BuildMsi();
 
-#if DEBUG
+        }
+
+        [Conditional("DEBUG")]
+        static void Cleanup()
+        {
             Console.Read();
-#endif
         }
     }
 }
