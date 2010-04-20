@@ -8,6 +8,9 @@ namespace IronAHK.Setup
     {
         static void Main(string[] args)
         {
+            TransformDocs();
+            PackageZip();
+            AppBundle();
             BuildMsi();
 
 #if DEBUG

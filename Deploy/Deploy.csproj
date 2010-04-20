@@ -70,6 +70,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Bundle.cs" />
+    <Compile Include="Package.cs" />
+    <Compile Include="Docs.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Installer.cs" />
   </ItemGroup>
