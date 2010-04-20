@@ -8,10 +8,7 @@ namespace IronAHK.Setup
     {
         static void Main(string[] args)
         {
-            x64 = false;
-            Build();
-            x64 = true;
-            Build();
+            BuildMsi();
 
 #if DEBUG
             Console.Read();
