@@ -12,8 +12,11 @@ namespace IronAHK.Setup
             TransformDocs();
             PackageZip();
             AppBundle();
-            BuildMsi();
 
+            if (Environment.OSVersion.Platform == PlatformID.Win32NT)
+                BuildMsi();
+
+            Cleanup();
         }
 
         [Conditional("DEBUG")]
