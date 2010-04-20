@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.IO;
 
 [assembly: CLSCompliant(true)]
 
@@ -23,6 +24,26 @@ namespace IronAHK.Setup
         static void Cleanup()
         {
             Console.Read();
+        }
+
+        static string Output
+        {
+            get
+            {
+                string path = string.Format("..{0}..{0}..{0}bin", Path.DirectorySeparatorChar.ToString());
+                path = Path.GetFullPath(path);
+
+                if (!Directory.Exists(path))
+                    Directory.CreateDirectory(path);
+
+                const string gitignore = ".gitignore";
+                string git = Path.Combine(path, gitignore);
+
+                if (!File.Exists(git))
+                    File.WriteAllText(git, "*");
+
+                return path;
+            }
         }
     }
 }

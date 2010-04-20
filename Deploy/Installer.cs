@@ -47,6 +47,8 @@ namespace IronAHK.Setup
             wix.Start();
             wix.WaitForExit();
             File.Delete(proj);
+
+            File.Move(output, Path.Combine(Output, output));
         }
 
         static void BuildMsi(TextWriter writer, bool x64)
