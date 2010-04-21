@@ -539,7 +539,9 @@ namespace IronAHK.Rusty
                             history.Length = 0;
                     }
                 }
-                
+
+                string trigger = history.Length > 0 ? history[history.Length - 1].ToString() : null;
+
                 foreach (var hotstring in expand)
                 {
                     new Thread(new ThreadStart(delegate()
@@ -556,13 +558,25 @@ namespace IronAHK.Rusty
                         // UNDONE: potential race condition, backspacing hotstring definition while another one is sending its replacement text
 
                         if ((hotstring.EnabledOptions & HotstringDefinition.Options.Backspace) == HotstringDefinition.Options.Backspace && length > 0)
-                            Backspace(length + 1);
+                        {
+                            int n = length + 1;
+                            history.Remove(history.Length - n, n);
+                            Backspace(n);
+                        }
 
                         hotstring.Proc(new object[] { });
 
-                        if ((hotstring.EnabledOptions & HotstringDefinition.Options.OmitEnding) == HotstringDefinition.Options.OmitEnding &&
-                            (hotstring.EnabledOptions & HotstringDefinition.Options.AutoTrigger) != HotstringDefinition.Options.AutoTrigger)
-                            Backspace(1);
+                        if ((hotstring.EnabledOptions & HotstringDefinition.Options.OmitEnding) == HotstringDefinition.Options.OmitEnding)
+                        {
+                            if ((hotstring.EnabledOptions & HotstringDefinition.Options.Backspace) == HotstringDefinition.Options.Backspace &&
+                                (hotstring.EnabledOptions & HotstringDefinition.Options.AutoTrigger) != HotstringDefinition.Options.AutoTrigger)
+                            {
+                                history.Remove(history.Length - 1, 1);
+                                Backspace(1);
+                            }
+                        }
+                        else if (trigger != null)
+                            Send(trigger);
                     })).Start();
                 }
 
