@@ -171,7 +171,7 @@ namespace IronAHK.Rusty
         /// </summary>
         /// <param name="input">The input string.</param>
         /// <param name="needle">The pattern to search for, which is a regular expression.</param>
-        /// <param name="replace">The string to replace <paramref name="search"/>.</param>
+        /// <param name="replace">The string to replace <paramref name="needle"/>.</param>
         /// <param name="output">The variable to store the result.</param>
         /// <param name="limit">The maximum number of replacements to perform.
         /// If this is below one all matches will be replaced.</param>
