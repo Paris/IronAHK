@@ -566,6 +566,8 @@ namespace IronAHK.Rusty
 
                 foreach (var hotstring in expand)
                 {
+                    block = true;
+
                     new Thread(new ThreadStart(delegate()
                     {
                         priorTime = currentTime;
@@ -576,8 +578,6 @@ namespace IronAHK.Rusty
 
                         if ((hotstring.EnabledOptions & HotstringDefinition.Options.AutoTrigger) == HotstringDefinition.Options.AutoTrigger)
                             length--;
-
-                        // UNDONE: potential race condition, backspacing hotstring definition while another one is sending its replacement text
 
                         if ((hotstring.EnabledOptions & HotstringDefinition.Options.Backspace) == HotstringDefinition.Options.Backspace && length > 0)
                         {
