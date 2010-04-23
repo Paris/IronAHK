@@ -474,6 +474,9 @@ namespace IronAHK.Rusty
             {
                 bool block = false;
 
+                if (typed.Length == 0)
+                    typed = "\0";
+
                 if (suspended)
                     goto next;
 
