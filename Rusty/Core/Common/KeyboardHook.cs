@@ -519,12 +519,26 @@ namespace IronAHK.Rusty
                     if (key == Keys.Back && history.Length > 0)
                         history.Remove(history.Length - 1, 1);
 
-                    int d = retention - history.Length;
+                    switch (key)
+                    {
+                        case Keys.Left:
+                        case Keys.Right:
+                        case Keys.Down:
+                        case Keys.Up:
+                        case Keys.Next:
+                        case Keys.Prior:
+                        case Keys.Home:
+                        case Keys.End:
+                            history.Length = 0;
+                            break;
 
-                    if (d < 0)
-                        history.Remove(history.Length + d, -d);
-
-                    history.Append(typed);
+                        default:
+                            int d = retention - history.Length;
+                            if (d < 0)
+                                history.Remove(history.Length + d, -d);
+                            history.Append(typed);
+                            break;
+                    }
                 }
 
                 if (suspended)
