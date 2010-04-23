@@ -20,6 +20,14 @@ namespace IronAHK.Scripting
             if (invoke.Method.TargetObject != null)
                 target = GetMethodInfo(invoke.Method);
 
+            // Case insensitive method search in local scope
+            if (target == null)
+            {
+                foreach (var name in Methods.Keys)
+                    if (invoke.Method.MethodName.Equals(name, StringComparison.OrdinalIgnoreCase))
+                        invoke.Method.MethodName = name;
+            }
+
             // First we check the local methods
             if(target == null && Methods.ContainsKey(invoke.Method.MethodName))
             {
