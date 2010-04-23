@@ -15,9 +15,13 @@ namespace IronAHK.Scripting
 
             bool isDictionary = typeof(IDictionary).IsAssignableFrom(item.GetType());
 
-            // don't allow numeric indexing for objects which have only string keys
-            if (IsNumeric(key) && !isDictionary)
-                return IndexAt(item, ForceInt(key));
+            if (IsNumeric(key))
+            {
+                if (isDictionary)
+                    key = ForceString(key);
+                else
+                    return IndexAt(item, ForceInt(key));
+            }
 
             if (!(key is string) || !isDictionary)
                 return null;
