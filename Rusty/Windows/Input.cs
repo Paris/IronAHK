@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using System.Runtime.InteropServices;
+using System.Text;
 
 namespace IronAHK.Rusty
 {
@@ -20,6 +21,15 @@ namespace IronAHK.Rusty
 
         [DllImport("user32.dll")]
         public static extern bool BlockInput(bool fBlockIt);
+
+        [DllImport("user32.dll")]
+        public static extern bool GetKeyboardState(byte[] lpKeyState);
+
+        [DllImport("user32.dll")]
+        public static extern IntPtr GetKeyboardLayout(uint idThread);
+
+        [DllImport("user32.dll")]
+        public static extern int ToUnicodeEx(uint wVirtKey, uint wScanCode, byte[] lpKeyState, [Out, MarshalAs(UnmanagedType.LPWStr)] StringBuilder pwszBuff, int cchBuff, uint wFlags, IntPtr dwhkl);
 
         [StructLayout(LayoutKind.Sequential)]
         public struct MOUSEINPUT

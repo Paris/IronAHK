@@ -18,7 +18,7 @@ namespace IronAHK.Rusty
             const int WM_KEYUP = 0x0101;
             const int WM_SYSKEYDOWN = 0x0104;
             const int VK_BACK = 0x08;
-            const int MAPVK_VK_TO_VSC = 0;
+            const int VK_SHIFT = 0x10;
             LowLevelKeyboardProc proc;
             IntPtr hookId = IntPtr.Zero;
             bool ignore = false;
@@ -93,6 +93,21 @@ namespace IronAHK.Rusty
                 ignore = false;
             }
 
+            string MapKey(uint vk, uint sc)
+            {
+                byte[] state = new byte[256];
+                GetKeyboardState(state);
+
+                bool shift = GetKeyState(VK_SHIFT) >> 8 != 0;
+                
+                if (shift)
+                    state[VK_SHIFT] = 128;
+                
+                var buf = new StringBuilder(4);
+                ToUnicodeEx(vk, sc, state, buf, buf.Capacity, 0, GetKeyboardLayout(0));
+                return buf.ToString();
+            }
+
             IntPtr HookCallback(int nCode, IntPtr wParam, IntPtr lParam)
             {
                 bool block = false;
@@ -105,7 +120,8 @@ namespace IronAHK.Rusty
                 if (nCode >= 0 && pressed || wParam == (IntPtr)WM_KEYUP)
                 {
                     int vkCode = Marshal.ReadInt32(lParam);
-                    block = KeyReceived((Keys)vkCode, pressed);
+                    string typed = MapKey((uint)vkCode, (uint)Marshal.ReadInt32(lParam, 8));
+                    block = KeyReceived((Keys)vkCode, typed, pressed);
                 }
 
             chain:
