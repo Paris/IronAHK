@@ -272,7 +272,7 @@ namespace IronAHK.Rusty
                 this.sequence = sequence;
                 this.proc = proc;
 
-                endchars = "-()[]{}:;'\"/\\,.?!\n \t";
+                endchars = "-()[]{}:;'\"/\\,.?!\r\n \t";
             }
 
             public string Sequence
