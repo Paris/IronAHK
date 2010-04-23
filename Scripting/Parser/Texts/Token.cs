@@ -124,6 +124,8 @@ namespace IronAHK.Scripting
             if (z == -1)
                 return false;
 
+            bool p = false;
+
             for (int i = 0; i < z; i++)
             {
                 char sym = code[i];
@@ -134,18 +136,25 @@ namespace IronAHK.Scripting
                     case '!':
                     case '^':
                     case '+':
-                    case '&':
                     case '<':
                     case '>':
                     case '*':
                     case '~':
                     case '$':
-                    case '.':
+                        break;
+
+                    case '&':
+                        p = false;
                         break;
 
                     default:
                         if (!IsSpace(sym) && !char.IsLetterOrDigit(sym))
-                            return false;
+                        {
+                            if (p)
+                                return false;
+                            else
+                                p = true;
+                        }
                         break;
                 }
             }
