@@ -243,6 +243,26 @@ namespace IronAHK.Rusty
                         case "lalt": value = Keys.LMenu; break;
                         case "ralt": value = Keys.RMenu; break;
                         case "break": value = Keys.Pause; break;
+                        case "numpad1": value = Keys.Oem1; break;
+                        case "numpad2": value = Keys.Oem2; break;
+                        case "numpad3": value = Keys.Oem3; break;
+                        case "numpad4": value = Keys.Oem4; break;
+                        case "numpad5": value = Keys.Oem5; break;
+                        case "numpad6": value = Keys.Oem6; break;
+                        case "numpad7": value = Keys.Oem7; break;
+                        case "numpad8": value = Keys.Oem8; break;
+                        case ";": value = Keys.OemSemicolon; break;
+                        case "=": value = Keys.Oemplus; break;
+                        case ",": value = Keys.Oemcomma; break;
+                        case "-": value = Keys.OemMinus; break;
+                        case ".": value = Keys.OemPeriod; break;
+                        case "/": value = Keys.OemQuestion; break;
+                        case "'": value = Keys.Oemtilde; break;
+                        case "[": value = Keys.OemOpenBrackets; break;
+                        case "\\": value = Keys.OemPipe; break;
+                        case "]": value = Keys.OemCloseBrackets; break;
+                        case "#": value = Keys.Oem7; break;
+                        case "`": value = Keys.Oem8; break;
                     }
                 }
 
