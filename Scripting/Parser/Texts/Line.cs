@@ -52,9 +52,7 @@ namespace IronAHK.Scripting
                 case Subtract:
                     if (1 < code.Length && code[1] == code[0])
                         return false;
-                    if (code[0] == Add)
-                        goto case Not;
-                    return true;
+                    goto case Not;
 
                 case TernaryB:
                     if (code.Length > 1 && code[1] == Equal)
