@@ -441,6 +441,8 @@ namespace IronAHK.Rusty
 
             char Letter(Keys key)
             {
+                // HACK: remove Keys translation (and the overload) since it should be passed from the native handler
+
                 bool caps = (key & Keys.Shift) == Keys.Shift || pressed[Keys.ShiftKey] || pressed[Keys.LShiftKey] || pressed[Keys.RShiftKey];
                 key &= ~Keys.Modifiers;
 
@@ -462,7 +464,13 @@ namespace IronAHK.Rusty
 
             #region Hotkey fired
 
+            [Obsolete]
             protected bool KeyReceived(Keys key, bool down)
+            {
+                return KeyReceived(key, Letter(key).ToString(), down);
+            }
+
+            protected bool KeyReceived(Keys key, string typed, bool down)
             {
                 bool block = false;
 
@@ -511,15 +519,12 @@ namespace IronAHK.Rusty
                     if (key == Keys.Back && history.Length > 0)
                         history.Remove(history.Length - 1, 1);
 
-                    char letter = Letter(key);
+                    int d = retention - history.Length;
 
-                    if (letter != 0)
-                    {
-                        history.Append(letter);
+                    if (d < 0)
+                        history.Remove(history.Length + d, -d);
 
-                        if (history.Length == retention)
-                            history.Remove(0, 1); // lifo stack
-                    }
+                    history.Append(typed);
                 }
 
                 if (suspended)
