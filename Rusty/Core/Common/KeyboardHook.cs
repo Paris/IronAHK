@@ -575,15 +575,16 @@ namespace IronAHK.Rusty
                         previous = current;
                         current = hotstring.ToString();
                         int length = hotstring.Sequence.Length;
+                        bool auto = (hotstring.EnabledOptions & HotstringDefinition.Options.AutoTrigger) == HotstringDefinition.Options.AutoTrigger;
 
-                        if ((hotstring.EnabledOptions & HotstringDefinition.Options.AutoTrigger) == HotstringDefinition.Options.AutoTrigger)
+                        if (auto)
                             length--;
 
                         if ((hotstring.EnabledOptions & HotstringDefinition.Options.Backspace) == HotstringDefinition.Options.Backspace && length > 0)
                         {
                             int n = length + 1;
                             history.Remove(history.Length - n, n);
-                            Backspace(n);
+                            Backspace(length);
                         }
 
                         hotstring.Proc(new object[] { });
@@ -597,7 +598,7 @@ namespace IronAHK.Rusty
                                 Backspace(1);
                             }
                         }
-                        else if (trigger != null)
+                        else if (trigger != null && !auto)
                             Send(trigger);
                     })).Start();
                 }
