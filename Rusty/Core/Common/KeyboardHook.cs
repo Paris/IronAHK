@@ -510,10 +510,12 @@ namespace IronAHK.Rusty
                     bool up = (hotkey.EnabledOptions & HotkeyDefinition.Options.Up) == HotkeyDefinition.Options.Up;
 
                     if (hotkey.Enabled && match && HasModifiers(hotkey) && up != down)
+                    {
                         exec.Add(hotkey);
 
-                    if (match && (hotkey.EnabledOptions & HotkeyDefinition.Options.PassThrough) != HotkeyDefinition.Options.PassThrough)
-                        block = true;
+                        if ((hotkey.EnabledOptions & HotkeyDefinition.Options.PassThrough) != HotkeyDefinition.Options.PassThrough)
+                            block = true;
+                    }
                 }
 
                 new Thread(new ThreadStart(delegate()
