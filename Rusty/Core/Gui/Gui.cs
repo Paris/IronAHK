@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Reflection;
 using System.Windows.Forms;
 
 namespace IronAHK.Rusty
@@ -972,7 +973,22 @@ namespace IronAHK.Rusty
 
         static BaseGui.Window GuiCreateWindow(string name)
         {
-            var win = new WinForms.Window();
+            BaseGui.Window win;
+
+            if (Type.GetType("Gtk.Window") != null)
+            {
+                string prefix = typeof(Core).Namespace;
+                var src = Assembly.GetExecutingAssembly().GetManifestResourceStream(string.Format("{0}.Resources.{0}.Gtk.dll", prefix));
+
+                var bin = new byte[src.Length];
+                src.Read(bin, 0, bin.Length);
+                var gtk = Assembly.Load(bin);
+
+                var type = gtk.GetType(prefix + ".GtkForms.Window");
+                win = (BaseGui.Window)Activator.CreateInstance(type);
+            }
+            else
+                win = new WinForms.Window();
 
             if (name != "1")
                 win.Label = name + win.Label;
