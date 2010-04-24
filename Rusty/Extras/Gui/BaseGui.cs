@@ -5,7 +5,7 @@ using System.Windows.Forms;
 
 namespace IronAHK.Rusty
 {
-    abstract class BaseGui
+    public abstract class BaseGui
     {
         #region Information
 
