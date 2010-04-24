@@ -379,7 +379,6 @@ namespace IronAHK.Rusty
                                                 if (mode.StartsWith(Keyword_ImageList))
                                                 {
                                                     mode = mode.Substring(Keyword_ImageList.Length);
-                                                    int n;
 
                                                     // UNDONE: TreeView control ImageList
                                                 }
