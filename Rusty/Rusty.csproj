@@ -101,7 +101,6 @@
     <Compile Include="Core\Variables.cs" />
     <Compile Include="Core\Window.cs" />
     <Compile Include="Extras\Gui\BaseGui.cs" />
-    <Compile Include="Extras\Gui\StubGui.cs" />
     <Compile Include="Extras\Gui\WinForms.cs" />
     <Compile Include="Extras\SimpleJson\SimpleJSON.cs" />
     <Compile Include="Core\Common\KeyboardHook.cs" />
