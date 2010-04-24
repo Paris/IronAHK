@@ -2,6 +2,9 @@
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rusty", "Rusty\Rusty.csproj", "{818030A8-5FFE-4CA1-8248-0940C72EA47A}"
+	ProjectSection(ProjectDependencies) = postProject
+		{ED8B2B00-18F8-4187-A810-9C4028C80A56} = {ED8B2B00-18F8-4187-A810-9C4028C80A56}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IronAHK", "IronAHK\IronAHK.csproj", "{66E074FB-EBF4-4A58-8BE6-D4A2D688F5E3}"
 	ProjectSection(ProjectDependencies) = postProject

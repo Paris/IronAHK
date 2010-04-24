@@ -45,16 +45,14 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\Rusty\Extras\Gui\BaseGui.cs">
+      <Link>BaseGui.cs</Link>
+    </Compile>
     <Compile Include="GtkForms.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Rusty\Rusty.csproj">
-      <Project>{818030A8-5FFE-4CA1-8248-0940C72EA47A}</Project>
-      <Name>Rusty</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
