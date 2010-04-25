@@ -67,8 +67,8 @@ namespace IronAHK.Setup
 
             const string author = "A";
             string name = Name;
+            string version = Version;
             string path = Path.GetFullPath(string.Format("..{0}..{0}..{0}{1}{0}bin{0}" + config, Path.DirectorySeparatorChar, name));
-            string version = File.ReadAllText(string.Format("{1}{0}..{0}..{0}version.txt", Path.DirectorySeparatorChar, path)).Trim();
             string docs = Path.GetFullPath(string.Format("{1}{0}..{0}..{0}Site{0}docs", Path.DirectorySeparatorChar, path));
             string favicon = string.Format("{1}{0}..{0}favicon.ico", Path.DirectorySeparatorChar.ToString(), docs);
             string main = name + ".exe";
