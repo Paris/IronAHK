@@ -37,7 +37,7 @@ namespace IronAHK.Setup
             wix.WaitForExit();
             File.Delete(xml);
 
-            string output = string.Format("x{0}.msi", x64 ? "64" : "86");
+            string output = string.Format("{0}-{1}-x{2}.msi", Name, Version, x64 ? "64" : "86");
 
             if (File.Exists(output))
                 File.Delete(output);
