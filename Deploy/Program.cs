@@ -13,11 +13,39 @@ namespace IronAHK.Setup
         {
             Environment.CurrentDirectory = WorkingDir;
 
-            TransformDocs();
-            PackageZip();
-            AppBundle();
+            bool all = false, docs = false, zip = false, app = false, msi = false;
+            string cmd = args.Length > 0 ? args[0].Trim().ToUpperInvariant() : string.Empty;
 
-            if (Environment.OSVersion.Platform == PlatformID.Win32NT)
+            switch (cmd)
+            {
+                case "HELP":
+                    Console.WriteLine("{0} [all|docs|zip|app|msi]", Path.GetFileName(Assembly.GetEntryAssembly().Location));
+                    break;
+
+                case "DOCS": docs = true; break;
+                case "ZIP": zip = true; break;
+                case "APP": app = true; break;
+                case "MSI": msi = true; break;
+
+                case "ALL":
+                default:
+                    all = true;
+                    break;
+            }
+
+            if (all)
+                docs = zip = app = msi = true;
+
+            if (docs)
+                TransformDocs();
+
+            if (zip)
+                PackageZip();
+
+            if (app)
+                AppBundle();
+
+            if (msi && Environment.OSVersion.Platform == PlatformID.Win32NT)
                 BuildMsi();
 
             Cleanup();
