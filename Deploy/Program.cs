@@ -26,6 +26,11 @@ namespace IronAHK.Setup
             Console.Read();
         }
 
+        static string Version
+        {
+            get { return File.ReadAllText(Path.Combine(WorkingDir, "version.txt")).Trim(); }
+        }
+
         static string Output
         {
             get
