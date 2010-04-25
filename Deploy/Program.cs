@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using System.Reflection;
 
 [assembly: CLSCompliant(true)]
 
@@ -26,9 +27,19 @@ namespace IronAHK.Setup
             Console.Read();
         }
 
+        static string Name
+        {
+            get { return typeof(Program).Namespace.Split(new[] { '.' }, 2)[0]; }
+        }
+
         static string Version
         {
             get { return File.ReadAllText(Path.Combine(WorkingDir, "version.txt")).Trim(); }
+        }
+
+        static string WorkingDir
+        {
+            get { return Path.GetFullPath(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)); }
         }
 
         static string Output
@@ -36,7 +47,7 @@ namespace IronAHK.Setup
             get
             {
                 string path = string.Format("..{0}..{0}..{0}bin", Path.DirectorySeparatorChar.ToString());
-                path = Path.GetFullPath(path);
+                path = Path.GetFullPath(Path.Combine(WorkingDir, path));
 
                 if (!Directory.Exists(path))
                     Directory.CreateDirectory(path);
