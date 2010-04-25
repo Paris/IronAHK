@@ -66,7 +66,7 @@ namespace IronAHK.Setup
 ;
 
             const string author = "A";
-            string name = typeof(Program).Namespace.Split(new char[] { '.' }, 2)[0];
+            string name = Name;
             string path = Path.GetFullPath(string.Format("..{0}..{0}..{0}{1}{0}bin{0}" + config, Path.DirectorySeparatorChar, name));
             string version = File.ReadAllText(string.Format("{1}{0}..{0}..{0}version.txt", Path.DirectorySeparatorChar, path)).Trim();
             string docs = Path.GetFullPath(string.Format("{1}{0}..{0}..{0}Site{0}docs", Path.DirectorySeparatorChar, path));
