@@ -19,7 +19,7 @@ SET config=Release
 SET outpre=bin
 SET site=Site
 SET devargs="%config%" "%name%.sln"
-SET versionfile=%name%\version.txt
+SET versionfile=Deploy\version.txt
 FOR /F %%G IN (%versionfile%) DO SET version=%%G
 GOTO :eof
 

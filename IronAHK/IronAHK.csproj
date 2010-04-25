@@ -137,7 +137,6 @@
     <Content Include="Site\robots.txt" />
     <Content Include="Site\docs\api.css" />
     <Content Include="Site\docs\primary.css" />
-    <Content Include="version.txt" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
