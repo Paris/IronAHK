@@ -18,9 +18,8 @@ SET libname=Rusty
 SET config=Release
 SET outpre=bin
 SET site=Site
+SET deploy=Deploy
 SET devargs="%config%" "%name%.sln"
-SET versionfile=Deploy\version.txt
-FOR /F %%G IN (%versionfile%) DO SET version=%%G
 GOTO :eof
 
 :vs
@@ -39,23 +38,8 @@ php-cgi -f "%name%\%site%\transform.php"
 GOTO :eof
 
 :dist
-CALL %0 docs
-devenv /rebuild %devargs% /project "%setup%"
-IF NOT EXIST "%outpre%" MKDIR "%outpre%"
-ECHO *>"%outpre%\.gitignore"
-SET cwd=%CD%
-CD "%setup%\%outpre%\%config%"
-"%setup%.exe"
-FOR %%G IN (*.msi) DO MOVE "%%G" "%cwd%\%outpre%\%name%-%version%-%%G"
-CD "%cwd%"
-SET Sz=%ProgramFiles%\7-zip
-IF EXIST "%Sz%" SET PATH=%PATH%;%Sz%
-CD "%name%\%outpre%"
-SET outname=%name%-%version%
-MOVE "%config%" "%outname%"
-7z a "%cwd%\%outpre%\%name%-%version%.zip" "%outname%" -mx=9
-MOVE "%outname%" "%config%"
-CD "%cwd%"
+CALL "%0" docs
+"%deploy%\%outpre%\%config%\Setup.exe"
 GOTO :eof
 
 :mostlyclean
