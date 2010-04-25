@@ -11,6 +11,8 @@ namespace IronAHK.Setup
     {
         static void Main(string[] args)
         {
+            Environment.CurrentDirectory = WorkingDir;
+
             TransformDocs();
             PackageZip();
             AppBundle();
