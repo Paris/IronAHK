@@ -1,30 +1,31 @@
 CC=mdtool
-PHP=php-cgi
+MONO=mono
 CSC=gmcs
+
 name=IronAHK
-libname=Rusty
 config=Release
 
 outdir=bin
+deploy=Deploy/$(outdir)/$(config)/Setup.exe
 setup=setup.sh
-site=Site
+working=$(name)/$(outdir)/$(config)
 
-.PHONY=all docs install uninstall clean
+.PHONY=all docs dist install uninstall clean
 
 all: clean
 	$(CC) build "--configuration:$(config)" "$(name).sln"
 
 docs: all
-	$(PHP) -f "$(name)/$(site)/transform.php"
+	$(MONO) $(deploy) docs
+
+dist: all
+	$(MONO) $(deploy)
 
 install: all
-	(cd "$(outdir)/$(config)"; "./$(setup)" install)
+	(cd "$(working)"; "./$(setup)" install)
 
 uninstall:
-	(cd "$(outdir)/$(config)"; "./$(setup)" uninstall)
-
-mostlyclean: clean
-		$(PHP) -f "$(name)/$(site)/clean.php" > /dev/null
+	(cd "$(working)"; "./$(setup)" uninstall)
 
 clean:
 	for dir in $(shell ls -d */ | xargs -l basename); do \
@@ -32,3 +33,4 @@ clean:
 			if [ -d "$${dir}/$${sub}" ]; then rm -R "$${dir}/$${sub}"; fi \
 		done; \
 	done;
+	if [ -d "$(outdir)" ]; then rm -R "$(outdir)"; fi
