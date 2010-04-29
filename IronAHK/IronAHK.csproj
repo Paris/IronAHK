@@ -118,7 +118,9 @@
     <Content Include="Site\docs\autohotkey\index.html" />
     <Content Include="Site\docs\changes\index.html" />
     <Content Include="Site\docs\commands\index.html" />
-    <Content Include="Site\docs\commands\view.xsl" />
+    <Content Include="Site\docs\commands\view.xsl">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Site\docs\developing\index.html" />
     <Content Include="Site\docs\faq\index.html" />
     <Content Include="Site\docs\index.html" />
