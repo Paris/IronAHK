@@ -100,6 +100,7 @@
       <Link>license.txt</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Site\docs\commands\doc.xsl" />
     <Content Include="Site\docs\developing\status\index.html" />
     <Content Include="Site\docs\images\cross.png" />
     <Content Include="Site\docs\images\delete.png" />
