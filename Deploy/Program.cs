@@ -76,7 +76,7 @@ namespace IronAHK.Setup
         [Conditional("DEBUG")]
         static void Cleanup()
         {
-            Console.Read();
+
         }
 
         static string Name
