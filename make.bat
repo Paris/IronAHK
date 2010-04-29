@@ -7,19 +7,14 @@ IF "%cmd%"=="" SET cmd=all
 GOTO %cmd%
 
 :all
-devenv /rebuild %devargs%
+devenv /rebuild "%config%" "%name%.sln"
 GOTO :eof
 
 :setvars
 CALL :vs
 SET name=IronAHK
-SET setup=Setup
-SET libname=Rusty
 SET config=Release
 SET outpre=bin
-SET site=Site
-SET deploy=Deploy
-SET devargs="%config%" "%name%.sln"
 GOTO :eof
 
 :vs
@@ -33,18 +28,12 @@ SET VSSETVARS=1
 GOTO :eof
 
 :docs
-CALL :all
-php-cgi -f "%name%\%site%\transform.php"
+CALL :dist docs
 GOTO :eof
 
 :dist
-CALL "%0" docs
-"%deploy%\%outpre%\%config%\Setup.exe"
-GOTO :eof
-
-:mostlyclean
-CALL :clean
-php-cgi -f "%name%\%site%\clean.php" > NUL
+CALL :all
+"Deploy\%outpre%\%config%\Setup.exe" %1
 GOTO :eof
 
 :clean

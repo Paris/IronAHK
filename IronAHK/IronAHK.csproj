@@ -85,7 +85,6 @@
     <None Include="Site\clean.php" />
     <None Include="Site\docs\commands\.gitignore" />
     <None Include="Site\download\.htaccess" />
-    <None Include="Site\transform.php" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Program.cs" />
