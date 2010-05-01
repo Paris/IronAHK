@@ -1,14 +1,14 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rusty", "Rusty\Rusty.csproj", "{818030A8-5FFE-4CA1-8248-0940C72EA47A}"
-	ProjectSection(ProjectDependencies) = postProject
-		{ED8B2B00-18F8-4187-A810-9C4028C80A56} = {ED8B2B00-18F8-4187-A810-9C4028C80A56}
-	EndProjectSection
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IronAHK", "IronAHK\IronAHK.csproj", "{66E074FB-EBF4-4A58-8BE6-D4A2D688F5E3}"
 	ProjectSection(ProjectDependencies) = postProject
 		{D7C6B1FD-2247-40A4-8DAB-199F3B8084E0} = {D7C6B1FD-2247-40A4-8DAB-199F3B8084E0}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rusty", "Rusty\Rusty.csproj", "{818030A8-5FFE-4CA1-8248-0940C72EA47A}"
+	ProjectSection(ProjectDependencies) = postProject
+		{ED8B2B00-18F8-4187-A810-9C4028C80A56} = {ED8B2B00-18F8-4187-A810-9C4028C80A56}
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Scripting", "Scripting\Scripting.csproj", "{D7C6B1FD-2247-40A4-8DAB-199F3B8084E0}"
@@ -28,14 +28,14 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{818030A8-5FFE-4CA1-8248-0940C72EA47A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{818030A8-5FFE-4CA1-8248-0940C72EA47A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{818030A8-5FFE-4CA1-8248-0940C72EA47A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{818030A8-5FFE-4CA1-8248-0940C72EA47A}.Release|Any CPU.Build.0 = Release|Any CPU
 		{66E074FB-EBF4-4A58-8BE6-D4A2D688F5E3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{66E074FB-EBF4-4A58-8BE6-D4A2D688F5E3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{66E074FB-EBF4-4A58-8BE6-D4A2D688F5E3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{66E074FB-EBF4-4A58-8BE6-D4A2D688F5E3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{818030A8-5FFE-4CA1-8248-0940C72EA47A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{818030A8-5FFE-4CA1-8248-0940C72EA47A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{818030A8-5FFE-4CA1-8248-0940C72EA47A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{818030A8-5FFE-4CA1-8248-0940C72EA47A}.Release|Any CPU.Build.0 = Release|Any CPU
 		{D7C6B1FD-2247-40A4-8DAB-199F3B8084E0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{D7C6B1FD-2247-40A4-8DAB-199F3B8084E0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D7C6B1FD-2247-40A4-8DAB-199F3B8084E0}.Release|Any CPU.ActiveCfg = Release|Any CPU
