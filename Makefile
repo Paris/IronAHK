@@ -1,31 +1,30 @@
-CC=mdtool
-MONO=mono
-CSC=gmcs
+CC=xbuild
+CLI=mono
 
 name=IronAHK
 config=Release
 
 outdir=bin
-deploy=Deploy/$(outdir)/$(config)/Setup.exe
-setup=setup.sh
-working=$(name)/$(outdir)/$(config)
+deploy=Deploy/$(outdir)/$(config)
+setup=$(deploy)/Setup.exe
+installer=$(deploy)/setup.sh
 
 .PHONY=all docs dist install uninstall clean
 
 all: clean
-	$(CC) build "--configuration:$(config)" "$(name).sln"
+	$(CC) "/property:Configuration=$(config)"
 
 docs: all
-	$(MONO) $(deploy) docs
+	$(CLI) $(setup) docs
 
 dist: all
-	$(MONO) $(deploy)
+	$(CLI) $(setup)
 
 install: all
-	(cd "$(working)"; "./$(setup)" install)
+	(cd "$(deploy)"; "./$(installer)" install)
 
-uninstall:
-	(cd "$(working)"; "./$(setup)" uninstall)
+uninstall: all
+	(cd "$(deploy)"; "./$(installer)" install)
 
 clean:
 	for dir in $(shell ls -d */ | xargs -l basename); do \
