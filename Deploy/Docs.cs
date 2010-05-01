@@ -16,14 +16,24 @@ namespace IronAHK.Setup
             string prefix = string.Format("M:{0}.", typeof(Rusty.Core).FullName), assembly = typeof(Rusty.Core).Namespace;
             const string index = "index", srcName = index + ".xml", htmlName = index + ".html", member = "member";
 
-            var reader = XmlTextReader.Create(assembly + ".xml");
-            reader.ReadToDescendant(member);
-
             foreach (string path in Directory.GetDirectories(root))
             {
                 RemoveCommonPaths(path, srcName, htmlName);
                 Directory.Delete(path, false);
             }
+
+            string xml = assembly + ".xml";
+
+            if (!File.Exists(xml))
+            {
+                string parent = Path.GetFullPath(Path.Combine(WorkingDir, string.Format("..{0}..{0}..", Path.DirectorySeparatorChar.ToString())));
+                string diff = Path.GetDirectoryName(Path.GetFullPath(xml)).Substring(parent.Length + 1);
+                diff = diff.Replace("Deploy", assembly.Substring(Name.Length + 1));
+                xml = Path.Combine(Path.Combine(parent, diff), xml);
+            }
+
+            var reader = XmlTextReader.Create(xml);
+            reader.ReadToDescendant(member);
 
             do
             {
