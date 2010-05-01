@@ -78,9 +78,6 @@
     <None Include="Example.ahk">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="setup.sh">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Include="Site\.htaccess" />
     <None Include="Site\clean.php" />
     <None Include="Site\docs\commands\.gitignore" />
