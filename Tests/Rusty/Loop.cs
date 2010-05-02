@@ -37,6 +37,7 @@ namespace IronAHK.Tests
 
             foreach (string value in Core.LoopParse(list, "CSV", null))
             {
+                Assert.IsNotNull(value);
                 Assert.AreEqual(items[x], Core.A_LoopField);
                 Assert.AreEqual(++x, Core.A_Index);
             }

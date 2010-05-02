@@ -9,7 +9,6 @@ namespace IronAHK.Scripting
 {
     partial class MethodWriter
     {
-        TypeBuilder Parent;
         ILGenerator Generator;
 
         MethodInfo ForceDecimal;
@@ -37,7 +36,6 @@ namespace IronAHK.Scripting
         {
             Loops = new Stack<LoopMetadata>();
 
-            this.Parent = Parent;
             this.Member = Member;
             this.Lookup = Lookup;
 

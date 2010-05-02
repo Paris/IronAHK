@@ -183,9 +183,6 @@ namespace IronAHK.Scripting
 
         object GetDefaultValueOfType(Type t)
         {
-            bool array = t.IsArray;
-            var rank = t.IsArray ? t.GetArrayRank() : -1;
-
             if (t == typeof(string))
                 return string.Empty;
             else if (t == typeof(object[]))
