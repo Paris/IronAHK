@@ -144,14 +144,14 @@ namespace IronAHK.Rusty
             if (state == null && mode.Equals(Keyword_Toggle, StringComparison.OrdinalIgnoreCase))
                 state = !(thread.ThreadState == System.Threading.ThreadState.Suspended || thread.ThreadState == System.Threading.ThreadState.SuspendRequested);
 
-#pragma warning disable 618
+#pragma warning disable 612,618
 
             if (state == true)
                 thread.Suspend();
             else if (state == false)
                 thread.Resume();
 
-#pragma warning restore 618
+#pragma warning restore 612,618
 
             // UNDONE: correct handling of pause on underlying thread
 

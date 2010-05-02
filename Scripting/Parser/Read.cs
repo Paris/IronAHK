@@ -68,7 +68,7 @@ namespace IronAHK.Scripting
                     parts[1] = StripComment(parts[1]).Trim(Spaces);
 
                     int value;
-                    bool numeric = int.TryParse(parts[1], out value);
+                    int.TryParse(parts[1], out value);
 
                     bool next = true;
                     bool include = false;

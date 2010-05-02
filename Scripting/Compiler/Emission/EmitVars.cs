@@ -143,15 +143,6 @@ namespace IronAHK.Scripting
             return typeof(object);
         }
 
-        string ResolveName(CodeVariableReferenceExpression Var)
-        {
-            const string sep = ".";
-            if (IsEntryPoint)
-                return string.Concat(sep, Var.VariableName);
-            else
-                return string.Concat(Member.Name, sep, Var.VariableName);
-        }
-
         void ConditionalBox(Type Top)
         {
             if(Top == null)
