@@ -416,7 +416,6 @@ namespace IronAHK.Rusty
             var reg = ToRegRootKey(RootKey);
             
             string[] keys = SubKey.Split('/');
-            int j = keys.Length - (Parent ? 1 : 0);
             for (int i = 0; i < keys.Length - (Parent ? 1 : 0); i++)
                 reg = reg.OpenSubKey(keys[i].Trim());
 
@@ -602,28 +601,6 @@ namespace IronAHK.Rusty
             }
 
             return table;
-        }
-
-
-        static List<string> ParseKeys(string Options)
-        {
-            var list = new List<string>();
-
-            for (int i = 0, j = 0; i < Options.Length; i++)
-            {
-                if (!char.IsLetterOrDigit(Options, i))
-                {
-                    list.Add(Options.Substring(j, i).ToLowerInvariant());
-                    j = i;
-                }
-            }
-
-            return list;
-        }
-
-        static List<string> ParseKeys(string[] Options)
-        {
-            return ParseKeys(string.Join(" ", Options));
         }
 
         static string[] ParseOptions(string options)

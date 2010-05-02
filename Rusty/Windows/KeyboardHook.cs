@@ -67,7 +67,7 @@ namespace IronAHK.Rusty
                 }
 
                 ignore = true;
-                var res = SendInput((uint)len, inputs, Marshal.SizeOf(typeof(INPUT)));
+                SendInput((uint)len, inputs, Marshal.SizeOf(typeof(INPUT)));
                 ignore = false;
             }
 
@@ -89,7 +89,7 @@ namespace IronAHK.Rusty
                 }
 
                 ignore = true;
-                var res = SendInput((uint)length, inputs, Marshal.SizeOf(typeof(INPUT)));
+                SendInput((uint)length, inputs, Marshal.SizeOf(typeof(INPUT)));
                 ignore = false;
             }
 

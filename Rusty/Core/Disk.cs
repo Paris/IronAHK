@@ -137,33 +137,6 @@ namespace IronAHK.Rusty
             }
         }
 
-        static void FileCopyDir(string Source, string Dest)
-        {
-            String[] Files;
-
-            if (Dest[Dest.Length - 1] != Path.DirectorySeparatorChar)
-                Dest += Path.DirectorySeparatorChar;
-            if (!Directory.Exists(Dest)) Directory.CreateDirectory(Dest);
-            Files = Directory.GetFileSystemEntries(Source);
-            foreach (string Element in Files)
-            {
-                // Sub directories
-
-                if (Directory.Exists(Element))
-                    FileCopyDir(Element, Dest + Path.GetFileName(Element), 0);
-                // Files in directory
-
-                else
-                {
-                    try
-                    {
-                        File.Copy(Element, Dest + Path.GetFileName(Element), false);
-                    }
-                    catch (Exception) { };
-                }
-            }
-        }
-
         /// <summary>
         /// Creates a directory/folder.
         /// </summary>
