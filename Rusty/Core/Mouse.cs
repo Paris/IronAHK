@@ -125,9 +125,6 @@ namespace IronAHK.Rusty
             }
         }
 
-        [DllImport("user32.dll", EntryPoint = "GetCursorPos")]
-        private static extern int GetCursorPos(out POINTAPI point);
-
         [StructLayout(LayoutKind.Sequential)]
         struct POINTAPI
         {

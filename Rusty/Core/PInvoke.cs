@@ -35,7 +35,6 @@ namespace IronAHK.Rusty
             #region Parameters
 
             var types = new Type[Parameters.Length / 2];
-            var refs = new bool[types.Length];
             var args = new object[types.Length];
             var returns = typeof(int);
             bool cdecl = false;
