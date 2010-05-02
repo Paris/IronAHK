@@ -130,7 +130,7 @@ namespace IronAHK.Rusty
                             if (handle == IntPtr.Zero)
                                 continue;
                             var address = Windows.GetProcAddress(handle, name);
-                            if (handle != IntPtr.Zero)
+                            if (address != IntPtr.Zero)
                             {
                                 path = lib + ".dll";
                                 break;
