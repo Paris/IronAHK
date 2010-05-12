@@ -971,7 +971,7 @@ namespace IronAHK.Rusty
 
         static Form GuiCreateWindow(string name)
         {
-            if (name== "1")
+            if (name == "1")
                 name = string.Empty;
 
             var win = new Form { Name = name, Tag = new GuiInfo { } };
@@ -1020,27 +1020,22 @@ namespace IronAHK.Rusty
                 switch (mode)
                 {
                     case Keyword_Left:
-                        //control.Alignment = ContentAlignment.MiddleLeft;
                         break;
 
                     case Keyword_Center:
-                        //control.Alignment = ContentAlignment.MiddleCenter;
                         break;
 
                     case Keyword_Right:
-                        //control.Alignment = ContentAlignment.MiddleRight;
                         break;
 
                     case Keyword_AltSubmit:
-                        //control.AltSubmit = on;
                         break;
 
                     case Keyword_Background:
-                        //control.Background = on;
                         break;
 
                     case Keyword_Border:
-                        //control.Border = on;
+                        SafeSetProperty(control, "BorderStyle", on ? BorderStyle.FixedSingle : BorderStyle.None);
                         break;
 
                     case Keyword_Enabled:
@@ -1052,11 +1047,9 @@ namespace IronAHK.Rusty
                         break;
 
                     case Keyword_HScroll:
-                        //control.HorizontalScroll = on;
                         break;
 
                     case Keyword_VScroll:
-                        //control.VerticalScroll = on;
                         break;
 
                     case Keyword_TabStop:
@@ -1064,11 +1057,10 @@ namespace IronAHK.Rusty
                         break;
 
                     case Keyword_Theme:
-                        //control.Theme = on;
                         break;
 
                     case Keyword_Transparent:
-                        //control.Transparent = on;
+                        control.BackColor = Color.Transparent;
                         break;
 
                     case Keyword_Visible:
@@ -1077,7 +1069,6 @@ namespace IronAHK.Rusty
                         break;
 
                     case Keyword_Wrap:
-                        //control.Wrap = on;
                         break;
 
                     default:
