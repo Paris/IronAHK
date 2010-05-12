@@ -965,7 +965,7 @@ namespace IronAHK.Rusty
                 #endregion
             }
 
-            if (opts != null)
+            if (opts == null)
                 GuiApplyStyles(control, options);
         }
 
