@@ -66,7 +66,7 @@ namespace IronAHK.Rusty
         [ThreadStatic]
         static int eventinfo;
 
-        static Dictionary<string, BaseGui.Window> guis;
+        static Dictionary<string, Form> guis;
 
         [ThreadStatic]
         static string defaultGui;
@@ -81,7 +81,7 @@ namespace IronAHK.Rusty
             }
         }
 
-        static BaseGui.Window DefaultGui
+        static Form DefaultGui
         {
             get
             {
@@ -94,9 +94,9 @@ namespace IronAHK.Rusty
         }
 
         [ThreadStatic]
-        static BaseGui.TreeView defaultTreeView;
+        static TreeView defaultTreeView;
 
-        static BaseGui.TreeView DefaultTreeView
+        static TreeView DefaultTreeView
         {
             get
             {
@@ -108,11 +108,11 @@ namespace IronAHK.Rusty
                 if (gui == null)
                     return null;
 
-                BaseGui.TreeView tv = null;
+                TreeView tv = null;
 
                 foreach (var control in gui.Controls)
-                    if (typeof(BaseGui.TreeView).IsAssignableFrom(control.GetType()))
-                        tv = (BaseGui.TreeView)control;
+                    if (control.GetType() == typeof(TreeView))
+                        tv = (TreeView)control;
 
                 return tv;
             }
@@ -120,9 +120,9 @@ namespace IronAHK.Rusty
         }
 
         [ThreadStatic]
-        static BaseGui.ListView defaultListView;
+        static ListView defaultListView;
 
-        static BaseGui.ListView DefaultListView
+        static ListView DefaultListView
         {
             get
             {
@@ -134,15 +134,34 @@ namespace IronAHK.Rusty
                 if (gui == null)
                     return null;
 
-                BaseGui.ListView lv = null;
+                ListView lv = null;
 
                 foreach (var control in gui.Controls)
-                    if (typeof(BaseGui.ListView).IsAssignableFrom(control.GetType()))
-                        lv = (BaseGui.ListView)control;
+                    if (control.GetType() == typeof(ListView))
+                        lv = (ListView)control;
 
                 return lv;
             }
             set { defaultListView = value; }
+        }
+
+        static StatusBar DefaultStatusBar
+        {
+            get
+            {
+                var gui = DefaultGui;
+
+                if (gui == null)
+                    return null;
+
+                StatusBar sb = null;
+
+                foreach (var control in gui.Controls)
+                    if (control.GetType() == typeof(StatusBar))
+                        sb = (StatusBar)control;
+
+                return sb;
+            }
         }
 
         static NotifyIcon Tray;

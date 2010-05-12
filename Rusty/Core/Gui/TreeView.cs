@@ -20,9 +20,7 @@ namespace IronAHK.Rusty
             if (tree == null)
                 return 0;
 
-            int id = tree.Add(Name, ParentItemID);
-            tree.Modify(id, Options, null);
-            return id;
+            throw new NotImplementedException(); // TODO: TV_Add
         }
 
         /// <summary>
@@ -37,8 +35,7 @@ namespace IronAHK.Rusty
             if (tree == null)
                 return false;
 
-            tree.Delete(ItemID);
-            return true;
+            throw new NotImplementedException(); // TODO: TV_Delete
         }
 
         /// <summary>
@@ -53,7 +50,7 @@ namespace IronAHK.Rusty
             if (tree == null)
                 return 0;
 
-            return tree.Child(ParentItemID);
+            throw new NotImplementedException(); // TODO: TV_GetChild
         }
 
         /// <summary>
@@ -67,7 +64,7 @@ namespace IronAHK.Rusty
             if (tree == null)
                 return 0;
 
-            return tree.Count();
+            throw new NotImplementedException(); // TODO: TV_GetCount
         }
 
         /// <summary>
@@ -83,7 +80,7 @@ namespace IronAHK.Rusty
             if (tree == null)
                 return 0;
 
-            return tree.Next(ItemID, Mode);
+            throw new NotImplementedException(); // TODO: TV_GetNext
         }
 
         /// <summary>
@@ -98,7 +95,7 @@ namespace IronAHK.Rusty
             if (tree == null)
                 return 0;
 
-            return tree.ParentOf(ItemID);
+            throw new NotImplementedException(); // TODO: TV_GetParent
         }
 
         /// <summary>
@@ -113,7 +110,7 @@ namespace IronAHK.Rusty
             if (tree == null)
                 return 0;
 
-            return tree.Previous(ItemID);
+            throw new NotImplementedException(); // TODO: TV_GetPrev
         }
 
         /// <summary>
@@ -127,7 +124,7 @@ namespace IronAHK.Rusty
             if (tree == null)
                 return 0;
 
-            return tree.Selection();
+            throw new NotImplementedException(); // TODO: TV_GetSelection
         }
 
         /// <summary>
@@ -144,8 +141,7 @@ namespace IronAHK.Rusty
             if (tree == null)
                 return 0;
 
-            OutputVar = tree.Text(ItemID);
-            return 1;
+            throw new NotImplementedException(); // TODO: TV_GetText
         }
 
         /// <summary>
@@ -162,7 +158,7 @@ namespace IronAHK.Rusty
             if (tree == null)
                 return 0;
 
-            return tree.Modify(ItemID, Options, NewName);
+            throw new NotImplementedException(); // TODO: TV_Modify
         }
     }
 }
