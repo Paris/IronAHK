@@ -28,6 +28,16 @@ namespace IronAHK.Rusty
             return value;
         }
 
+        static void SafeSetProperty(object item, string name, object value)
+        {
+            var prop = item.GetType().GetProperty(name, value.GetType());
+
+            if (prop == null)
+                return;
+
+            prop.SetValue(item, value, null);
+        }
+
         static MethodInfo FindLocalRoutine(string name)
         {
             return FindLocalMethod(LabelMethodName(name));
