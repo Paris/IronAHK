@@ -16,6 +16,13 @@ namespace IronAHK.Rusty
 
         #endregion
 
+        #region Windows
+
+        [DllImport("user32.dll")]
+        public static extern bool FlashWindow(IntPtr hWnd, bool bInvert);
+
+        #endregion
+
         #region Process
 
         [DllImport("kernel32.dll")]

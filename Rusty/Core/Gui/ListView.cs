@@ -19,7 +19,7 @@ namespace IronAHK.Rusty
             if (list == null)
                 return 0;
 
-            return list.Add(Options, FieldN);
+            throw new NotImplementedException(); // TODO: LV_Add
         }
 
         /// <summary>
@@ -34,8 +34,7 @@ namespace IronAHK.Rusty
             if (list == null)
                 return false;
 
-            list.Delete(RowNumber);
-            return true;
+            throw new NotImplementedException(); // TODO: LV_Delete
         }
 
         /// <summary>
@@ -50,8 +49,7 @@ namespace IronAHK.Rusty
             if (list == null)
                 return false;
 
-            list.DeleteColumn(ColumnNumber);
-            return true;
+            throw new NotImplementedException(); // TODO: LV_DeleteCol
         }
 
         /// <summary>
@@ -66,7 +64,7 @@ namespace IronAHK.Rusty
             if (list == null)
                 return 0;
 
-            return list.CountColumn(Type);
+            throw new NotImplementedException(); // TODO: LV_GetCount
         }
 
         /// <summary>
@@ -82,7 +80,7 @@ namespace IronAHK.Rusty
             if (list == null)
                 return 0;
 
-            return list.Next(StartingRowNumber, Mode);
+            throw new NotImplementedException(); // TODO: LV_GetNext
         }
 
         /// <summary>
@@ -100,8 +98,7 @@ namespace IronAHK.Rusty
             if (list == null)
                 return false;
 
-            OutputVar = list.Text(RowNumber, ColumnNumber);
-            return true;
+            throw new NotImplementedException(); // TODO: LV_GetText
         }
 
         /// <summary>
@@ -114,8 +111,10 @@ namespace IronAHK.Rusty
         {
             var list = DefaultListView;
 
-            if (list != null)
-                list.Insert(RowNumber, Options, ColN);
+            if (list == null)
+                return;
+
+            throw new NotImplementedException(); // TODO: LV_Insert
         }
 
         /// <summary>
@@ -132,7 +131,7 @@ namespace IronAHK.Rusty
             if (list == null)
                 return 0;
 
-            return list.InsertColumn(ColumnNumber, Options, ColumnTitle);
+            throw new NotImplementedException(); // TODO: LV_InsertCol
         }
 
         /// <summary>
@@ -145,8 +144,10 @@ namespace IronAHK.Rusty
         {
             var list = DefaultListView;
 
-            if (list != null)
-                list.Modify(RowNumber, Options, NewCol);
+            if (list == null)
+                return;
+
+            throw new NotImplementedException(); // TODO: LV_Modify
         }
 
         /// <summary>
@@ -163,7 +164,7 @@ namespace IronAHK.Rusty
             if (list == null)
                 return 0;
 
-            return list.ModifyColumn(ColumnNumber, Options, ColumnTitle);
+            throw new NotImplementedException(); // TODO: LV_ModifyCol
         }
 
         /// <summary>
@@ -176,7 +177,7 @@ namespace IronAHK.Rusty
         /// <param name="Mode"></param>
         public static void LV_SetImageList(int ImageListID, string Mode)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException(); // TODO: LV_SetImageList
         }
     }
 }
