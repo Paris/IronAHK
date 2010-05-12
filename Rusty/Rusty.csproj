@@ -71,6 +71,7 @@
     <Compile Include="Core\Common\Initialisers.cs" />
     <Compile Include="Core\Core.cs" />
     <Compile Include="Core\Disk.cs" />
+    <Compile Include="Core\Gui\Menu.cs" />
     <Compile Include="Core\Gui\Info.cs" />
     <Compile Include="Core\Gui\Tips.cs" />
     <Compile Include="Core\Gui\Dialogs.cs" />
