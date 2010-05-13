@@ -110,11 +110,11 @@ namespace IronAHK.Rusty
                             }
                         }
 
-                        if (auto)
-                            guis[id].AutoSize = true;
+                        if (auto || pos[0] == null && pos[1] == null)
+                            guis[id].Size = guis[id].PreferredSize;
                         else
                         {
-                            var size = guis[id].Size;
+                            var size = guis[id].PreferredSize;
 
                             if (pos[0] != null)
                                 size.Width = (int)pos[0];
