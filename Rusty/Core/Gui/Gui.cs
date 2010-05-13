@@ -1326,9 +1326,14 @@ namespace IronAHK.Rusty
                         ctrl.Enabled = n == 1;
                     if (Command.StartsWith(Keyword_Disable) && int.TryParse(Command.Substring(Keyword_Disable.Length), out n) && (n == 1 || n == 0))
                         ctrl.Enabled = n == 0;
-                    //GuiApplyExtendedStyles(ctrl, ctrl.GetType().Name, Param3);
+                    GuiApplyExtendedStyles(ctrl, Param3);
                     break;
             }
+        }
+
+        static void GuiApplyExtendedStyles(Control control, string options)
+        {
+
         }
 
         /// <summary>
