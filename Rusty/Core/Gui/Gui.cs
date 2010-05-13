@@ -53,6 +53,7 @@ namespace IronAHK.Rusty
                         Control control = null;
                         GuiControlEdit(ref control, Param2, Param3, Param4);
                         guis[id].Controls.Add(control);
+                        GuiApplyInitialStyles(control);
                     }
                     break;
 
@@ -998,8 +999,31 @@ namespace IronAHK.Rusty
             return win;
         }
 
+        static void GuiApplyInitialStyles(Control control)
+        {
+            if (control.Location.IsEmpty)
+            {
+                int n = control.Parent.Controls.Count - 1;
+
+                if (n == 0)
+                    control.Location = new Point(control.Parent.Margin.Left, control.Parent.Margin.Top);
+                else
+                {
+                    var last = control.Parent.Controls[n - 1];
+                    var location = last.Location;
+                    location.Y += last.Size.Height + last.Margin.Bottom + control.Margin.Top;
+                    control.Location = location;
+                }
+            }
+
+            if (control.Size.IsEmpty)
+                control.Size = control.PreferredSize;
+        }
+
         static string GuiApplyStyles(Control control, string styles)
         {
+            control.Size = control.PreferredSize;
+
             string[] opts = ParseOptions(styles), excess = new string[opts.Length];
 
             for (int i = 0; i < opts.Length; i++)
