@@ -141,7 +141,13 @@ namespace IronAHK.Rusty
                         if (cY)
                             location.Y = (screen.Height - guis[id].Size.Height) / 2 + screen.Y;
 
-                        guis[id].Location = location;
+                        if (cX && cY || location.IsEmpty)
+                            guis[id].StartPosition = FormStartPosition.CenterScreen;
+                        else
+                        {
+                            guis[id].StartPosition = FormStartPosition.Manual;
+                            guis[id].Location = location;
+                        }
 
                         guis[id].ResumeLayout(true);
 
