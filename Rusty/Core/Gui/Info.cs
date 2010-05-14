@@ -1,4 +1,5 @@
-﻿
+﻿using System.Drawing;
+
 namespace IronAHK.Rusty
 {
     partial class Core
@@ -7,6 +8,7 @@ namespace IronAHK.Rusty
         {
             char delimiter;
             bool owndialogs = false;
+            Point section;
 
             public char Delimiter
             {
@@ -18,6 +20,12 @@ namespace IronAHK.Rusty
             {
                 get { return owndialogs; }
                 set { owndialogs = value; }
+            }
+
+            public Point Section
+            {
+                get { return section; }
+                set { section = value; }
             }
         }
     }
