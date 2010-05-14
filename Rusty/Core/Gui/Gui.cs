@@ -1119,6 +1119,10 @@ namespace IronAHK.Rusty
                     case Keyword_Wrap:
                         break;
 
+                    case Keyword_Section:
+                        ((GuiInfo)control.Parent.Tag).Section = control.Location;
+                        break;
+
                     default:
                         switch (mode[0])
                         {
@@ -1187,7 +1191,11 @@ namespace IronAHK.Rusty
                         {
                             case 's':
                             case 'S':
-                                // TODO: sectional positioning for gui controls
+                                {
+                                    var sec = ((GuiInfo)control.Parent.Tag).Section;
+                                    var last = sec.IsEmpty ? new Point(control.Parent.Margin.Left, control.Parent.Margin.Top) : sec;
+                                    p = alt ? last.Y : last.X;
+                                }
                                 break;
 
                             case 'm':
