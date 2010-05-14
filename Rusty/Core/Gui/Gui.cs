@@ -51,8 +51,7 @@ namespace IronAHK.Rusty
                 case Keyword_Add:
                     {
                         Control control = null;
-                        GuiControlEdit(ref control, Param2, Param3, Param4);
-                        guis[id].Controls.Add(control);
+                        GuiControlEdit(ref control, guis[id], Param2, Param3, Param4);
                         GuiApplyInitialStyles(control);
                     }
                     break;
@@ -349,7 +348,7 @@ namespace IronAHK.Rusty
 
         #region Helpers
 
-        static void GuiControlEdit(ref Control control, string type, string options, string content)
+        static void GuiControlEdit(ref Control control, Form parent, string type, string options, string content)
         {
             string opts = null;
 
@@ -359,6 +358,7 @@ namespace IronAHK.Rusty
                 case Keyword_Text:
                     {
                         var text = (Label)(control ?? new Label());
+                        parent.Controls.Add(text);
                         control = text;
                         text.Text = content;
                     }
@@ -369,6 +369,7 @@ namespace IronAHK.Rusty
                 case Keyword_Edit:
                     {
                         var edit = (TextBox)(control ?? new TextBox());
+                        parent.Controls.Add(edit);
                         control = edit;
                         edit.Text = content;
                         opts = GuiApplyStyles(edit, options);
@@ -452,6 +453,7 @@ namespace IronAHK.Rusty
                 case Keyword_Pic:
                     {
                         var pic = (PictureBox)(control ?? new PictureBox());
+                        parent.Controls.Add(pic);
                         control = pic;
                         bool exists = File.Exists(content);
 
@@ -473,6 +475,7 @@ namespace IronAHK.Rusty
                 case Keyword_Button:
                     {
                         var button = (Button)(control ?? new Button());
+                        parent.Controls.Add(button);
                         control = button;
                         button.Text = content;
                     }
@@ -483,6 +486,7 @@ namespace IronAHK.Rusty
                 case Keyword_CheckBox:
                     {
                         var check = (CheckBox)(control ?? new CheckBox());
+                        parent.Controls.Add(check);
                         control = check;
                         check.Text = content;
                         opts = GuiApplyStyles(check, options);
@@ -520,6 +524,7 @@ namespace IronAHK.Rusty
                 case Keyword_Radio:
                     {
                         var radio = (RadioButton)(control ?? new RadioButton());
+                        parent.Controls.Add(radio);
                         control = radio;
                         radio.Text = content;
                         radio.Checked = false;
@@ -554,6 +559,7 @@ namespace IronAHK.Rusty
                 case Keyword_DDL:
                     {
                         var ddl = (ComboBox)(control ?? new ComboBox());
+                        parent.Controls.Add(ddl);
                         control = ddl;
                         ddl.Text = content;
                         opts = GuiApplyStyles(ddl, options);
@@ -589,6 +595,7 @@ namespace IronAHK.Rusty
                 case Keyword_ComboBox:
                     {
                         var combo = (ComboBox)(control ?? new ComboBox());
+                        parent.Controls.Add(combo);
                         control = combo;
                         combo.Text = content;
                         opts = GuiApplyStyles(combo, options);
@@ -612,6 +619,7 @@ namespace IronAHK.Rusty
                 case Keyword_ListBox:
                     {
                         var listbox = new ListBox();
+                        parent.Controls.Add(listbox);
                         listbox.Text = content;
                         opts = GuiApplyStyles(listbox, options);
 
@@ -654,6 +662,7 @@ namespace IronAHK.Rusty
                 case Keyword_ListView:
                     {
                         var lv = (ListView)(control ?? new ListView());
+                        parent.Controls.Add(lv);
                         control = lv;
                         opts = GuiApplyStyles(lv, options);
 
@@ -685,6 +694,7 @@ namespace IronAHK.Rusty
                 case Keyword_TreeView:
                     {
                         var tree = (TreeView)(control ?? new TreeView());
+                        parent.Controls.Add(tree);
                         control = tree;
                         opts = GuiApplyStyles(tree, options);
 
@@ -727,6 +737,7 @@ namespace IronAHK.Rusty
                 case Keyword_DateTime:
                     {
                         var date = (DateTimePicker)(control ?? new DateTimePicker());
+                        parent.Controls.Add(date);
                         control = date;
                         opts = GuiApplyStyles(date, options);
 
@@ -765,6 +776,7 @@ namespace IronAHK.Rusty
                 case Keyword_MonthCal:
                     {
                         var cal = (MonthCalendar)(control ?? new MonthCalendar());
+                        parent.Controls.Add(cal);
                         control = cal;
                         opts = GuiApplyStyles(cal, options);
 
@@ -797,6 +809,7 @@ namespace IronAHK.Rusty
                 case Keyword_Slider:
                     {
                         var slider = (TrackBar)(control ?? new TrackBar());
+                        parent.Controls.Add(slider);
                         control = slider;
                         opts = GuiApplyStyles(slider, options);
 
@@ -859,6 +872,7 @@ namespace IronAHK.Rusty
                 case Keyword_Progress:
                     {
                         var progress = (ProgressBar)(control ?? new ProgressBar());
+                        parent.Controls.Add(progress);
                         control = progress;
                         opts = GuiApplyStyles(progress, options);
 
@@ -910,6 +924,7 @@ namespace IronAHK.Rusty
                 case Keyword_GroupBox:
                     {
                         var group = (GroupBox)(control ?? new GroupBox());
+                        parent.Controls.Add(group);
                         control = group;
                         group.Text = content;
                     }
@@ -921,6 +936,7 @@ namespace IronAHK.Rusty
                 case Keyword_Tab2:
                     {
                         var tab = (TabPage)(control ?? new TabPage());
+                        parent.Controls.Add(tab);
                         control = tab;
                         opts = GuiApplyStyles(tab, options);
 
@@ -955,6 +971,7 @@ namespace IronAHK.Rusty
                 case Keyword_StatusBar:
                     {
                         var status = (StatusBar)(control ?? new StatusBar());
+                        parent.Controls.Add(status);
                         control = status;
                         status.Text = content;
                     }
@@ -965,6 +982,7 @@ namespace IronAHK.Rusty
                 case Keyword_WebBrowser:
                     {
                         var web = (WebBrowser)(control ?? new WebBrowser());
+                        parent.Controls.Add(web);
                         control = web;
                         web.Navigate(content);
                     }
