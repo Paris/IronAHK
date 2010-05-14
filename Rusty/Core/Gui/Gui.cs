@@ -1163,7 +1163,7 @@ namespace IronAHK.Rusty
                 case 'X':
                     {
                         offset = true;
-                        int x = 0;
+                        int p = 0;
 
                         switch (mode[1])
                         {
@@ -1174,7 +1174,7 @@ namespace IronAHK.Rusty
 
                             case 'm':
                             case 'M':
-                                x = alt ? control.Parent.Margin.Top : control.Parent.Margin.Left;
+                                p = alt ? control.Parent.Margin.Top : control.Parent.Margin.Left;
                                 break;
 
                             case '+':
@@ -1185,7 +1185,7 @@ namespace IronAHK.Rusty
                                         return;
 
                                     var s = control.Parent.Controls[n].Location;
-                                    x = alt ? s.Y : s.X;
+                                    p = alt ? s.Y : s.X;
                                 }
                                 break;
 
@@ -1197,9 +1197,9 @@ namespace IronAHK.Rusty
                         arg = mode.Substring(offset ? 2 : 1);
 
                         if (!int.TryParse(arg, out d))
-                            return;
+                            d = 0;
 
-                        d += x;
+                        d += p;
 
                         if (alt)
                             control.Location = new Point(control.Location.X, d);
