@@ -26,7 +26,7 @@ case $1 in
 		install *.dll "$outdir"
 		install *.exe "$outdir"
 		echo "#!/bin/sh" > "$stub"
-		echo "exec mono \"$outdir/$main.exe\" \"$@\"" >> "$stub"
+		echo "exec mono \"$outdir/$main.exe\" \"\$@\"" >> "$stub"
 		chmod 755 "$stub"
 		echo "Installation complete"
 		;;
