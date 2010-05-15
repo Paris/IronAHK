@@ -39,7 +39,7 @@ namespace IronAHK.Rusty
                 if (keys.Length == 0)
                     return;
 
-                var seq = UTF8Encoding.ASCII.GetBytes(keys);
+                var seq = UTF8Encoding.Unicode.GetBytes(keys);
                 Send(seq);
             }
 
