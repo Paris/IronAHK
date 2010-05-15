@@ -159,9 +159,4 @@
     <None Include="Rusty.snk" />
   </ItemGroup>
   <ItemGroup />
-  <ItemGroup>
-    <EmbeddedResource Include="..\Gtk\bin\All\IronAHK.Rusty.Gtk.dll">
-      <Link>Resources\IronAHK.Rusty.Gtk.dll</Link>
-    </EmbeddedResource>
-  </ItemGroup>
 </Project>
