@@ -333,7 +333,7 @@ namespace IronAHK.Rusty
             {
                 var options = Options.Backspace;
 
-                mode = mode.ToLowerInvariant();
+                mode = mode.ToUpperInvariant();
 
                 for (int i = 0; i < mode.Length; i++)
                 {
