@@ -86,5 +86,23 @@ namespace IronAHK.Rusty
         public const int KEYEVENTF_EXTENDEDKEY = 1;
         public const int KEYEVENTF_KEYUP = 2;
         public const int KEYEVENTF_UNICODE = 4;
+
+        [Flags()]
+        public enum MOUSEEVENTF
+        {
+            MOVE = 0x0001,  // mouse move 
+            LEFTDOWN = 0x0002,  // left button down
+            LEFTUP = 0x0004,  // left button up
+            RIGHTDOWN = 0x0008,  // right button down
+            RIGHTUP = 0x0010,  // right button up
+            MIDDLEDOWN = 0x0020,  // middle button down
+            MIDDLEUP = 0x0040,  // middle button up
+            XDOWN = 0x0080,  // x button down 
+            XUP = 0x0100,  // x button down
+            WHEEL = 0x0800,  // wheel button rolled
+            VIRTUALDESK = 0x4000,  // map to entire virtual desktop
+            ABSOLUTE = 0x8000,  // absolute move
+        }
+
     }
 }
