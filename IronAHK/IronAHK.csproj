@@ -82,6 +82,7 @@
     <None Include="Site\clean.php" />
     <None Include="Site\docs\commands\.gitignore" />
     <None Include="Site\download\.htaccess" />
+    <Content Include="Site\download\nightly\blank.txt" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Program.cs" />
