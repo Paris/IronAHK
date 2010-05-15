@@ -39,27 +39,21 @@ namespace IronAHK.Rusty
                 if (keys.Length == 0)
                     return;
 
-                var seq = UTF8Encoding.Unicode.GetBytes(keys);
-                Send(seq);
-            }
-
-            void Send(byte[] seq)
-            {
-                var len = seq.Length * 2;
+                var len = keys.Length * 2;
                 var inputs = new INPUT[len];
 
-                for (int i = 0; i < seq.Length; i++)
+                for (int i = 0; i < keys.Length; i++)
                 {
                     uint flag = KEYEVENTF_UNICODE;
 
-                    if ((seq[i] & 0xff00) == 0xe000)
+                    if ((keys[i] & 0xff00) == 0xe000)
                         flag |= KEYEVENTF_EXTENDEDKEY;
 
                     var down = new INPUT { type = INPUT_KEYBOARD };
-                    down.i.k = new KEYBDINPUT { wScan = seq[i], dwFlags = flag };
+                    down.i.k = new KEYBDINPUT { wScan = keys[i], dwFlags = flag };
 
                     var up = new INPUT { type = INPUT_KEYBOARD };
-                    up.i.k = new KEYBDINPUT { wScan = seq[i], dwFlags = flag | KEYEVENTF_KEYUP };
+                    up.i.k = new KEYBDINPUT { wScan = keys[i], dwFlags = flag | KEYEVENTF_KEYUP };
 
                     int x = i * 2;
                     inputs[x] = down;
