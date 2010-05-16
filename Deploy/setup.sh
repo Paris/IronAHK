@@ -1,5 +1,7 @@
 #!/bin/sh
 
+cd "$(dirname "$0")"
+
 if [ -z "$prefix" ]; then prefix=/usr; fi
 libdir=lib
 bindir=bin
