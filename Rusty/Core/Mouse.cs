@@ -1,6 +1,8 @@
 using System;
 using System.Drawing;
 using System.Runtime.InteropServices;
+using System.Text.RegularExpressions;
+using System.Windows.Forms;
 
 namespace IronAHK.Rusty
 {
@@ -12,10 +14,94 @@ namespace IronAHK.Rusty
         /// Clicks a mouse button at the specified coordinates. It can also hold down a mouse button, turn the mouse wheel, or move the mouse.
         /// </summary>
         /// <param name="Options"></param>
-        public static void Click(string[] Options)
+        public static void Click(object[] Options)
         {
-            throw new NotImplementedException();
+            string ParamLine = "";
+            Windows.INPUT[] aInput = new Windows.INPUT[2];
+            Point MousePos = new Point(0, 0);
+            int ClickCount = 1;
+
+            Regex RE_Coord = new Regex(@"(\d*?)\s*,\s*(\d*)[\s,\,]*", RegexOptions.IgnoreCase);
+            Regex RE_Num = new Regex(@"\d+", RegexOptions.IgnoreCase);
+            CaptureCollection Out;
+            Match Match;
+
+            //rebuild Argument string, as we have to parse this in a special way 
+            foreach (object option in Options)
+            {
+                if (option is string)
+                    ParamLine += (string)option + ",";
+                else if (option is double)
+                    ParamLine += ((int)(double)option).ToString() + ",";
+            }
+            ParamLine = ParamLine.ToLower().Substring(0, ParamLine.Length - 1);
+
+            //search coordinates, move mouse, remove them
+            if (RE_Coord.IsMatch(ParamLine))
+            {
+                Match = RE_Coord.Match(ParamLine);
+                MousePos.X = Convert.ToInt32(Match.Groups[1].Value);
+                MousePos.Y = Convert.ToInt32(Match.Groups[2].Value);
+                ParamLine = RE_Coord.Replace(ParamLine, ""); //remove coord
+
+                Cursor CurrentCursor = new Cursor(Cursor.Current.Handle);
+                Cursor.Position = MousePos;
+            }
+            //click count
+            if (RE_Num.IsMatch(ParamLine))
+            {
+                Out = RE_Num.Match(ParamLine).Captures;
+                ClickCount = Convert.ToInt32(Out[0].Value);
+                if (ClickCount <= 0)
+                    return;
+            }
+
+            if (Environment.OSVersion.Platform == PlatformID.Win32NT)
+            {
+                //right or left mouse
+                if (ParamLine.Contains("right"))
+                {
+                    aInput[0].i.m.dwFlags = (uint)Windows.MOUSEEVENTF.RIGHTDOWN;
+                    aInput[1].i.m.dwFlags = (uint)Windows.MOUSEEVENTF.RIGHTUP;
+                }
+                else
+                {
+                    aInput[0].i.m.dwFlags = (uint)Windows.MOUSEEVENTF.LEFTDOWN;
+                    aInput[1].i.m.dwFlags = (uint)Windows.MOUSEEVENTF.LEFTUP;
+                }
+                //down event
+                aInput[0].type = Windows.INPUT_MOUSE;
+                aInput[0].i.m.dwExtraInfo = IntPtr.Zero;
+                aInput[0].i.m.mouseData = 0;
+                aInput[0].i.m.time = 0;
+                aInput[0].i.m.dx = MousePos.X;
+                aInput[0].i.m.dy = MousePos.Y;
+                //up event
+                aInput[1].type = Windows.INPUT_MOUSE;
+                aInput[1].i.m.dwExtraInfo = IntPtr.Zero;
+                aInput[1].i.m.mouseData = 0;
+                aInput[1].i.m.time = 0;
+                aInput[1].i.m.dx = MousePos.X;
+                aInput[1].i.m.dy = MousePos.Y;
+
+                if (ParamLine.Contains("up"))
+                { //just send the up event:
+                    aInput[0] = aInput[1];
+                    for (int i = 1; ClickCount >= i; i++)
+                        Windows.SendInput(1, aInput, Marshal.SizeOf(typeof(Windows.INPUT)));
+                }
+                else if (ParamLine.Contains("down"))
+                {
+                    //just send the down event:
+                    for (int i = 1; ClickCount >= i; i++)
+                        Windows.SendInput(1, aInput, Marshal.SizeOf(typeof(Windows.INPUT)));
+                }
+                else //send both events:
+                    for (int i = 1; ClickCount >= i; i++)
+                        Windows.SendInput((uint)aInput.Length, aInput, Marshal.SizeOf(typeof(Windows.INPUT)));
+            }
         }
+        
         
         /// <summary>
         /// Sends a mouse button or mouse wheel event to a control.
