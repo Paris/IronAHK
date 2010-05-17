@@ -728,7 +728,32 @@ namespace IronAHK.Rusty
                 #region Hotkey
                 case Keyword_Hotkey:
                     {
-                        // TODO: subclass edit for hotkey control
+                        var hotkey = (HotkeyBox)(control ?? new HotkeyBox());
+                        parent.Controls.Add(hotkey);
+                        control = hotkey;
+                        opts = GuiApplyStyles(hotkey, options);
+
+                        foreach (string opt in ParseOptions(opts))
+                        {
+                            bool on = opt[0] != '-';
+                            string mode = opt.Substring(!on || opt[0] == '+' ? 1 : 0).ToLowerInvariant();
+
+                            switch (mode)
+                            {
+                                case Keyword_Limit:
+                                    if (!on)
+                                        hotkey.Limit = HotkeyBox.Limits.None;
+                                    else
+                                    {
+                                        int n;
+
+                                        if (int.TryParse(mode, out n))
+                                            hotkey.Limit = (HotkeyBox.Limits)n;
+                                    }
+                                    break;
+                            }
+                        }
+
                     }
                     break;
                 #endregion
