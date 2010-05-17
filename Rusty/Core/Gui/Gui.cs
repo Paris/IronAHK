@@ -412,6 +412,7 @@ namespace IronAHK.Rusty
                 case Keyword_UpDown:
                     {
                         var updown = (NumericUpDown)(control ?? new NumericUpDown());
+                        parent.Controls.Add(updown);
                         control = updown;
                         updown.Value = decimal.Parse(content);
                         opts = GuiApplyStyles(updown, options);
@@ -620,6 +621,7 @@ namespace IronAHK.Rusty
                     {
                         var listbox = new ListBox();
                         parent.Controls.Add(listbox);
+                        control = listbox;
                         listbox.Text = content;
                         opts = GuiApplyStyles(listbox, options);
 
