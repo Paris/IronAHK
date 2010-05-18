@@ -195,6 +195,8 @@ namespace IronAHK.Rusty
                 Windows.GetCursorPos(out pos);
                 IntPtr hwnd = Windows.WindowFromPoint(pos);
 
+                OutputVarWin = hwnd.ToInt32();
+
                 var rect = new Windows.RECT();
                 Windows.GetWindowRect(hwnd, out rect);
                 IntPtr chwnd = Windows.RealChildWindowFromPoint(hwnd, new Point(pos.X - rect.Left, pos.Y - rect.Top));
