@@ -60,6 +60,7 @@ namespace IronAHK.Rusty
             GenericFunction precondition;
             bool enabled;
             string name;
+            string typed;
 
             [Flags]
             public enum Options { None = 0, IgnoreModifiers = 1, PassThrough = 2, Up = 4 }
@@ -116,6 +117,12 @@ namespace IronAHK.Rusty
                 set { name = value; }
             }
 
+            public string Typed
+            {
+                get { return typed; }
+                set { typed = value; }
+            }
+
             #endregion
 
             public bool Condition()
@@ -131,6 +138,7 @@ namespace IronAHK.Rusty
             {
                 Keys keys = Keys.None, extra = Keys.None;
                 Options options = Options.None;
+                string typed = string.Empty;
 
                 #region Modifiers
 
@@ -195,6 +203,9 @@ namespace IronAHK.Rusty
                     {
                         string alt = sequence.Substring(z).Trim();
                         extra = ParseKey(alt);
+
+                        if (alt.Length == 1)
+                            typed = alt;
                     }
                     sequence = sequence.Substring(0, z - 1).Trim();
                 }
@@ -207,7 +218,10 @@ namespace IronAHK.Rusty
 
                 keys |= ParseKey(sequence);
 
-                return new HotkeyDefinition(keys, extra, options, null);
+                if (typed.Length == 0 && sequence.Length == 1)
+                    typed = sequence;
+
+                return new HotkeyDefinition(keys, extra, options, null) { Typed = typed };
             }
 
             static Keys ParseKey(string name)
@@ -506,7 +520,7 @@ namespace IronAHK.Rusty
 
                 foreach (var hotkey in hotkeys)
                 {
-                    bool match = (hotkey.Keys & ~Keys.Modifiers) == key;
+                    bool match = (hotkey.Keys & ~Keys.Modifiers) == key || hotkey.Typed.Equals(typed, StringComparison.OrdinalIgnoreCase);
                     bool up = (hotkey.EnabledOptions & HotkeyDefinition.Options.Up) == HotkeyDefinition.Options.Up;
 
                     if (hotkey.Enabled && match && HasModifiers(hotkey) && up != down)
