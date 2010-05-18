@@ -115,8 +115,9 @@ namespace IronAHK.Rusty
 
         public static string GetWindowText(IntPtr hwnd)
         {
-            StringBuilder sb = new StringBuilder(GetWindowTextLength(hwnd) + 1);
-            GetWindowText(hwnd, sb, sb.Capacity);
+            var len = SendMessage(hwnd, (uint)WM_GETTEXTLENGTH, IntPtr.Zero, IntPtr.Zero).ToInt32();
+            var sb = new StringBuilder(len + 1);
+            SendMessage(hwnd, WM_GETTEXT, sb.Capacity, sb);
             return sb.ToString();
         }
 
@@ -183,6 +184,9 @@ namespace IronAHK.Rusty
 
         [DllImport("user32.dll")]
         public static extern IntPtr SendMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
+
+        [DllImport("user32.dll")]
+        static extern int SendMessage(IntPtr hwnd, uint msg, int wParam, StringBuilder sb);
 
         [DllImport("user32.dll")]
         public static extern bool PostMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
@@ -310,6 +314,9 @@ namespace IronAHK.Rusty
 
         public const int HWND_BROADCAST = 0xffff;
         public const uint WM_SETTINGCHANGE = 0x001A;
+
+        public const int WM_GETTEXT = 0x000D;
+        public const int WM_GETTEXTLENGTH = 0x000E;
 
         public const uint WM_SYSCOMMAND = 0x0112;
         public const int SC_CLOSE = 0xF060;
