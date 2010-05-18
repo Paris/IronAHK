@@ -416,6 +416,22 @@ namespace IronAHK.Rusty
                 case Keyword_UpDown:
                     {
                         var updown = (NumericUpDown)(control ?? new NumericUpDown());
+
+                        if (parent.Controls.Count != 0)
+                        {
+                            int n = parent.Controls.Count - 1;
+                            var last = parent.Controls[n];
+
+                            if (last is TextBox)
+                            {
+                                updown.Location = last.Location;
+                                updown.Size = last.Size;
+                                updown.Font = last.Font;
+                                updown.ForeColor = last.ForeColor;
+                                parent.Controls.RemoveAt(n);
+                            }
+                        }
+
                         parent.Controls.Add(updown);
                         control = updown;
                         updown.Value = decimal.Parse(content);
