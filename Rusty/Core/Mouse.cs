@@ -8,6 +8,7 @@ namespace IronAHK.Rusty
 {
     partial class Core
     {
+
         // TODO: organise Mouse.cs
 
         /// <summary>
@@ -55,7 +56,6 @@ namespace IronAHK.Rusty
                 if (ClickCount <= 0)
                     return;
             }
-
             if (Environment.OSVersion.Platform == PlatformID.Win32NT)
             {
                 //right or left mouse
@@ -156,10 +156,37 @@ namespace IronAHK.Rusty
         /// <item>Relative: Coordinates are relative to the active window.</item>
         /// </list>
         /// </param>
-        public static void CoordMode(string Item, string Mode)
+        public  static void CoordMode(string Item, string Mode)
         {
+            Coordmodes TargetCoordMode;
+            Mode = Mode.ToLowerInvariant();
+            Item = Item.ToLowerInvariant();  
 
+            if (Mode.Contains("screen"))
+                TargetCoordMode = Coordmodes.SCREEN;
+            else
+                TargetCoordMode = Coordmodes.RELATIVE;
+            switch (Item)
+            {
+            case "tooltip":
+                    _COORDMODE.Tooltip = TargetCoordMode;
+                    break;
+            case "pixel":
+                    _COORDMODE.Pixel = TargetCoordMode;
+                    break;
+            case "mouse":
+                    _COORDMODE.Mouse = TargetCoordMode;
+                    break;
+            case "caret":
+                    _COORDMODE.Caret = TargetCoordMode;
+                    break;
+            case "menu":
+                    _COORDMODE.Menu = TargetCoordMode;
+                    break;
+            }
         }
+
+
 
         /// <summary>
         /// Retrieves the current position of the mouse cursor, and optionally which window and control it is hovering over.
@@ -199,7 +226,7 @@ namespace IronAHK.Rusty
                     Windows.GetWindowText(chwnd) : chwnd.ToInt32().ToString();
             }
             else pos = System.Windows.Forms.Control.MousePosition;
-
+            
             OutputVarX = pos.X;
             OutputVarY = pos.Y;
             if (/*_CoordMode.Mouse*/ true)
@@ -217,5 +244,6 @@ namespace IronAHK.Rusty
             public int x;
             public int y;
         }
+
     }
 }
