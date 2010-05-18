@@ -228,13 +228,28 @@ namespace IronAHK.Rusty
 
             static Keys ParseKey(string name)
             {
-                object value = Keys.None;
+                var value = Keys.None;
+                int n;
 
-                // TODO: SC and VK key codes
+                if (name.StartsWith(Keyword_HotkeyVK, StringComparison.OrdinalIgnoreCase))
+                {
+                    name = name.Substring(Keyword_HotkeyVK.Length);
+
+                    if (int.TryParse(name, out n) && n > -1)
+                        value = (Keys)n;
+                }
+                else if (name.StartsWith(Keyword_HotkeySC, StringComparison.OrdinalIgnoreCase) && Environment.OSVersion.Platform == PlatformID.Win32NT)
+                {
+                    name = name.Substring(Keyword_HotkeySC.Length);
+
+                    if (int.TryParse(name, System.Globalization.NumberStyles.HexNumber, System.Threading.Thread.CurrentThread.CurrentCulture, out n) && n > -1)
+                        value = (Keys)Windows.MapVirtualKeyEx((uint)n, Windows.MAPVK_VSC_TO_VK_EX, Windows.GetKeyboardLayout(0));
+                }
 
                 try
                 {
-                    value = Enum.Parse(typeof(Keys), name, true);
+                    if (value == Keys.None)
+                        value = (Keys)Enum.Parse(typeof(Keys), name, true);
                 }
                 catch (ArgumentException)
                 {
@@ -282,7 +297,7 @@ namespace IronAHK.Rusty
                     }
                 }
 
-                return (Keys)value;
+                return value;
             }
 
             public override string ToString()

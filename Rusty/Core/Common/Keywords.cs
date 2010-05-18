@@ -337,6 +337,8 @@ namespace IronAHK.Rusty
         const char Keyword_HotkeyPassThrough = '~';
         const char Keyword_HotkeyCombination = '&';
         const char Keyword_HotkeyNoRecurse = '$';
+        const string Keyword_HotkeyVK = "VK";
+        const string Keyword_HotkeySC = "SC";
 
         const char Keyword_HotstringAuto = '*';
         const char Keyword_HotstringNested = '?';

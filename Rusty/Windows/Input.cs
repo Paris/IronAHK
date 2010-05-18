@@ -31,6 +31,9 @@ namespace IronAHK.Rusty
         [DllImport("user32.dll")]
         public static extern int ToUnicodeEx(uint wVirtKey, uint wScanCode, byte[] lpKeyState, [Out, MarshalAs(UnmanagedType.LPWStr)] StringBuilder pwszBuff, int cchBuff, uint wFlags, IntPtr dwhkl);
 
+        [DllImport("user32.dll")]
+        public static extern uint MapVirtualKeyEx(uint uCode, uint uMapType, IntPtr dwhkl);
+
         [StructLayout(LayoutKind.Sequential)]
         public struct MOUSEINPUT
         {
@@ -86,6 +89,8 @@ namespace IronAHK.Rusty
         public const int KEYEVENTF_EXTENDEDKEY = 1;
         public const int KEYEVENTF_KEYUP = 2;
         public const int KEYEVENTF_UNICODE = 4;
+
+        public const uint MAPVK_VSC_TO_VK_EX = 3;
 
         [Flags()]
         public enum MOUSEEVENTF
