@@ -374,6 +374,11 @@ namespace IronAHK.Rusty
                         edit.Text = content;
                         opts = GuiApplyStyles(edit, options);
 
+                        const int mw = 100;
+
+                        if (edit.Width < mw)
+                            edit.Width = mw;
+
                         foreach (string opt in ParseOptions(opts))
                         {
                             bool on = opt[0] != '-';
