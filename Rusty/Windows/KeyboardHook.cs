@@ -19,6 +19,7 @@ namespace IronAHK.Rusty
             const int WM_SYSKEYDOWN = 0x0104;
             const int VK_BACK = 0x08;
             const int VK_SHIFT = 0x10;
+            const int VK_CONTROL = 0x11;
             LowLevelKeyboardProc proc;
             IntPtr hookId = IntPtr.Zero;
             bool ignore = false;
@@ -96,6 +97,8 @@ namespace IronAHK.Rusty
                 
                 if (shift)
                     state[VK_SHIFT] = 128;
+
+                state[VK_CONTROL] = 0;
                 
                 var buf = new StringBuilder(4);
                 ToUnicodeEx(vk, sc, state, buf, buf.Capacity, 0, GetKeyboardLayout(0));
