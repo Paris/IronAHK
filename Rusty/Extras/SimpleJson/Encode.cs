@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -21,7 +21,7 @@ namespace IronAHK.Rusty
             if (node == null)
                 return Null;
 
-            StringBuilder json = new StringBuilder();
+            var json = new StringBuilder();
             Type type = node.GetType();
 
             if (type == typeof(Dictionary<string, object>))
@@ -29,7 +29,7 @@ namespace IronAHK.Rusty
                 var pairs = (Dictionary<string, object>)node;
                 json.Append(ObjectOpen);
                 int n = pairs.Keys.Count;
-                foreach (string key in pairs.Keys)
+                foreach (var key in pairs.Keys)
                 {
                     json.Append(Space);
                     json.Append(StringBoundary);
@@ -46,10 +46,10 @@ namespace IronAHK.Rusty
             }
             else if (type == typeof(object[]))
             {
-                object[] list = (object[])node;
+                var list = (object[])node;
                 json.Append(ArrayOpen);
                 int n = list.Length;
-                foreach (object sub in list)
+                foreach (var sub in list)
                 {
                     json.Append(Space);
                     json.Append(EncodeObject(sub));

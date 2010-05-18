@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Reflection;
 
@@ -18,7 +18,7 @@ namespace IronAHK.Rusty
 
             if (method != null)
             {
-                try { method.Invoke(null, new object[] { value }); }
+                try { method.Invoke(null, new[] { value }); }
                 catch (ArgumentException)
                 {
                     error = 1;
@@ -96,7 +96,7 @@ namespace IronAHK.Rusty
             name = (set ? "set_" : "get_") + name;
             var list = typeof(Core).GetMethods();
 
-            foreach (MethodInfo method in list)
+            foreach (var method in list)
             {
                 if (method.Name.Equals(name, StringComparison.OrdinalIgnoreCase) && method.IsStatic)
                     return method;

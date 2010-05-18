@@ -21,22 +21,22 @@ namespace IronAHK.Rusty
                 return;
 
             string ParamLine = "";
-            Windows.INPUT[] aInput = new Windows.INPUT[2];
-            Point MousePos = new Point(0, 0);
+            var aInput = new Windows.INPUT[2];
+            var MousePos = new Point(0, 0);
             int ClickCount = 1;
 
-            Regex RE_Coord = new Regex(@"(\d*?)\s*,\s*(\d*)[\s,\,]*", RegexOptions.IgnoreCase);
-            Regex RE_Num = new Regex(@"\d+", RegexOptions.IgnoreCase);
+            var RE_Coord = new Regex(@"(\d*?)\s*,\s*(\d*)[\s,\,]*", RegexOptions.IgnoreCase);
+            var RE_Num = new Regex(@"\d+", RegexOptions.IgnoreCase);
             CaptureCollection Out;
             Match Match;
 
             //rebuild Argument string, as we have to parse this in a special way 
-            foreach (object option in Options)
+            foreach (var option in Options)
             {
                 if (option is string)
                     ParamLine += (string)option + ",";
                 else if (option is double)
-                    ParamLine += ((int)(double)option).ToString() + ",";
+                    ParamLine += ((int)(double)option) + ",";
             }
             ParamLine = ParamLine.ToLower().Substring(0, ParamLine.Length - 1);
 
@@ -48,7 +48,7 @@ namespace IronAHK.Rusty
                 MousePos.Y = Convert.ToInt32(Match.Groups[2].Value);
                 ParamLine = RE_Coord.Replace(ParamLine, ""); //remove coord
 
-                Cursor CurrentCursor = new Cursor(Cursor.Current.Handle);
+                var CurrentCursor = new Cursor(Cursor.Current.Handle);
                 Cursor.Position = MousePos;
             }
             //click count

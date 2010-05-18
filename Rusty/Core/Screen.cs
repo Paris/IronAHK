@@ -63,7 +63,7 @@ namespace IronAHK.Rusty
                 default: format = PixelFormat.Format32bppArgb;
                     break;
             }
-            Bitmap bmp = new Bitmap(1, 1, format);
+            var bmp = new Bitmap(1, 1, format);
             if (/*CoordMode.Pixel*/ true) //if coordmode true using relative coords
             {
                 Windows.RECT rect;
@@ -114,7 +114,7 @@ namespace IronAHK.Rusty
                 return;
             }
 
-            int[,] c = new int[3, 2];
+            var c = new int[3, 2];
 
             for (int i = 0; i < 3; i++)
             {
@@ -122,7 +122,7 @@ namespace IronAHK.Rusty
                 c[i, 0] = t - Variation; c[i, 1] = t + Variation;
             }
 
-            Rectangle region = new Rectangle(X1, Y1, X2 - X1, Y2 - Y1);
+            var region = new Rectangle(X1, Y1, X2 - X1, Y2 - Y1);
             Bitmap bmp = GetScreen(region);
 
             for (int row = 0; row < region.Height; row++)

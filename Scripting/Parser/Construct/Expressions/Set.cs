@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 
 namespace IronAHK.Scripting
 {
@@ -17,7 +17,7 @@ namespace IronAHK.Scripting
             if (!(e.Current is string))
                 return 0;
 
-            string first = (string)e.Current;
+            var first = (string)e.Current;
             const char nul = '\0';
             char expect = nul;
 
@@ -59,7 +59,7 @@ namespace IronAHK.Scripting
                 if (!(e.Current is string))
                     continue;
 
-                string current = (string)e.Current;
+                var current = (string)e.Current;
 
                 if (current.Length == 0)
                     continue;

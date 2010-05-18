@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Text;
 
 namespace IronAHK.Rusty
@@ -36,7 +36,7 @@ namespace IronAHK.Rusty
             if (Environment.OSVersion.Platform != PlatformID.Win32NT)
                 return;
 
-            StringBuilder buf = new StringBuilder(char.MaxValue);
+            var buf = new StringBuilder(char.MaxValue);
             Windows.GetPrivateProfileString(section, key, error, buf, (uint)buf.Capacity, filename);
             output = buf.ToString();
         }

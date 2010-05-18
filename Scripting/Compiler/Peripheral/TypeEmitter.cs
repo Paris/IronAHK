@@ -18,12 +18,12 @@ namespace IronAHK.Scripting
 
             foreach(CodeMemberMethod Method in Decl.Members)
             {
-                MethodWriter Writer = new MethodWriter(Type, Method, Methods);
+                var Writer = new MethodWriter(Type, Method, Methods);
                 LocalParameters.Add(Method.Name, GetParameterTypes(Method.Parameters));
                 LocalMethods.Add(Method.Name, Writer);
             }
 
-            foreach(MethodWriter Writer in LocalMethods.Values)
+            foreach(var Writer in LocalMethods.Values)
             {
                 Writer.ParameterTypes = LocalParameters;
                 Writer.Methods = LocalMethods;

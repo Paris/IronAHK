@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using IronAHK.Rusty;
+using IronAHK.Scripting;
 
 namespace IronAHK.Setup
 {
@@ -24,7 +26,7 @@ namespace IronAHK.Setup
             BuildMsi(src, x64);
             src.Close();
 
-            string dir = string.Format("..{0}..{0}WiX", Path.DirectorySeparatorChar.ToString());
+            string dir = string.Format("..{0}..{0}WiX", Path.DirectorySeparatorChar);
 
             if (Directory.Exists(dir))
                 Environment.SetEnvironmentVariable("PATH", string.Concat(Environment.GetEnvironmentVariable("PATH"), Path.PathSeparator.ToString(), dir));
@@ -75,7 +77,7 @@ namespace IronAHK.Setup
             string version = Version;
             string path = Path.GetFullPath(string.Format("..{0}..{0}..{0}{1}{0}bin{0}" + config, Path.DirectorySeparatorChar, name));
             string docs = Path.GetFullPath(string.Format("{1}{0}..{0}..{0}Site{0}docs", Path.DirectorySeparatorChar, path));
-            string favicon = string.Format("{1}{0}..{0}favicon.ico", Path.DirectorySeparatorChar.ToString(), docs);
+            string favicon = string.Format("{1}{0}..{0}favicon.ico", Path.DirectorySeparatorChar, docs);
             string main = name + ".exe";
             const string license = "license.txt";
             const string licenseRtf = "license.rtf";
@@ -92,7 +94,7 @@ namespace IronAHK.Setup
             writer.WriteLine("      <Directory Id='ProgramFiles{0}Folder' Name='ProgramFiles{0}Folder'>", x64 ? "64" : string.Empty);
             writer.WriteLine("        <Directory Id='INSTALLDIR' Name='{0}'>", name);
 
-            foreach (var dll in new[] { typeof(Rusty.Core), typeof(Scripting.IACodeProvider) })
+            foreach (var dll in new[] { typeof(Core), typeof(IACodeProvider) })
             {
                 writer.WriteLine("          <Component Id='{0}' Guid='{1}'>", IdL, Guid);
                 writer.WriteLine("            <File Id='{0}' Source='{1}' KeyPath='yes' Assembly='.net' AssemblyManifest='{0}' />", Id, dll.Assembly.Location);
@@ -135,7 +137,7 @@ namespace IronAHK.Setup
             writer.WriteLine("    </Directory>");
 
             writer.WriteLine("    <Feature Id='{0}' Title='Complete' Absent='allow' Level='1'>", Id);
-            foreach (string item in components)
+            foreach (var item in components)
                 writer.WriteLine("      <ComponentRef Id='{0}' />", item);
             writer.WriteLine("    </Feature>");
 
@@ -171,7 +173,7 @@ namespace IronAHK.Setup
             int offset = Directory.GetParent(root).FullName.Length + 1;
             const string sp = "            ";
 
-            foreach (string dir in Directory.GetDirectories(parent))
+            foreach (var dir in Directory.GetDirectories(parent))
             {
                 string sub = Path.GetFullPath(dir).Substring(offset).Replace(Path.DirectorySeparatorChar, '.');
                 writer.WriteLine(sp + "<Directory Id='INSTALLDIR.{0}' Name='{1}'>", sub, Path.GetFileName(dir));
@@ -179,7 +181,7 @@ namespace IronAHK.Setup
                 writer.WriteLine(sp + "</Directory>");
             }
 
-            foreach (string file in Directory.GetFiles(parent))
+            foreach (var file in Directory.GetFiles(parent))
             {
                 writer.WriteLine(sp + "<Component Id='{0}' Guid='{1}'>", IdL, Guid);
                 writer.WriteLine(sp + "  <File Id='{0}' Source='{1}' />", Id, file);
@@ -194,7 +196,7 @@ namespace IronAHK.Setup
 
         static string Id
         {
-            get { return "c" + c++.ToString(); }
+            get { return "c" + c++; }
         }
 
         static string IdL

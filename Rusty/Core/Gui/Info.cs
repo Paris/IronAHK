@@ -1,4 +1,4 @@
-﻿using System.Drawing;
+using System.Drawing;
 
 namespace IronAHK.Rusty
 {
@@ -6,27 +6,11 @@ namespace IronAHK.Rusty
     {
         class GuiInfo
         {
-            char delimiter;
-            bool owndialogs = false;
-            Point section;
+            public char Delimiter { get; set; }
 
-            public char Delimiter
-            {
-                get { return delimiter; }
-                set { delimiter = value; }
-            }
+            public bool OwnDialogs { get; set; }
 
-            public bool OwnDialogs
-            {
-                get { return owndialogs; }
-                set { owndialogs = value; }
-            }
-
-            public Point Section
-            {
-                get { return section; }
-                set { section = value; }
-            }
+            public Point Section { get; set; }
         }
     }
 }

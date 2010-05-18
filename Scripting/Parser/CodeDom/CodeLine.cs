@@ -1,21 +1,15 @@
-﻿using System.CodeDom;
+using System.CodeDom;
 
 namespace IronAHK.Scripting
 {
     class CodeLine : CodeLinePragma
     {
-        string code;
-
         public CodeLine(string fileName, int lineNumber, string code)
             : base(fileName, lineNumber)
         {
-            this.code = code;
+            this.Code = code;
         }
 
-        public string Code
-        {
-            get { return code; }
-            set { code = value; }
-        }
+        public string Code { get; set; }
     }
 }

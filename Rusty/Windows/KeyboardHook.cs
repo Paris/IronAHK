@@ -22,7 +22,7 @@ namespace IronAHK.Rusty
             const int VK_CONTROL = 0x11;
             LowLevelKeyboardProc proc;
             IntPtr hookId = IntPtr.Zero;
-            bool ignore = false;
+            bool ignore;
 
             protected override void RegisterHook()
             {
@@ -90,7 +90,7 @@ namespace IronAHK.Rusty
 
             string MapKey(uint vk, uint sc)
             {
-                byte[] state = new byte[256];
+                var state = new byte[256];
                 GetKeyboardState(state);
 
                 bool shift = GetKeyState(VK_SHIFT) >> 8 != 0;

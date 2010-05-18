@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Text;
 
 namespace IronAHK.Scripting
@@ -266,7 +266,7 @@ namespace IronAHK.Scripting
 
                 for (int i = 0; i < last; i++)
                 {
-                    string check = parts[i] as string;
+                    var check = parts[i] as string;
 
                     if (string.IsNullOrEmpty(check))
                         continue;

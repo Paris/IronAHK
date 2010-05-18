@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Globalization;
 
 namespace IronAHK.Scripting
@@ -31,7 +31,7 @@ namespace IronAHK.Scripting
                 }
             }
 
-            foreach (char sym in token)
+            foreach (var sym in token)
             {
                 if (!IsIdentifier(sym))
                 {
@@ -103,7 +103,7 @@ namespace IronAHK.Scripting
             string codeTrim = code.Trim(Spaces);
             var info = CultureInfo.CreateSpecificCulture("en-GB");
 
-            int e = codeTrim.IndexOfAny(new char[] { 'e', 'E' });
+            int e = codeTrim.IndexOfAny(new[] { 'e', 'E' });
             double x = 0;
             bool xf = false;
             if (e != -1)

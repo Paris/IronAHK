@@ -5,7 +5,7 @@ namespace IronAHK.Scripting
     {
         public static string LabelMethodName(string raw)
         {
-            foreach (char sym in raw)
+            foreach (var sym in raw)
             {
                 if (!char.IsLetterOrDigit(sym))
                     return string.Concat("label_", raw.GetHashCode().ToString("X"));

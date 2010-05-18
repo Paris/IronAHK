@@ -19,13 +19,13 @@ namespace IronAHK.Scripting
 
         MethodCollection Lookup;
 
-        public bool IsEntryPoint = false;
+        public bool IsEntryPoint;
         public MethodBuilder Method;
         public Dictionary<string, MethodWriter> Methods; // Set in TypeEmitter.cs
         public Dictionary<string, Type[]> ParameterTypes;
         public CodeMemberMethod Member;
 
-        int Depth = 0;
+        int Depth;
 
         Stack<LoopMetadata> Loops;
 
@@ -44,7 +44,7 @@ namespace IronAHK.Scripting
                 Method = Parent.DefineMethod("Main", MethodAttributes.Private | MethodAttributes.Static, typeof(void), null);
                 IsEntryPoint = true;
             }
-            else Method = Parent.DefineMethod(Member.Name, MethodAttributes.Public | MethodAttributes.Static, typeof(object), new Type[] { typeof(object[]) });
+            else Method = Parent.DefineMethod(Member.Name, MethodAttributes.Public | MethodAttributes.Static, typeof(object), new[] { typeof(object[]) });
             
             Generator = Method.GetILGenerator();
 
@@ -63,8 +63,8 @@ namespace IronAHK.Scripting
 
         void GenerateEntryPointHeader()
         {
-            ConstructorInfo StatThreadConstructor = typeof(System.STAThreadAttribute).GetConstructor(Type.EmptyTypes);
-            CustomAttributeBuilder Attribute = new CustomAttributeBuilder(StatThreadConstructor, new object[] {});
+            ConstructorInfo StatThreadConstructor = typeof(STAThreadAttribute).GetConstructor(Type.EmptyTypes);
+            var Attribute = new CustomAttributeBuilder(StatThreadConstructor, new object[] {});
             Method.SetCustomAttribute(Attribute);
         }
 

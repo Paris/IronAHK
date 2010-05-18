@@ -30,7 +30,7 @@ namespace IronAHK.Scripting
                     case "HOUR":
                     case "D":
                     case "DAY":
-                        return new CodeExpressionStatement[] { new CodeExpressionStatement(ParseDateExpression(code)) };
+                        return new[] { new CodeExpressionStatement(ParseDateExpression(code)) };
                 }
             }
 
@@ -74,7 +74,7 @@ namespace IronAHK.Scripting
                     continue;
                 }
 
-                string check = (string)parts[i];
+                var check = (string)parts[i];
 
                 if (check.Length == 1 && check[0] == Multicast && sub.Count != 0)
                 {
@@ -109,7 +109,7 @@ namespace IronAHK.Scripting
             {
                 if (parts[i] is string)
                 {
-                    string part = (string)parts[i];
+                    var part = (string)parts[i];
                     object result;
 
                     #region Parentheses
@@ -356,7 +356,7 @@ namespace IronAHK.Scripting
                                 {
                                     if (parts[z] is string && ((string)parts[z]).Length == 1 && ((string)parts[z])[0] == ParenOpen)
                                     {
-                                        int[] zx = new int[] { z + 1, z + 2 };
+                                        var zx = new[] { z + 1, z + 2 };
                                         if (zx[1] < parts.Count &&
                                             parts[zx[1]] is string && ((string)parts[zx[1]]).Length == 1 && ((string)parts[zx[1]])[0] == ParenClose &&
                                             (parts[zx[0]] is string && IsDynamicReference((string)parts[zx[0]]) || parts[zx[0]] is CodeComplexVariableReferenceExpression))
@@ -418,7 +418,7 @@ namespace IronAHK.Scripting
 
                             var list = new List<object>(9);
                             list.Add(parts[z]);
-                            list.Add(new string(new char[] { Add, Equal }));
+                            list.Add(new string(new[] { Add, Equal }));
                             list.Add(d.ToString());
                             if (shadow != null)
                             {
@@ -607,10 +607,10 @@ namespace IronAHK.Scripting
 
                             var eval = (CodeMethodInvokeExpression)InternalMethods.IfElse;
                             eval.Parameters.Add(WrappedComplexVar(parts[x]));
-                            var ternary = new CodeTernaryOperatorExpression() { Condition = eval };
+                            var ternary = new CodeTernaryOperatorExpression { Condition = eval };
 
                             int depth = 1, max = parts.Count - i, start = i;
-                            var branch = new List<object>[] { new List<object>(max), new List<object>(max) };
+                            var branch = new[] { new List<object>(max), new List<object>(max) };
 
                             for (i++; i < parts.Count; i++)
                             {

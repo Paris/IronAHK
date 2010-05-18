@@ -1,6 +1,7 @@
-﻿using System.IO;
+using System.IO;
 using System.Xml;
 using System.Xml.Xsl;
+using IronAHK.Rusty;
 
 namespace IronAHK.Setup
 {
@@ -8,15 +9,15 @@ namespace IronAHK.Setup
     {
         static void TransformDocs()
         {
-            string root = string.Format("..{0}..{0}..{0}{1}{0}Site{0}docs{0}commands", Path.DirectorySeparatorChar.ToString(), Name);
+            string root = string.Format("..{0}..{0}..{0}{1}{0}Site{0}docs{0}commands", Path.DirectorySeparatorChar, Name);
 
             var xsl = new XslCompiledTransform();
-            xsl.Load(XmlReader.Create(Path.Combine(root, "view.xsl"), new XmlReaderSettings() { ProhibitDtd = false }));
+            xsl.Load(XmlReader.Create(Path.Combine(root, "view.xsl"), new XmlReaderSettings { ProhibitDtd = false }));
 
-            string prefix = string.Format("M:{0}.", typeof(Rusty.Core).FullName), assembly = typeof(Rusty.Core).Namespace;
+            string prefix = string.Format("M:{0}.", typeof(Core).FullName), assembly = typeof(Core).Namespace;
             const string index = "index", srcName = index + ".xml", htmlName = index + ".html", member = "member";
 
-            foreach (string path in Directory.GetDirectories(root))
+            foreach (var path in Directory.GetDirectories(root))
             {
                 RemoveCommonPaths(path, srcName, htmlName);
                 Directory.Delete(path, false);
@@ -26,13 +27,13 @@ namespace IronAHK.Setup
 
             if (!File.Exists(xml))
             {
-                string parent = Path.GetFullPath(Path.Combine(WorkingDir, string.Format("..{0}..{0}..", Path.DirectorySeparatorChar.ToString())));
+                string parent = Path.GetFullPath(Path.Combine(WorkingDir, string.Format("..{0}..{0}..", Path.DirectorySeparatorChar)));
                 string diff = Path.GetDirectoryName(Path.GetFullPath(xml)).Substring(parent.Length + 1);
                 diff = diff.Replace("Deploy", assembly.Substring(Name.Length + 1));
                 xml = Path.Combine(Path.Combine(parent, diff), xml);
             }
 
-            var reader = XmlTextReader.Create(xml);
+            var reader = XmlReader.Create(xml);
             reader.ReadToDescendant(member);
 
             do
@@ -76,7 +77,7 @@ namespace IronAHK.Setup
 
         static void RemoveCommonPaths(string parent, params string[] files)
         {
-            foreach (string file in files)
+            foreach (var file in files)
             {
                 string path = Path.Combine(parent, file);
 

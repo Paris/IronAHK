@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.CodeDom;
 using System.CodeDom.Compiler;
 using System.Collections.Generic;
@@ -67,7 +67,7 @@ namespace IronAHK.Scripting
                 while (invokes.Count != 0)
                     StdLib();
 
-                foreach (CodeMemberMethod method in methods.Values)
+                foreach (var method in methods.Values)
                     container.Members.Add(method);
 
                 return unit;

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -59,11 +59,11 @@ namespace IronAHK.Scripting
                     if (code.Length < 2)
                         throw new ParseException(ExUnknownDirv, line);
                     
-                    char[] delim = new char[Spaces.Length + 1];
+                    var delim = new char[Spaces.Length + 1];
                     delim[0] = Multicast;
                     Spaces.CopyTo(delim, 1);
                     string[] sub = code.Split(delim, 2);
-                    string[] parts = new string[] { sub[0], sub.Length > 1 ? sub[1] : string.Empty };
+                    var parts = new[] { sub[0], sub.Length > 1 ? sub[1] : string.Empty };
 
                     parts[1] = StripComment(parts[1]).Trim(Spaces);
 

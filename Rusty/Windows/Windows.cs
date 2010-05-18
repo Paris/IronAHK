@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -11,7 +11,7 @@ namespace IronAHK.Rusty
 
         static WindowType find, exclude;
         static IntPtr[] matches = new IntPtr[31];
-        static int count = 0;
+        static int count;
 
         public static IntPtr FindWindow(string WinTitle, string WinText, string ExcludeTitle, string ExcludeText)
         {
@@ -45,10 +45,10 @@ namespace IronAHK.Rusty
             count = 0;
 
             if (find.Title == "A")
-                matches[0] = Windows.GetActiveWindow();
+                matches[0] = GetActiveWindow();
             else if (find.ID != 0 && Control.Length == 0)
                 matches[0] = new IntPtr(find.ID);
-            else EnumWindows(new EnumFunc(FilterWindow), 0);
+            else EnumWindows(FilterWindow, 0);
 
             if (find.Control.Length != 0)
             {
@@ -67,7 +67,7 @@ namespace IronAHK.Rusty
         static bool FilterWindow(IntPtr hwnd, int lParam)
         {
             string title = GetWindowText(hwnd).ToLowerInvariant();
-            StringBuilder sb = new StringBuilder(Math.Max(find.Class.Length, exclude.Class.Length));
+            var sb = new StringBuilder(Math.Max(find.Class.Length, exclude.Class.Length));
             string classname = GetClassName(hwnd, sb, sb.Capacity).ToString();
 
             int id = hwnd.ToInt32();
@@ -115,7 +115,7 @@ namespace IronAHK.Rusty
 
         public static string GetWindowText(IntPtr hwnd)
         {
-            var len = SendMessage(hwnd, (uint)WM_GETTEXTLENGTH, IntPtr.Zero, IntPtr.Zero).ToInt32();
+            var len = SendMessage(hwnd, WM_GETTEXTLENGTH, IntPtr.Zero, IntPtr.Zero).ToInt32();
             var sb = new StringBuilder(len + 1);
             SendMessage(hwnd, WM_GETTEXT, sb.Capacity, sb);
             return sb.ToString();
@@ -123,7 +123,7 @@ namespace IronAHK.Rusty
 
         public static string GetClassName(IntPtr hwnd)
         {
-            StringBuilder sb = new StringBuilder(1024);
+            var sb = new StringBuilder(1024);
             return GetClassName(hwnd, sb, sb.Capacity).ToString();
         }
 
@@ -328,15 +328,15 @@ namespace IronAHK.Rusty
         class WindowType
         {
             string title = string.Empty, classname = string.Empty, group = string.Empty, text = string.Empty, control = string.Empty;
-            int id = 0;
-            uint pid = 0;
-            public string[] Bounds = new string[] { "ahk" };
+            int id;
+            uint pid;
+            public string[] Bounds = new[] { "ahk" };
 
             enum Mode { Title, Class, ID, PID, Group };
 
             public WindowType(string Criteria)
             {
-                foreach (string criterion in Criteria.Trim().Split(Bounds, StringSplitOptions.RemoveEmptyEntries))
+                foreach (var criterion in Criteria.Trim().Split(Bounds, StringSplitOptions.RemoveEmptyEntries))
                 {
                     if (criterion.Substring(0, 1) == "_")
                     {

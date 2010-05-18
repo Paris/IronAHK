@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -92,7 +92,7 @@ namespace IronAHK.Rusty
 
         public const uint MAPVK_VSC_TO_VK_EX = 3;
 
-        [Flags()]
+        [Flags]
         public enum MOUSEEVENTF
         {
             MOVE = 0x0001,  // mouse move 

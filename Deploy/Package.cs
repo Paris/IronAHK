@@ -1,4 +1,6 @@
-﻿using System.IO;
+using System.IO;
+using IronAHK.Rusty;
+using IronAHK.Scripting;
 
 namespace IronAHK.Setup
 {
@@ -12,7 +14,7 @@ namespace IronAHK.Setup
             if (!Directory.Exists(target))
                 Directory.CreateDirectory(target);
 
-            foreach (var dll in new[] { typeof(Rusty.Core), typeof(Scripting.IACodeProvider) })
+            foreach (var dll in new[] { typeof(Core), typeof(IACodeProvider) })
                 File.Copy(dll.Assembly.Location, Path.Combine(target, Path.GetFileName(dll.Assembly.Location)));
 
             foreach (var file in new[] { "license.txt", "Example.ahk", "setup.sh", Name + ".exe" })

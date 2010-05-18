@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
-using System.Reflection;
 using System.Windows.Forms;
 
 namespace IronAHK.Rusty
@@ -64,7 +63,7 @@ namespace IronAHK.Rusty
                         bool center = false, cX = false, cY = false, auto = false, min = false, max = false, restore = false, hide = false;
                         int?[] pos = { null, null, null, null };
 
-                        foreach (string option in ParseOptions(Param2))
+                        foreach (var option in ParseOptions(Param2))
                         {
                             string mode = option.ToLowerInvariant();
                             int select = -1;
@@ -262,7 +261,7 @@ namespace IronAHK.Rusty
 
                 default:
                     {
-                        foreach (string option in ParseOptions(Command))
+                        foreach (var option in ParseOptions(Command))
                         {
                             bool on = option[0] != '-';
                             string mode = option;
@@ -378,7 +377,7 @@ namespace IronAHK.Rusty
                         if (edit.Width < mw)
                             edit.Width = mw;
 
-                        foreach (string opt in ParseOptions(opts))
+                        foreach (var opt in ParseOptions(opts))
                         {
                             bool on = opt[0] != '-';
                             string mode = opt.Substring(!on || opt[0] == '+' ? 1 : 0).ToLowerInvariant();
@@ -437,7 +436,7 @@ namespace IronAHK.Rusty
                         updown.Value = decimal.Parse(content);
                         opts = GuiApplyStyles(updown, options);
 
-                        foreach (string opt in ParseOptions(opts))
+                        foreach (var opt in ParseOptions(opts))
                         {
                             bool on = opt[0] != '-';
                             string mode = opt.Substring(!on || opt[0] == '+' ? 1 : 0).ToLowerInvariant();
@@ -515,7 +514,7 @@ namespace IronAHK.Rusty
                         check.Text = content;
                         opts = GuiApplyStyles(check, options);
 
-                        foreach (string opt in ParseOptions(opts))
+                        foreach (var opt in ParseOptions(opts))
                         {
                             switch (opt.ToLowerInvariant())
                             {
@@ -554,7 +553,7 @@ namespace IronAHK.Rusty
                         radio.Checked = false;
                         opts = GuiApplyStyles(radio, options);
 
-                        foreach (string opt in ParseOptions(opts))
+                        foreach (var opt in ParseOptions(opts))
                         {
                             switch (opt.ToLowerInvariant())
                             {
@@ -588,7 +587,7 @@ namespace IronAHK.Rusty
                         ddl.Text = content;
                         opts = GuiApplyStyles(ddl, options);
 
-                        foreach (string opt in ParseOptions(opts))
+                        foreach (var opt in ParseOptions(opts))
                         {
                             bool on = opt[0] != '-';
                             string mode = opt.Substring(!on || opt[0] == '+' ? 1 : 0).ToLowerInvariant();
@@ -624,7 +623,7 @@ namespace IronAHK.Rusty
                         combo.Text = content;
                         opts = GuiApplyStyles(combo, options);
 
-                        foreach (string opt in ParseOptions(opts))
+                        foreach (var opt in ParseOptions(opts))
                         {
                             bool on = opt[0] != '-';
                             string mode = opt.Substring(!on || opt[0] == '+' ? 1 : 0).ToLowerInvariant();
@@ -650,7 +649,7 @@ namespace IronAHK.Rusty
 
                         bool multi = false, read = false;
 
-                        foreach (string opt in ParseOptions(opts))
+                        foreach (var opt in ParseOptions(opts))
                         {
                             bool on = opt[0] != '-';
                             string mode = opt.Substring(!on || opt[0] == '+' ? 1 : 0).ToLowerInvariant();
@@ -691,7 +690,7 @@ namespace IronAHK.Rusty
                         control = lv;
                         opts = GuiApplyStyles(lv, options);
 
-                        foreach (string opt in ParseOptions(opts))
+                        foreach (var opt in ParseOptions(opts))
                         {
                             bool on = opt[0] != '-';
                             string mode = opt.Substring(!on || opt[0] == '+' ? 1 : 0).ToLowerInvariant();
@@ -723,7 +722,7 @@ namespace IronAHK.Rusty
                         control = tree;
                         opts = GuiApplyStyles(tree, options);
 
-                        foreach (string opt in ParseOptions(opts))
+                        foreach (var opt in ParseOptions(opts))
                         {
                             bool on = opt[0] != '-';
                             string mode = opt.Substring(!on || opt[0] == '+' ? 1 : 0).ToLowerInvariant();
@@ -758,7 +757,7 @@ namespace IronAHK.Rusty
                         control = hotkey;
                         opts = GuiApplyStyles(hotkey, options);
 
-                        foreach (string opt in ParseOptions(opts))
+                        foreach (var opt in ParseOptions(opts))
                         {
                             bool on = opt[0] != '-';
                             string mode = opt.Substring(!on || opt[0] == '+' ? 1 : 0).ToLowerInvariant();
@@ -791,7 +790,7 @@ namespace IronAHK.Rusty
                         control = date;
                         opts = GuiApplyStyles(date, options);
 
-                        foreach (string opt in ParseOptions(opts))
+                        foreach (var opt in ParseOptions(opts))
                         {
                             bool on = opt[0] != '-';
                             string mode = opt.Substring(!on || opt[0] == '+' ? 1 : 0).ToLowerInvariant();
@@ -830,7 +829,7 @@ namespace IronAHK.Rusty
                         control = cal;
                         opts = GuiApplyStyles(cal, options);
 
-                        foreach (string opt in ParseOptions(opts))
+                        foreach (var opt in ParseOptions(opts))
                         {
                             bool on = opt[0] != '-';
                             string mode = opt.Substring(!on || opt[0] == '+' ? 1 : 0).ToLowerInvariant();
@@ -863,7 +862,7 @@ namespace IronAHK.Rusty
                         control = slider;
                         opts = GuiApplyStyles(slider, options);
 
-                        foreach (string opt in ParseOptions(opts))
+                        foreach (var opt in ParseOptions(opts))
                         {
                             bool on = opt[0] != '-';
                             string mode = opt.Substring(!on || opt[0] == '+' ? 1 : 0).ToLowerInvariant();
@@ -926,7 +925,7 @@ namespace IronAHK.Rusty
                         control = progress;
                         opts = GuiApplyStyles(progress, options);
 
-                        foreach (string opt in ParseOptions(opts))
+                        foreach (var opt in ParseOptions(opts))
                         {
                             bool on = opt[0] != '-';
                             string mode = opt.Substring(!on || opt[0] == '+' ? 1 : 0).ToLowerInvariant();
@@ -990,7 +989,7 @@ namespace IronAHK.Rusty
                         control = tab;
                         opts = GuiApplyStyles(tab, options);
 
-                        foreach (string opt in ParseOptions(opts))
+                        foreach (var opt in ParseOptions(opts))
                         {
                             bool on = opt[0] != '-';
                             string mode = opt.Substring(!on || opt[0] == '+' ? 1 : 0).ToLowerInvariant();
@@ -1051,24 +1050,22 @@ namespace IronAHK.Rusty
 
             var win = new Form { Name = name, Tag = new GuiInfo { } };
 
-            win.FormClosed += new FormClosedEventHandler(delegate(object sender, FormClosedEventArgs e)
-            {
-                SafeInvoke(win.Name + Keyword_GuiClose);
-            });
+            win.FormClosed += delegate {
+                                      SafeInvoke(win.Name + Keyword_GuiClose);
+                                  };
 
-            win.KeyDown += new KeyEventHandler(delegate(object sender, KeyEventArgs e)
-            {
-                if (e.KeyCode == Keys.Escape)
-                {
-                    e.Handled = true;
-                    SafeInvoke(win.Name + Keyword_GuiEscape);
-                }
-            });
+            win.KeyDown += delegate(object sender, KeyEventArgs e)
+                               {
+                                   if (e.KeyCode == Keys.Escape)
+                                   {
+                                       e.Handled = true;
+                                       SafeInvoke(win.Name + Keyword_GuiEscape);
+                                   }
+                               };
 
-            win.Resize += new EventHandler(delegate(object sender, EventArgs e)
-            {
-                SafeInvoke(win.Name + Keyword_GuiSize);
-            });
+            win.Resize += delegate {
+                                  SafeInvoke(win.Name + Keyword_GuiSize);
+                              };
 
             return win;
         }

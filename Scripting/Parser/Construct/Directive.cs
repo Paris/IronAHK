@@ -1,4 +1,4 @@
-﻿using System.CodeDom;
+using System.CodeDom;
 
 namespace IronAHK.Scripting
 {
@@ -18,12 +18,12 @@ namespace IronAHK.Scripting
         bool NoEnv = NoEnvDefault;
         bool NoTrayIcon = NoTrayIconDefault;
         bool Persistent = PersistentDefault;
-        bool? SingleInstance = null;
+        bool? SingleInstance;
         bool WinActivateForce = WinActivateForceDefault;
-        bool HotstringNoMouse = false;
+        bool HotstringNoMouse;
         string HotstringEndChars = string.Empty;
         string HotstringNewOptions = string.Empty;
-        bool LTrimForced = false;
+        bool LTrimForced;
 
         string IfWinActive_WinTitle = string.Empty;
         string IfWinActive_WinText = string.Empty;
@@ -43,7 +43,7 @@ namespace IronAHK.Scripting
             if (code.Length < 2)
                 throw new ParseException(ExUnknownDirv);
 
-            char[] delim = new char[Spaces.Length + 1];
+            var delim = new char[Spaces.Length + 1];
             delim[0] = Multicast;
             Spaces.CopyTo(delim, 1);
             string[] parts = code.Split(delim, 2);
@@ -60,13 +60,13 @@ namespace IronAHK.Scripting
             if (parts[1].Length == 0)
             {
                 numeric = false;
-                sub = new string[] { string.Empty, string.Empty };
+                sub = new[] { string.Empty, string.Empty };
             }
             else
             {
                 numeric = int.TryParse(parts[1], out value);
-                string[] split = parts[1].Split(new char[] { Multicast }, 2);
-                sub = new string[] { split[0].Trim(Spaces), split.Length > 1 ? split[1].Trim(Spaces) : string.Empty };
+                string[] split = parts[1].Split(new[] { Multicast }, 2);
+                sub = new[] { split[0].Trim(Spaces), split.Length > 1 ? split[1].Trim(Spaces) : string.Empty };
             }
 
             string cmd = parts[0].Substring(1);

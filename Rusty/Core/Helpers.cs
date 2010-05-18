@@ -1,4 +1,4 @@
-﻿using System.Drawing;
+using System.Drawing;
 using System.Drawing.Imaging;
 using System.Windows.Forms;
 
@@ -22,14 +22,14 @@ namespace IronAHK.Rusty
             }
             try
             {
-                Bitmap bmp = new Bitmap(rect.Width, rect.Height, pFormat);
+                var bmp = new Bitmap(rect.Width, rect.Height, pFormat);
                 Graphics g = Graphics.FromImage(bmp);
                 g.CopyFromScreen(rect.Left, rect.Top, 0, 0, rect.Size);
                 return bmp;
             }
             catch
             {
-                Bitmap bmp2 = new Bitmap(0, 0, PixelFormat.Format24bppRgb);
+                var bmp2 = new Bitmap(0, 0, PixelFormat.Format24bppRgb);
                 return bmp2;
             }
         }
