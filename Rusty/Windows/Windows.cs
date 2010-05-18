@@ -46,6 +46,8 @@ namespace IronAHK.Rusty
 
             if (find.Title == "A")
                 matches[0] = Windows.GetActiveWindow();
+            else if (find.ID != 0 && Control.Length == 0)
+                matches[0] = new IntPtr(find.ID);
             else EnumWindows(new EnumFunc(FilterWindow), 0);
 
             if (find.Control.Length != 0)
