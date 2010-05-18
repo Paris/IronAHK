@@ -464,15 +464,18 @@ namespace IronAHK.Rusty
                         bool exists = File.Exists(content);
 
                         if (exists)
-                            pic.ImageLocation = content;
-                        
-                        GuiApplyStyles(pic, options);
-
-                        if (exists && pic.Size.IsEmpty)
                         {
-                            var image = Image.FromFile(pic.ImageLocation);
-                            pic.Size = image.Size;
+                            pic.ImageLocation = content;
+
+                            try
+                            {
+                                var image = Image.FromFile(pic.ImageLocation);
+                                pic.Size = image.Size;
+                            }
+                            catch (Exception) { }
                         }
+
+                        GuiApplyStyles(pic, options);
                     }
                     break;
                 #endregion
