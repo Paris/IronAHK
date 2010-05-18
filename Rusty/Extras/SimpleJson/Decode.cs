@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -69,7 +69,7 @@ namespace IronAHK.Rusty
 
         static bool ExtractNumber(ref string node, ref int i, out object value)
         {
-            StringBuilder s = new StringBuilder();
+            var s = new StringBuilder();
             while (i < node.Length)
             {
                 char c = node[i];
@@ -83,7 +83,7 @@ namespace IronAHK.Rusty
             double n;
             if (double.TryParse(s.ToString(), out n))
             {
-                value = ((double)((int)n)) == n ? (int)n : n;
+                value = (((int)n)) == n ? (int)n : n;
                 return true;
             }
             return false;
@@ -228,7 +228,7 @@ namespace IronAHK.Rusty
                         key = Scan(node, ref i, StringBoundaryAlt);
                     else
                     {
-                        StringBuilder keyip = new StringBuilder();
+                        var keyip = new StringBuilder();
                         do
                         {
                             char c = node[i];

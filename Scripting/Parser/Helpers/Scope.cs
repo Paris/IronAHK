@@ -1,14 +1,14 @@
-﻿
+
 namespace IronAHK.Scripting
 {
     partial class Parser
     {
         const string ScopeVar = ".";
-        int internalID = 0;
+        int internalID;
 
         string InternalID
         {
-            get { return "e" + internalID++.ToString(); }
+            get { return "e" + internalID++; }
         }
 
         string Scope

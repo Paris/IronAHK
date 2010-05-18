@@ -118,7 +118,7 @@ namespace IronAHK.Rusty
                 Dest += Path.DirectorySeparatorChar;
             if (!Directory.Exists(Dest)) Directory.CreateDirectory(Dest);
             Files = Directory.GetFileSystemEntries(Source);
-            foreach (string Element in Files)
+            foreach (var Element in Files)
             {
                 // Sub directories
 
@@ -311,8 +311,8 @@ namespace IronAHK.Rusty
         /// </param>
         public static void FileGetTime(out string OutputVar, string Filename, string WhichTime)
         {
-            FileInfo file = new FileInfo(Filename);
-            DateTime time = new DateTime();
+            var file = new FileInfo(Filename);
+            var time = new DateTime();
 
             switch (WhichTime[0])
             {
@@ -550,7 +550,7 @@ namespace IronAHK.Rusty
             OutputVar = string.Empty;
             try
             {
-                StreamReader sr = new StreamReader(Filename);
+                var sr = new StreamReader(Filename);
                 string line = string.Empty;
                 for (int i = 0; i < LineNum; i++)
                     line = sr.ReadLine();
@@ -634,7 +634,7 @@ namespace IronAHK.Rusty
             try
             {
                 error = 0;
-                foreach (string path in ToFiles(FilePattern, OperateOnFolders != 2, OperateOnFolders != 0, Recurse != 0))
+                foreach (var path in ToFiles(FilePattern, OperateOnFolders != 2, OperateOnFolders != 0, Recurse != 0))
                 {
                     FileAttributes set = ToFileAttribs(Attributes, File.GetAttributes(path));
                     File.SetAttributes(path, set);
@@ -681,9 +681,9 @@ namespace IronAHK.Rusty
             try
             {
                 error = 0;
-                foreach (string path in ToFiles(FilePattern, OperateOnFolders != 2, OperateOnFolders != 0, Recurse != 0))
+                foreach (var path in ToFiles(FilePattern, OperateOnFolders != 2, OperateOnFolders != 0, Recurse != 0))
                 {
-                    DateTime set = new DateTime();
+                    var set = new DateTime();
 
                     switch (WhichTime[0])
                     {

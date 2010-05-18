@@ -1,4 +1,3 @@
-﻿using System;
 using System.CodeDom;
 using System.Collections.Generic;
 
@@ -12,7 +11,7 @@ namespace IronAHK.Scripting
         {
             var list = new List<CodeExpression>(parts.Length);
 
-            foreach (CodeExpression part in parts)
+            foreach (var part in parts)
             {
                 if (part is CodePrimitiveExpression)
                 {
@@ -31,7 +30,7 @@ namespace IronAHK.Scripting
         {
             get
             {
-                string[] refs = new string[parts.Length];
+                var refs = new string[parts.Length];
                 bool simple = true;
 
                 for (int i = 0; i < parts.Length; i++)
@@ -50,13 +49,13 @@ namespace IronAHK.Scripting
 
                 var concat = (CodeMethodInvokeExpression)Parser.InternalMethods.Concat;
 
-                CodeExpression[] sub = new CodeExpression[parts.Length];
+                var sub = new CodeExpression[parts.Length];
 
                 for (int i = 0; i < parts.Length; i++)
                 {
                     var part = parts[i];
                     if (part is CodePrimitiveExpression)
-                        sub[i] = (CodePrimitiveExpression)part;
+                        sub[i] = part;
                     else if (part is CodeComplexVariableReferenceExpression)
                         sub[i] = (CodeMethodInvokeExpression)(CodeComplexVariableReferenceExpression)part;
                     else

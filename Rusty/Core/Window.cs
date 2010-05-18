@@ -1,5 +1,4 @@
 using System;
-using System.Diagnostics;
 
 namespace IronAHK.Rusty
 {
@@ -390,7 +389,7 @@ namespace IronAHK.Rusty
             Windows.SetForegroundWindow(hwnd);
             Windows.SetActiveWindow(hwnd);
             if (_WinDelay >= 0)
-                Core.Sleep(_WinDelay ?? 100);
+                Sleep(_WinDelay ?? 100);
         }
 
         /// <summary>
@@ -450,7 +449,7 @@ namespace IronAHK.Rusty
                     break;
             }
             if (_WinDelay >= 0)
-                Core.Sleep(_WinDelay ?? 100);
+                Sleep(_WinDelay ?? 100);
         }
 
         /// <summary>
@@ -720,7 +719,7 @@ namespace IronAHK.Rusty
             if (Environment.OSVersion.Platform != PlatformID.Win32NT)
                 return;
 
-            foreach (IntPtr hwnd in Windows.FindAllWindows())
+            foreach (var hwnd in Windows.FindAllWindows())
                 Windows.ShowWindow(hwnd, Windows.SW_MINIMIZE);
         }
 
@@ -732,7 +731,7 @@ namespace IronAHK.Rusty
             if (Environment.OSVersion.Platform != PlatformID.Win32NT)
                 return;
 
-            foreach (IntPtr hwnd in Windows.FindAllWindows())
+            foreach (var hwnd in Windows.FindAllWindows())
                 Windows.ShowWindow(hwnd, Windows.SW_RESTORE);
         }
 
@@ -883,7 +882,7 @@ namespace IronAHK.Rusty
                 }
             }
             if (_WinDelay >= 0)
-                Core.Sleep(_WinDelay ?? 100);
+                Sleep(_WinDelay ?? 100);
         }
 
         /// <summary>

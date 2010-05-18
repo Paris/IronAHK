@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 
 namespace IronAHK.Scripting
@@ -38,12 +38,12 @@ namespace IronAHK.Scripting
 
         bool IsSpace(char sym)
         {
-            return Array.IndexOf<char>(Spaces, sym) != -1;
+            return Array.IndexOf(Spaces, sym) != -1;
         }
 
         bool IsSpace(string code)
         {
-            foreach (char sym in code)
+            foreach (var sym in code)
                 if (!IsSpace(sym))
                     return false;
             return true;
@@ -54,7 +54,7 @@ namespace IronAHK.Scripting
         bool IsFlowOperator(string code)
         {
             const int offset = 3;
-            char[] delimiters = new char[Spaces.Length + offset];
+            var delimiters = new char[Spaces.Length + offset];
             delimiters[0] = Multicast;
             delimiters[1] = BlockOpen;
             delimiters[2] = ParenOpen;
@@ -287,7 +287,7 @@ namespace IronAHK.Scripting
 
             while (reader.Peek() != -1)
             {
-                char sym = (char)reader.Read();
+                var sym = (char)reader.Read();
 
                 if (sym == BlockOpen)
                     return true;

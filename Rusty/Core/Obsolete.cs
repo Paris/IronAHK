@@ -1,5 +1,6 @@
-﻿using System;
+using System;
 using System.Diagnostics;
+using System.Windows.Forms;
 
 namespace IronAHK.Rusty
 {
@@ -61,7 +62,7 @@ namespace IronAHK.Rusty
             {
                 case Keyword_Unicode:
                     if (Value1 == null)
-                        OutputVar = System.Windows.Forms.Clipboard.GetText();
+                        OutputVar = Clipboard.GetText();
                     else OutputVar = Value1;
                     break;
                 case Keyword_Asc:
@@ -211,7 +212,7 @@ namespace IronAHK.Rusty
         [Obsolete, Conditional("LEGACY")]
         public static void MouseClick(string WhichButton, int X, int Y, int ClickCount, int Speed, string DU, bool R)
         {
-            Click(new string[] { WhichButton, X.ToString(), Y.ToString(), ClickCount.ToString(), Speed.ToString(), DU, R ? Keyword_Relative : string.Empty });
+            Click(new[] { WhichButton, X.ToString(), Y.ToString(), ClickCount.ToString(), Speed.ToString(), DU, R ? Keyword_Relative : string.Empty });
         }
 
         /// <summary>
@@ -237,7 +238,7 @@ namespace IronAHK.Rusty
         [Obsolete, Conditional("LEGACY")]
         public static void MouseMove(int X, int Y, int Speed, bool R)
         {
-            Click(new string[] { X.ToString(), Y.ToString(), "0", Speed.ToString(), R ? Keyword_Relative : string.Empty });
+            Click(new[] { X.ToString(), Y.ToString(), "0", Speed.ToString(), R ? Keyword_Relative : string.Empty });
         }
 
         #endregion

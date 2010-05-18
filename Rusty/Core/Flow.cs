@@ -4,6 +4,8 @@ using System.Diagnostics;
 using System.Threading;
 using System.Timers;
 using System.Windows.Forms;
+using ThreadState = System.Threading.ThreadState;
+using Timer = System.Timers.Timer;
 
 namespace IronAHK.Rusty
 {
@@ -89,8 +91,8 @@ namespace IronAHK.Rusty
                 return;
             }
 
-            var handler = new EventHandler(delegate(object sender, EventArgs e)
-            {
+            var handler = new EventHandler(delegate
+                                               {
                 try { method.Invoke(null, new object[] { new object[] { } }); }
                 catch (Exception) { }
             });
@@ -142,7 +144,7 @@ namespace IronAHK.Rusty
             var state = OnOff(mode);
 
             if (state == null && mode.Equals(Keyword_Toggle, StringComparison.OrdinalIgnoreCase))
-                state = !(thread.ThreadState == System.Threading.ThreadState.Suspended || thread.ThreadState == System.Threading.ThreadState.SuspendRequested);
+                state = !(thread.ThreadState == ThreadState.Suspended || thread.ThreadState == ThreadState.SuspendRequested);
 
 #pragma warning disable 612,618
 
@@ -182,7 +184,7 @@ namespace IronAHK.Rusty
         public static void SetTimer(string label, string mode, int priority)
         {
             if (timers == null)
-                timers = new Dictionary<string, System.Timers.Timer>();
+                timers = new Dictionary<string, Timer>();
 
             switch (mode.ToLowerInvariant())
             {
@@ -212,7 +214,7 @@ namespace IronAHK.Rusty
                 return;
             }
 
-            var timer = new System.Timers.Timer();
+            var timer = new Timer();
 
             bool once = interval < 0;
 
@@ -229,31 +231,31 @@ namespace IronAHK.Rusty
 
             timer.Interval = interval;
 
-            var level = System.Threading.ThreadPriority.Normal;
+            var level = ThreadPriority.Normal;
 
             if (priority > -1 && priority < 5)
-                level = (System.Threading.ThreadPriority)priority;
+                level = (ThreadPriority)priority;
 
             var method = FindLocalMethod(label);
 
-            timer.Elapsed += new ElapsedEventHandler(delegate(object s, ElapsedEventArgs e)
-            {
-                System.Threading.Thread.CurrentThread.Priority = level;
+            timer.Elapsed += delegate
+                                 {
+                                     System.Threading.Thread.CurrentThread.Priority = level;
 
-                try { method.Invoke(null, new object[] { new object[] { } }); }
-                catch (Exception)
-                {
-                    timer.Stop();
-                    timers.Remove(label);
-                    timer.Dispose();
-                }
+                                     try { method.Invoke(null, new object[] { new object[] { } }); }
+                                     catch (Exception)
+                                     {
+                                         timer.Stop();
+                                         timers.Remove(label);
+                                         timer.Dispose();
+                                     }
 
-                if (once)
-                {
-                    timer.Stop();
-                    timer.Dispose();
-                }
-            });
+                                     if (once)
+                                     {
+                                         timer.Stop();
+                                         timer.Dispose();
+                                     }
+                                 };
 
             timer.Start();
         }

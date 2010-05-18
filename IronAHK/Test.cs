@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
@@ -63,7 +63,7 @@ namespace IronAHK
             File.Delete(output);
 
             if (args == null || args.Length == 0)
-                args = new string[] { "--out", output, source };
+                args = new[] { "--out", output, source };
         }
 
         [Conditional("DEBUG")]

@@ -1,4 +1,4 @@
-﻿using System.Diagnostics;
+using System.Diagnostics;
 using System.Text;
 
 namespace IronAHK.Scripting
@@ -10,7 +10,7 @@ namespace IronAHK.Scripting
         {
             #region Variables
 
-            char[] delim = new char[Spaces.Length + 1];
+            var delim = new char[Spaces.Length + 1];
             delim[0] = Multicast;
             Spaces.CopyTo(delim, 1);
             int z = code.IndexOfAny(delim);
@@ -264,7 +264,7 @@ namespace IronAHK.Scripting
                     replaced.Append(ParenOpen);
                     replaced.Append("WinActive");
                     replaced.Append(ParenOpen);
-                    foreach (string part in parts)
+                    foreach (var part in parts)
                     {
                         replaced.Append(part);
                         replaced.Append(Multicast);
@@ -280,7 +280,7 @@ namespace IronAHK.Scripting
                     replaced.Append(ParenOpen);
                     replaced.Append("WinExist");
                     replaced.Append(ParenOpen);
-                    foreach (string part in parts)
+                    foreach (var part in parts)
                     {
                         replaced.Append(part);
                         replaced.Append(Multicast);
@@ -297,7 +297,7 @@ namespace IronAHK.Scripting
                     replaced.Append(Not);
                     replaced.Append("WinActive");
                     replaced.Append(ParenOpen);
-                    foreach (string part in parts)
+                    foreach (var part in parts)
                     {
                         replaced.Append(part);
                         replaced.Append(Multicast);
@@ -314,7 +314,7 @@ namespace IronAHK.Scripting
                     replaced.Append(Not);
                     replaced.Append("WinExist");
                     replaced.Append(ParenOpen);
-                    foreach (string part in parts)
+                    foreach (var part in parts)
                     {
                         replaced.Append(part);
                         replaced.Append(Multicast);

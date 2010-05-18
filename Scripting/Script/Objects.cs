@@ -44,7 +44,7 @@ namespace IronAHK.Scripting
 
             if (item is object[])
             {
-                object[] array = (object[])item;
+                var array = (object[])item;
                 
                 if (position > array.Length - 1)
                     return null;
@@ -129,7 +129,7 @@ namespace IronAHK.Scripting
                         return null;
 
                     var dictionary = (IDictionary)item;
-                    string name = (string)parents[i];
+                    var name = (string)parents[i];
                     dictionary.Add(name, new Dictionary<string, object>());
 
                     item = dictionary[name];
@@ -192,7 +192,7 @@ namespace IronAHK.Scripting
 
             var array = (object[])item;
             int i = array.Length;
-            Array.Resize<object>(ref array, i + 1);
+            Array.Resize(ref array, i + 1);
             array[i] = value;
             item = array;
 

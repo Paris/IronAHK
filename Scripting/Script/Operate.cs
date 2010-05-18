@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 
 namespace IronAHK.Scripting
@@ -231,13 +231,13 @@ namespace IronAHK.Scripting
                     return false;
 
                 case In:
-                    foreach (string sub in test.Split(Delimiter))
+                    foreach (var sub in test.Split(Delimiter))
                         if (var.Equals(sub, StringComparison.OrdinalIgnoreCase))
                             return true;
                     return false;
 
                 case Contains:
-                    foreach (string sub in test.Split(Delimiter))
+                    foreach (var sub in test.Split(Delimiter))
                         if (var.IndexOf(sub, StringComparison.OrdinalIgnoreCase) != -1)
                             return true;
                     return false;
@@ -279,7 +279,7 @@ namespace IronAHK.Scripting
                             {
                                 bool dot = false;
 
-                                foreach (char sym in var)
+                                foreach (var sym in var)
                                 {
                                     if (sym == '.')
                                     {
@@ -295,7 +295,7 @@ namespace IronAHK.Scripting
                             }
 
                         case Digit:
-                            foreach (char sym in var)
+                            foreach (var sym in var)
                                 if (!char.IsDigit(sym))
                                     return false;
                             return true;
@@ -303,38 +303,38 @@ namespace IronAHK.Scripting
                         case Integer:
                         case Xdigit:
                             {
-                                foreach (char sym in var)
+                                foreach (var sym in var)
                                     if (!(char.IsDigit(sym) || (sym > 'a' - 1 && sym < 'f' + 1) || (sym > 'A' - 1 && sym < 'F' + 1)))
                                         return false;
                                 return true;
                             }
 
                         case Alpha:
-                            foreach (char sym in var)
+                            foreach (var sym in var)
                                 if (!char.IsLetter(sym))
                                     return false;
                             return true;
 
                         case Upper:
-                            foreach (char sym in var)
+                            foreach (var sym in var)
                                 if (!char.IsUpper(sym))
                                     return false;
                             return true;
 
                         case Lower:
-                            foreach (char sym in var)
+                            foreach (var sym in var)
                                 if (!char.IsLower(sym))
                                     return false;
                             return true;
 
                         case Alnum:
-                            foreach (char sym in var)
+                            foreach (var sym in var)
                                 if (!char.IsLetterOrDigit(sym))
                                     return false;
                             return true;
 
                         case Space:
-                            foreach (char sym in var)
+                            foreach (var sym in var)
                                 if (!char.IsWhiteSpace(sym))
                                     return false;
                             return true;

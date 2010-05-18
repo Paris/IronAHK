@@ -1,7 +1,8 @@
-﻿using System;
+using System;
 using System.CodeDom.Compiler;
 using System.IO;
 using System.Text;
+using IronAHK.Rusty;
 using IronAHK.Scripting;
 using NUnit.Framework;
 
@@ -10,7 +11,7 @@ namespace IronAHK.Tests
     [TestFixture, Category("Scripting")]
     public partial class Scripting
     {
-        string path = string.Format("..{0}..{0}Code{0}", Path.DirectorySeparatorChar.ToString());
+        string path = string.Format("..{0}..{0}Code{0}", Path.DirectorySeparatorChar);
         const string ext = ".ahk";
 
         bool TestScript(string source)
@@ -30,7 +31,7 @@ namespace IronAHK.Tests
                 return false;
 
             const string pass = "pass";
-            foreach (string remove in new string[] { pass, " ", "\n" })
+            foreach (var remove in new[] { pass, " ", "\n" })
                 output = output.Replace(remove, string.Empty);
 
             return output.Length == 0;
@@ -40,7 +41,7 @@ namespace IronAHK.Tests
         {
             var provider = new IACodeProvider();
             var options = new CompilerParameters { GenerateExecutable = false, GenerateInMemory = true, };
-            options.ReferencedAssemblies.Add(typeof(IronAHK.Rusty.Core).Namespace + ".dll");
+            options.ReferencedAssemblies.Add(typeof(Core).Namespace + ".dll");
             var results = provider.CompileAssemblyFromFile(options, source);
 
             var buffer = new StringBuilder();

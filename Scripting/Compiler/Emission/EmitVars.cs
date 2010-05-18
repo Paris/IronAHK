@@ -1,6 +1,7 @@
 using System;
 using System.CodeDom;
 using System.Reflection.Emit;
+using IronAHK.Rusty;
 
 namespace IronAHK.Scripting
 {
@@ -133,13 +134,13 @@ namespace IronAHK.Scripting
 
         Type EmitResolveVar()
         {
-            Generator.Emit(OpCodes.Call, typeof(Rusty.Core).GetMethod("GetEnv"));
+            Generator.Emit(OpCodes.Call, typeof(Core).GetMethod("GetEnv"));
             return typeof(object);
         }
 
         Type EmitSaveVar()
         {
-            Generator.Emit(OpCodes.Call, typeof(Rusty.Core).GetMethod("SetEnv"));
+            Generator.Emit(OpCodes.Call, typeof(Core).GetMethod("SetEnv"));
             return typeof(object);
         }
 

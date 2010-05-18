@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.CodeDom;
 using System.Reflection;
 
@@ -47,7 +47,7 @@ namespace IronAHK.Scripting
 
             if (source.typeArguments != null)
             {
-                foreach (Type argument in source.typeArguments)
+                foreach (var argument in source.typeArguments)
                 {
                     method.TypeArguments.Add(new CodeTypeReference(argument));
                 }

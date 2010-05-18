@@ -95,8 +95,8 @@ namespace IronAHK
                                 {
                                     exe = null;
 
-                                    var saveas = new SaveFileDialog()
-                                    {
+                                    var saveas = new SaveFileDialog
+                                                     {
                                         AddExtension = true,
                                         AutoUpgradeEnabled = true,
                                         CheckPathExists = true,
@@ -120,7 +120,7 @@ namespace IronAHK
                         case "VERSION":
                         case "V":
                             string vers = string.Format("{0} {1}",
-                                typeof(Program).Namespace, Assembly.GetExecutingAssembly().GetName().Version.ToString());
+                                typeof(Program).Namespace, Assembly.GetExecutingAssembly().GetName().Version);
                             return Message(vers, ExitSuccess);
 
                         case "HELP":
@@ -139,7 +139,7 @@ namespace IronAHK
             {
                 if (gui)
                 {
-                    string[] docs = new[] 
+                    var docs = new[] 
                     {
                         Path.Combine(Path.GetDirectoryName(self), Path.Combine("docs", "index.html")),
                         string.Format("..{0}..{0}Site{0}docs{0}index.html", Path.DirectorySeparatorChar),
@@ -201,10 +201,10 @@ namespace IronAHK
                 if (!error.IsWarning)
                 {
                     failed = true;
-                    warnings.WriteLine("{0}:{1} - {2}", Path.GetFileName(file), error.Line.ToString(), error.ErrorText);
+                    warnings.WriteLine("{0}:{1} - {2}", Path.GetFileName(file), error.Line, error.ErrorText);
                 }
 
-                Console.Error.WriteLine("{0} ({1}): ==> {2}", file, error.Line.ToString(), error.ErrorText);
+                Console.Error.WriteLine("{0} ({1}): ==> {2}", file, error.Line, error.ErrorText);
             }
 
             if (failed)

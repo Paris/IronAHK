@@ -8,7 +8,7 @@ using System.IO;
 
 namespace IronAHK.Scripting
 {
-    public sealed partial class IACodeProvider : CodeDomProvider
+    public sealed class IACodeProvider : CodeDomProvider
     {
         #region Extras
 
@@ -21,7 +21,7 @@ namespace IronAHK.Scripting
 
         #region Generator
 
-        [Obsolete()]
+        [Obsolete]
         public override ICodeGenerator CreateGenerator()
         {
             return new Generator();
@@ -33,7 +33,7 @@ namespace IronAHK.Scripting
 
         #region Wrappers
 
-        [Obsolete()]
+        [Obsolete]
         public override ICodeCompiler CreateCompiler()
         {
             throw new NotImplementedException();
@@ -59,7 +59,7 @@ namespace IronAHK.Scripting
                 File.WriteAllText(file, readers[i].ReadToEnd());
             }
 
-            string[] fileNames = new string[tempFiles.Count];
+            var fileNames = new string[tempFiles.Count];
             tempFiles.CopyTo(fileNames, 0);
             var results = CompileAssemblyFromFile(options, fileNames);
             tempFiles.Delete();

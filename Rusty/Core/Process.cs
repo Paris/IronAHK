@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using System.Security;
 
 namespace IronAHK.Rusty
 {
@@ -28,7 +29,7 @@ namespace IronAHK.Rusty
         /// <param name="Param3">See Cmd above for details.</param>
         public static void Process(string Cmd, string PID_or_Name, string Param3)
         {
-            System.Diagnostics.Process prc;
+            Process prc;
             int timeout = 0, start = 0;
 
             switch (Cmd.ToLowerInvariant())
@@ -132,7 +133,7 @@ namespace IronAHK.Rusty
         /// <param name="Wait"></param>
         public static void Run(string Target, string WorkingDir, string ShowMode, out int OutputVarPID, bool Wait)
         {
-            System.Diagnostics.Process prc = new Process();
+            var prc = new Process();
             prc.StartInfo.UseShellExecute = true;
             prc.StartInfo.FileName = Target;
             if (WorkingDir != null)
@@ -191,8 +192,8 @@ namespace IronAHK.Rusty
                 runPassword = null;
             else
             {
-                runPassword = new System.Security.SecureString();
-                foreach (char sym in Password)
+                runPassword = new SecureString();
+                foreach (var sym in Password)
                     runPassword.AppendChar(sym);
                 runPassword.MakeReadOnly();
             }

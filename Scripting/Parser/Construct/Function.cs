@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.CodeDom;
 using System.Collections.Generic;
 using System.Text;
@@ -241,7 +241,7 @@ namespace IronAHK.Scripting
             if (code.Length == 0)
                 return null;
 
-            var cs = System.StringComparison.OrdinalIgnoreCase;
+            var cs = StringComparison.OrdinalIgnoreCase;
             if (code.Equals(TrueTxt, cs) || code.Equals(FalseTxt, cs) || code.Equals(NullTxt, cs))
                 return code;
 

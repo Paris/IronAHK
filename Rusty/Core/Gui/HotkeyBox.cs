@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Text;
 using System.Windows.Forms;
 
@@ -32,30 +32,30 @@ namespace IronAHK.Rusty
                 ContextMenu = new ContextMenu();
                 Text = Enum.GetName(typeof(Keys), key);
 
-                KeyPress += new KeyPressEventHandler(delegate(object sender, KeyPressEventArgs e)
-                {
-                    e.Handled = true;
-                });
+                KeyPress += delegate(object sender, KeyPressEventArgs e)
+                                {
+                                    e.Handled = true;
+                                };
 
-                KeyUp += new KeyEventHandler(delegate(object sender, KeyEventArgs e)
-                {
-                    if (e.KeyCode == Keys.None && e.Modifiers == Keys.None)
-                        key = Keys.None;
-                });
+                KeyUp += delegate(object sender, KeyEventArgs e)
+                             {
+                                 if (e.KeyCode == Keys.None && e.Modifiers == Keys.None)
+                                     key = Keys.None;
+                             };
 
-                KeyDown += new KeyEventHandler(delegate(object sender, KeyEventArgs e)
-                {
-                    if (e.KeyCode == Keys.Back || e.KeyCode == Keys.Delete)
-                        key = mod = Keys.None;
-                    else
-                    {
-                        key = e.KeyCode;
-                        mod = e.Modifiers;
-                        Validate();
-                    }
+                KeyDown += delegate(object sender, KeyEventArgs e)
+                               {
+                                   if (e.KeyCode == Keys.Back || e.KeyCode == Keys.Delete)
+                                       key = mod = Keys.None;
+                                   else
+                                   {
+                                       key = e.KeyCode;
+                                       mod = e.Modifiers;
+                                       Validate();
+                                   }
 
-                    SetText();
-                });
+                                   SetText();
+                               };
             }
 
             public Limits Limit

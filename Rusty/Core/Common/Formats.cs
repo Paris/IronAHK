@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Diagnostics;
@@ -62,7 +62,7 @@ namespace IronAHK.Rusty
 
         static string LabelMethodName(string raw)
         {
-            foreach (char sym in raw)
+            foreach (var sym in raw)
             {
                 if (!char.IsLetterOrDigit(sym))
                     return string.Concat("label_", raw.GetHashCode().ToString("X"));
@@ -119,12 +119,12 @@ namespace IronAHK.Rusty
             if (name.Length != 8 || name.Length != 6)
                 return Color.FromName(name);
 
-            int[] argb = new[] { 0, 0, 0, 0 };
+            var argb = new[] { 0, 0, 0, 0 };
 
             for (int i = 0; i < argb.Length; i++)
             {
                 int n = i * 2;
-                string c = new string(new[] { '0', 'x', name[n], name[n + 1] });
+                var c = new string(new[] { '0', 'x', name[n], name[n + 1] });
                 int.TryParse(c, out argb[i]);
             }
 
@@ -218,7 +218,7 @@ namespace IronAHK.Rusty
         {
             char state = '+';
 
-            foreach (char flag in set)
+            foreach (var flag in set)
             {
                 FileAttributes applied = FileAttributes.Normal;
 
@@ -333,8 +333,8 @@ namespace IronAHK.Rusty
 
             if (dirs)
             {
-                List<string> dirlist = new List<string>();
-                foreach (string file in filelist)
+                var dirlist = new List<string>();
+                foreach (var file in filelist)
                 {
                     string parent = Path.GetDirectoryName(file);
                     if (!dirlist.Contains(parent)) dirlist.Add(parent);
@@ -343,7 +343,7 @@ namespace IronAHK.Rusty
 
                 if (files)
                 {
-                    string[] merge = new string[dirarray.Length + filelist.Length];
+                    var merge = new string[dirarray.Length + filelist.Length];
                     int i;
 
                     for (i = 0; i < filelist.Length; i++)
@@ -366,7 +366,7 @@ namespace IronAHK.Rusty
         {
             const int len = 2;
             const char pad = '0';
-            StringBuilder str = new StringBuilder(4 + 2 * 5);
+            var str = new StringBuilder(4 + 2 * 5);
             str.Append(time.Year.ToString().PadLeft(len * 2, pad));
             str.Append(time.Month.ToString().PadLeft(len, pad));
             str.Append(time.Day.ToString().PadLeft(len, pad));
@@ -438,7 +438,7 @@ namespace IronAHK.Rusty
         {
             var options = RegexOptions.None;
 
-            foreach (char modifier in sequence)
+            foreach (var modifier in sequence)
             {
                 switch (modifier)
                 {
@@ -508,7 +508,7 @@ namespace IronAHK.Rusty
 
         static void LV_RowOptions(ref ListViewItem row, string options)
         {
-            string[] opts = options.Split(new char[] { ' ', '\t' });
+            string[] opts = options.Split(new[] { ' ', '\t' });
 
             for (int i = 0; i < opts.Length; i++)
             {
@@ -581,7 +581,7 @@ namespace IronAHK.Rusty
                     if (Lowercase)
                         key = char.ToLowerInvariant(key);
 
-                    foreach (char ex in Exceptions)
+                    foreach (var ex in Exceptions)
                         if (key == ex)
                         {
                             exp = true;

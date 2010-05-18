@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
@@ -56,11 +57,8 @@ namespace IronAHK.Rusty
 
             Keys keys, extra;
             Options options;
-            GenericFunction proc;
             GenericFunction precondition;
-            bool enabled;
             string name;
-            string typed;
 
             [Flags]
             public enum Options { None = 0, IgnoreModifiers = 1, PassThrough = 2, Up = 4 }
@@ -72,8 +70,8 @@ namespace IronAHK.Rusty
                 this.keys = keys;
                 this.extra = extra;
                 this.options = options;
-                this.proc = proc;
-                enabled = true;
+                this.Proc = proc;
+                Enabled = true;
             }
 
             #region Accessors
@@ -93,11 +91,7 @@ namespace IronAHK.Rusty
                 get { return options; }
             }
 
-            public GenericFunction Proc
-            {
-                get { return proc; }
-                set { proc = value; }
-            }
+            public GenericFunction Proc { get; set; }
 
             public GenericFunction Precondition
             {
@@ -105,11 +99,7 @@ namespace IronAHK.Rusty
                 set { precondition = value; }
             }
 
-            public bool Enabled
-            {
-                get { return enabled; }
-                set { enabled = value; }
-            }
+            public bool Enabled { get; set; }
 
             public string Name
             {
@@ -117,11 +107,7 @@ namespace IronAHK.Rusty
                 set { name = value; }
             }
 
-            public string Typed
-            {
-                get { return typed; }
-                set { typed = value; }
-            }
+            public string Typed { get; set; }
 
             #endregion
 
@@ -242,7 +228,7 @@ namespace IronAHK.Rusty
                 {
                     name = name.Substring(Keyword_HotkeySC.Length);
 
-                    if (int.TryParse(name, System.Globalization.NumberStyles.HexNumber, System.Threading.Thread.CurrentThread.CurrentCulture, out n) && n > -1)
+                    if (int.TryParse(name, NumberStyles.HexNumber, System.Threading.Thread.CurrentThread.CurrentCulture, out n) && n > -1)
                         value = (Keys)Windows.MapVirtualKeyEx((uint)n, Windows.MAPVK_VSC_TO_VK_EX, Windows.GetKeyboardLayout(0));
                 }
 
@@ -309,10 +295,7 @@ namespace IronAHK.Rusty
         internal class HotstringDefinition
         {
             string sequence;
-            string endchars;
-            Options options;
             GenericFunction proc;
-            bool enabled;
             string name;
 
             [Flags]
@@ -323,7 +306,7 @@ namespace IronAHK.Rusty
                 this.sequence = sequence;
                 this.proc = proc;
 
-                endchars = "-()[]{}:;'\"/\\,.?!\r\n \t";
+                EndChars = "-()[]{}:;'\"/\\,.?!\r\n \t";
             }
 
             public string Sequence
@@ -331,28 +314,16 @@ namespace IronAHK.Rusty
                 get { return sequence; }
             }
 
-            public string EndChars
-            {
-                get { return endchars; }
-                set { endchars = value; }
-            }
+            public string EndChars { get; set; }
 
-            public Options EnabledOptions
-            {
-                get { return options; }
-                set { options = value; }
-            }
+            public Options EnabledOptions { get; set; }
 
             public GenericFunction Proc
             {
                 get { return proc; }
             }
 
-            public bool Enabled
-            {
-                get { return enabled; }
-                set { enabled = value; }
-            }
+            public bool Enabled { get; set; }
 
             public string Name
             {
@@ -549,19 +520,19 @@ namespace IronAHK.Rusty
                     }
                 }
 
-                new Thread(new ThreadStart(delegate()
-                {
-                    foreach (var hotkey in exec)
-                    {
-                        priorTime = currentTime;
-                        currentTime = Environment.TickCount;
-                        previous = current;
-                        current = hotkey.ToString();
+                new Thread(delegate()
+                               {
+                                   foreach (var hotkey in exec)
+                                   {
+                                       priorTime = currentTime;
+                                       currentTime = Environment.TickCount;
+                                       previous = current;
+                                       current = hotkey.ToString();
 
-                        if (hotkey.Condition())
-                            hotkey.Proc(new object[] { });
-                    }
-                })).Start();
+                                       if (hotkey.Condition())
+                                           hotkey.Proc(new object[] { });
+                                   }
+                               }).Start();
 
             next:
 
@@ -621,39 +592,39 @@ namespace IronAHK.Rusty
                 {
                     block = true;
 
-                    new Thread(new ThreadStart(delegate()
-                    {
-                        priorTime = currentTime;
-                        currentTime = Environment.TickCount;
-                        previous = current;
-                        current = hotstring.ToString();
-                        int length = hotstring.Sequence.Length;
-                        bool auto = (hotstring.EnabledOptions & HotstringDefinition.Options.AutoTrigger) == HotstringDefinition.Options.AutoTrigger;
+                    new Thread(delegate()
+                                   {
+                                       priorTime = currentTime;
+                                       currentTime = Environment.TickCount;
+                                       previous = current;
+                                       current = hotstring.ToString();
+                                       int length = hotstring.Sequence.Length;
+                                       bool auto = (hotstring.EnabledOptions & HotstringDefinition.Options.AutoTrigger) == HotstringDefinition.Options.AutoTrigger;
 
-                        if (auto)
-                            length--;
+                                       if (auto)
+                                           length--;
 
-                        if ((hotstring.EnabledOptions & HotstringDefinition.Options.Backspace) == HotstringDefinition.Options.Backspace && length > 0)
-                        {
-                            int n = length + 1;
-                            history.Remove(history.Length - n, n);
-                            Backspace(length);
-                        }
+                                       if ((hotstring.EnabledOptions & HotstringDefinition.Options.Backspace) == HotstringDefinition.Options.Backspace && length > 0)
+                                       {
+                                           int n = length + 1;
+                                           history.Remove(history.Length - n, n);
+                                           Backspace(length);
+                                       }
 
-                        hotstring.Proc(new object[] { });
+                                       hotstring.Proc(new object[] { });
 
-                        if ((hotstring.EnabledOptions & HotstringDefinition.Options.OmitEnding) == HotstringDefinition.Options.OmitEnding)
-                        {
-                            if ((hotstring.EnabledOptions & HotstringDefinition.Options.Backspace) == HotstringDefinition.Options.Backspace &&
-                                (hotstring.EnabledOptions & HotstringDefinition.Options.AutoTrigger) != HotstringDefinition.Options.AutoTrigger)
-                            {
-                                history.Remove(history.Length - 1, 1);
-                                Backspace(1);
-                            }
-                        }
-                        else if (trigger != null && !auto)
-                            Send(trigger);
-                    })).Start();
+                                       if ((hotstring.EnabledOptions & HotstringDefinition.Options.OmitEnding) == HotstringDefinition.Options.OmitEnding)
+                                       {
+                                           if ((hotstring.EnabledOptions & HotstringDefinition.Options.Backspace) == HotstringDefinition.Options.Backspace &&
+                                               (hotstring.EnabledOptions & HotstringDefinition.Options.AutoTrigger) != HotstringDefinition.Options.AutoTrigger)
+                                           {
+                                               history.Remove(history.Length - 1, 1);
+                                               Backspace(1);
+                                           }
+                                       }
+                                       else if (trigger != null && !auto)
+                                           Send(trigger);
+                                   }).Start();
                 }
 
                 return block;

@@ -1,4 +1,4 @@
-﻿using System.CodeDom;
+using System.CodeDom;
 using System.Collections.Generic;
 
 namespace IronAHK.Scripting
@@ -19,7 +19,7 @@ namespace IronAHK.Scripting
                 if (!(parts[i] is string))
                     throw new ParseException(ExUnexpected);
 
-                string name = (string)parts[i];
+                var name = (string)parts[i];
 
                 if (name.Length > 2 && name[0] == StringBound && name[name.Length - 1] == StringBound)
                     name = name.Substring(1, name.Length - 2);
@@ -38,7 +38,7 @@ namespace IronAHK.Scripting
                 if (!(parts[i] is string))
                     throw new ParseException(ExUnexpected);
 
-                string assign = (string)parts[i];
+                var assign = (string)parts[i];
 
                 if (assign.Length == 1 && assign[0] == Multicast)
                     goto collect;
@@ -80,7 +80,7 @@ namespace IronAHK.Scripting
                 if (!(parts[i] is string))
                     throw new ParseException(ExUnexpected);
 
-                string delim = (string)parts[i];
+                var delim = (string)parts[i];
 
                 if (!(delim.Length == 1 && delim[0] == Multicast))
                     throw new ParseException(ExUnexpected);

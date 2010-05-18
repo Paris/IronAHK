@@ -1,11 +1,11 @@
-﻿using System.CodeDom;
+using System.CodeDom;
 
 namespace IronAHK.Scripting
 {
     class CodeComplexAssignStatement : CodeAssignStatement
     {
         public CodeComplexAssignStatement()
-            : base() { }
+        { }
 
         public CodeComplexAssignStatement(CodeComplexVariableReferenceExpression left, CodeExpression right)
             : base(left, right) { }

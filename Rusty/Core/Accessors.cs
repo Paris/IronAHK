@@ -1,8 +1,11 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Net;
+using System.Net.Sockets;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Security.Principal;
+using System.Threading;
 
 namespace IronAHK.Rusty
 {
@@ -373,10 +376,10 @@ namespace IronAHK.Rusty
             get
             {
                 var addr = Dns.GetHostEntry(Dns.GetHostName()).AddressList;
-                string[] ips = new string[addr.Length];
+                var ips = new string[addr.Length];
 
                 for (int i = 0; i < addr.Length; i++)
-                    if (addr[i].AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
+                    if (addr[i].AddressFamily == AddressFamily.InterNetwork)
                         ips[i] = addr[i].ToString();
 
                 return ips;
@@ -404,17 +407,13 @@ namespace IronAHK.Rusty
         /// </summary>
         public static int A_IsCritical
         {
-            get { return System.Threading.Thread.CurrentThread.Priority == System.Threading.ThreadPriority.Highest ? 1 : 0; }
+            get { return System.Threading.Thread.CurrentThread.Priority == ThreadPriority.Highest ? 1 : 0; }
         }
 
         /// <summary>
         /// <code>true</code> if the script is suspended, <code>false</code> otherwise;
         /// </summary>
-        public static bool A_IsSuspended
-        {
-            get { return suspended; }
-            set { suspended = value; }
-        }
+        public static bool A_IsSuspended { get; set; }
 
         /// <summary>
         /// The delay that will occur after each keystroke sent by <see cref="Send"/> and <see cref="ControlSend"/>.
@@ -447,7 +446,7 @@ namespace IronAHK.Rusty
         /// </summary>
         public static int A_LastError
         {
-            get { return System.Runtime.InteropServices.Marshal.GetLastWin32Error(); }
+            get { return Marshal.GetLastWin32Error(); }
         }
 
         /// <summary>
@@ -1196,7 +1195,7 @@ namespace IronAHK.Rusty
         /// </summary>
         public static string A_YWeek
         {
-            get { return DateTime.Now.ToString("yyyy") + Math.Floor((double)(DateTime.Now.DayOfYear / 12)).ToString(); }
+            get { return DateTime.Now.ToString("yyyy") + Math.Floor((double)(DateTime.Now.DayOfYear / 12)); }
         }
 
         /// <summary>
