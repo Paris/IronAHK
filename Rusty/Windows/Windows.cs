@@ -181,7 +181,7 @@ namespace IronAHK.Rusty
         [DllImport("user32.dll")]
         public static extern int EnumWindows(EnumFunc lpEnumFunc, int lParam);
 
-        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = false)]
+        [DllImport("user32.dll")]
         public static extern IntPtr SendMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
 
         [DllImport("user32.dll")]
@@ -190,7 +190,7 @@ namespace IronAHK.Rusty
         [DllImport("kernel32.dll")]
         public static extern void OutputDebugString(string lpOutputString);
 
-        [DllImport("user32.dll", CharSet = CharSet.Auto)]
+        [DllImport("user32.dll")]
         public static extern int GetWindowText(IntPtr hWnd, StringBuilder lpString, int nMaxCount);
 
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
