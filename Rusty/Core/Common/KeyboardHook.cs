@@ -244,7 +244,7 @@ namespace IronAHK.Rusty
                         case "del": value = Keys.Delete; break;
                         case "ins": value = Keys.Insert; break;
                         case "pgup": value = Keys.PageUp; break;
-                        case "pgdown": value = Keys.PageDown; break;
+                        case "pgdn": value = Keys.PageDown; break;
                         case "scrolllock": value = Keys.Scroll; break;
                         case "appskey": value = Keys.Apps; break;
                         case "ctrl": value = Keys.Control; break;
