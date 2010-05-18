@@ -210,9 +210,11 @@ namespace IronAHK.Rusty
                     sequence = sequence.Substring(0, z - 1).Trim();
                 }
 
-                if (sequence.EndsWith(Keyword_Up, StringComparison.OrdinalIgnoreCase))
+                z = sequence.LastIndexOf(Keyword_Up, StringComparison.OrdinalIgnoreCase);
+
+                if (z > 0 && char.IsWhiteSpace(sequence, z - 1))
                 {
-                    sequence = sequence.Substring(0, sequence.Length - Keyword_Up.Length).Trim();
+                    sequence = sequence.Substring(0, z).Trim();
                     options |= Options.Up;
                 }
 
