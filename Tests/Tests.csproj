@@ -104,6 +104,7 @@
     <None Include="Code\comments.ahk" />
     <Content Include="Code\copyright.txt" />
     <Content Include="Code\select.txt" />
+    <None Include="Code\gui.ahk" />
     <None Include="Code\line.ahk" />
     <None Include="Code\objects.ahk" />
     <None Include="Code\isolated.ahk" />
