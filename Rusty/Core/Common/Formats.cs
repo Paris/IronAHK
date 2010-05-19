@@ -87,6 +87,15 @@ namespace IronAHK.Rusty
             }
         }
 
+        static bool IsAnyBlank(params string[] args)
+        {
+            foreach (var str in args)
+                if (string.IsNullOrEmpty(str))
+                    return true;
+
+            return false;
+        }
+
         static string GuiId(ref string command)
         {
             string id = DefaultGuiId;

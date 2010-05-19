@@ -452,6 +452,12 @@ namespace IronAHK.Rusty
         /// <remarks>If <paramref name="all"/> is true and <see cref="A_StringCaseSense"/> is on a faster replacement algorithm is used.</remarks>
         public static void StringReplace(out string output, ref string input, string search, string replace, bool all)
         {
+            if (IsAnyBlank(input, search, replace))
+            {
+                output = string.Empty;
+                return;
+            }
+
             var compare = _StringCaseSense ?? StringComparison.OrdinalIgnoreCase;
 
             if (all && compare == StringComparison.Ordinal)
