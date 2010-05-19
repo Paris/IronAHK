@@ -769,7 +769,7 @@ namespace IronAHK.Scripting
                     if (LaxExpressions)
                         typed = parts[i] is CodeComplexAssignStatement || parts[i] is CodeComplexVariableReferenceExpression;
 
-                    if (!(typed || parts[i] is CodeMethodInvokeExpression || parts[i] is CodePrimitiveExpression))
+                    if (!(typed || parts[i] is CodeMethodInvokeExpression || parts[i] is CodePrimitiveExpression || parts[i] is CodeTernaryOperatorExpression))
                         throw new ArgumentOutOfRangeException();
 
                     if (i % 2 == 1)
