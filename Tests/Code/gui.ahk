@@ -6,7 +6,7 @@ If (!FileExist(f))
 Gui, Add, Text, vC1 Border gButtonClick, Test
 Gui, Add, Edit, vC2 ym
 Gui, Add, UpDown, vC3 Range5-10, 7
-Gui, Add, Pic, vC4 xm Section, X:\Media\Pictures\what 100.png
+Gui, Add, Pic, vC4 xm Section, %f%
 Gui, Add, Button, vC5 ys+10 h20, Click
 Gui, Add, CheckBox, vC6 xp+5 yp+30 CheckedGrey, Check
 Gui, Add, Radio, vC7, Option 1
