@@ -16,6 +16,9 @@ namespace IronAHK.Scripting
             int line = 0;
 
             var includes = new List<string>();
+            string includePath = string.Empty;
+
+            name = Path.GetFullPath(name);
 
             #endregion
 
@@ -71,32 +74,58 @@ namespace IronAHK.Scripting
                     int.TryParse(parts[1], out value);
 
                     bool next = true;
-                    bool include = false;
+                    bool includeOnce = false;
 
                     switch (parts[0].Substring(1).ToUpperInvariant())
                     {
                         case "INCLUDE":
-                            include = true;
+                            includeOnce = true;
                             goto case "INCLUDEAGAIN";
 
                         case "INCLUDEAGAIN":
-                            bool ignore = false;
-                            if (parts[1].Length > 3 && parts[1][0] == '*' && (parts[1][1] == 'i' || parts[1][1] == 'I') && IsSpace(parts[1][2]))
                             {
-                                parts[1] = parts[1].Substring(3);
-                                ignore = true;
+                                var replace = new[,]
+                                {
+                                    { "A_ScriptDir", Path.GetDirectoryName(name) },
+                                    { "A_AppData", Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) },
+                                    { "A_AppDataCommon", Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) },
+                                    { "ProgramFiles", Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) },
+                                };
+
+                                for (int i = 0; i < replace.Length / 2; i++)
+                                    parts[1] = Replace(parts[1], string.Format("{0}{1}{0}", Resolve, replace[i, 0]), replace[i, 1]);
+
+                                bool silent = false;
+
+                                if (parts[1].Length > 3 && parts[1][0] == '*' && (parts[1][1] == 'i' || parts[1][1] == 'I') && IsSpace(parts[1][2]))
+                                {
+                                    parts[1] = parts[1].Substring(3);
+                                    silent = true;
+                                }
+
+                                string path = parts[1];
+
+                                if (!Path.IsPathRooted(path) && Directory.Exists(includePath))
+                                    path = Path.Combine(includePath, path);
+
+                                path = Path.GetFullPath(path);
+
+                                if (!File.Exists(path))
+                                {
+                                    if (!silent)
+                                        throw new ParseException(ExIncludeNotFound, line);
+                                    break;
+                                }
+
+                                if (includeOnce && includes.Contains(path))
+                                    break;
+
+                                var newlist = Read(new StreamReader(path), path);
+                                list.AddRange(newlist);
+
+                                if (!includes.Contains(path))
+                                    includes.Add(path);
                             }
-
-                            if (include && !includes.Contains(new FileInfo(parts[1]).FullName))
-                                break;
-                            if (ignore && !File.Exists(parts[1]))
-                                break;
-
-                            parts[1] = new FileInfo(parts[1]).FullName;
-                            var newlist = Read(new StreamReader(parts[1]), parts[1]);
-                            list.AddRange(newlist);
-                            if (!includes.Contains(parts[1]))
-                                includes.Add(parts[1]);
                             break;
 
                         case "NOENV":
