@@ -168,5 +168,25 @@ namespace IronAHK.Scripting
 
             return buffer.ToString();
         }
+
+        string Replace(string input, string search, string replace)
+        {
+            var buf = new StringBuilder(input.Length);
+            int z = 0, n = 0, l = search.Length;
+
+            while (z < input.Length && (z = input.IndexOf(search, z, StringComparison.OrdinalIgnoreCase)) != -1)
+            {
+                if (n < z)
+                    buf.Append(input, n, z - n);
+                buf.Append(replace);
+                z += l;
+                n = z;
+            }
+
+            if (n < input.Length)
+                buf.Append(input, n, input.Length - n);
+
+            return buf.ToString();
+        }
     }
 }
