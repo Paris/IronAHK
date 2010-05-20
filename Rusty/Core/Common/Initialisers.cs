@@ -7,6 +7,9 @@ namespace IronAHK.Rusty
     {
         static void InitKeyboardHook()
         {
+            if (hotkeys == null)
+                hotkeys = new Dictionary<string, HotkeyDefinition>();
+
             if (keyboardHook != null)
                 return;
 
@@ -14,8 +17,6 @@ namespace IronAHK.Rusty
                 keyboardHook = new Windows.KeyboardHook();
             else
                 keyboardHook = new Linux.KeyboardHook();
-
-            hotkeys = new Dictionary<string, HotkeyDefinition>();
         }
     }
 }
