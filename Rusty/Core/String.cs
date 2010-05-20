@@ -465,7 +465,7 @@ namespace IronAHK.Rusty
             else
             {
                 var buf = new StringBuilder(input.Length);
-                int z = 0, n = 0, l = replace.Length;
+                int z = 0, n = 0, l = search.Length;
 
                 while (z < input.Length && (z = input.IndexOf(search, z, compare)) != -1)
                 {
