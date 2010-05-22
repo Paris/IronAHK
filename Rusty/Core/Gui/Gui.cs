@@ -370,6 +370,7 @@ namespace IronAHK.Rusty
                         parent.Controls.Add(edit);
                         control = edit;
                         edit.Text = content;
+                        edit.Tag = options;
                         opts = GuiApplyStyles(edit, options);
 
                         const int mw = 100;
@@ -428,6 +429,7 @@ namespace IronAHK.Rusty
                                 updown.Font = last.Font;
                                 updown.ForeColor = last.ForeColor;
                                 parent.Controls.RemoveAt(n);
+                                options = string.Concat(last.Tag as string ?? string.Empty, " ", options);
                             }
                         }
 
@@ -1072,15 +1074,10 @@ namespace IronAHK.Rusty
 
         static string GuiApplyStyles(Control control, string styles)
         {
-            if (control.Parent.Controls.Count == 1)
+            bool first = control.Parent.Controls.Count == 1, dx = false, dy = false, sec = false;
+
+            if (first)
                 control.Location = new Point(control.Parent.Margin.Left, control.Parent.Margin.Top);
-            else
-            {
-                var last = control.Parent.Controls[control.Parent.Controls.Count - 2];
-                control.Location = new Point(
-                    last.Location.X + last.Size.Width + last.Margin.Right + control.Margin.Left,
-                    last.Location.Y + last.Size.Height + last.Margin.Bottom + control.Margin.Top);
-            }
 
             control.Size = control.PreferredSize;
 
@@ -1156,14 +1153,20 @@ namespace IronAHK.Rusty
                         break;
 
                     case Keyword_Section:
-                        ((GuiInfo)control.Parent.Tag).Section = control.Location;
+                        sec = true;
                         break;
 
                     default:
                         switch (mode[0])
                         {
                             case 'x':
+                                dx = true;
+                                goto case 'h';
+
                             case 'y':
+                                dy = true;
+                                goto case 'h';
+
                             case 'w':
                             case 'h':
                                 GuiControlMove(mode, control);
@@ -1203,6 +1206,24 @@ namespace IronAHK.Rusty
                     excess[i] = opts[i];
             }
 
+            if (!first)
+            {
+                var last = control.Parent.Controls[control.Parent.Controls.Count - 2];
+
+                var loc = new Point(last.Location.X + last.Size.Width + last.Margin.Right + control.Margin.Left,
+                    last.Location.Y + last.Size.Height + last.Margin.Bottom + control.Margin.Top);
+
+                if (!dx && !dy)
+                    control.Location = new Point(last.Location.X, loc.Y);
+                else if (!dy)
+                    control.Location = new Point(control.Location.X, loc.Y);
+                else if (!dx)
+                    control.Location = new Point(loc.X, control.Location.Y);
+            }
+
+            if (sec)
+                ((GuiInfo)control.Parent.Tag).Section = control.Location;
+
             return string.Join(Keyword_Spaces[1].ToString(), excess).Trim();
         }
 
@@ -1239,7 +1260,8 @@ namespace IronAHK.Rusty
                                 p = alt ? control.Parent.Margin.Top : control.Parent.Margin.Left;
                                 break;
 
-                            case '+':
+                            case 'p':
+                            case 'P':
                                 {
                                     int n = control.Parent.Controls.Count - 2;
 
@@ -1248,6 +1270,18 @@ namespace IronAHK.Rusty
 
                                     var s = control.Parent.Controls[n].Location;
                                     p = alt ? s.Y : s.X;
+                                }
+                                break;
+
+                            case '+':
+                                {
+                                    int n = control.Parent.Controls.Count - 2;
+
+                                    if (n < 0)
+                                        return;
+
+                                    var s = control.Parent.Controls[n];
+                                    p = alt ? s.Location.Y + s.Size.Height : s.Location.X + s.Size.Width;
                                 }
                                 break;
 
