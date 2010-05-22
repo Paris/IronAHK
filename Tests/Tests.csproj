@@ -99,6 +99,7 @@
   <ItemGroup>
     <None Include=".gitignore" />
     <None Include="Code\.gitignore" />
+    <None Include="Code\click.ahk" />
     <None Include="Code\comments.ahk" />
     <Content Include="Code\copyright.txt" />
     <Content Include="Code\select.txt" />

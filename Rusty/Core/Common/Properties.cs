@@ -201,9 +201,6 @@ namespace IronAHK.Rusty
         [ThreadStatic]
         static bool? _TitleMatchModeSpeed;
 
-        [ThreadStatic]
-        static CoordModeTypes _COORDMODE;
-
         #endregion
 
         #region Strings
@@ -232,19 +229,25 @@ namespace IronAHK.Rusty
 
         #endregion
 
+        #region Coordmode
+
+        [ThreadStatic]
+        static CoordModeTypes _COORDMODE;
+
 
         struct CoordModeTypes
         {
-            public Coordmodes Tooltip = Coordmodes.RELATIVE;
-            public Coordmodes Pixel = Coordmodes.RELATIVE;
-            public Coordmodes Mouse = Coordmodes.RELATIVE;
-            public Coordmodes Caret = Coordmodes.RELATIVE;
-            public Coordmodes Menu = Coordmodes.RELATIVE;
+            public Coordmodes Tooltip;
+            public Coordmodes Pixel;
+            public Coordmodes Mouse;
+            public Coordmodes Caret;
+            public Coordmodes Menu;
         }
         public enum Coordmodes
         {
-            SCREEN,
-            RELATIVE
+            RELATIVE,
+            SCREEN
         }
+        #endregion
     }
 }
