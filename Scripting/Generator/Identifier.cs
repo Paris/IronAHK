@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Text;
 
 namespace IronAHK.Scripting
@@ -9,7 +9,7 @@ namespace IronAHK.Scripting
         {
             var result = new StringBuilder(value.Length * 5);
 
-            foreach (char sym in value)
+            foreach (var sym in value)
             {
                 if (Parser.IsIdentifier(sym))
                     result.Append(sym);
@@ -34,7 +34,7 @@ namespace IronAHK.Scripting
             if (value.Length == 0)
                 return false;
 
-            foreach (char sym in value)
+            foreach (var sym in value)
                 if (!Parser.IsIdentifier(sym))
                     return false;
 

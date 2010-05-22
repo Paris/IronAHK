@@ -154,7 +154,7 @@ namespace IronAHK.Scripting
             
             #region Save back the variables
             // Save the variables passed to reference back in Rusty's variable handling
-            foreach(LocalBuilder Builder in ByRef.Keys)
+            foreach(var Builder in ByRef.Keys)
             {
                 if(ByRef[Builder] is CodeComplexVariableReferenceExpression)
                 {
@@ -214,11 +214,11 @@ namespace IronAHK.Scripting
                 target = Type.GetType(((CodeTypeReferenceExpression)reference.TargetObject).Type.BaseType);
             else if (reference.TargetObject is CodeExpression)
             {
-                target = EmitExpression(reference.TargetObject as CodeExpression);
+                target = EmitExpression(reference.TargetObject);
             }
             else throw new CompileException(reference.TargetObject, "Non-static method referencing neither type nor expression");
 
-            Type[] parameters = new Type[reference.TypeArguments.Count];
+            var parameters = new Type[reference.TypeArguments.Count];
 
             for (int i = 0; i < reference.TypeArguments.Count; i++)
                 parameters[i] = Type.GetType(reference.TypeArguments[i].BaseType);

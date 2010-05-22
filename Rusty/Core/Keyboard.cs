@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Windows.Forms;
 
 namespace IronAHK.Rusty
 {
@@ -45,8 +44,7 @@ namespace IronAHK.Rusty
                 cond[win, 0] = Label; // title
                 cond[win, 1] = Options; // text
 
-                keyCondition = new GenericFunction(delegate(object[] args)
-                {
+                keyCondition = new GenericFunction(delegate {
                     return HotkeyPrecondition(cond);
                 });
                 
@@ -62,7 +60,7 @@ namespace IronAHK.Rusty
             bool? enabled = true;
             bool error = false;
 
-            foreach (string option in ParseOptions(Options))
+            foreach (var option in ParseOptions(Options))
             {
                 switch (option.ToLowerInvariant())
                 {

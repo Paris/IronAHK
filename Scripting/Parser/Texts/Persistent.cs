@@ -1,9 +1,9 @@
-﻿
+
 namespace IronAHK.Scripting
 {
     partial class Parser
     {
-        bool persistent = false;
+        bool persistent;
 
         void CheckPersistent(string name)
         {

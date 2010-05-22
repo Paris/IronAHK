@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
@@ -56,9 +57,7 @@ namespace IronAHK.Rusty
 
             Keys keys, extra;
             Options options;
-            GenericFunction proc;
             GenericFunction precondition;
-            bool enabled;
             string name;
 
             [Flags]
@@ -71,8 +70,8 @@ namespace IronAHK.Rusty
                 this.keys = keys;
                 this.extra = extra;
                 this.options = options;
-                this.proc = proc;
-                enabled = true;
+                this.Proc = proc;
+                Enabled = true;
             }
 
             #region Accessors
@@ -92,11 +91,7 @@ namespace IronAHK.Rusty
                 get { return options; }
             }
 
-            public GenericFunction Proc
-            {
-                get { return proc; }
-                set { proc = value; }
-            }
+            public GenericFunction Proc { get; set; }
 
             public GenericFunction Precondition
             {
@@ -104,17 +99,15 @@ namespace IronAHK.Rusty
                 set { precondition = value; }
             }
 
-            public bool Enabled
-            {
-                get { return enabled; }
-                set { enabled = value; }
-            }
+            public bool Enabled { get; set; }
 
             public string Name
             {
                 get { return name; }
                 set { name = value; }
             }
+
+            public string Typed { get; set; }
 
             #endregion
 
@@ -131,6 +124,7 @@ namespace IronAHK.Rusty
             {
                 Keys keys = Keys.None, extra = Keys.None;
                 Options options = Options.None;
+                string typed = string.Empty;
 
                 #region Modifiers
 
@@ -195,30 +189,53 @@ namespace IronAHK.Rusty
                     {
                         string alt = sequence.Substring(z).Trim();
                         extra = ParseKey(alt);
+
+                        if (alt.Length == 1)
+                            typed = alt;
                     }
                     sequence = sequence.Substring(0, z - 1).Trim();
                 }
 
-                if (sequence.EndsWith(Keyword_Up, StringComparison.OrdinalIgnoreCase))
+                z = sequence.LastIndexOf(Keyword_Up, StringComparison.OrdinalIgnoreCase);
+
+                if (z > 0 && char.IsWhiteSpace(sequence, z - 1))
                 {
-                    sequence = sequence.Substring(0, sequence.Length - Keyword_Up.Length).Trim();
+                    sequence = sequence.Substring(0, z).Trim();
                     options |= Options.Up;
                 }
 
                 keys |= ParseKey(sequence);
 
-                return new HotkeyDefinition(keys, extra, options, null);
+                if (typed.Length == 0 && sequence.Length == 1)
+                    typed = sequence;
+
+                return new HotkeyDefinition(keys, extra, options, null) { Typed = typed };
             }
 
             static Keys ParseKey(string name)
             {
-                object value = Keys.None;
+                var value = Keys.None;
+                int n;
 
-                // TODO: SC and VK key codes
+                if (name.StartsWith(Keyword_HotkeyVK, StringComparison.OrdinalIgnoreCase))
+                {
+                    name = name.Substring(Keyword_HotkeyVK.Length);
+
+                    if (int.TryParse(name, out n) && n > -1)
+                        value = (Keys)n;
+                }
+                else if (name.StartsWith(Keyword_HotkeySC, StringComparison.OrdinalIgnoreCase) && Environment.OSVersion.Platform == PlatformID.Win32NT)
+                {
+                    name = name.Substring(Keyword_HotkeySC.Length);
+
+                    if (int.TryParse(name, NumberStyles.HexNumber, System.Threading.Thread.CurrentThread.CurrentCulture, out n) && n > -1)
+                        value = (Keys)Windows.MapVirtualKeyEx((uint)n, Windows.MAPVK_VSC_TO_VK_EX, Windows.GetKeyboardLayout(0));
+                }
 
                 try
                 {
-                    value = Enum.Parse(typeof(Keys), name, true);
+                    if (value == Keys.None)
+                        value = (Keys)Enum.Parse(typeof(Keys), name, true);
                 }
                 catch (ArgumentException)
                 {
@@ -230,7 +247,7 @@ namespace IronAHK.Rusty
                         case "del": value = Keys.Delete; break;
                         case "ins": value = Keys.Insert; break;
                         case "pgup": value = Keys.PageUp; break;
-                        case "pgdown": value = Keys.PageDown; break;
+                        case "pgdn": value = Keys.PageDown; break;
                         case "scrolllock": value = Keys.Scroll; break;
                         case "appskey": value = Keys.Apps; break;
                         case "ctrl": value = Keys.Control; break;
@@ -266,7 +283,7 @@ namespace IronAHK.Rusty
                     }
                 }
 
-                return (Keys)value;
+                return value;
             }
 
             public override string ToString()
@@ -278,10 +295,7 @@ namespace IronAHK.Rusty
         internal class HotstringDefinition
         {
             string sequence;
-            string endchars;
-            Options options;
             GenericFunction proc;
-            bool enabled;
             string name;
 
             [Flags]
@@ -292,7 +306,7 @@ namespace IronAHK.Rusty
                 this.sequence = sequence;
                 this.proc = proc;
 
-                endchars = "-()[]{}:;'\"/\\,.?!\r\n \t";
+                EndChars = "-()[]{}:;'\"/\\,.?!\r\n \t";
             }
 
             public string Sequence
@@ -300,28 +314,16 @@ namespace IronAHK.Rusty
                 get { return sequence; }
             }
 
-            public string EndChars
-            {
-                get { return endchars; }
-                set { endchars = value; }
-            }
+            public string EndChars { get; set; }
 
-            public Options EnabledOptions
-            {
-                get { return options; }
-                set { options = value; }
-            }
+            public Options EnabledOptions { get; set; }
 
             public GenericFunction Proc
             {
                 get { return proc; }
             }
 
-            public bool Enabled
-            {
-                get { return enabled; }
-                set { enabled = value; }
-            }
+            public bool Enabled { get; set; }
 
             public string Name
             {
@@ -506,7 +508,7 @@ namespace IronAHK.Rusty
 
                 foreach (var hotkey in hotkeys)
                 {
-                    bool match = (hotkey.Keys & ~Keys.Modifiers) == key;
+                    bool match = (hotkey.Keys & ~Keys.Modifiers) == key || hotkey.Typed.Equals(typed, StringComparison.OrdinalIgnoreCase);
                     bool up = (hotkey.EnabledOptions & HotkeyDefinition.Options.Up) == HotkeyDefinition.Options.Up;
 
                     if (hotkey.Enabled && match && HasModifiers(hotkey) && up != down)
@@ -518,19 +520,19 @@ namespace IronAHK.Rusty
                     }
                 }
 
-                new Thread(new ThreadStart(delegate()
-                {
-                    foreach (var hotkey in exec)
-                    {
-                        priorTime = currentTime;
-                        currentTime = Environment.TickCount;
-                        previous = current;
-                        current = hotkey.ToString();
+                new Thread(delegate()
+                               {
+                                   foreach (var hotkey in exec)
+                                   {
+                                       priorTime = currentTime;
+                                       currentTime = Environment.TickCount;
+                                       previous = current;
+                                       current = hotkey.ToString();
 
-                        if (hotkey.Condition())
-                            hotkey.Proc(new object[] { });
-                    }
-                })).Start();
+                                       if (hotkey.Condition())
+                                           hotkey.Proc(new object[] { });
+                                   }
+                               }).Start();
 
             next:
 
@@ -590,39 +592,39 @@ namespace IronAHK.Rusty
                 {
                     block = true;
 
-                    new Thread(new ThreadStart(delegate()
-                    {
-                        priorTime = currentTime;
-                        currentTime = Environment.TickCount;
-                        previous = current;
-                        current = hotstring.ToString();
-                        int length = hotstring.Sequence.Length;
-                        bool auto = (hotstring.EnabledOptions & HotstringDefinition.Options.AutoTrigger) == HotstringDefinition.Options.AutoTrigger;
+                    new Thread(delegate()
+                                   {
+                                       priorTime = currentTime;
+                                       currentTime = Environment.TickCount;
+                                       previous = current;
+                                       current = hotstring.ToString();
+                                       int length = hotstring.Sequence.Length;
+                                       bool auto = (hotstring.EnabledOptions & HotstringDefinition.Options.AutoTrigger) == HotstringDefinition.Options.AutoTrigger;
 
-                        if (auto)
-                            length--;
+                                       if (auto)
+                                           length--;
 
-                        if ((hotstring.EnabledOptions & HotstringDefinition.Options.Backspace) == HotstringDefinition.Options.Backspace && length > 0)
-                        {
-                            int n = length + 1;
-                            history.Remove(history.Length - n, n);
-                            Backspace(length);
-                        }
+                                       if ((hotstring.EnabledOptions & HotstringDefinition.Options.Backspace) == HotstringDefinition.Options.Backspace && length > 0)
+                                       {
+                                           int n = length + 1;
+                                           history.Remove(history.Length - n, n);
+                                           Backspace(length);
+                                       }
 
-                        hotstring.Proc(new object[] { });
+                                       hotstring.Proc(new object[] { });
 
-                        if ((hotstring.EnabledOptions & HotstringDefinition.Options.OmitEnding) == HotstringDefinition.Options.OmitEnding)
-                        {
-                            if ((hotstring.EnabledOptions & HotstringDefinition.Options.Backspace) == HotstringDefinition.Options.Backspace &&
-                                (hotstring.EnabledOptions & HotstringDefinition.Options.AutoTrigger) != HotstringDefinition.Options.AutoTrigger)
-                            {
-                                history.Remove(history.Length - 1, 1);
-                                Backspace(1);
-                            }
-                        }
-                        else if (trigger != null && !auto)
-                            Send(trigger);
-                    })).Start();
+                                       if ((hotstring.EnabledOptions & HotstringDefinition.Options.OmitEnding) == HotstringDefinition.Options.OmitEnding)
+                                       {
+                                           if ((hotstring.EnabledOptions & HotstringDefinition.Options.Backspace) == HotstringDefinition.Options.Backspace &&
+                                               (hotstring.EnabledOptions & HotstringDefinition.Options.AutoTrigger) != HotstringDefinition.Options.AutoTrigger)
+                                           {
+                                               history.Remove(history.Length - 1, 1);
+                                               Backspace(1);
+                                           }
+                                       }
+                                       else if (trigger != null && !auto)
+                                           Send(trigger);
+                                   }).Start();
                 }
 
                 return block;

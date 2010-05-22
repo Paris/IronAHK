@@ -6,16 +6,12 @@ namespace IronAHK.Scripting
 {
     class MethodCollection : List<MethodInfo>
     {
-        public MethodCollection() 
-        {
-        }
-
         public MethodInfo BestMatch(string name, int length)
         {
             MethodInfo result = null;
             int last = -1;
 
-            foreach (MethodInfo writer in this)
+            foreach (var writer in this)
             {
                 // find method with same name (case insensitive)
                 if (!name.Equals(writer.Name, StringComparison.OrdinalIgnoreCase))

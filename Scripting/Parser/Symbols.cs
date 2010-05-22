@@ -193,6 +193,7 @@ namespace IronAHK.Scripting
         const string ExIntlLineMismatch = "Line and index counts mismatched";
         const string ExContJoinTooLong = "Join string for continuation section is too long";
         const string ExTooFewParams = "Too few parameters passed to function";
+        const string ExIncludeNotFound = "Include file not found";
 
         #endregion
     }

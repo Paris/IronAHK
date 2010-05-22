@@ -90,13 +90,13 @@ namespace IronAHK.Scripting
 
             if(T != null && T.IsArray)
             {
-                object[] Contents = Primitive.Value as object[];
+                var Contents = Primitive.Value as object[];
                 Type Element = T.GetElementType();
                 Generator.Emit(OpCodes.Ldc_I4, Contents.Length);
                 Generator.Emit(OpCodes.Newarr, Element);
 
                 int i = 0;
-                foreach(object Value in Contents)
+                foreach(var Value in Contents)
                 {
                     Generator.Emit(OpCodes.Dup);
                     Generator.Emit(OpCodes.Ldc_I4, i);
@@ -149,7 +149,7 @@ namespace IronAHK.Scripting
                 var array = new CodeArrayCreateExpression();
                 array.CreateType = new CodeTypeReference(typeof(object));
 
-                foreach (object sub in (object[])Value)
+                foreach (var sub in (object[])Value)
                     array.Initializers.Add(new CodePrimitiveExpression(sub));
 
                 EmitDynamicName(array);
@@ -157,7 +157,7 @@ namespace IronAHK.Scripting
             }
             else if(T == typeof(bool))
             {
-                bool val = (bool) Value;
+                var val = (bool) Value;
                 Debug("Pushing bool: "+Value);
                 
                 Generator.Emit(val ? OpCodes.Ldc_I4_1 : OpCodes.Ldc_I4_0);

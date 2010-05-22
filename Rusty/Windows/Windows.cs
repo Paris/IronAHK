@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -11,7 +11,7 @@ namespace IronAHK.Rusty
 
         static WindowType find, exclude;
         static IntPtr[] matches = new IntPtr[31];
-        static int count = 0;
+        static int count;
 
         public static IntPtr FindWindow(string WinTitle, string WinText, string ExcludeTitle, string ExcludeText)
         {
@@ -45,8 +45,10 @@ namespace IronAHK.Rusty
             count = 0;
 
             if (find.Title == "A")
-                matches[0] = Windows.GetActiveWindow();
-            else EnumWindows(new EnumFunc(FilterWindow), 0);
+                matches[0] = GetActiveWindow();
+            else if (find.ID != 0 && Control.Length == 0)
+                matches[0] = new IntPtr(find.ID);
+            else EnumWindows(FilterWindow, 0);
 
             if (find.Control.Length != 0)
             {
@@ -65,7 +67,7 @@ namespace IronAHK.Rusty
         static bool FilterWindow(IntPtr hwnd, int lParam)
         {
             string title = GetWindowText(hwnd).ToLowerInvariant();
-            StringBuilder sb = new StringBuilder(Math.Max(find.Class.Length, exclude.Class.Length));
+            var sb = new StringBuilder(Math.Max(find.Class.Length, exclude.Class.Length));
             string classname = GetClassName(hwnd, sb, sb.Capacity).ToString();
 
             int id = hwnd.ToInt32();
@@ -113,14 +115,15 @@ namespace IronAHK.Rusty
 
         public static string GetWindowText(IntPtr hwnd)
         {
-            StringBuilder sb = new StringBuilder(GetWindowTextLength(hwnd) + 1);
-            GetWindowText(hwnd, sb, sb.Capacity);
+            var len = SendMessage(hwnd, WM_GETTEXTLENGTH, IntPtr.Zero, IntPtr.Zero).ToInt32();
+            var sb = new StringBuilder(len + 1);
+            SendMessage(hwnd, WM_GETTEXT, sb.Capacity, sb);
             return sb.ToString();
         }
 
         public static string GetClassName(IntPtr hwnd)
         {
-            StringBuilder sb = new StringBuilder(1024);
+            var sb = new StringBuilder(1024);
             return GetClassName(hwnd, sb, sb.Capacity).ToString();
         }
 
@@ -179,8 +182,11 @@ namespace IronAHK.Rusty
         [DllImport("user32.dll")]
         public static extern int EnumWindows(EnumFunc lpEnumFunc, int lParam);
 
-        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = false)]
+        [DllImport("user32.dll")]
         public static extern IntPtr SendMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
+
+        [DllImport("user32.dll")]
+        static extern int SendMessage(IntPtr hwnd, uint msg, int wParam, StringBuilder sb);
 
         [DllImport("user32.dll")]
         public static extern bool PostMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
@@ -188,7 +194,7 @@ namespace IronAHK.Rusty
         [DllImport("kernel32.dll")]
         public static extern void OutputDebugString(string lpOutputString);
 
-        [DllImport("user32.dll", CharSet = CharSet.Auto)]
+        [DllImport("user32.dll")]
         public static extern int GetWindowText(IntPtr hWnd, StringBuilder lpString, int nMaxCount);
 
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
@@ -309,6 +315,9 @@ namespace IronAHK.Rusty
         public const int HWND_BROADCAST = 0xffff;
         public const uint WM_SETTINGCHANGE = 0x001A;
 
+        public const int WM_GETTEXT = 0x000D;
+        public const int WM_GETTEXTLENGTH = 0x000E;
+
         public const uint WM_SYSCOMMAND = 0x0112;
         public const int SC_CLOSE = 0xF060;
 
@@ -319,15 +328,15 @@ namespace IronAHK.Rusty
         class WindowType
         {
             string title = string.Empty, classname = string.Empty, group = string.Empty, text = string.Empty, control = string.Empty;
-            int id = 0;
-            uint pid = 0;
-            public string[] Bounds = new string[] { "ahk" };
+            int id;
+            uint pid;
+            public string[] Bounds = new[] { "ahk" };
 
             enum Mode { Title, Class, ID, PID, Group };
 
             public WindowType(string Criteria)
             {
-                foreach (string criterion in Criteria.Trim().Split(Bounds, StringSplitOptions.RemoveEmptyEntries))
+                foreach (var criterion in Criteria.Trim().Split(Bounds, StringSplitOptions.RemoveEmptyEntries))
                 {
                     if (criterion.Substring(0, 1) == "_")
                     {

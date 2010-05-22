@@ -12,7 +12,7 @@ namespace IronAHK.Scripting
         {
             Setup(options);
                 
-            foreach(CodeCompileUnit Unit in compilationUnits)
+            foreach(var Unit in compilationUnits)
             {
                 EmitNamespace(ABuilder, Unit.Namespaces[0]);
             }
@@ -40,12 +40,12 @@ namespace IronAHK.Scripting
 
         public CompilerResults CompileAssemblyFromDom(CompilerParameters options, CodeCompileUnit compilationUnit)
         {
-            return CompileAssemblyFromDomBatch(options, new CodeCompileUnit[] { compilationUnit });
+            return CompileAssemblyFromDomBatch(options, new[] { compilationUnit });
         }
         
         public CompilerResults CompileAssemblyFromFile(CompilerParameters options, string fileName)
         {
-            return CompileAssemblyFromFileBatch(options, new string[] { fileName });
+            return CompileAssemblyFromFileBatch(options, new[] { fileName });
         }
     
         public CompilerResults CompileAssemblyFromFileBatch(CompilerParameters options, string[] fileNames)
@@ -60,7 +60,7 @@ namespace IronAHK.Scripting
 
         public CompilerResults CompileAssemblyFromSource(CompilerParameters options, string source)
         {
-            return CompileAssemblyFromSourceBatch(options, new string[] { source });
+            return CompileAssemblyFromSourceBatch(options, new[] { source });
         }
     
         public CompilerResults CompileAssemblyFromSourceBatch(CompilerParameters options, string[] sources)

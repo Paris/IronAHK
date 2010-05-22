@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Reflection;
 using System.Windows.Forms;
 
@@ -162,7 +162,7 @@ namespace IronAHK.Rusty
                 {
                     gtk.GetType("Gtk.Application").InvokeMember("Init", BindingFlags.InvokeMethod, null, null, new object[] { });
 
-                    var md_ctor = gtk.GetType("Gtk.MessageDialog").GetConstructor(new Type[] {
+                    var md_ctor = gtk.GetType("Gtk.MessageDialog").GetConstructor(new[] {
                         gtk.GetType("Gtk.Window"), typeof(int), typeof(int), typeof(int), typeof(string), typeof(object[]) });
 
                     var md = md_ctor.Invoke(new object[] { null, 1, 4, 1, Text, new object[] { } });

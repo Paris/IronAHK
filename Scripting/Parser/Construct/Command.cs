@@ -1,4 +1,4 @@
-﻿using System.CodeDom;
+using System.CodeDom;
 using System.Collections.Generic;
 
 namespace IronAHK.Scripting
@@ -7,7 +7,7 @@ namespace IronAHK.Scripting
     {
         CodeMethodInvokeExpression ParseCommand(string code)
         {
-            char[] anchors = new char[Spaces.Length + 1];
+            var anchors = new char[Spaces.Length + 1];
             anchors[0] = Multicast;
             Spaces.CopyTo(anchors, 1);
 
@@ -26,7 +26,7 @@ namespace IronAHK.Scripting
                     parts[1] = parts[1].Substring(cast + 1);
 
                 if (parts[1].Length != 0)
-                    foreach (string param in SplitCommandParameters(parts[1]))
+                    foreach (var param in SplitCommandParameters(parts[1]))
                         invoke.Parameters.Add(ParseCommandParameter(param));
             }
 

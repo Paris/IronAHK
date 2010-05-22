@@ -1,13 +1,12 @@
-﻿using System;
+using System;
 using System.CodeDom;
 using System.Collections.Generic;
-using System.Text;
 
 namespace IronAHK.Scripting
 {
     partial class Parser
     {
-        Dictionary<string, string> conditionIds = null;
+        Dictionary<string, string> conditionIds;
 
         CodeMethodReturnStatement ParseHotkey(List<CodeLine> lines, int index)
         {
@@ -22,7 +21,7 @@ namespace IronAHK.Scripting
                 code = code.Substring(z);
             }
 
-            string[] parts = code.Split(new string[] { HotkeySignal }, 2, StringSplitOptions.None);
+            string[] parts = code.Split(new[] { HotkeySignal }, 2, StringSplitOptions.None);
 
             if (parts.Length == 0 || parts[0].Length == 0)
                 throw new ParseException("Blank hotkey definition");

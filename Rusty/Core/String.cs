@@ -157,7 +157,7 @@ namespace IronAHK.Rusty
             index = Math.Min(0, index - 1);
             Match res = exp.Match(input, index);
 
-            string[] matches = new string[res.Groups.Count];
+            var matches = new string[res.Groups.Count];
             for (int i = 0; i < res.Groups.Count; i++)
                 matches[i] = res.Groups[i].Value;
 
@@ -267,7 +267,7 @@ namespace IronAHK.Rusty
         /// </remarks>
         public static void Sort(ref string input, params string[] options)
         {
-            var opts = KeyValues(string.Join(",", options), true, new char[] { 'f' });
+            var opts = KeyValues(string.Join(",", options), true, new[] { 'f' });
             MethodInfo function = null;
 
             if (opts.ContainsKey('f'))
@@ -287,7 +287,7 @@ namespace IronAHK.Rusty
                 opts.Remove('d');
             }
 
-            string[] list = input.Split(new char[] { split }, StringSplitOptions.RemoveEmptyEntries);
+            string[] list = input.Split(new[] { split }, StringSplitOptions.RemoveEmptyEntries);
 
             if (split == '\n')
             {
@@ -301,7 +301,7 @@ namespace IronAHK.Rusty
 
             if (opts.ContainsKey('z') && input[input.Length - 1] == split)
             {
-                Array.Resize<string>(ref list, list.Length + 1);
+                Array.Resize(ref list, list.Length + 1);
                 list[list.Length - 1] = string.Empty;
                 opts.Remove('z');
             }
@@ -357,7 +357,7 @@ namespace IronAHK.Rusty
             }
 
             var comp = new CaseInsensitiveComparer();
-            var rand = new System.Random();
+            var rand = new Random();
 
             Array.Sort(list, delegate(string x, string y)
             {
@@ -406,7 +406,7 @@ namespace IronAHK.Rusty
             {
                 error = 0;
                 var ulist = new List<string>(list.Length);
-                foreach (string item in list)
+                foreach (var item in list)
                     if (!ulist.Contains(item))
                         ulist.Add(item);
                     else
@@ -452,6 +452,12 @@ namespace IronAHK.Rusty
         /// <remarks>If <paramref name="all"/> is true and <see cref="A_StringCaseSense"/> is on a faster replacement algorithm is used.</remarks>
         public static void StringReplace(out string output, ref string input, string search, string replace, bool all)
         {
+            if (IsAnyBlank(input, search, replace))
+            {
+                output = string.Empty;
+                return;
+            }
+
             var compare = _StringCaseSense ?? StringComparison.OrdinalIgnoreCase;
 
             if (all && compare == StringComparison.Ordinal)
@@ -459,7 +465,7 @@ namespace IronAHK.Rusty
             else
             {
                 var buf = new StringBuilder(input.Length);
-                int z = 0, n = 0, l = replace.Length;
+                int z = 0, n = 0, l = search.Length;
 
                 while (z < input.Length && (z = input.IndexOf(search, z, compare)) != -1)
                 {
@@ -491,7 +497,7 @@ namespace IronAHK.Rusty
             if (delimiters.Length == 0)
             {
                 var list = new List<string>(input.Length);
-                foreach (char letter in input)
+                foreach (var letter in input)
                     if (trim.IndexOf(letter) == -1)
                         list.Add(letter.ToString());
                 output = list.ToArray();

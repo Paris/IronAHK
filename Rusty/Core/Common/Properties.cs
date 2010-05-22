@@ -1,6 +1,8 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
+using System.Security;
 using System.Windows.Forms;
+using Timer = System.Timers.Timer;
 
 namespace IronAHK.Rusty
 {
@@ -45,7 +47,7 @@ namespace IronAHK.Rusty
 
         static KeyboardHook keyboardHook;
 
-        static bool suspended = false;
+        static bool suspended;
 
         [ThreadStatic]
         static int? _KeyDelay;
@@ -174,7 +176,7 @@ namespace IronAHK.Rusty
         static string runUser;
 
         [ThreadStatic]
-        static System.Security.SecureString runPassword;
+        static SecureString runPassword;
 
         [ThreadStatic]
         static string runDomain;
@@ -221,7 +223,7 @@ namespace IronAHK.Rusty
 
         #region Misc
 
-        static Dictionary<string, System.Timers.Timer> timers;
+        static Dictionary<string, Timer> timers;
 
         static EventHandler onExit;
 

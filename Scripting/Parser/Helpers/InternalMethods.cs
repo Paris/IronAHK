@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using IronAHK.Rusty;
 
 namespace IronAHK.Scripting
@@ -25,22 +25,22 @@ namespace IronAHK.Scripting
 
             public static MethodReference Hotkey
             {
-                get { return new MethodReference(typeof(Core), "Hotkey", new Type[] { typeof(string), typeof(string), typeof(string) }); }
+                get { return new MethodReference(typeof(Core), "Hotkey", new[] { typeof(string), typeof(string), typeof(string) }); }
             }
 
             public static MethodReference Hotstring
             {
-                get { return new MethodReference(typeof(Core), "Hotstring", new Type[] { typeof(string), typeof(string), typeof(string) }); }
+                get { return new MethodReference(typeof(Core), "Hotstring", new[] { typeof(string), typeof(string), typeof(string) }); }
             }
 
             public static MethodReference Send
             {
-                get { return new MethodReference(typeof(Core), "Send", new Type[] { typeof(string) }); }
+                get { return new MethodReference(typeof(Core), "Send", new[] { typeof(string) }); }
             }
 
             public static MethodReference LabelCall
             {
-                get { return new MethodReference(typeof(Script), "LabelCall", new Type[] { typeof(string) }); }
+                get { return new MethodReference(typeof(Script), "LabelCall", new[] { typeof(string) }); }
             }
 
             #endregion
@@ -161,7 +161,7 @@ namespace IronAHK.Scripting
 
             public static MethodReference Concat
             {
-                get { return new MethodReference(typeof(string), "Concat", new Type[] { typeof(string[]) }); }
+                get { return new MethodReference(typeof(string), "Concat", new[] { typeof(string[]) }); }
             }
 
             #endregion

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.CodeDom;
 using System.CodeDom.Compiler;
 using System.IO;
@@ -90,7 +90,7 @@ namespace IronAHK.Scripting
             else if (statement is CodeCommentStatement)
                 EmitComment((CodeCommentStatement)statement);
             else
-                throw new ArgumentException("Unrecognised statement: " + statement.GetType().ToString());
+                throw new ArgumentException("Unrecognised statement: " + statement.GetType());
         }
 
         #region Misc.

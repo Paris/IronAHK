@@ -1,6 +1,7 @@
-﻿using System;
+using System;
 using System.CodeDom;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 
 namespace IronAHK.Scripting
@@ -76,7 +77,7 @@ namespace IronAHK.Scripting
                     return new CodePrimitiveExpression(line);
 
                 case "a_linefile":
-                    return new CodePrimitiveExpression(System.IO.Path.GetFullPath(fileName));
+                    return new CodePrimitiveExpression(Path.GetFullPath(fileName));
 
                 case "a_thisfunc":
                     return new CodePrimitiveExpression(Scope);
@@ -149,7 +150,7 @@ namespace IronAHK.Scripting
         {
             var list = new List<CodeExpression>(parts.Length);
 
-            foreach (CodeExpression part in parts)
+            foreach (var part in parts)
             {
                 if (part is CodePrimitiveExpression)
                 {

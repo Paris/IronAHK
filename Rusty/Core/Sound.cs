@@ -142,7 +142,7 @@ namespace IronAHK.Rusty
             if (string.IsNullOrEmpty(percent))
                 percent = "0";
 
-            IntPtr dev = new IntPtr(device);
+            var dev = new IntPtr(device);
             uint vol;
 
             char p = percent[0];
