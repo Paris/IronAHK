@@ -44,8 +44,14 @@ namespace IronAHK.Rusty
                 MousePos.X = Convert.ToInt32(Match.Groups[1].Value);
                 MousePos.Y = Convert.ToInt32(Match.Groups[2].Value);
                 ParamLine = RE_Coord.Replace(ParamLine, ""); //remove coord
-
                 Cursor CurrentCursor = new Cursor(Cursor.Current.Handle);
+                if (_COORDMODE.Mouse == Coordmodes.RELATIVE)
+                {
+                    Windows.RECT rect;
+                    Windows.GetWindowRect(Windows.GetForegroundWindow(), out rect);
+                    MousePos.X += rect.Left;
+                    MousePos.Y += rect.Top;
+                }
                 Cursor.Position = MousePos;
             }
             //click count
@@ -229,7 +235,7 @@ namespace IronAHK.Rusty
             
             OutputVarX = pos.X;
             OutputVarY = pos.Y;
-            if (/*_CoordMode.Mouse*/ true)
+            if (_COORDMODE.Mouse == Coordmodes.RELATIVE)
             {
                 Windows.RECT rect;
                 Windows.GetWindowRect(Windows.GetForegroundWindow(), out rect);
