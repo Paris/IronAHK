@@ -1,6 +1,4 @@
 using System;
-using System.Diagnostics;
-using System.Windows.Forms;
 
 namespace IronAHK.Rusty
 {
@@ -35,7 +33,7 @@ namespace IronAHK.Rusty
         /// <returns>The ASCII code. If String is empty, 0 is returned.</returns>
         public static decimal Asc(string String)
         {
-            return string.IsNullOrEmpty(String) ? 0 : (decimal)String[0];
+            return string.IsNullOrEmpty(String) ? 0 : String[0];
         }
 
         /// <summary>
@@ -109,22 +107,22 @@ namespace IronAHK.Rusty
             {
                 case Keyword_Seconds:
                 case "s":
-                    x.AddSeconds((double)Value);
+                    x.AddSeconds(Value);
                     break;
 
                 case Keyword_Minutes:
                 case "m":
-                    x.AddMinutes((double)Value);
+                    x.AddMinutes(Value);
                     break;
 
                 case Keyword_Hours:
                 case "h":
-                    x.AddHours((double)Value);
+                    x.AddHours(Value);
                     break;
 
                 case Keyword_Days:
                 case "d":
-                    x.AddDays((double)Value);
+                    x.AddDays(Value);
                     break;
 
                 default:
@@ -210,7 +208,7 @@ namespace IronAHK.Rusty
         /// <param name="Max">The largest number that can be generated, which can be negative or floating point. If omitted, the largest number will be 2147483647 (which is also the largest allowed integer value -- but floating point numbers have no restrictions).</param>
         public static void Random(out double OutputVar, double Min, double Max)
         {
-            System.Random r = new Random();
+            var r = new Random();
             double x = Math.IEEERemainder(Min, 1), y = Math.IEEERemainder(Max, 1), z = r.Next((int)Min, (int)Max);
 
             if (x != 0 || y != 0)

@@ -1,5 +1,7 @@
 #!/bin/sh
 
+cd "$(dirname "$0")"
+
 if [ -z "$prefix" ]; then prefix=/usr; fi
 libdir=lib
 bindir=bin
@@ -26,7 +28,7 @@ case $1 in
 		install *.dll "$outdir"
 		install *.exe "$outdir"
 		echo "#!/bin/sh" > "$stub"
-		echo "exec mono \"$outdir/$main.exe\" \"$@\"" >> "$stub"
+		echo "exec mono \"$outdir/$main.exe\" \"\$@\"" >> "$stub"
 		chmod 755 "$stub"
 		echo "Installation complete"
 		;;

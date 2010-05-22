@@ -11,7 +11,7 @@ namespace IronAHK.Scripting
             Debug("Emitting iteration statement");
 
             // Used for break and continue later on
-            LoopMetadata Meta = new LoopMetadata {
+            var Meta = new LoopMetadata {
                 Begin = Generator.DefineLabel(),
                 End = Generator.DefineLabel(),
             };

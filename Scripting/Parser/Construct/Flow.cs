@@ -1,5 +1,6 @@
-﻿using System;
+using System;
 using System.CodeDom;
+using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 
@@ -7,7 +8,7 @@ namespace IronAHK.Scripting
 {
     partial class Parser
     {
-        bool blockOpen = false;
+        bool blockOpen;
 
         CodeStatement[] ParseFlow(List<CodeLine> lines, int index)
         {
@@ -17,10 +18,10 @@ namespace IronAHK.Scripting
             string code = line.Code.TrimStart(Spaces);
             string[] parts = { string.Empty, string.Empty };
 
-            char[] delimiters = new char[Spaces.Length + 1];
+            var delimiters = new char[Spaces.Length + 1];
             delimiters[0] = Multicast;
             Spaces.CopyTo(delimiters, 1);
-            int[] d = { code.IndexOfAny(delimiters), code.IndexOfAny(new char[] { BlockOpen, ParenOpen }) };
+            int[] d = { code.IndexOfAny(delimiters), code.IndexOfAny(new[] { BlockOpen, ParenOpen }) };
 
             if (d[0] == -1 && d[1] == -1)
                 parts[0] = code;
@@ -36,7 +37,7 @@ namespace IronAHK.Scripting
             }
 
             if (parts.Length > 1 && IsEmptyStatement(parts[1]))
-                parts = new string[] { parts[0] };
+                parts = new[] { parts[0] };
 
             #endregion
 
@@ -51,7 +52,7 @@ namespace IronAHK.Scripting
 
                         bool blockOpen = false;
                         CodeExpression condition = ParseFlowParameter(parts[1], true, out blockOpen, false);
-                        CodeConditionStatement ifelse = new CodeConditionStatement { Condition = condition };
+                        var ifelse = new CodeConditionStatement { Condition = condition };
 
                         var block = new CodeBlock(line, Scope, ifelse.TrueStatements, CodeBlock.BlockKind.IfElse, blocks.Count == 0 ? null : blocks.Peek());
                         block.Type = blockOpen ? CodeBlock.BlockType.Within : CodeBlock.BlockType.Expect;
@@ -168,7 +169,7 @@ namespace IronAHK.Scripting
                             if (skip && parts[1].Length == 0)
                                 throw new ParseException("Loop type must have an argument");
 
-                            foreach (string arg in SplitCommandParameters(parts[1]))
+                            foreach (var arg in SplitCommandParameters(parts[1]))
                                 iterator.Parameters.Add(ParseCommandParameter(arg));
                         }
                         else
@@ -182,14 +183,14 @@ namespace IronAHK.Scripting
 
                         var init = new CodeVariableDeclarationStatement();
                         init.Name = id;
-                        init.Type = new CodeTypeReference(typeof(System.Collections.IEnumerable));
+                        init.Type = new CodeTypeReference(typeof(IEnumerable));
                         init.InitExpression = new CodeMethodInvokeExpression(iterator, "GetEnumerator", new CodeExpression[] { });
 
                         var condition = new CodeMethodInvokeExpression();
                         condition.Method.TargetObject = new CodeVariableReferenceExpression(id);
                         condition.Method.MethodName = "MoveNext";
 
-                        CodeIterationStatement loop = new CodeIterationStatement();
+                        var loop = new CodeIterationStatement();
                         loop.InitStatement = init;
                         loop.IncrementStatement = new CodeCommentStatement(string.Empty); // for C# display
                         loop.TestExpression = condition;
@@ -206,7 +207,7 @@ namespace IronAHK.Scripting
                     {
                         bool blockOpen = false;
                         CodeExpression condition = parts.Length > 1 ? ParseFlowParameter(parts[1], true, out blockOpen, true) : new CodePrimitiveExpression(true);
-                        CodeIterationStatement loop = new CodeIterationStatement();
+                        var loop = new CodeIterationStatement();
                         loop.TestExpression = condition;
                         loop.InitStatement = new CodeCommentStatement(string.Empty);
 
@@ -349,14 +350,14 @@ namespace IronAHK.Scripting
             }
             else
             {
-                char[] op = new char[] { Equal, Not, Greater, Less };
+                var op = new[] { Equal, Not, Greater, Less };
                 
-                if (Array.IndexOf<char>(op, code[i]) == -1)
+                if (Array.IndexOf(op, code[i]) == -1)
                     throw new ParseException(ExUnexpected);
 
                 buf.Append(code[i++]);
 
-                if (i < code.Length && Array.IndexOf<char>(op, code[i]) != -1)
+                if (i < code.Length && Array.IndexOf(op, code[i]) != -1)
                     buf.Append(code[i++]);
 
                 buf.Append(StringBound);

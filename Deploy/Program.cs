@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
@@ -98,7 +98,7 @@ namespace IronAHK.Setup
         {
             get
             {
-                string path = string.Format("..{0}..{0}..{0}bin", Path.DirectorySeparatorChar.ToString());
+                string path = string.Format("..{0}..{0}..{0}bin", Path.DirectorySeparatorChar);
                 path = Path.GetFullPath(Path.Combine(WorkingDir, path));
 
                 if (!Directory.Exists(path))

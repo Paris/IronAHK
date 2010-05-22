@@ -1,6 +1,3 @@
-// PlatformInvokes.cs created by tobias at 13:30 PM 2/15/2009
-// DllImports from libX11 for PoliteRegister and future implementations
-
 using System;
 using System.Runtime.InteropServices;
 using System.Text;

@@ -1,35 +1,43 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
+
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns="http://www.w3.org/1999/xhtml">
   <xsl:template match="c">
     <code>
-    <xsl:apply-templates/>
+      <xsl:apply-templates />
     </code>
   </xsl:template>
   <xsl:template match="para">
     <p>
-      <xsl:apply-templates/>
+      <xsl:apply-templates />
     </p>
   </xsl:template>
   <xsl:template match="see">
     <a>
-    <xsl:attribute name="href"><xsl:text>../</xsl:text><xsl:value-of select="@cref"/><xsl:text>/</xsl:text></xsl:attribute>
-    <xsl:apply-templates/>
+      <xsl:attribute name="href">
+        <xsl:text>../</xsl:text>
+        <xsl:value-of select="@cref" />
+        <xsl:text>/</xsl:text>
+      </xsl:attribute>
+      <xsl:apply-templates />
     </a>
   </xsl:template>
   <xsl:template match="code">
     <pre>
-    <xsl:apply-templates/>
+      <xsl:apply-templates />
     </pre>
   </xsl:template>
   <xsl:template match="example">
     <div class="example">
-      <xsl:apply-templates/>
+      <xsl:apply-templates />
     </div>
   </xsl:template>
   <xsl:template match="paramref">
     <a>
-    <xsl:attribute name="href"><xsl:text>#</xsl:text><xsl:value-of select="@name"/></xsl:attribute>
-    <xsl:apply-templates/>
+      <xsl:attribute name="href">
+        <xsl:text>#</xsl:text>
+        <xsl:value-of select="@name" />
+      </xsl:attribute>
+      <xsl:apply-templates />
     </a>
   </xsl:template>
   <xsl:template match="list">
@@ -38,7 +46,7 @@
         <ul>
           <xsl:for-each select="item">
             <li>
-              <xsl:apply-templates/>
+              <xsl:apply-templates />
             </li>
           </xsl:for-each>
         </ul>
@@ -47,7 +55,7 @@
         <ol>
           <xsl:for-each select="item">
             <li>
-              <xsl:apply-templates/>
+              <xsl:apply-templates />
             </li>
           </xsl:for-each>
         </ol>
@@ -56,7 +64,8 @@
         <xsl:if test="listheader">
           <tr>
             <xsl:for-each select="listheader/term">
-              <th><xsl:apply-templates/>
+              <th>
+                <xsl:apply-templates />
               </th>
             </xsl:for-each>
           </tr>
@@ -64,7 +73,8 @@
         <xsl:for-each select="item">
           <tr>
             <xsl:for-each select="term">
-              <td><xsl:apply-templates/>
+              <td>
+                <xsl:apply-templates />
               </td>
             </xsl:for-each>
           </tr>
@@ -74,12 +84,12 @@
   </xsl:template>
   <xsl:template match="item">
     <dfn>
-    <xsl:apply-templates/>
+      <xsl:apply-templates />
     </dfn>
   </xsl:template>
   <xsl:template match="description">
     <span class="description">
-    <xsl:apply-templates/>
+      <xsl:apply-templates />
     </span>
   </xsl:template>
 </xsl:stylesheet>

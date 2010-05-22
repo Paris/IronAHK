@@ -1,11 +1,12 @@
-﻿using System;
+using System;
 using System.CodeDom;
+using IronAHK.Rusty;
 
 namespace IronAHK.Scripting
 {
     partial class Emit
     {
-        bool stmt = false;
+        bool stmt;
 
         void EmitExpressionStatement(CodeExpression expr)
         {
@@ -37,7 +38,7 @@ namespace IronAHK.Scripting
             else if (expr is CodeTypeReferenceExpression)
                 EmitTypeReference((CodeTypeReferenceExpression)expr);
             else
-                throw new ArgumentException("Unrecognised expression: " + expr.GetType().ToString());
+                throw new ArgumentException("Unrecognised expression: " + expr.GetType());
         }
 
         #region Methods
@@ -389,7 +390,7 @@ namespace IronAHK.Scripting
             else if (primitive.Value is bool)
                 writer.Write(((bool)primitive.Value) ? Parser.TrueTxt : Parser.FalseTxt);
             else
-                throw new ArgumentException("Unrecognised primitive: " + primitive.Value.ToString());
+                throw new ArgumentException("Unrecognised primitive: " + primitive.Value);
         }
 
         void EmitTypeReference(CodeTypeReferenceExpression type)
@@ -403,7 +404,7 @@ namespace IronAHK.Scripting
         bool IsInternalType(CodeTypeReferenceExpression type)
         {
             string name = type.Type.BaseType;
-            return name == typeof(Rusty.Core).FullName || name == typeof(Script).FullName;
+            return name == typeof(Core).FullName || name == typeof(Script).FullName;
         }
 
         #endregion

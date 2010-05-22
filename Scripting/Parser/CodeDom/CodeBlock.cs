@@ -1,4 +1,4 @@
-﻿using System.CodeDom;
+using System.CodeDom;
 
 namespace IronAHK.Scripting
 {
@@ -11,11 +11,9 @@ namespace IronAHK.Scripting
         CodeLine line;
         string method;
         CodeStatementCollection statements;
-        BlockType type;
         BlockKind kind;
         CodeBlock parent;
         int level;
-        string name;
         string endLabel, exitLabel;
 
         public CodeBlock(CodeLine line, string method, CodeStatementCollection statements, BlockKind kind, CodeBlock parent)
@@ -26,10 +24,10 @@ namespace IronAHK.Scripting
             this.line = line;
             this.method = method;
             this.statements = statements;
-            this.type = BlockType.Expect;
+            Type = BlockType.Expect;
             this.kind = kind;
             this.parent = parent;
-            this.level = int.MaxValue;
+            level = int.MaxValue;
             this.endLabel = endLabel;
             this.exitLabel = exitLabel;
         }
@@ -49,11 +47,7 @@ namespace IronAHK.Scripting
             get { return statements; }
         }
 
-        public BlockType Type
-        {
-            get { return type; }
-            set { type = value; }
-        }
+        public BlockType Type { get; set; }
 
         public BlockKind Kind
         {
@@ -71,11 +65,7 @@ namespace IronAHK.Scripting
             set { level = value; }
         }
 
-        public string Name
-        {
-            get { return name; }
-            set { name = value; }
-        }
+        public string Name { get; set; }
 
         public string EndLabel
         {

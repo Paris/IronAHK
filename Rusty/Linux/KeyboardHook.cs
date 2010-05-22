@@ -20,7 +20,7 @@ namespace IronAHK.Rusty
             Thread Listener;
             
             Dictionary<char, CachedKey> Cache;
-            Dictionary<Keys, WF.Keys> Mapping;
+            Dictionary<Keys, System.Windows.Forms.Keys> Mapping;
             
             protected override void RegisterHook()
             {
@@ -50,13 +50,13 @@ namespace IronAHK.Rusty
                 while (true)
                 {
                     FishEvent();
-                    System.Threading.Thread.Sleep(10); // Be polite
+                    Thread.Sleep(10); // Be polite
                 }
             }
             
             private void FishEvent()
             {
-                XEvent Event = new XEvent();
+                var Event = new XEvent();
                 X11.XNextEvent(Display, ref Event);
 
                 if (Event.type == XEventName.KeyPress || Event.type == XEventName.KeyRelease)
@@ -108,14 +108,14 @@ namespace IronAHK.Rusty
                 X11.XSetErrorHandler(Old);
             }
             
-            WF.Keys TranslateKey(XEvent Event)
+            System.Windows.Forms.Keys TranslateKey(XEvent Event)
             {
                 if(Mapping.ContainsKey(Event.KeyEvent.keycode))
                     return Mapping[Event.KeyEvent.keycode];
                 else return StringToWFKey(Event);
             }
             
-            WF.Keys StringToWFKey(XEvent Event)
+            System.Windows.Forms.Keys StringToWFKey(XEvent Event)
             {
                 Dummy.Remove(0, Dummy.Length);
                 Dummy.Append(" "); // HACK: Somehow necessary
@@ -129,11 +129,11 @@ namespace IronAHK.Rusty
                     if(Dummy.Length == 1 && char.IsLetterOrDigit(Dummy[0]))
                         Lookup = Dummy[0].ToString().ToUpper();
                     
-                    if(string.IsNullOrEmpty(Lookup.Trim())) return WF.Keys.None;
+                    if(string.IsNullOrEmpty(Lookup.Trim())) return System.Windows.Forms.Keys.None;
                     
-                    return (WF.Keys) Enum.Parse(typeof(WF.Keys), Lookup);
+                    return (System.Windows.Forms.Keys) Enum.Parse(typeof(System.Windows.Forms.Keys), Lookup);
                 }
-                else return WF.Keys.None;
+                else return System.Windows.Forms.Keys.None;
             }
              
             #region Hotstrings
@@ -150,7 +150,7 @@ namespace IronAHK.Rusty
             
             protected internal override void Send(string Sequence)
             {
-                foreach(char C in Sequence)
+                foreach(var C in Sequence)
                 {
                     CachedKey Key = LookupKeycode(C);
                     
@@ -180,7 +180,7 @@ namespace IronAHK.Rusty
                 uint KeyCode = X11.XKeysymToKeycode(Display, KeySym);
                 
                 // Cache for later use
-                CachedKey Ret = new CachedKey(KeyCode, false);
+                var Ret = new CachedKey(KeyCode, false);
                 Cache.Add(Code, Ret);
                           
                 return Ret;

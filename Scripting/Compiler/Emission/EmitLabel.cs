@@ -12,7 +12,7 @@ namespace IronAHK.Scripting
                 // Create the label if it does not exist yet.
                 // Remember, labels can be referenced before they are declared
 
-                LabelMetadata Add = new LabelMetadata();
+                var Add = new LabelMetadata();
                 Add.Label = Generator.DefineLabel();
                 Add.Name = Name;
                 Add.Resolved = false;
@@ -57,7 +57,7 @@ namespace IronAHK.Scripting
 
         void CheckLabelsResolved()
         {
-            foreach(LabelMetadata Meta in Labels.Values)
+            foreach(var Meta in Labels.Values)
             {
                 if(!Meta.Resolved)
                     throw new CompileException(Meta.From, "Unresolved label: "+Meta.Name);

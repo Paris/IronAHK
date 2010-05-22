@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -80,7 +80,7 @@ namespace IronAHK.Rusty
 
                     const char tokenStr = '"', tokenDelim = ',';
 
-                    char sym = (char)current;
+                    var sym = (char)current;
 
                     switch (sym)
                     {
@@ -143,7 +143,7 @@ namespace IronAHK.Rusty
                 string[] parts = input.Split(delimiters.ToCharArray(), StringSplitOptions.None);
                 char[] remove = omit.ToCharArray();
 
-                foreach (string part in parts)
+                foreach (var part in parts)
                 {
                     string result = part.Trim(remove);
                     info.result = result;
@@ -228,7 +228,7 @@ namespace IronAHK.Rusty
 
             string[] list = Directory.GetFiles(pattern, string.Empty, recurse ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly);
 
-            foreach (string file in list)
+            foreach (var file in list)
             {
                 info.result = file;
                 info.index++;

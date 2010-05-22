@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
+using System;
 using System.IO;
 using System.Reflection;
 using System.Reflection.Emit;
@@ -123,7 +121,7 @@ namespace IronAHK.Rusty
 
                     if (Environment.OSVersion.Platform == PlatformID.Win32NT)
                     {
-                        foreach (string lib in new[] { "user32", "kernel32", "comctl32", "gdi32" })
+                        foreach (var lib in new[] { "user32", "kernel32", "comctl32", "gdi32" })
                         {
                             var handle = Windows.GetModuleHandle(lib);
                             if (handle == IntPtr.Zero)
@@ -204,7 +202,7 @@ namespace IronAHK.Rusty
             #region Address
             else if (Function is decimal || Function is int || Function is float)
             {
-                int address = (int)Function;
+                var address = (int)Function;
 
                 if (address < 0)
                 {
@@ -247,14 +245,14 @@ namespace IronAHK.Rusty
         public static void NumGet(int VarOrAddress, int Offset, string Type)
         {
             char[] type = Type.Trim().ToLowerInvariant().ToCharArray();
-            IntPtr adr = new IntPtr(VarOrAddress);
+            var adr = new IntPtr(VarOrAddress);
 
             switch (type[1])
             {
                 case 's': Marshal.ReadInt16(adr, Offset); break; // short
                 case 'c': Marshal.ReadByte(adr, Offset); break; // char
                 default: // double, int, int64
-                    if (Array.Exists<char>(type, delegate(char match) { return match == '6'; }))
+                    if (Array.Exists(type, delegate(char match) { return match == '6'; }))
                         Marshal.ReadInt64(adr, Offset);
                     else Marshal.ReadInt32(adr, Offset);
                     break;
@@ -271,15 +269,15 @@ namespace IronAHK.Rusty
         public static void NumPut(int Number, int VarOrAddress, int Offset, string Type)
         {
             char[] type = (Type).Trim().ToLowerInvariant().ToCharArray();
-            IntPtr adr = new IntPtr(VarOrAddress);
+            var adr = new IntPtr(VarOrAddress);
 
             switch (type[1])
             {
                 case 's': Marshal.WriteInt16(adr, Offset, (char)Number); break; // short
                 case 'c': Marshal.WriteByte(adr, Offset, (byte)Number); break; // char
                 default: // double, int, int64
-                    if (Array.Exists<char>(type, delegate(char match) { return match == '6'; }))
-                        Marshal.WriteInt64(adr, Offset, (long)Number);
+                    if (Array.Exists(type, delegate(char match) { return match == '6'; }))
+                        Marshal.WriteInt64(adr, Offset, Number);
                     else Marshal.WriteInt32(adr, Offset, Number);
                     break;
             }
@@ -328,7 +326,7 @@ namespace IronAHK.Rusty
         {
             Var = new byte[RequestedCapacity];
 
-            byte fill = (byte)FillByte;
+            var fill = (byte)FillByte;
             if (fill != 0)
                 for (int i = 0; i < Var.Length; i++)
                     Var[i] = fill;

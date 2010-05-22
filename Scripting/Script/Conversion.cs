@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Text;
 
@@ -17,9 +17,9 @@ namespace IronAHK.Scripting
             else if (input is float)
                 return (decimal)(float)input;
             else if (input is long)
-                return (decimal)(long)input;
+                return (long)input;
             else if (input is int)
-                return (decimal)(int)input;
+                return (int)input;
             else if (input is string)
             {
                 decimal result;
@@ -41,7 +41,7 @@ namespace IronAHK.Scripting
             else if (input is float)
                 return (long)(float)input;
             else if (input is int)
-                return (long)(int)input;
+                return (int)input;
             else if (input is string)
             {
                 long result;
@@ -111,7 +111,7 @@ namespace IronAHK.Scripting
                 var dictionary = (IDictionary)input;
                 bool first = true;
 
-                foreach (object key in dictionary.Keys)
+                foreach (var key in dictionary.Keys)
                 {
                     if (first)
                         first = false;
@@ -150,7 +150,7 @@ namespace IronAHK.Scripting
                 var array = (Array)input;
                 bool first = true;
 
-                foreach (object item in array)
+                foreach (var item in array)
                 {
                     if (first)
                         first = false;

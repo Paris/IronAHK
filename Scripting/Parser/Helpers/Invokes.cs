@@ -1,10 +1,11 @@
-﻿using System;
+using System;
 using System.CodeDom;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Text;
+using IronAHK.Rusty;
 
 namespace IronAHK.Scripting
 {
@@ -17,7 +18,7 @@ namespace IronAHK.Scripting
 
         CodeMemberMethod LocalMethod(string name)
         {
-            var method = new CodeMemberMethod() { Name = name, ReturnType = new CodeTypeReference(typeof(object)) };
+            var method = new CodeMemberMethod { Name = name, ReturnType = new CodeTypeReference(typeof(object)) };
             var param = new CodeParameterDeclarationExpression(typeof(object[]), args);
             param.UserData.Add("rawtype", typeof(object[]));
             method.Parameters.Add(param);
@@ -91,7 +92,7 @@ namespace IronAHK.Scripting
 
                 MethodInfo core;
 
-                try { core = typeof(Rusty.Core).GetMethod(name, BindingFlags.Public | BindingFlags.Static | BindingFlags.IgnoreCase); }
+                try { core = typeof(Core).GetMethod(name, BindingFlags.Public | BindingFlags.Static | BindingFlags.IgnoreCase); }
                 catch (AmbiguousMatchException) { continue; }
 
                 if (core != null)
@@ -105,7 +106,7 @@ namespace IronAHK.Scripting
                 if (z != -1)
                     name = name.Substring(0, z);
 
-                foreach (string dir in paths)
+                foreach (var dir in paths)
                 {
                     if (!Directory.Exists(dir))
                         continue;
@@ -139,7 +140,7 @@ namespace IronAHK.Scripting
 
                 if (invoke.Parameters[i] is CodeExpression)
                 {
-                    invoke.Parameters[i] = VarId((CodeExpression)invoke.Parameters[i]);
+                    invoke.Parameters[i] = VarId(invoke.Parameters[i]);
                     continue;
                 }
 

@@ -47,7 +47,6 @@
     <DocumentationFile>bin\Debug\IronAHK.Rusty.xml</DocumentationFile>
     <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
     <DebugSymbols>true</DebugSymbols>
-    <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>none</DebugType>
@@ -72,6 +71,7 @@
     <Compile Include="Core\Common\Initialisers.cs" />
     <Compile Include="Core\Core.cs" />
     <Compile Include="Core\Disk.cs" />
+    <Compile Include="Core\Gui\HotkeyBox.cs" />
     <Compile Include="Core\Gui\Menu.cs" />
     <Compile Include="Core\Gui\Info.cs" />
     <Compile Include="Core\Gui\Tips.cs" />

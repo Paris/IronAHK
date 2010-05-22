@@ -9,22 +9,22 @@ deploy=Deploy/$(outdir)/$(config)
 setup=$(deploy)/Setup.exe
 installer=$(deploy)/setup.sh
 
-.PHONY=all docs dist install uninstall clean
+.PHONY=all docs docs dist install uninstall clean
 
 all: clean
 	$(CC) "/property:Configuration=$(config)"
 
 docs: all
-	$(CLI) $(setup) docs
+	$(CLI) "$(setup)" docs
 
 dist: all
-	$(CLI) $(setup)
+	$(CLI) "$(setup)"
 
 install: all
-	(cd "$(deploy)"; "./$(installer)" install)
+	"$(installer)" install
 
 uninstall: all
-	(cd "$(deploy)"; "./$(installer)" install)
+	"$(installer)" remove
 
 clean:
 	for dir in $(shell ls -d */ | xargs -l basename); do \

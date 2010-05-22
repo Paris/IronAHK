@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Text;
 
@@ -37,7 +37,7 @@ namespace IronAHK.Scripting
                     line = line.Replace(",", string.Empty);
 
                 string[] options = line.Substring(1).Trim().Split(Spaces, StringSplitOptions.RemoveEmptyEntries);
-                foreach (string option in options)
+                foreach (var option in options)
                 {
                     switch (option.ToUpperInvariant())
                     {
@@ -83,7 +83,7 @@ namespace IronAHK.Scripting
             string escape = Escape.ToString();
             string cast = Multicast.ToString();
             string resolveEscaped = string.Concat(escape, resolve);
-            string escapeEscaped = new string(Escape, 2);
+            var escapeEscaped = new string(Escape, 2);
             string castEscaped = string.Concat(escape, cast);
 
             while ((line = reader.ReadLine()) != null)
@@ -132,7 +132,7 @@ namespace IronAHK.Scripting
             var buffer = new StringBuilder(code.Length + 32);
             bool escaped = false;
 
-            foreach (char sym in code)
+            foreach (var sym in code)
             {
                 if (escaped)
                 {
@@ -167,6 +167,26 @@ namespace IronAHK.Scripting
             }
 
             return buffer.ToString();
+        }
+
+        string Replace(string input, string search, string replace)
+        {
+            var buf = new StringBuilder(input.Length);
+            int z = 0, n = 0, l = search.Length;
+
+            while (z < input.Length && (z = input.IndexOf(search, z, StringComparison.OrdinalIgnoreCase)) != -1)
+            {
+                if (n < z)
+                    buf.Append(input, n, z - n);
+                buf.Append(replace);
+                z += l;
+                n = z;
+            }
+
+            if (n < input.Length)
+                buf.Append(input, n, input.Length - n);
+
+            return buf.ToString();
         }
     }
 }

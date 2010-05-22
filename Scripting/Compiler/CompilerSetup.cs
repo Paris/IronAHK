@@ -1,12 +1,10 @@
-// Setup.cs created by Tobias Kappé at 14:59 21-12-2008
-// Unless stated otherwise, this is licenced under the new BSD license
-
 using System;
 using System.CodeDom.Compiler;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Reflection.Emit;
+using IronAHK.Rusty;
 
 namespace IronAHK.Scripting
 {
@@ -46,16 +44,16 @@ namespace IronAHK.Scripting
             AName = new AssemblyName(name);
             ABuilder = AppDomain.CurrentDomain.DefineDynamicAssembly(AName, AssemblyBuilderAccess.RunAndSave, dir);
 
-            foreach (var type in new[] { typeof(Rusty.Core), typeof(Script) })
+            foreach (var type in new[] { typeof(Core), typeof(Script) })
                 MineMethods(type);
 
-            foreach (string assembly in Options.ReferencedAssemblies)
+            foreach (var assembly in Options.ReferencedAssemblies)
                 LinkTo(assembly);
         }
 
         void MineTypes(Assembly Asm)
         {
-            foreach(Type T in Asm.GetTypes())
+            foreach(var T in Asm.GetTypes())
             {
                 MineMethods(T);
             }
@@ -68,7 +66,7 @@ namespace IronAHK.Scripting
 
             Debug("Adding type " + Typ.Name);
 
-            foreach(MethodInfo Method in Typ.GetMethods())
+            foreach(var Method in Typ.GetMethods())
             {
                 // We skip private methods for privacy, abstract/nonstatic/constructor/generic methods for convenience
                 // Also, properties because exposing those is plain silly

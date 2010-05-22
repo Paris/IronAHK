@@ -1,4 +1,6 @@
-﻿using System.IO;
+using System.IO;
+using IronAHK.Rusty;
+using IronAHK.Scripting;
 
 namespace IronAHK.Setup
 {
@@ -11,12 +13,12 @@ namespace IronAHK.Setup
             string tmp = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
             string root = Path.Combine(tmp, name);
             string res = Path.Combine(Path.Combine(root, "Contents"), "Resources");
-            string favicon = string.Format("..{0}..{0}..{0}{1}{0}Site{0}favicon.ico", Path.DirectorySeparatorChar.ToString(), Name);
+            string favicon = string.Format("..{0}..{0}..{0}{1}{0}Site{0}favicon.ico", Path.DirectorySeparatorChar, Name);
 
             if (!Directory.Exists(res))
                 Directory.CreateDirectory(res);
 
-            foreach (var dll in new[] { typeof(Rusty.Core), typeof(Scripting.IACodeProvider) })
+            foreach (var dll in new[] { typeof(Core), typeof(IACodeProvider) })
                 File.Copy(dll.Assembly.Location, Path.Combine(res, Path.GetFileName(dll.Assembly.Location)));
 
             foreach (var path in new[] { favicon, Name + ".exe" })
