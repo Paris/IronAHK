@@ -75,7 +75,9 @@
     <Compile Include="Core\Gui\Menu.cs" />
     <Compile Include="Core\Gui\Info.cs" />
     <Compile Include="Core\Gui\Tips.cs" />
-    <Compile Include="Core\Gui\Dialogs.cs" />
+    <Compile Include="Core\Gui\Dialogs.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Core\PInvoke.cs" />
     <Compile Include="Core\Environment.cs" />
     <Compile Include="Core\Flow.cs" />
