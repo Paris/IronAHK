@@ -137,10 +137,33 @@ namespace IronAHK.Rusty
         /// <param name="Font">Not yet implemented (leave blank). In the future it might accept something like verdana:8</param>
         /// <param name="Timeout">Timeout in seconds (can contain a decimal point).  If this value exceeds 2147483 (24.8 days), it will be set to 2147483. After the timeout has elapsed, the InputBox window will be automatically closed and ErrorLevel will be set to 2. OutputVar will still be set to what the user entered.</param>
         /// <param name="Default">A string that will appear in the InputBox's edit field when the dialog first appears. The user can change it by backspacing or other means.</param>
-        public static void InputBox(out string OutputVar, string Title, string Prompt, string HIDE, string Width, string Height, string X, string Y, string Font, string Timeout, string Default)
+        public static DialogResult InputBox(out string OutputVar, string Title, string Prompt, string HIDE, string Width, string Height, string X, string Y, string Font, string Timeout, string Default)
         {
-            OutputVar = null;
+            DialogResult dlgResult;
+
+            DlgInputBox MyInputBox = new DlgInputBox();
+
+            MyInputBox.Title = Title;
+            MyInputBox.Prompt = Prompt;
+
+            HIDE = HIDE.ToLowerInvariant();
+            MyInputBox.Hide = HIDE.Contains("hide");
+
+
+            dlgResult = MyInputBox.ShowDialog();
+
+
+            if (dlgResult == DialogResult.OK)
+            {
+                OutputVar = MyInputBox.Message;
+            }
+            else
+                OutputVar = null;
+            //OutputVar ;
+            return dlgResult;
         }
+
+
 
         /// <summary>
         /// Show a message box.
@@ -289,5 +312,157 @@ namespace IronAHK.Rusty
         }
 
 
+    }
+
+
+    /// <summary> InputBox Dialoge Class
+    /// InputBox(out string OutputVar, string Title, string Prompt, string HIDE, string Width, string Height, string X, string Y, string Font, string Timeout, string Default)
+    /// </summary>
+    public class DlgInputBox : System.Windows.Forms.Form
+    {
+        private System.ComponentModel.Container components = null;
+        private System.Windows.Forms.Button btnCancel;
+        private System.Windows.Forms.Button btnOK;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.TextBox txtMessage;
+
+        private string _Prompt, _Default, _Title;
+        private bool _Hide;
+
+        public string Title
+        {
+            get { return _Title;}
+            set 
+            {
+                _Title = value;
+                this.Text = value; 
+            } 
+        }
+        public string Prompt
+        {
+            get { return _Prompt; }
+            set
+            {
+                _Prompt = value;
+                this.label1.Text = value;
+            } 
+        }
+        public string Default
+        {
+            get { return _Default; }
+            set
+            {
+                _Default = value;
+                this.txtMessage.Text = value; ;
+            } 
+        }
+        public bool Hide
+        {
+            get { return _Hide; }
+            set
+            {
+                _Hide = value;
+                this.txtMessage.UseSystemPasswordChar = value;
+            }
+        }
+        public int Width { get; set; }
+        public int Height { get; set; }
+        public int Timeout { get; set; }
+
+        public string Message { get; set; }
+        //public System.Drawing.Point Location { get; set; }
+        //public System.Drawing.Font { get; set; }
+
+        //public DlgInputBox(string uTitle, string uPrompt, bool uHide, System.Drawing.Point uLocation,System.Drawing.Font uFont, int Timeout, string Default)
+        //{
+        //    // set variables here...
+        //    // ...
+
+        //    InitializeComponent();
+        //    this.StartPosition = FormStartPosition.CenterParent;
+        //}
+        public DlgInputBox(){
+            InitializeComponent();
+            this.StartPosition = FormStartPosition.CenterParent;
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                if (components != null)
+                {
+                    components.Dispose();
+                }
+            }
+            base.Dispose(disposing);
+        }
+
+        private void InitializeComponent()
+        {
+            this.label1 = new System.Windows.Forms.Label();
+            this.btnOK = new System.Windows.Forms.Button();
+            this.btnCancel = new System.Windows.Forms.Button();
+            this.txtMessage = new System.Windows.Forms.TextBox();
+            this.SuspendLayout();
+            // 
+            // label1
+            // 
+            //this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold);
+            this.label1.Location = new System.Drawing.Point(20, 20);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(240, 48);
+            this.label1.TabIndex = 1;
+
+            // 
+            // btnOK
+            // 
+            this.btnOK.DialogResult = System.Windows.Forms.DialogResult.OK;
+            this.btnOK.Location = new System.Drawing.Point(16, 104);
+            this.btnOK.Name = "btnOK";
+            this.btnOK.Size = new System.Drawing.Size(96, 24);
+            this.btnOK.TabIndex = 2;
+            this.btnOK.Text = "OK";
+            this.btnOK.Click += new System.EventHandler(this.btnOK_Click);
+            // 
+            // btnCancel
+            // 
+            this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.btnCancel.Location = new System.Drawing.Point(152, 104);
+            this.btnCancel.Name = "btnCancel";
+            this.btnCancel.Size = new System.Drawing.Size(96, 24);
+            this.btnCancel.TabIndex = 3;
+            this.btnCancel.Text = "Cancel";
+            // 
+            // txtMessage
+            // 
+            this.txtMessage.Location = new System.Drawing.Point(16, 72);
+            this.txtMessage.Name = "txtMessage";
+            this.txtMessage.Size = new System.Drawing.Size(232, 20);
+            this.txtMessage.TabIndex = 0;
+
+            // 
+            // DialogForm
+            // 
+            this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
+            this.ClientSize = new System.Drawing.Size(266, 151);
+            this.ControlBox = false;
+            this.Controls.Add(this.btnCancel);
+            this.Controls.Add(this.btnOK);
+            this.Controls.Add(this.label1);
+            this.Controls.Add(this.txtMessage);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
+            this.Name = "InputBoxDialog";
+            this.Text = "IronAHK Inputbox";
+            this.ResumeLayout(false);
+
+        }
+
+        protected void btnOK_Click(object sender, System.EventArgs e)
+        {
+            Message = txtMessage.Text;
+        }
     }
 }
