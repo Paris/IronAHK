@@ -1,6 +1,7 @@
 using System;
 using System.Reflection;
 using System.Windows.Forms;
+using System.Drawing;
 
 namespace IronAHK.Rusty
 {
@@ -146,12 +147,45 @@ namespace IronAHK.Rusty
             MyInputBox.Title = Title;
             MyInputBox.Prompt = Prompt;
 
+            if (Width != null && Width != "")
+            {
+                int iWith;
+                if (Int32.TryParse(Width, out iWith))
+                {
+                    MyInputBox.Size = new Size(iWith, MyInputBox.Size.Height);
+                }
+            }
+            if (Height != null && Height != "")
+            {
+                int iHeight;
+                if (Int32.TryParse(Height, out iHeight))
+                {
+                    MyInputBox.Size = new Size(MyInputBox.Size.Width, iHeight);
+                }
+            }
+            if (X != null && X != "")
+            {
+                int iX;
+                if (Int32.TryParse(X, out iX))
+                {
+                    MyInputBox.Location = new Point(iX, MyInputBox.Location.Y);
+                }
+            }
+            if (Y != null && Y != "")
+            {
+                int iY;
+                if (Int32.TryParse(Y, out iY))
+                {
+                    MyInputBox.Location = new Point(MyInputBox.Location.X, iY);
+                }
+            }
+
             HIDE = HIDE.ToLowerInvariant();
             MyInputBox.Hide = HIDE.Contains("hide");
 
 
             dlgResult = MyInputBox.ShowDialog();
-
+            // waits until dialoge is done
 
             if (dlgResult == DialogResult.OK)
             {
@@ -159,7 +193,7 @@ namespace IronAHK.Rusty
             }
             else
                 OutputVar = null;
-            //OutputVar ;
+
             return dlgResult;
         }
 
@@ -347,7 +381,7 @@ namespace IronAHK.Rusty
                 this.label1.Text = value;
             } 
         }
-        public string Default
+        public string Message
         {
             get { return _Default; }
             set
@@ -365,22 +399,11 @@ namespace IronAHK.Rusty
                 this.txtMessage.UseSystemPasswordChar = value;
             }
         }
-        public int Width { get; set; }
-        public int Height { get; set; }
         public int Timeout { get; set; }
 
-        public string Message { get; set; }
-        //public System.Drawing.Point Location { get; set; }
-        //public System.Drawing.Font { get; set; }
-
-        //public DlgInputBox(string uTitle, string uPrompt, bool uHide, System.Drawing.Point uLocation,System.Drawing.Font uFont, int Timeout, string Default)
-        //{
-        //    // set variables here...
-        //    // ...
-
-        //    InitializeComponent();
-        //    this.StartPosition = FormStartPosition.CenterParent;
-        //}
+        /// <summary>Constructor: Inits Dialoge
+        /// 
+        /// </summary>
         public DlgInputBox(){
             InitializeComponent();
             this.StartPosition = FormStartPosition.CenterParent;
@@ -413,6 +436,7 @@ namespace IronAHK.Rusty
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(240, 48);
             this.label1.TabIndex = 1;
+            this.label1.Anchor = AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Top; 
 
             // 
             // btnOK
@@ -424,6 +448,7 @@ namespace IronAHK.Rusty
             this.btnOK.TabIndex = 2;
             this.btnOK.Text = "OK";
             this.btnOK.Click += new System.EventHandler(this.btnOK_Click);
+            this.btnOK.Anchor = AnchorStyles.Left | AnchorStyles.Bottom;
             // 
             // btnCancel
             // 
@@ -433,6 +458,7 @@ namespace IronAHK.Rusty
             this.btnCancel.Size = new System.Drawing.Size(96, 24);
             this.btnCancel.TabIndex = 3;
             this.btnCancel.Text = "Cancel";
+            this.btnCancel.Anchor = AnchorStyles.Right | AnchorStyles.Bottom;
             // 
             // txtMessage
             // 
@@ -440,6 +466,7 @@ namespace IronAHK.Rusty
             this.txtMessage.Name = "txtMessage";
             this.txtMessage.Size = new System.Drawing.Size(232, 20);
             this.txtMessage.TabIndex = 0;
+            this.txtMessage.Anchor = AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Bottom; 
 
             // 
             // DialogForm
