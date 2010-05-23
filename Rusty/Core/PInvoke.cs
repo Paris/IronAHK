@@ -127,6 +127,8 @@ namespace IronAHK.Rusty
                             if (handle == IntPtr.Zero)
                                 continue;
                             var address = Windows.GetProcAddress(handle, name);
+                            if (address == IntPtr.Zero)
+                                address = Windows.GetProcAddress(handle, name + "W");
                             if (address != IntPtr.Zero)
                             {
                                 path = lib + ".dll";
