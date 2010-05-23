@@ -367,7 +367,7 @@ namespace IronAHK.Scripting
 
         static bool IsNumeric(object value)
         {
-            return value is int || value is float || value is double || value is decimal;
+            return value is int || value is long || value is float || value is double || value is decimal;
         }
 
         #endregion
