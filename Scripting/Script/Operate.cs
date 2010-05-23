@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Runtime.InteropServices;
 
 namespace IronAHK.Scripting
 {
@@ -168,6 +169,9 @@ namespace IronAHK.Scripting
                 case Operator.Dereference:
                     // TODO: dereference operator
                     return null;
+
+                case Operator.BitwiseAnd:
+                    return GCHandle.Alloc(right, GCHandleType.Pinned).AddrOfPinnedObject().ToInt64();
 
                 default:
                     throw new ArgumentOutOfRangeException();
