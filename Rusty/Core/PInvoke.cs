@@ -244,20 +244,19 @@ namespace IronAHK.Rusty
         /// <param name="VarOrAddress"></param>
         /// <param name="Offset"></param>
         /// <param name="Type"></param>
-        public static void NumGet(int VarOrAddress, int Offset, string Type)
+        public static long NumGet(long VarOrAddress, int Offset, string Type)
         {
-            char[] type = Type.Trim().ToLowerInvariant().ToCharArray();
             var adr = new IntPtr(VarOrAddress);
+            char mode = Type.Length > 1 ? Type.ToLowerInvariant()[1] : '\0';
 
-            switch (type[1])
+            switch (mode)
             {
-                case 's': Marshal.ReadInt16(adr, Offset); break; // short
-                case 'c': Marshal.ReadByte(adr, Offset); break; // char
+                case 's': return Marshal.ReadInt16(adr, Offset); // short
+                case 'c': return Marshal.ReadByte(adr, Offset); // char
                 default: // double, int, int64
-                    if (Array.Exists(type, delegate(char match) { return match == '6'; }))
-                        Marshal.ReadInt64(adr, Offset);
-                    else Marshal.ReadInt32(adr, Offset);
-                    break;
+                    if (Type.Contains("6"))
+                        return Marshal.ReadInt64(adr, Offset);
+                    else return Marshal.ReadInt32(adr, Offset);
             }
         }
 
@@ -268,17 +267,17 @@ namespace IronAHK.Rusty
         /// <param name="VarOrAddress"></param>
         /// <param name="Offset"></param>
         /// <param name="Type"></param>
-        public static void NumPut(int Number, int VarOrAddress, int Offset, string Type)
+        public static void NumPut(int Number, long VarOrAddress, int Offset, string Type)
         {
-            char[] type = (Type).Trim().ToLowerInvariant().ToCharArray();
             var adr = new IntPtr(VarOrAddress);
+            char mode = Type.Length > 1 ? Type.ToLowerInvariant()[1] : '\0';
 
-            switch (type[1])
+            switch (mode)
             {
                 case 's': Marshal.WriteInt16(adr, Offset, (char)Number); break; // short
                 case 'c': Marshal.WriteByte(adr, Offset, (byte)Number); break; // char
                 default: // double, int, int64
-                    if (Array.Exists(type, delegate(char match) { return match == '6'; }))
+                    if (Type.Contains("6"))
                         Marshal.WriteInt64(adr, Offset, Number);
                     else Marshal.WriteInt32(adr, Offset, Number);
                     break;
