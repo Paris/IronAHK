@@ -477,7 +477,7 @@ namespace IronAHK.Rusty
                 string letter = key.ToString();
 
                 if (!caps)
-                    letter = letter.ToLowerInvariant();
+                    letter = letter.ToLower();
 
                 return letter.Length == 1 ? letter[0] : (char)0;
             }
@@ -508,7 +508,7 @@ namespace IronAHK.Rusty
 
                 foreach (var hotkey in hotkeys)
                 {
-                    bool match = (hotkey.Keys & ~Keys.Modifiers) == key || hotkey.Typed.Equals(typed, StringComparison.OrdinalIgnoreCase);
+                    bool match = (hotkey.Keys & ~Keys.Modifiers) == key || hotkey.Typed.Equals(typed, StringComparison.CurrentCultureIgnoreCase);
                     bool up = (hotkey.EnabledOptions & HotkeyDefinition.Options.Up) == HotkeyDefinition.Options.Up;
 
                     if (hotkey.Enabled && match && HasModifiers(hotkey) && up != down)
@@ -659,7 +659,7 @@ namespace IronAHK.Rusty
                     return false;
 
                 var compare = (hotstring.EnabledOptions & HotstringDefinition.Options.CaseSensitive) == HotstringDefinition.Options.CaseSensitive ?
-                    StringComparison.Ordinal : StringComparison.OrdinalIgnoreCase;
+                    StringComparison.CurrentCulture : StringComparison.CurrentCultureIgnoreCase;
 
                 int x = history.Length - hotstring.Sequence.Length - 1;
 
