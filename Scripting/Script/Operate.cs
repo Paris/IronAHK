@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Runtime.InteropServices;
 
 namespace IronAHK.Scripting
 {
@@ -168,6 +169,9 @@ namespace IronAHK.Scripting
                 case Operator.Dereference:
                     // TODO: dereference operator
                     return null;
+
+                case Operator.BitwiseAnd:
+                    return GCHandle.Alloc(right, GCHandleType.Pinned).AddrOfPinnedObject().ToInt64();
 
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -367,7 +371,7 @@ namespace IronAHK.Scripting
 
         static bool IsNumeric(object value)
         {
-            return value is int || value is float || value is double || value is decimal;
+            return value is int || value is long || value is float || value is double || value is decimal;
         }
 
         #endregion
