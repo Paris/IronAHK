@@ -316,8 +316,31 @@ namespace IronAHK.Rusty
         /// </param>
         public static void Progress(string ProgressParam1, string SubText, string MainText, string WinTitle, string FontName)
         {
-
+            if (IronDlgProgress == null)
+            {
+                IronDlgProgress = new DlgProgress();
+                IronDlgProgress.Show();
+            }
+            IronDlgProgress.Invoke((SimpleDelegate)delegate { ProgressAssync(ProgressParam1,  SubText,  MainText,  WinTitle,  FontName); });
+            return;
         }
+
+        public static void ProgressAssync(string ProgressParam1, string SubText, string MainText, string WinTitle, string FontName)
+        {
+            ProgressParam1 = ProgressParam1.ToLowerInvariant();
+            if (ProgressParam1.Contains("off"))
+            {
+                IronDlgProgress.Dispose();
+                return;
+            }
+            IronDlgProgress.Title = WinTitle;
+            IronDlgProgress.SubText = SubText;
+            IronDlgProgress.MainText = MainText;
+            IronDlgProgress.Value = Int32.Parse(ProgressParam1);
+            return;
+        }
+
+
 
         /// <summary>
         /// Creates or updates a window containing a progress bar or an image.
@@ -352,7 +375,7 @@ namespace IronAHK.Rusty
 
     #region InputBox
 
-    /// <summary> InputBox Dialoge Class
+ /// <summary> InputBox Dialoge Class
     /// InputBox(out string OutputVar, string Title, string Prompt, string HIDE, string Width, string Height, string X, string Y, string Font, string Timeout, string Default)
     /// </summary>
     public class DlgInputBox : System.Windows.Forms.Form
@@ -384,7 +407,7 @@ namespace IronAHK.Rusty
                 this.label1.Text = value;
             } 
         }
-        public string Message
+       public string Default
         {
             get { return _Default; }
             set
@@ -402,11 +425,15 @@ namespace IronAHK.Rusty
                 this.txtMessage.UseSystemPasswordChar = value;
             }
         }
+       public int Width { get; set; }
+       public int Height { get; set; }
         public int Timeout { get; set; }
 
-        /// <summary>Constructor: Inits Dialoge
-        /// 
-        /// </summary>
+       public string Message { get; set; }
+
+       /// <summary>Constructor: Inits Dialoge
+       /// 
+       /// </summary>
         public DlgInputBox(){
             InitializeComponent();
             this.StartPosition = FormStartPosition.CenterParent;
@@ -439,7 +466,7 @@ namespace IronAHK.Rusty
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(240, 48);
             this.label1.TabIndex = 1;
-            this.label1.Anchor = AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Top; 
+           this.label1.Anchor = AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Top; 
 
             // 
             // btnOK
@@ -451,7 +478,7 @@ namespace IronAHK.Rusty
             this.btnOK.TabIndex = 2;
             this.btnOK.Text = "OK";
             this.btnOK.Click += new System.EventHandler(this.btnOK_Click);
-            this.btnOK.Anchor = AnchorStyles.Left | AnchorStyles.Bottom;
+           this.btnOK.Anchor = AnchorStyles.Left | AnchorStyles.Bottom;
             // 
             // btnCancel
             // 
@@ -461,7 +488,7 @@ namespace IronAHK.Rusty
             this.btnCancel.Size = new System.Drawing.Size(96, 24);
             this.btnCancel.TabIndex = 3;
             this.btnCancel.Text = "Cancel";
-            this.btnCancel.Anchor = AnchorStyles.Right | AnchorStyles.Bottom;
+           this.btnCancel.Anchor = AnchorStyles.Right | AnchorStyles.Bottom;
             // 
             // txtMessage
             // 
@@ -469,7 +496,7 @@ namespace IronAHK.Rusty
             this.txtMessage.Name = "txtMessage";
             this.txtMessage.Size = new System.Drawing.Size(232, 20);
             this.txtMessage.TabIndex = 0;
-            this.txtMessage.Anchor = AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Bottom; 
+           this.txtMessage.Anchor = AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Bottom; 
 
             // 
             // DialogForm
@@ -502,38 +529,30 @@ namespace IronAHK.Rusty
     public class DlgProgress : System.Windows.Forms.Form
     {
         private System.ComponentModel.Container components = null;
-        private System.Windows.Forms.ProgressBar Progress;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.TextBox txtMessage;
-
-        private string _Prompt, _Default, _Title;
+        private System.Windows.Forms.ProgressBar mProgressBar;
+        private System.Windows.Forms.Label mSubText;
+        private System.Windows.Forms.Label mMainText;
 
         public string Title
         {
-            get { return _Title; }
-            set
-            {
-                _Title = value;
-                this.Text = value;
-            }
+            get { return this.Text; }
+            set { this.Text = value; }
         }
-        public string Prompt
+        public string SubText
         {
-            get { return _Prompt; }
-            set
-            {
-                _Prompt = value;
-                this.label1.Text = value;
-            }
+            get { return mSubText.Text; }
+            set { this.mSubText.Text = value; }
         }
-        public string Message
+        public string MainText
         {
-            get { return _Default; }
-            set
-            {
-                _Default = value;
-                this.txtMessage.Text = value; ;
-            }
+            get { return mMainText.Text; }
+            set { this.mMainText.Text = value; }
+        }
+
+        public int Value
+        {
+            get { return this.mProgressBar.Value; }
+            set { this.mProgressBar.Value = value; }
         }
 
         /// <summary>Constructor: Inits Dialoge
@@ -559,39 +578,40 @@ namespace IronAHK.Rusty
 
         private void InitializeComponent()
         {
-            this.label1 = new System.Windows.Forms.Label();
-            this.Progress = new System.Windows.Forms.ProgressBar();
-            this.txtMessage = new System.Windows.Forms.TextBox();
+            this.mSubText = new System.Windows.Forms.Label();
+            this.mMainText = new System.Windows.Forms.Label();
+            this.mProgressBar = new System.Windows.Forms.ProgressBar();
+            
             this.SuspendLayout();
             // 
-            // label1
+            // mMainText
             // 
             //this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold);
-            this.label1.Location = new System.Drawing.Point(20, 20);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(240, 48);
-            this.label1.TabIndex = 1;
-            this.label1.Anchor = AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Top;
+            this.mMainText.Location = new System.Drawing.Point(20, 20);
+            this.mMainText.Name = "label1";
+            this.mMainText.Size = new System.Drawing.Size(240, 48);
+            this.mMainText.TabIndex = 1;
+            this.mMainText.Anchor = AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Top;
 
 
             // 
             // Progress
             // 
-            this.Progress.Location = new System.Drawing.Point(152, 104);
-            this.Progress.Name = "Progress";
-            this.Progress.Size = new System.Drawing.Size(96, 24);
-            this.Progress.TabIndex = 3;
-            this.Progress.Text = "Cancel";
-            this.Progress.Anchor = AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Bottom;
+            this.mProgressBar.Location = new System.Drawing.Point(152, 104);
+            this.mProgressBar.Name = "Progress";
+            this.mProgressBar.Size = new System.Drawing.Size(96, 24);
+            this.mProgressBar.TabIndex = 3;
+            this.mProgressBar.Value = 0;
+            this.mProgressBar.Anchor = AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Bottom;
 
             // 
-            // txtMessage
+            // mSubText
             // 
-            this.txtMessage.Location = new System.Drawing.Point(16, 72);
-            this.txtMessage.Name = "txtMessage";
-            this.txtMessage.Size = new System.Drawing.Size(232, 20);
-            this.txtMessage.TabIndex = 0;
-            this.txtMessage.Anchor = AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Bottom;
+            this.mSubText.Location = new System.Drawing.Point(16, 72);
+            this.mSubText.Name = "txtMessage";
+            this.mSubText.Size = new System.Drawing.Size(232, 20);
+            this.mSubText.TabIndex = 0;
+            this.mSubText.Anchor = AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Bottom;
 
             // 
             // DialogForm
@@ -599,15 +619,15 @@ namespace IronAHK.Rusty
             this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
             this.ClientSize = new System.Drawing.Size(266, 151);
             this.ControlBox = false;
-            this.Controls.Add(this.Progress);
-            this.Controls.Add(this.label1);
-            this.Controls.Add(this.txtMessage);
+            this.Controls.Add(this.mSubText);
+            this.Controls.Add(this.mMainText);
+            this.Controls.Add(this.mProgressBar);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "ProgressDialog";
             this.Text = "IronAHK Progress";
-            this.ResumeLayout(false);
+            this.ResumeLayout(true);
 
         }
     }
