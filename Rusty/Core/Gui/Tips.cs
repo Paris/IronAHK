@@ -19,6 +19,27 @@ namespace IronAHK.Rusty
         public static void ToolTip(string Text, int X, int Y, int ID)
         {
 
+            if (ToolTipForm == null)
+            {
+                ToolTipForm = new Form();
+                //ToolTipForm.Opacity = 0.0;
+                ToolTipForm.Width = 0;
+                ToolTipForm.Height = 0;
+                ToolTipForm.Visible = false;
+                ToolTipForm.Show();
+            }
+
+            if (AlwaysToolTip == null)
+            {
+                AlwaysToolTip = new ToolTip();
+                // Set up the delays for the ToolTip.
+                AlwaysToolTip.AutoPopDelay = 0;
+                AlwaysToolTip.InitialDelay = 0;
+                AlwaysToolTip.ReshowDelay = 0;
+                AlwaysToolTip.ShowAlways = true;
+            }
+            AlwaysToolTip.Show(Text, ToolTipForm, new System.Drawing.Point(500, 500));
+            return;
         }
 
         /// <summary>
