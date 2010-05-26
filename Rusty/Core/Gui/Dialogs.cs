@@ -348,6 +348,9 @@ namespace IronAHK.Rusty
 
     }
 
+    #region Dialog Classes
+
+    #region InputBox
 
     /// <summary> InputBox Dialoge Class
     /// InputBox(out string OutputVar, string Title, string Prompt, string HIDE, string Width, string Height, string X, string Y, string Font, string Timeout, string Default)
@@ -492,4 +495,125 @@ namespace IronAHK.Rusty
             Message = txtMessage.Text;
         }
     }
+    #endregion
+
+    #region Progress
+
+    public class DlgProgress : System.Windows.Forms.Form
+    {
+        private System.ComponentModel.Container components = null;
+        private System.Windows.Forms.ProgressBar Progress;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.TextBox txtMessage;
+
+        private string _Prompt, _Default, _Title;
+
+        public string Title
+        {
+            get { return _Title; }
+            set
+            {
+                _Title = value;
+                this.Text = value;
+            }
+        }
+        public string Prompt
+        {
+            get { return _Prompt; }
+            set
+            {
+                _Prompt = value;
+                this.label1.Text = value;
+            }
+        }
+        public string Message
+        {
+            get { return _Default; }
+            set
+            {
+                _Default = value;
+                this.txtMessage.Text = value; ;
+            }
+        }
+
+        /// <summary>Constructor: Inits Dialoge
+        /// 
+        /// </summary>
+        public DlgProgress()
+        {
+            InitializeComponent();
+            this.StartPosition = FormStartPosition.CenterParent;
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                if (components != null)
+                {
+                    components.Dispose();
+                }
+            }
+            base.Dispose(disposing);
+        }
+
+        private void InitializeComponent()
+        {
+            this.label1 = new System.Windows.Forms.Label();
+            this.Progress = new System.Windows.Forms.ProgressBar();
+            this.txtMessage = new System.Windows.Forms.TextBox();
+            this.SuspendLayout();
+            // 
+            // label1
+            // 
+            //this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold);
+            this.label1.Location = new System.Drawing.Point(20, 20);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(240, 48);
+            this.label1.TabIndex = 1;
+            this.label1.Anchor = AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Top;
+
+
+            // 
+            // Progress
+            // 
+            this.Progress.Location = new System.Drawing.Point(152, 104);
+            this.Progress.Name = "Progress";
+            this.Progress.Size = new System.Drawing.Size(96, 24);
+            this.Progress.TabIndex = 3;
+            this.Progress.Text = "Cancel";
+            this.Progress.Anchor = AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Bottom;
+
+            // 
+            // txtMessage
+            // 
+            this.txtMessage.Location = new System.Drawing.Point(16, 72);
+            this.txtMessage.Name = "txtMessage";
+            this.txtMessage.Size = new System.Drawing.Size(232, 20);
+            this.txtMessage.TabIndex = 0;
+            this.txtMessage.Anchor = AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Bottom;
+
+            // 
+            // DialogForm
+            // 
+            this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
+            this.ClientSize = new System.Drawing.Size(266, 151);
+            this.ControlBox = false;
+            this.Controls.Add(this.Progress);
+            this.Controls.Add(this.label1);
+            this.Controls.Add(this.txtMessage);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
+            this.Name = "ProgressDialog";
+            this.Text = "IronAHK Progress";
+            this.ResumeLayout(false);
+
+        }
+    }
+
+    #endregion
+
+
+    #endregion
 }

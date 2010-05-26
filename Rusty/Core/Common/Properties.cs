@@ -170,6 +170,20 @@ namespace IronAHK.Rusty
 
         #endregion
 
+        #region Dialoges
+
+        static DlgProgress IronDlgProgress;
+
+        #endregion
+
+        #region Tips
+
+        static ToolTip AlwaysToolTip;
+        static Form ToolTipForm;
+
+        #endregion
+
+
         #region RunAs
 
         [ThreadStatic]
