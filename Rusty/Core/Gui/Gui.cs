@@ -1417,33 +1417,20 @@ namespace IronAHK.Rusty
             return null;
         }
 
-        #endregion
-
-        /// <summary>
-        /// Makes a variety of changes to a control in a GUI window.
-        /// </summary>
-        /// <param name="Command"></param>
-        /// <param name="ControlID"></param>
-        /// <param name="Param3"></param>
-        public static void GuiControl(string Command, string ControlID, string Param3)
+        static void GuiControlAsync(Control ctrl, string cmd, string arg)
         {
-            var ctrl = GuiFindControl(ControlID);
+            cmd = cmd.ToLowerInvariant();
 
-            if (ctrl == null)
-                return;
-
-            Command = Command.ToLowerInvariant();
-
-            switch (Command)
+            switch (cmd)
             {
                 case Keyword_Text:
                 case "":
-                    ctrl.Text = Param3;
+                    ctrl.Text = arg;
                     break;
 
                 case Keyword_Move:
                 case Keyword_MoveDraw:
-                    GuiControlMove(Param3, ctrl);
+                    GuiControlMove(arg, ctrl);
                     break;
 
                 case Keyword_Focus:
@@ -1481,13 +1468,31 @@ namespace IronAHK.Rusty
 
                 default:
                     int n;
-                    if (Command.StartsWith(Keyword_Enable) && int.TryParse(Command.Substring(Keyword_Enable.Length), out n) && (n == 1 || n == 0))
+                    if (cmd.StartsWith(Keyword_Enable) && int.TryParse(cmd.Substring(Keyword_Enable.Length), out n) && (n == 1 || n == 0))
                         ctrl.Enabled = n == 1;
-                    if (Command.StartsWith(Keyword_Disable) && int.TryParse(Command.Substring(Keyword_Disable.Length), out n) && (n == 1 || n == 0))
+                    if (cmd.StartsWith(Keyword_Disable) && int.TryParse(cmd.Substring(Keyword_Disable.Length), out n) && (n == 1 || n == 0))
                         ctrl.Enabled = n == 0;
-                    GuiApplyExtendedStyles(ctrl, Param3);
+                    GuiApplyExtendedStyles(ctrl, arg);
                     break;
             }
+        }
+
+        #endregion
+
+        /// <summary>
+        /// Makes a variety of changes to a control in a GUI window.
+        /// </summary>
+        /// <param name="Command"></param>
+        /// <param name="ControlID"></param>
+        /// <param name="Param3"></param>
+        public static void GuiControl(string Command, string ControlID, string Param3)
+        {
+            var ctrl = GuiFindControl(ControlID);
+
+            if (ctrl == null)
+                return;
+
+            ctrl.Invoke((SimpleDelegate)delegate { GuiControlAsync(ctrl, Command, Param3); });
         }
 
         static void GuiApplyExtendedStyles(Control control, string options)
