@@ -17,6 +17,8 @@ namespace IronAHK.Rusty
         /// <returns>A value.</returns>
         public delegate object GenericFunction(object[] args);
 
+        delegate void SimpleDelegate();
+
         #endregion
 
         #region Error
