@@ -589,6 +589,11 @@ namespace IronAHK.Rusty
                         ddl.Text = content;
                         opts = GuiApplyStyles(ddl, options);
 
+                        int select;
+                        bool clear;
+                        ddl.Items.AddRange(GuiParseList(ddl, out select, out clear));
+                        ddl.SelectedIndex = select;
+
                         foreach (var opt in ParseOptions(opts))
                         {
                             bool on = opt[0] != '-';
@@ -625,6 +630,11 @@ namespace IronAHK.Rusty
                         combo.Text = content;
                         opts = GuiApplyStyles(combo, options);
 
+                        int select;
+                        bool clear;
+                        combo.Items.AddRange(GuiParseList(combo, out select, out clear));
+                        combo.SelectedIndex = select;
+
                         foreach (var opt in ParseOptions(opts))
                         {
                             bool on = opt[0] != '-';
@@ -648,6 +658,11 @@ namespace IronAHK.Rusty
                         control = listbox;
                         listbox.Text = content;
                         opts = GuiApplyStyles(listbox, options);
+
+                        int select;
+                        bool clear;
+                        listbox.Items.AddRange(GuiParseList(listbox, out select, out clear));
+                        listbox.SelectedIndex = select;
 
                         bool multi = false, read = false;
 
@@ -690,7 +705,15 @@ namespace IronAHK.Rusty
                         var lv = (ListView)(control ?? new ListView());
                         parent.Controls.Add(lv);
                         control = lv;
+                        lv.Text = content;
                         opts = GuiApplyStyles(lv, options);
+                        lv.View = View.Details;
+
+                        int select;
+                        bool clear;
+
+                        foreach (var item in GuiParseList(lv, out select, out clear))
+                            lv.Columns.Add(new ColumnHeader { Text = item });
 
                         foreach (var opt in ParseOptions(opts))
                         {
@@ -1045,12 +1068,46 @@ namespace IronAHK.Rusty
                 GuiApplyStyles(control, options);
         }
 
+        static string[] GuiParseList(Control control, out int select, out bool clear)
+        {
+            select = 0;
+            clear = false;
+
+            if (string.IsNullOrEmpty(control.Text))
+                return new string[] { };
+
+            var split = ((GuiInfo)control.Parent.Tag).Delimiter;
+
+            clear = control.Text.IndexOf(split) == 0;
+            string text = control.Text.Substring(clear ? 1 : 0);
+            var items = text.Split(split);
+            var list = new List<string>();
+
+            for (int i = 0; i < items.Length; i++)
+            {
+                if (items[i].Length == 0)
+                    select = i - 1;
+                else
+                    list.Add(items[i]);
+            }
+
+            if (select == list.Count)
+                select--;
+
+            if (select < 0)
+                select = 0;
+
+            control.Text = string.Empty;
+
+            return list.ToArray();
+        }
+
         static Form GuiCreateWindow(string name)
         {
             if (name == "1")
                 name = string.Empty;
 
-            var win = new Form { Name = name, Tag = new GuiInfo { } };
+            var win = new Form { Name = name, Tag = new GuiInfo { Delimiter = '|' } };
 
             win.FormClosed += delegate {
                                       SafeInvoke(win.Name + Keyword_GuiClose);
@@ -1360,33 +1417,20 @@ namespace IronAHK.Rusty
             return null;
         }
 
-        #endregion
-
-        /// <summary>
-        /// Makes a variety of changes to a control in a GUI window.
-        /// </summary>
-        /// <param name="Command"></param>
-        /// <param name="ControlID"></param>
-        /// <param name="Param3"></param>
-        public static void GuiControl(string Command, string ControlID, string Param3)
+        static void GuiControlAsync(Control ctrl, string cmd, string arg)
         {
-            var ctrl = GuiFindControl(ControlID);
+            cmd = cmd.ToLowerInvariant();
 
-            if (ctrl == null)
-                return;
-
-            Command = Command.ToLowerInvariant();
-
-            switch (Command)
+            switch (cmd)
             {
                 case Keyword_Text:
                 case "":
-                    ctrl.Text = Param3;
+                    ctrl.Text = arg;
                     break;
 
                 case Keyword_Move:
                 case Keyword_MoveDraw:
-                    GuiControlMove(Param3, ctrl);
+                    GuiControlMove(arg, ctrl);
                     break;
 
                 case Keyword_Focus:
@@ -1424,13 +1468,31 @@ namespace IronAHK.Rusty
 
                 default:
                     int n;
-                    if (Command.StartsWith(Keyword_Enable) && int.TryParse(Command.Substring(Keyword_Enable.Length), out n) && (n == 1 || n == 0))
+                    if (cmd.StartsWith(Keyword_Enable) && int.TryParse(cmd.Substring(Keyword_Enable.Length), out n) && (n == 1 || n == 0))
                         ctrl.Enabled = n == 1;
-                    if (Command.StartsWith(Keyword_Disable) && int.TryParse(Command.Substring(Keyword_Disable.Length), out n) && (n == 1 || n == 0))
+                    if (cmd.StartsWith(Keyword_Disable) && int.TryParse(cmd.Substring(Keyword_Disable.Length), out n) && (n == 1 || n == 0))
                         ctrl.Enabled = n == 0;
-                    GuiApplyExtendedStyles(ctrl, Param3);
+                    GuiApplyExtendedStyles(ctrl, arg);
                     break;
             }
+        }
+
+        #endregion
+
+        /// <summary>
+        /// Makes a variety of changes to a control in a GUI window.
+        /// </summary>
+        /// <param name="Command"></param>
+        /// <param name="ControlID"></param>
+        /// <param name="Param3"></param>
+        public static void GuiControl(string Command, string ControlID, string Param3)
+        {
+            var ctrl = GuiFindControl(ControlID);
+
+            if (ctrl == null)
+                return;
+
+            ctrl.Invoke((SimpleDelegate)delegate { GuiControlAsync(ctrl, Command, Param3); });
         }
 
         static void GuiApplyExtendedStyles(Control control, string options)

@@ -7,27 +7,15 @@ namespace IronAHK.Scripting
     {
         CodeMethodInvokeExpression ParseCommand(string code)
         {
-            var anchors = new char[Spaces.Length + 1];
-            anchors[0] = Multicast;
-            Spaces.CopyTo(anchors, 1);
-
-            code = code.TrimStart(Spaces);
-            string[] parts = code.Split(anchors, 2);
-            string name = parts[0];
-
+            var parts = SplitCommandStatement(code);
             var invoke = new CodeMethodInvokeExpression();
-            invoke.Method = new CodeMethodReferenceExpression(null, name);
-            CheckPersistent(name);
+            invoke.Method = new CodeMethodReferenceExpression(null, parts[0]);
+            CheckPersistent(parts[0]);
 
             if (parts.Length > 1 && parts[1].Length != 0)
             {
-                int cast = parts[1].IndexOf(Multicast);
-                if (cast != -1 && IsSpace(parts[1].Substring(0, cast)))
-                    parts[1] = parts[1].Substring(cast + 1);
-
-                if (parts[1].Length != 0)
-                    foreach (var param in SplitCommandParameters(parts[1]))
-                        invoke.Parameters.Add(ParseCommandParameter(param));
+                foreach (var param in SplitCommandParameters(parts[1]))
+                    invoke.Parameters.Add(ParseCommandParameter(param));
             }
 
             invoke.UserData.Add(invokeCommand, true);
@@ -36,6 +24,32 @@ namespace IronAHK.Scripting
         }
 
         #region Parameters
+
+        string[] SplitCommandStatement(string code)
+        {
+            int i = 0;
+            bool d = false;
+
+            code = code.TrimStart(Spaces);
+
+            for (; i < code.Length; i++)
+            {
+                if (code[i] == Multicast)
+                    break;
+                else if (IsSpace(code[i]))
+                    d = true;
+                else if (d)
+                {
+                    i--;
+                    break;
+                }
+            }
+
+            int n = i + 1;
+            var parts = new[] { code.Substring(0, i).TrimEnd(Spaces), n >= code.Length ? string.Empty : code.Substring(n).TrimStart(Spaces) };
+
+            return parts;
+        }
 
         string[] SplitCommandParameters(string code)
         {
