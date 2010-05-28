@@ -1104,27 +1104,33 @@ namespace IronAHK.Rusty
 
         static Form GuiCreateWindow(string name)
         {
+            int n;
+
             if (name == "1")
-                name = string.Empty;
+                name = Keyword_GuiPrefix;
+            else if (name.Length < 3 && name.Length > 0 && int.TryParse(name, out n) && n > 0 && n < 99)
+                name += Keyword_GuiPrefix;
 
-            var win = new Form { Name = name, Tag = new GuiInfo { Delimiter = '|' } };
+            var win = new Form { Name = name, Tag = new GuiInfo { Delimiter = '|' }, KeyPreview = true };
 
-            win.FormClosed += delegate {
-                                      SafeInvoke(win.Name + Keyword_GuiClose);
-                                  };
+            win.FormClosed += delegate
+            {
+                SafeInvoke(win.Name + Keyword_GuiClose);
+            };
 
             win.KeyDown += delegate(object sender, KeyEventArgs e)
-                               {
-                                   if (e.KeyCode == Keys.Escape)
-                                   {
-                                       e.Handled = true;
-                                       SafeInvoke(win.Name + Keyword_GuiEscape);
-                                   }
-                               };
+            {
+                if (e.KeyCode == Keys.Escape)
+                {
+                    e.Handled = true;
+                    SafeInvoke(win.Name + Keyword_GuiEscape);
+                }
+            };
 
-            win.Resize += delegate {
-                                  SafeInvoke(win.Name + Keyword_GuiSize);
-                              };
+            win.Resize += delegate
+            {
+                SafeInvoke(win.Name + Keyword_GuiSize);
+            };
 
             return win;
         }
