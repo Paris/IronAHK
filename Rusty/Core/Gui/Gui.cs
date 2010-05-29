@@ -998,6 +998,11 @@ namespace IronAHK.Rusty
                                     break;
                             }
                         }
+
+                        int n;
+
+                        if (!string.IsNullOrEmpty(content) && int.TryParse(content, out n))
+                            progress.Value = Math.Max(progress.Minimum, Math.Min(progress.Maximum, n));
                     }
                     break;
                 #endregion
