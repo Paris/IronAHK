@@ -108,7 +108,15 @@ namespace IronAHK.Rusty
                         }
 
                         if (auto || pos[0] == null && pos[1] == null)
+                        {
                             guis[id].Size = guis[id].PreferredSize;
+
+                            var status = ((GuiInfo)guis[id].Tag).StatusBar;
+                            int d = status == null ? 0 : status.Height;
+
+                            if (d > 0)
+                                guis[id].Size = new Size(guis[id].Size.Width, guis[id].Size.Height + d);
+                        }
                         else
                         {
                             var size = guis[id].PreferredSize;
