@@ -21,6 +21,7 @@ Gui, Add, DateTime, vC15 xm, 2010
 Gui, Add, MonthCal, vC16 Section, 2009
 Gui, Add, Slider, vC17 ys Range1-10, 5
 Gui, Add, Progress, vC18 -Smooth, 50
+Gui, Add, StatusBar, , Started
 Gui, Show, xCenter y100, Example
 Return
 
