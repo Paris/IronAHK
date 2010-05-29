@@ -1044,9 +1044,18 @@ namespace IronAHK.Rusty
                 #region StatusBar
                 case Keyword_StatusBar:
                     {
+                        var info = (GuiInfo)parent.Tag;
+
+                        if (info.StatusBar != null)
+                        {
+                            opts = string.Empty;
+                            break;
+                        }
+
                         var status = (StatusBar)(control ?? new StatusBar());
                         parent.Controls.Add(status);
                         control = status;
+                        info.StatusBar = status;
                         status.Text = content;
                     }
                     break;
