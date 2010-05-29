@@ -946,6 +946,13 @@ namespace IronAHK.Rusty
                                     break;
                             }
                         }
+
+
+
+                        int n;
+
+                        if (!string.IsNullOrEmpty(content) && int.TryParse(content, out n))
+                            slider.Value = Math.Max(slider.Minimum, Math.Min(slider.Maximum, n));
                     }
                     break;
                 #endregion
