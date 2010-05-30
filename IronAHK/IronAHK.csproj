@@ -94,10 +94,10 @@
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="..\license.txt">
+    <EmbeddedResource Include="..\license.txt">
       <Link>license.txt</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    </EmbeddedResource>
     <Content Include="Site\docs\commands\doc.xsl" />
     <Content Include="Site\docs\developing\status\index.html" />
     <Content Include="Site\docs\images\cross.png" />
