@@ -13,19 +13,20 @@ namespace IronAHK.Setup
         {
             Environment.CurrentDirectory = WorkingDir;
 
-            bool all = false, docs = false, zip = false, app = false, msi = false;
+            bool all = false, docs = false, zip = false, app = false, msi = false, ptb = false;
             string cmd = args.Length > 0 ? args[0].Trim().ToUpperInvariant() : string.Empty;
 
             switch (cmd)
             {
                 case "HELP":
-                    Console.WriteLine("{0} [all|docs|zip|app|msi]", Path.GetFileName(Assembly.GetEntryAssembly().Location));
+                    Console.WriteLine("{0} [all|docs|zip|app|msi|std]", Path.GetFileName(Assembly.GetEntryAssembly().Location));
                     break;
 
                 case "DOCS": docs = true; break;
                 case "ZIP": zip = true; break;
                 case "APP": app = true; break;
                 case "MSI": msi = true; break;
+                case "STD": ptb = true; break;
 
                 case "ALL":
                 default:
@@ -34,7 +35,7 @@ namespace IronAHK.Setup
             }
 
             if (all)
-                docs = zip = app = msi = true;
+                docs = zip = app = msi = ptb = true;
 
             if (docs)
                 TransformDocs();
@@ -47,6 +48,9 @@ namespace IronAHK.Setup
 
             if (msi && Environment.OSVersion.Platform == PlatformID.Win32NT)
                 BuildMsi();
+
+            if (ptb)
+                MergePortable();
 
             Cleanup();
         }
