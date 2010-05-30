@@ -46,11 +46,14 @@ namespace IronAHK.Setup
             if (app)
                 AppBundle();
 
-            if (msi && Environment.OSVersion.Platform == PlatformID.Win32NT)
-                BuildMsi();
+            if (Environment.OSVersion.Platform == PlatformID.Win32NT)
+            {
+                if (msi)
+                    BuildMsi();
 
-            if (ptb)
-                MergePortable();
+                if (ptb)
+                    MergePortable();
+            }
 
             Cleanup();
         }
