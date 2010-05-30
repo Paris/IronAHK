@@ -16,10 +16,6 @@ namespace IronAHK.Rusty
         /// <param name="Options"></param>
         public static void Click(object[] Options)
         {
-            // only supporting Windows for now
-            if (Environment.OSVersion.Platform != PlatformID.Win32NT)
-                return;
-
             string ParamLine = "";
             var aInput = new Windows.INPUT[2];
             var MousePos = new Point(0, 0);
