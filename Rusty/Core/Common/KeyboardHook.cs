@@ -559,6 +559,15 @@ namespace IronAHK.Rusty
                             history.Length = 0;
                             break;
 
+                        case Keys.Alt:
+                        case Keys.LMenu:
+                        case Keys.RMenu:
+                        case Keys.LControlKey:
+                        case Keys.RControlKey:
+                        case Keys.LShiftKey:
+                        case Keys.RShiftKey:
+                            break;
+
                         default:
                             int d = retention - history.Length;
                             if (d < 0)
