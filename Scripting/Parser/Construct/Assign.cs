@@ -66,7 +66,7 @@ namespace IronAHK.Scripting
             if (value.Length == 0)
                 value = null;
             else
-                value = StripCommentSingle(value);
+                value = StripCommentSingle(value.Trim(Spaces));
 
             #endregion
 
