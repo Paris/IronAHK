@@ -38,7 +38,8 @@ namespace IronAHK
 
             #region Command line
 
-            string self = Assembly.GetExecutingAssembly().Location;
+            var asm = Assembly.GetExecutingAssembly();
+            string self = asm.Location;
 
             string script = null;
             string exe = null;
@@ -128,6 +129,10 @@ namespace IronAHK
                             string txt = string.Format("Usage: {0} [{1}gui] [{1}out filename] <source file>",
                                 Path.GetFileName(self), Environment.OSVersion.Platform == PlatformID.Unix ? "--" : "/");
                             return Message(txt, ExitSuccess);
+
+                        case "ABOUT":
+                            var license = asm.GetManifestResourceStream(typeof(Program).Namespace + ".license.txt");
+                            return Message(new StreamReader(license).ReadToEnd(), ExitSuccess);
 
                         default:
                             return Message(ErrorUnrecognisedSwitch, ExitInvalidFunction);
