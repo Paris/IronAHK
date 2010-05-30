@@ -180,22 +180,7 @@ namespace IronAHK.Rusty
         /// <param name="Options"></param>
         public static void Hotstring(string Sequence, string Label, string Options)
         {
-            #region Initialise
-
-            if (keyboardHook == null)
-            {
-                if (Environment.OSVersion.Platform == PlatformID.Win32NT)
-                    keyboardHook = new Windows.KeyboardHook();
-                else
-                    keyboardHook = new Linux.KeyboardHook();
-            }
-
-            if (hotstrings == null)
-                hotstrings = new Dictionary<string, HotstringDefinition>();
-
-            #endregion
-
-            #region Create
+            InitKeyboardHook();
 
             GenericFunction proc;
 
@@ -216,8 +201,6 @@ namespace IronAHK.Rusty
             var key = new HotstringDefinition(Sequence, proc) { Name = Sequence, Enabled = true, EnabledOptions = options };
             hotstrings.Add(Sequence, key);
             keyboardHook.Add(key);
-
-            #endregion
         }
 
         /// <summary>
