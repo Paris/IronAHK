@@ -128,6 +128,8 @@ namespace IronAHK.Rusty
 
                 #region Modifiers
 
+                sequence = sequence.Replace(Keyword_ModifierAltGr, new string(new[] { Keyword_ModifierCtrl, Keyword_ModifierAlt }));
+
                 for (int i = 0; i < sequence.Length; i++)
                 {
                     switch (sequence[i])

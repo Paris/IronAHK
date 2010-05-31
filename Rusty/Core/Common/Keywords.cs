@@ -330,6 +330,7 @@ namespace IronAHK.Rusty
 
         const char Keyword_ModifierWin = '#';
         const char Keyword_ModifierAlt = '!';
+        const string Keyword_ModifierAltGr = "<^>!";
         const char Keyword_ModifierCtrl = '^';
         const char Keyword_ModifierShift = '+';
         const char Keyword_ModifierLeftPair = '<';
