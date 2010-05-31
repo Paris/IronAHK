@@ -20,6 +20,7 @@ namespace IronAHK.Rusty
             const int VK_BACK = 0x08;
             const int VK_SHIFT = 0x10;
             const int VK_CONTROL = 0x11;
+            const int VK_MENU = 0x12;
             LowLevelKeyboardProc proc;
             IntPtr hookId = IntPtr.Zero;
             bool ignore;
@@ -93,13 +94,15 @@ namespace IronAHK.Rusty
                 var state = new byte[256];
                 GetKeyboardState(state);
 
-                bool shift = GetKeyState(VK_SHIFT) >> 8 != 0;
-                
-                if (shift)
-                    state[VK_SHIFT] = 128;
+                foreach (var key in new[] { VK_SHIFT, VK_CONTROL, VK_MENU })
+                {
+                    const byte d = 0x80;
+                    const byte u = d - 1;
 
-                state[VK_CONTROL] = 0;
-                
+                    bool s = GetKeyState(key) >> 8 != 0;
+                    state[key] &= s ? d : u;
+                }
+
                 var buf = new StringBuilder(4);
                 ToUnicodeEx(vk, sc, state, buf, buf.Capacity, 0, GetKeyboardLayout(0));
                 return buf.ToString();
