@@ -327,6 +327,7 @@ namespace IronAHK.Rusty
         const string Keyword_MoveDraw = "movedraw";
         const string Keyword_Hwnd = "hwnd";
         const string Keyword_GuiPrefix = "gui";
+        const string Keyword_GuiButton = "Button";
 
         const char Keyword_ModifierWin = '#';
         const char Keyword_ModifierAlt = '!';

@@ -511,6 +511,7 @@ namespace IronAHK.Rusty
                         parent.Controls.Add(button);
                         control = button;
                         button.Text = content;
+                        button.Click += delegate { SafeInvoke(Keyword_GuiButton + content); };
                     }
                     break;
                 #endregion
