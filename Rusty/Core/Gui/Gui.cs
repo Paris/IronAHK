@@ -1287,6 +1287,10 @@ namespace IronAHK.Rusty
                                 control.Name = arg;
                                 break;
 
+                            case 'g':
+                                control.Click += delegate { SafeInvoke(arg); };
+                                break;
+
                             default:
                                 append = true;
                                 break;
