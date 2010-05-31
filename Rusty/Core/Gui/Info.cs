@@ -1,4 +1,5 @@
 using System.Drawing;
+using System.Windows.Forms;
 
 namespace IronAHK.Rusty
 {
@@ -11,6 +12,8 @@ namespace IronAHK.Rusty
             public bool OwnDialogs { get; set; }
 
             public Point Section { get; set; }
+
+            public StatusBar StatusBar { get; set; }
         }
     }
 }

@@ -108,7 +108,15 @@ namespace IronAHK.Rusty
                         }
 
                         if (auto || pos[0] == null && pos[1] == null)
+                        {
                             guis[id].Size = guis[id].PreferredSize;
+
+                            var status = ((GuiInfo)guis[id].Tag).StatusBar;
+                            int d = status == null ? 0 : status.Height;
+
+                            if (d > 0)
+                                guis[id].Size = new Size(guis[id].Size.Width, guis[id].Size.Height + d);
+                        }
                         else
                         {
                             var size = guis[id].PreferredSize;
@@ -938,6 +946,13 @@ namespace IronAHK.Rusty
                                     break;
                             }
                         }
+
+
+
+                        int n;
+
+                        if (!string.IsNullOrEmpty(content) && int.TryParse(content, out n))
+                            slider.Value = Math.Max(slider.Minimum, Math.Min(slider.Maximum, n));
                     }
                     break;
                 #endregion
@@ -990,6 +1005,11 @@ namespace IronAHK.Rusty
                                     break;
                             }
                         }
+
+                        int n;
+
+                        if (!string.IsNullOrEmpty(content) && int.TryParse(content, out n))
+                            progress.Value = Math.Max(progress.Minimum, Math.Min(progress.Maximum, n));
                     }
                     break;
                 #endregion
@@ -1044,9 +1064,18 @@ namespace IronAHK.Rusty
                 #region StatusBar
                 case Keyword_StatusBar:
                     {
+                        var info = (GuiInfo)parent.Tag;
+
+                        if (info.StatusBar != null)
+                        {
+                            opts = string.Empty;
+                            break;
+                        }
+
                         var status = (StatusBar)(control ?? new StatusBar());
                         parent.Controls.Add(status);
                         control = status;
+                        info.StatusBar = status;
                         status.Text = content;
                     }
                     break;
@@ -1104,27 +1133,33 @@ namespace IronAHK.Rusty
 
         static Form GuiCreateWindow(string name)
         {
+            int n;
+
             if (name == "1")
-                name = string.Empty;
+                name = Keyword_GuiPrefix;
+            else if (name.Length < 3 && name.Length > 0 && int.TryParse(name, out n) && n > 0 && n < 99)
+                name += Keyword_GuiPrefix;
 
-            var win = new Form { Name = name, Tag = new GuiInfo { Delimiter = '|' } };
+            var win = new Form { Name = name, Tag = new GuiInfo { Delimiter = '|' }, KeyPreview = true };
 
-            win.FormClosed += delegate {
-                                      SafeInvoke(win.Name + Keyword_GuiClose);
-                                  };
+            win.FormClosed += delegate
+            {
+                SafeInvoke(win.Name + Keyword_GuiClose);
+            };
 
             win.KeyDown += delegate(object sender, KeyEventArgs e)
-                               {
-                                   if (e.KeyCode == Keys.Escape)
-                                   {
-                                       e.Handled = true;
-                                       SafeInvoke(win.Name + Keyword_GuiEscape);
-                                   }
-                               };
+            {
+                if (e.KeyCode == Keys.Escape)
+                {
+                    e.Handled = true;
+                    SafeInvoke(win.Name + Keyword_GuiEscape);
+                }
+            };
 
-            win.Resize += delegate {
-                                  SafeInvoke(win.Name + Keyword_GuiSize);
-                              };
+            win.Resize += delegate
+            {
+                SafeInvoke(win.Name + Keyword_GuiSize);
+            };
 
             return win;
         }
