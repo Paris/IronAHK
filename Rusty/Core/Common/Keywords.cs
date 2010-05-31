@@ -326,9 +326,11 @@ namespace IronAHK.Rusty
         const string Keyword_Horz = "horz";
         const string Keyword_MoveDraw = "movedraw";
         const string Keyword_Hwnd = "hwnd";
+        const string Keyword_GuiPrefix = "gui";
 
         const char Keyword_ModifierWin = '#';
         const char Keyword_ModifierAlt = '!';
+        const string Keyword_ModifierAltGr = "<^>!";
         const char Keyword_ModifierCtrl = '^';
         const char Keyword_ModifierShift = '+';
         const char Keyword_ModifierLeftPair = '<';

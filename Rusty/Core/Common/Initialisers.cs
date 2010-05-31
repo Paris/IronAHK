@@ -10,6 +10,9 @@ namespace IronAHK.Rusty
             if (hotkeys == null)
                 hotkeys = new Dictionary<string, HotkeyDefinition>();
 
+            if (hotstrings == null)
+                hotstrings = new Dictionary<string, HotstringDefinition>();
+
             if (keyboardHook != null)
                 return;
 

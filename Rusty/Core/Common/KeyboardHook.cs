@@ -128,6 +128,8 @@ namespace IronAHK.Rusty
 
                 #region Modifiers
 
+                sequence = sequence.Replace(Keyword_ModifierAltGr, new string(new[] { Keyword_ModifierCtrl, Keyword_ModifierAlt }));
+
                 for (int i = 0; i < sequence.Length; i++)
                 {
                     switch (sequence[i])
@@ -557,6 +559,15 @@ namespace IronAHK.Rusty
                         case Keys.Home:
                         case Keys.End:
                             history.Length = 0;
+                            break;
+
+                        case Keys.Alt:
+                        case Keys.LMenu:
+                        case Keys.RMenu:
+                        case Keys.LControlKey:
+                        case Keys.RControlKey:
+                        case Keys.LShiftKey:
+                        case Keys.RShiftKey:
                             break;
 
                         default:

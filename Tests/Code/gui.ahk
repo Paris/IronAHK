@@ -1,7 +1,7 @@
 f = %A_Temp%\guitest.png
 
 If (!FileExist(f))
-	UrlDownloadToFile, http://i44.tinypic.com/vovc4j.png, %f%
+	UrlDownloadToFile, http://i50.tinypic.com/289v245.png, %f%
 
 Gui, Add, Text, vC1 Border gButtonClick, Test
 Gui, Add, Edit, vC2 ym
@@ -21,6 +21,7 @@ Gui, Add, DateTime, vC15 xm, 2010
 Gui, Add, MonthCal, vC16 Section, 2009
 Gui, Add, Slider, vC17 ys Range1-10, 5
 Gui, Add, Progress, vC18 -Smooth, 50
+Gui, Add, StatusBar, , Started
 Gui, Show, xCenter y100, Example
 Return
 
