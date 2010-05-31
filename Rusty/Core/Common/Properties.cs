@@ -176,6 +176,8 @@ namespace IronAHK.Rusty
 
         static DlgProgress IronDlgProgress;
 
+        static DlgSplashImage IronDlgSplashImage;
+
         #endregion
 
         #region Tips
