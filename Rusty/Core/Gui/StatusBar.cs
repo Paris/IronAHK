@@ -1,4 +1,6 @@
 using System;
+using System.Drawing;
+using System.Windows.Forms;
 
 namespace IronAHK.Rusty
 {
@@ -19,21 +21,43 @@ namespace IronAHK.Rusty
             if (status == null)
                 return;
 
-            throw new NotImplementedException(); // TODO: SB_SetIcon
+            if (PartNumber != 0)
+                PartNumber--;
+
+            int max = 0;
+            foreach (var panel in status.Panels)
+                max++;
+
+            if ((PartNumber != 0 && PartNumber > max) || PartNumber < 0)
+                return;
+
+            try { status.Panels[PartNumber].Icon = new Icon(Filename); }
+            catch (Exception) { }
         }
 
         /// <summary>
         /// Divides the bar into multiple sections according to the specified widths (in pixels). If all parameters are omitted, the bar is restored to having only a single, long part. Otherwise, specify the width of each part except the last (the last will fill the remaining width of the bar). For example, SB_SetParts(50, 50) would create three parts: the first two of width 50 and the last one of all the remaining width. Note: Any parts "deleted" by SB_SetParts() will start off with no text the next time they are shown (furthermore, their icons are automatically destroyed). Upon success, SB_SetParts() returns a non-zero value (the status bar's HWND). Upon failure it returns 0.
         /// </summary>
         /// <param name="WidthN"></param>
-        public static void SB_SetParts(int[] WidthN)
+        public static void SB_SetParts(object[] WidthN)
         {
             var status = DefaultStatusBar;
 
             if (status == null)
                 return;
 
-            throw new NotImplementedException(); // TODO: SB_SetParts
+            if (WidthN == null || WidthN.Length == 0)
+            {
+                status.ShowPanels = false;
+                status.Panels.Clear();
+            }
+            else
+            {
+                foreach (var width in WidthN)
+                    status.Panels.Add(new StatusBarPanel { Width = width is int ? (int)width : 100 });
+
+                status.ShowPanels = true;
+            }
         }
 
         /// <summary>
@@ -49,7 +73,49 @@ namespace IronAHK.Rusty
             if (status == null)
                 return;
 
-            throw new NotImplementedException(); // TODO: SB_SetText
+            PartNumber--;
+
+            int max = 0;
+            foreach (var panel in status.Panels)
+                max++;
+
+            if (PartNumber == max)
+            {
+                status.Panels.Add(string.Empty);
+                max++;
+            }
+
+            if (PartNumber == 0 && Style == 0 && !status.ShowPanels)
+            {
+                status.Text = NewText;
+                return;
+            }
+            else
+                status.ShowPanels = true;
+
+            if ((PartNumber != 0 && PartNumber > max) || PartNumber < 0)
+                return;
+
+            status.Panels[PartNumber].Text = NewText;
+
+            var border = status.Panels[PartNumber].BorderStyle;
+
+            switch (Style)
+            {
+                case 0:
+                    border = StatusBarPanelBorderStyle.Sunken;
+                    break;
+
+                case 1:
+                    border = StatusBarPanelBorderStyle.None;
+                    break;
+
+                case 2:
+                    border = StatusBarPanelBorderStyle.Raised;
+                    break;
+            }
+
+            status.Panels[PartNumber].BorderStyle = border;
         }
     }
 }
