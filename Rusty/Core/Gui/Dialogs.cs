@@ -321,7 +321,14 @@ namespace IronAHK.Rusty
                 IronDlgProgress = new DlgProgress();
                 IronDlgProgress.Show();
             }
-            IronDlgProgress.Invoke((SimpleDelegate)delegate { ProgressAssync(ProgressParam1,  SubText,  MainText,  WinTitle,  FontName); });
+            try
+            {
+                IronDlgProgress.Invoke((SimpleDelegate)delegate { ProgressAssync(ProgressParam1,  SubText,  MainText,  WinTitle,  FontName); });
+            }
+            catch (Exception e)
+            {
+                return;
+            }
             return;
         }
 
@@ -337,10 +344,10 @@ namespace IronAHK.Rusty
             IronDlgProgress.SubText = SubText;
             IronDlgProgress.MainText = MainText;
             IronDlgProgress.Value = Int32.Parse(ProgressParam1);
+            IronDlgProgress.TopMost = true;
+            IronDlgProgress.ShowInTaskbar = false;
             return;
         }
-
-
 
         /// <summary>
         /// Creates or updates a window containing a progress bar or an image.
@@ -366,8 +373,34 @@ namespace IronAHK.Rusty
         public static void SplashImage(string ImageFile, string Options, string SubText, string MainText, string WinTitle, string FontName)
         {
 
+            if (IronDlgSplashImage == null)
+            {
+                IronDlgSplashImage = new DlgSplashImage();
+                IronDlgSplashImage.Show();
+            }
+            try
+            {
+                IronDlgSplashImage.Invoke((SimpleDelegate)delegate { SplashImageAssync(ImageFile, Options, SubText, MainText, WinTitle, FontName); });
+            }
+            catch(Exception e)
+            {
+                return;
+            }
+            return;
         }
-
+        public static void SplashImageAssync(string ImageFile, string Options, string SubText, string MainText, string WinTitle, string FontName)
+        {
+            string sImageFile = ImageFile.ToLowerInvariant();
+            if (sImageFile.Contains("off"))
+            {
+                IronDlgSplashImage.Dispose();
+                return;
+            }
+            IronDlgSplashImage.PicturePath = ImageFile;
+            IronDlgSplashImage.Title = WinTitle;
+            IronDlgSplashImage.SubText = SubText;
+            IronDlgSplashImage.MainText = MainText;
+        }
 
     }
 
@@ -561,7 +594,7 @@ namespace IronAHK.Rusty
         public DlgProgress()
         {
             InitializeComponent();
-            this.StartPosition = FormStartPosition.CenterParent;
+            this.StartPosition = FormStartPosition.CenterScreen;
         }
 
         protected override void Dispose(bool disposing)
@@ -586,20 +619,20 @@ namespace IronAHK.Rusty
             // 
             // mMainText
             // 
-            //this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold);
             this.mMainText.Location = new System.Drawing.Point(20, 20);
             this.mMainText.Name = "label1";
             this.mMainText.Size = new System.Drawing.Size(240, 48);
             this.mMainText.TabIndex = 1;
+            this.mMainText.Font = new Font(this.mMainText.Font.FontFamily,12, FontStyle.Bold);
             this.mMainText.Anchor = AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Top;
 
 
             // 
             // Progress
             // 
-            this.mProgressBar.Location = new System.Drawing.Point(152, 104);
+            this.mProgressBar.Location = new System.Drawing.Point(20, 70);
             this.mProgressBar.Name = "Progress";
-            this.mProgressBar.Size = new System.Drawing.Size(96, 24);
+            this.mProgressBar.Size = new System.Drawing.Size(230, 24);
             this.mProgressBar.TabIndex = 3;
             this.mProgressBar.Value = 0;
             this.mProgressBar.Anchor = AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Bottom;
@@ -607,7 +640,7 @@ namespace IronAHK.Rusty
             // 
             // mSubText
             // 
-            this.mSubText.Location = new System.Drawing.Point(16, 72);
+            this.mSubText.Location = new System.Drawing.Point(20, 100);
             this.mSubText.Name = "txtMessage";
             this.mSubText.Size = new System.Drawing.Size(232, 20);
             this.mSubText.TabIndex = 0;
@@ -618,7 +651,7 @@ namespace IronAHK.Rusty
             // 
             this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
             this.ClientSize = new System.Drawing.Size(266, 151);
-            this.ControlBox = false;
+            this.ControlBox = true;
             this.Controls.Add(this.mSubText);
             this.Controls.Add(this.mMainText);
             this.Controls.Add(this.mProgressBar);
@@ -628,12 +661,126 @@ namespace IronAHK.Rusty
             this.Name = "ProgressDialog";
             this.Text = "IronAHK Progress";
             this.ResumeLayout(true);
-
         }
     }
 
     #endregion
 
+    #region SplashImage
+
+    public class DlgSplashImage : System.Windows.Forms.Form
+    {
+        private System.ComponentModel.Container components = null;
+        private System.Windows.Forms.PictureBox mPictureBox;
+        private System.Windows.Forms.Label mSubText;
+        private System.Windows.Forms.Label mMainText;
+
+        public string Title
+        {
+            get { return this.Text; }
+            set { this.Text = value; }
+        }
+        public string SubText
+        {
+            get { return mSubText.Text; }
+            set { this.mSubText.Text = value; }
+        }
+        public string MainText
+        {
+            get { return mMainText.Text; }
+            set { this.mMainText.Text = value; }
+        }
+
+        public string PicturePath
+        {
+            get { return this.mPictureBox.ImageLocation; }
+            set { this.mPictureBox.ImageLocation = value; }
+        }
+
+        /// <summary>Constructor: Inits Dialoge
+        /// 
+        /// </summary>
+        public DlgSplashImage()
+        {
+            InitializeComponent();
+            this.StartPosition = FormStartPosition.CenterScreen;
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                if (components != null)
+                {
+                    components.Dispose();
+                }
+            }
+            base.Dispose(disposing);
+        }
+
+        private void InitializeComponent()
+        {
+            this.mSubText = new System.Windows.Forms.Label();
+            this.mMainText = new System.Windows.Forms.Label();
+            this.mPictureBox = new System.Windows.Forms.PictureBox();
+
+            this.SuspendLayout();
+            // 
+            // mMainText
+            // 
+            this.mMainText.Location = new System.Drawing.Point(20, 0);
+            this.mMainText.Name = "label1";
+            this.mMainText.Size = new System.Drawing.Size(240, 1);
+            this.mMainText.TabIndex = 1;
+            this.mMainText.Font = new Font(this.mMainText.Font.FontFamily, 12, FontStyle.Bold);
+            this.mMainText.AutoSize = true; 
+            this.mMainText.Anchor = AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Top;
+
+
+            // 
+            // Splash
+            // 
+            this.mPictureBox.Location = new System.Drawing.Point(0, 1);
+            this.mPictureBox.Name = "Progress";
+            this.mPictureBox.Size = new System.Drawing.Size(300, 300);
+            this.mPictureBox.TabIndex = 3;
+            this.mPictureBox.Anchor = AnchorStyles.Left | AnchorStyles.Top;
+            this.mPictureBox.SizeMode = PictureBoxSizeMode.AutoSize;
+
+            // 
+            // mSubText
+            // 
+            this.mSubText.Location = new System.Drawing.Point(20, 301);
+            this.mSubText.Name = "txtMessage";
+            this.mSubText.Size = new System.Drawing.Size(240, 1);
+            this.mMainText.AutoSize = true; 
+            this.mSubText.TabIndex = 0;
+            this.mSubText.Anchor = AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Bottom;
+
+            // 
+            // DialogForm
+            // 
+            this.AutoScaleBaseSize = new System.Drawing.Size(300, 350);
+            this.ClientSize = new System.Drawing.Size(300, 350);
+            
+            this.Controls.Add(this.mSubText);
+            this.Controls.Add(this.mMainText);
+            this.Controls.Add(this.mPictureBox);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
+            this.ControlBox = true;
+            this.Name = "ProgressDialog";
+            this.Text = "IronAHK Progress";
+            this.AutoSize = true;
+            this.ResumeLayout(true);
+            
+        }
+
+
+    }
+
+    #endregion
 
     #endregion
 }
