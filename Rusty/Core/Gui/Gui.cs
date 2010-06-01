@@ -154,8 +154,6 @@ namespace IronAHK.Rusty
                             guis[id].Location = location;
                         }
 
-                        guis[id].ResumeLayout(true);
-
                         if (min)
                             guis[id].WindowState = FormWindowState.Minimized;
                         else if (max)
@@ -166,6 +164,8 @@ namespace IronAHK.Rusty
                             guis[id].Hide();
                         else
                             guis[id].Show();
+
+                        guis[id].ResumeLayout(true);
                     }
                     break;
 
@@ -1137,6 +1137,8 @@ namespace IronAHK.Rusty
                 name += Keyword_GuiPrefix;
 
             var win = new Form { Name = name, Tag = new GuiInfo { Delimiter = '|' }, KeyPreview = true };
+
+            win.SuspendLayout();
 
             win.FormClosed += delegate
             {
