@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Diagnostics;
+using System.Drawing;
 using System.IO;
 using System.Reflection;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
@@ -114,6 +116,34 @@ namespace IronAHK.Rusty
             }
 
             return pre.Length == 0 ? id : pre;
+        }
+
+        static string ToString(byte[] array)
+        {
+            var buf = new StringBuilder(array.Length * 2);
+
+            foreach (var b in array)
+                buf.Append(b.ToString("x").PadLeft(2, '0'));
+
+            return buf.ToString();
+        }
+
+        static byte[] ToByteArray(object value)
+        {
+            if (value is string)
+                return Encoding.Unicode.GetBytes((string)value);
+
+            var formatter = new BinaryFormatter();
+            var writer = new MemoryStream();
+            formatter.Serialize(writer, value);
+            return writer.ToArray();
+        }
+
+        static string Hash(object value, HashAlgorithm alg)
+        {
+            var raw = ToByteArray(value);
+            var result = alg.ComputeHash(raw);
+            return ToString(result);
         }
 
         static Color ParseColor(string name)
