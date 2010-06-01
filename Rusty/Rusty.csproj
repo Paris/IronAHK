@@ -69,6 +69,7 @@
   -->
   <ItemGroup>
     <Compile Include="Core\Common\Initialisers.cs" />
+    <Compile Include="Core\Crypt.cs" />
     <Compile Include="Core\Core.cs" />
     <Compile Include="Core\Disk.cs" />
     <Compile Include="Core\Gui\HotkeyBox.cs" />
