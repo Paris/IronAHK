@@ -145,6 +145,51 @@ namespace IronAHK.Rusty
             return writer.ToArray();
         }
 
+        static byte[] Encrypt(object value, object key, bool decrypt, SymmetricAlgorithm alg)
+        {
+            int size = 0;
+
+            foreach (var legal in alg.LegalKeySizes)
+                size = Math.Max(size, legal.MaxSize);
+
+            var k = new byte[size / 8];
+
+            var keyBytes = ToByteArray(key);
+
+            if (keyBytes.Length < k.Length)
+            {
+                var padded = new byte[k.Length];
+                keyBytes.CopyTo(padded, 0);
+                keyBytes = padded;
+            }
+
+            for (int i = 0; i < k.Length; i++)
+                k[i] = keyBytes[i];
+
+            try
+            {
+                alg.Key = k;
+            }
+            catch (CryptographicException)
+            {
+                error = 2;
+                return new byte[] { };
+            }
+
+            var iv = new byte[alg.IV.Length];
+            var hash = new SHA1Managed().ComputeHash(keyBytes, 0, iv.Length);
+
+            for (int i = 0; i < Math.Min(iv.Length, hash.Length); i++)
+                iv[i] = hash[i];
+
+            alg.IV = iv;
+
+            var trans = decrypt ? alg.CreateDecryptor() : alg.CreateEncryptor();
+            var buffer = ToByteArray(value);
+            var result = trans.TransformFinalBlock(buffer, 0, buffer.Length);
+            return result;
+        }
+
         static string Hash(object value, HashAlgorithm alg)
         {
             var raw = ToByteArray(value);
