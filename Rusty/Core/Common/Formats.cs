@@ -132,6 +132,12 @@ namespace IronAHK.Rusty
         {
             if (value is string)
                 return Encoding.Unicode.GetBytes((string)value);
+            
+            if (value is byte[])
+                return (byte[])value;
+
+            if (value == null)
+                return new byte[] { };
 
             var formatter = new BinaryFormatter();
             var writer = new MemoryStream();
