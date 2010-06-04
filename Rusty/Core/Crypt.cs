@@ -5,6 +5,8 @@ namespace IronAHK.Rusty
 {
     partial class Core
     {
+        #region Hash
+
         /// <summary>
         /// Calculates the MD5 hash of an object.
         /// </summary>
@@ -65,6 +67,10 @@ namespace IronAHK.Rusty
             return Hash(value, new SHA512Managed());
         }
 
+        #endregion
+
+        #region Random
+
         /// <summary>
         /// Generates a secure (cryptographic) random number. 
         /// </summary>
@@ -102,5 +108,7 @@ namespace IronAHK.Rusty
 
             return diff == 0 ? val : min + val % diff;
         }
+
+        #endregion
     }
 }
