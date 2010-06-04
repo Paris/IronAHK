@@ -67,6 +67,19 @@ namespace IronAHK.Rusty
         #region Hash
 
         /// <summary>
+        /// Calculates the CRC32 polynomial of an object.
+        /// </summary>
+        /// <param name="value">The object to check.</param>
+        /// <returns>A checksum of <paramref name="value"/> as an integer.</returns>
+        public static long CRC32(object value)
+        {
+            var raw = ToByteArray(value);
+            var alg = new Rusty.CRC32();
+            alg.ComputeHash(raw);
+            return alg.Value;
+        }
+
+        /// <summary>
         /// Calculates the MD5 hash of an object.
         /// </summary>
         /// <param name="value">The object to hash.</param>
