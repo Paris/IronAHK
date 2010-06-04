@@ -154,8 +154,6 @@ namespace IronAHK.Rusty
                             guis[id].Location = location;
                         }
 
-                        guis[id].ResumeLayout(true);
-
                         if (min)
                             guis[id].WindowState = FormWindowState.Minimized;
                         else if (max)
@@ -166,6 +164,8 @@ namespace IronAHK.Rusty
                             guis[id].Hide();
                         else
                             guis[id].Show();
+
+                        guis[id].ResumeLayout(true);
                     }
                     break;
 
@@ -381,11 +381,6 @@ namespace IronAHK.Rusty
                         edit.Tag = options;
                         opts = GuiApplyStyles(edit, options);
 
-                        const int mw = 100;
-
-                        if (edit.Width < mw)
-                            edit.Width = mw;
-
                         foreach (var opt in ParseOptions(opts))
                         {
                             bool on = opt[0] != '-';
@@ -511,6 +506,7 @@ namespace IronAHK.Rusty
                         parent.Controls.Add(button);
                         control = button;
                         button.Text = content;
+                        button.Click += delegate { SafeInvoke(Keyword_GuiButton + content); };
                     }
                     break;
                 #endregion
@@ -1142,6 +1138,8 @@ namespace IronAHK.Rusty
 
             var win = new Form { Name = name, Tag = new GuiInfo { Delimiter = '|' }, KeyPreview = true };
 
+            win.SuspendLayout();
+
             win.FormClosed += delegate
             {
                 SafeInvoke(win.Name + Keyword_GuiClose);
@@ -1171,7 +1169,29 @@ namespace IronAHK.Rusty
             if (first)
                 control.Location = new Point(control.Parent.Margin.Left, control.Parent.Margin.Top);
 
-            control.Size = control.PreferredSize;
+            #region Default sizing
+
+            float dw = control.Font.SizeInPoints * 15;
+            float w = 0;
+
+            if (control is ComboBox || control is ListBox || control is HotkeyBox || control is TextBox)
+                w = dw;
+            else if (control is ListView || control is TreeView || control is DateTimePicker)
+                w = dw * 2;
+            else if (control is NumericUpDown)
+                w = dw;
+            else if (control is TrackBar)
+                w = dw;
+            else if (control is ProgressBar)
+                w = dw;
+            else if (control is GroupBox)
+                w = dw + 2 * control.Parent.Margin.Left;
+            else if (control is TabPage)
+                w = 2 * dw + 3 * control.Parent.Margin.Left;
+
+            control.Size = new Size(Math.Max((int)w, control.PreferredSize.Width), control.PreferredSize.Height);
+
+            #endregion
 
             string[] opts = ParseOptions(styles), excess = new string[opts.Length];
 
@@ -1285,6 +1305,10 @@ namespace IronAHK.Rusty
 
                             case 'v':
                                 control.Name = arg;
+                                break;
+
+                            case 'g':
+                                control.Click += delegate { SafeInvoke(arg); };
                                 break;
 
                             default:

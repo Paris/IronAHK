@@ -158,13 +158,7 @@ namespace IronAHK.Rusty
                 if (gui == null)
                     return null;
 
-                StatusBar sb = null;
-
-                foreach (var control in gui.Controls)
-                    if (control.GetType() == typeof(StatusBar))
-                        sb = (StatusBar)control;
-
-                return sb;
+                return ((GuiInfo)gui.Tag).StatusBar;
             }
         }
 
