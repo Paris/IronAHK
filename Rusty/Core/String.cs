@@ -11,6 +11,26 @@ namespace IronAHK.Rusty
     partial class Core
     {
         /// <summary>
+        /// Encodes binary data to a base 64 character string.
+        /// </summary>
+        /// <param name="value">The data to encode.</param>
+        /// <returns>A base 64 string representation of the given binary data.</returns>
+        public static string Base64Encode(object value)
+        {
+            return Convert.ToBase64String(ToByteArray(value));
+        }
+
+        /// <summary>
+        /// Decodes a base 64 character string to binary data.
+        /// </summary>
+        /// <param name="s">The base 64 string to decode.</param>
+        /// <returns>A binary byte array of the given sequence.</returns>
+        public static byte[] Base64Decode(string s)
+        {
+            return Convert.FromBase64String(s);
+        }
+
+        /// <summary>
         /// Transforms a YYYYMMDDHH24MISS timestamp into the specified date/time format.
         /// </summary>
         /// <param name="output">The variable to store the result.</param>
@@ -91,6 +111,34 @@ namespace IronAHK.Rusty
             {
                 output = null;
             }
+        }
+
+        /// <summary>
+        /// Encodes binary data to a hexadecimal string.
+        /// </summary>
+        /// <param name="value">The data to encode.</param>
+        /// <returns>A hexadecimal string representation of the given binary data.</returns>
+        public static string HexEncode(object value)
+        {
+            return ToString(ToByteArray(value));
+        }
+
+        /// <summary>
+        /// Decodes a hexadecimal string to binary data.
+        /// </summary>
+        /// <param name="hex">The hexadecimal string to decode.</param>
+        /// <returns>A binary byte array of the given sequence.</returns>
+        public static byte[] HexDecode(string hex)
+        {
+            var binary = new byte[hex.Length / 2];
+
+            for (int i = 0; i < hex.Length; i += 2)
+            {
+                var n = new string(new[] { hex[i], hex[i + 1] });
+                binary[i / 2] = byte.Parse(n, NumberStyles.AllowHexSpecifier);
+            }
+
+            return binary;
         }
 
         /// <summary>
