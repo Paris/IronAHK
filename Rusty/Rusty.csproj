@@ -104,6 +104,7 @@
     <Compile Include="Core\String.cs" />
     <Compile Include="Core\Variables.cs" />
     <Compile Include="Core\Window.cs" />
+    <Compile Include="Extras\CRC32.cs" />
     <Compile Include="Extras\SimpleJson\SimpleJSON.cs" />
     <Compile Include="Core\Common\KeyboardHook.cs" />
     <Compile Include="Linux\Linux.cs" />
