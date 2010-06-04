@@ -5,6 +5,65 @@ namespace IronAHK.Rusty
 {
     partial class Core
     {
+        #region Encryption
+
+        /// <summary>
+        /// Encrypt or decrypt data with the Data Encryption Standard (DES) algorithm.
+        /// </summary>
+        /// <param name="value">The data to encrypt or decrypt.</param>
+        /// <param name="key">The secret key.</param>
+        /// <param name="decrypt"><code>true</code> to decrypt the given <paramref name="value"/>, otherwise encrypt.</param>
+        /// <returns>The corresponding encrypted or decrypted data.</returns>
+        /// <remarks>A key length of 64 bits is supported.</remarks>
+        public static byte[] DES(object value, object key, bool decrypt)
+        {
+            return Encrypt(value, key, decrypt, new DESCryptoServiceProvider());
+        }
+
+        /// <summary>
+        /// Encrypt or decrypt data with the RC2 algorithm.
+        /// </summary>
+        /// <param name="value">The data to encrypt or decrypt.</param>
+        /// <param name="key">The secret key.</param>
+        /// <param name="decrypt"><code>true</code> to decrypt the given <paramref name="value"/>, otherwise encrypt.</param>
+        /// <returns>The corresponding encrypted or decrypted data.</returns>
+        /// <remarks>Key lengths from 40 bits to 128 bits in increments of 8 bits are supported.</remarks>
+        public static byte[] RC2(object value, object key, bool decrypt)
+        {
+            return Encrypt(value, key, decrypt, new RC2CryptoServiceProvider());
+        }
+
+        /// <summary>
+        /// Encrypt or decrypt data with the Rijndael algorithm.
+        /// </summary>
+        /// <param name="value">The data to encrypt or decrypt.</param>
+        /// <param name="key">The secret key.</param>
+        /// <param name="decrypt"><code>true</code> to decrypt the given <paramref name="value"/>, otherwise encrypt.</param>
+        /// <returns>The corresponding encrypted or decrypted data.</returns>
+        /// <remarks>Key lengths of 128, 192, or 256 bits are supported.</remarks>
+        public static byte[] Rijndael(object value, object key, bool decrypt)
+        {
+            return Encrypt(value, key, decrypt, new RijndaelManaged());
+        }
+
+        /// <summary>
+        /// Encrypt or decrypt data with the Triple Data Encryption Standard (TripleDES) algorithm.
+        /// </summary>
+        /// <param name="value">The data to encrypt or decrypt.</param>
+        /// <param name="key">The secret key.</param>
+        /// <param name="decrypt"><code>true</code> to decrypt the given <paramref name="value"/>, otherwise encrypt.</param>
+        /// <returns>The corresponding encrypted or decrypted data.</returns>
+        /// <remarks>
+        /// <para>Three successive iterations of the <see cref="DES"/> algorithm are used, with either two or three 56-bit keys.</para>
+        /// <para>Key lengths from 128 bits to 192 bits in increments of 64 bits are supported.</para>
+        /// </remarks>
+        public static byte[] TripleDES(object value, object key, bool decrypt)
+        {
+            return Encrypt(value, key, decrypt, new TripleDESCryptoServiceProvider());
+        }
+
+        #endregion
+
         #region Hash
 
         /// <summary>
