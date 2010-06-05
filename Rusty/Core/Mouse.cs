@@ -17,10 +17,11 @@ namespace IronAHK.Rusty
         /// <param name="Options"></param>
         public static void Click(object[] Options)
         {
-            string ParamLine = "";
+            string ParamLine = string.Empty;
             var aInput = new Windows.INPUT[2];
             var MousePos = new Point(0, 0);
             int ClickCount = 1;
+            const string delimiter = ",";
 
             var RE_Coord = new Regex(@"(\d*?)\s*,\s*(\d*)[\s,\,]*", RegexOptions.IgnoreCase);
             var RE_Num = new Regex(@"\d+", RegexOptions.IgnoreCase);
@@ -31,9 +32,9 @@ namespace IronAHK.Rusty
             foreach (var option in Options)
             {
                 if (option is string)
-                    ParamLine += (string)option + ",";
+                    ParamLine += (string)option + delimiter;
                 else if (option is double)
-                    ParamLine += ((int)(double)option) + ",";
+                    ParamLine += ((int)(double)option) + delimiter;
             }
             ParamLine = ParamLine.ToLower().Substring(0, ParamLine.Length - 1);
 
@@ -43,9 +44,9 @@ namespace IronAHK.Rusty
                 Match = RE_Coord.Match(ParamLine);
                 MousePos.X = Convert.ToInt32(Match.Groups[1].Value);
                 MousePos.Y = Convert.ToInt32(Match.Groups[2].Value);
-                ParamLine = RE_Coord.Replace(ParamLine, ""); //remove coord
+                ParamLine = RE_Coord.Replace(ParamLine, string.Empty); //remove coord
                 var CurrentCursor = new Cursor(Cursor.Current.Handle);
-                if (_COORDMODE.Mouse == Coordmodes.RELATIVE)
+                if (coords.Mouse == CoordModeType.Relative)
                 {
                     Windows.RECT rect;
                     Windows.GetWindowRect(Windows.GetForegroundWindow(), out rect);
@@ -65,7 +66,7 @@ namespace IronAHK.Rusty
             if (Environment.OSVersion.Platform == PlatformID.Win32NT)
             {
                 //right or left mouse
-                if (ParamLine.Contains("right"))
+                if (ParamLine.Contains(Keyword_Right))
                 {
                     aInput[0].i.m.dwFlags = (uint)Windows.MOUSEEVENTF.RIGHTDOWN;
                     aInput[1].i.m.dwFlags = (uint)Windows.MOUSEEVENTF.RIGHTUP;
@@ -90,13 +91,13 @@ namespace IronAHK.Rusty
                 aInput[1].i.m.dx = MousePos.X;
                 aInput[1].i.m.dy = MousePos.Y;
 
-                if (ParamLine.Contains("up"))
+                if (ParamLine.Contains(Keyword_Up))
                 { //just send the up event:
                     aInput[0] = aInput[1];
                     for (int i = 1; ClickCount >= i; i++)
                         Windows.SendInput(1, aInput, Marshal.SizeOf(typeof(Windows.INPUT)));
                 }
-                else if (ParamLine.Contains("down"))
+                else if (ParamLine.Contains(Keyword_Down))
                 {
                     //just send the down event:
                     for (int i = 1; ClickCount >= i; i++)
@@ -107,7 +108,6 @@ namespace IronAHK.Rusty
                         Windows.SendInput((uint)aInput.Length, aInput, Marshal.SizeOf(typeof(Windows.INPUT)));
             }
         }
-        
         
         /// <summary>
         /// Sends a mouse button or mouse wheel event to a control.
@@ -164,30 +164,30 @@ namespace IronAHK.Rusty
         /// </param>
         public  static void CoordMode(string Item, string Mode)
         {
-            Coordmodes TargetCoordMode;
+            CoordModeType TargetCoordMode;
             Mode = Mode.ToLowerInvariant();
             Item = Item.ToLowerInvariant();  
 
             if (Mode.Contains("screen"))
-                TargetCoordMode = Coordmodes.SCREEN;
+                TargetCoordMode = CoordModeType.Screen;
             else
-                TargetCoordMode = Coordmodes.RELATIVE;
+                TargetCoordMode = CoordModeType.Relative;
             switch (Item)
             {
             case "tooltip":
-                    _COORDMODE.Tooltip = TargetCoordMode;
+                    coords.Tooltip = TargetCoordMode;
                     break;
             case "pixel":
-                    _COORDMODE.Pixel = TargetCoordMode;
+                    coords.Pixel = TargetCoordMode;
                     break;
             case "mouse":
-                    _COORDMODE.Mouse = TargetCoordMode;
+                    coords.Mouse = TargetCoordMode;
                     break;
             case "caret":
-                    _COORDMODE.Caret = TargetCoordMode;
+                    coords.Caret = TargetCoordMode;
                     break;
             case "menu":
-                    _COORDMODE.Menu = TargetCoordMode;
+                    coords.Menu = TargetCoordMode;
                     break;
             }
         }
@@ -237,7 +237,7 @@ namespace IronAHK.Rusty
             
             OutputVarX = pos.X;
             OutputVarY = pos.Y;
-            if (_COORDMODE.Mouse == Coordmodes.RELATIVE)
+            if (coords.Mouse == CoordModeType.Relative)
             {
                 Windows.RECT rect;
                 Windows.GetWindowRect(Windows.GetForegroundWindow(), out rect);
