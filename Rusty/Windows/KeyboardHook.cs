@@ -1,8 +1,9 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
-using System.Windows.Forms;
 using System.Text;
+using System.Windows.Forms;
 
 namespace IronAHK.Rusty
 {
@@ -24,9 +25,12 @@ namespace IronAHK.Rusty
             LowLevelKeyboardProc proc;
             IntPtr hookId = IntPtr.Zero;
             bool ignore;
+            bool dead;
+            List<int> deadkeys;
 
             protected override void RegisterHook()
             {
+                ScanDeadKeys();
                 proc = HookCallback;
                 hookId = SetWindowsHookEx(WH_KEYBOARD_LL, proc, GetModuleHandle(Process.GetCurrentProcess().MainModule.ModuleName), 0);
             }
@@ -89,6 +93,23 @@ namespace IronAHK.Rusty
                 ignore = false;
             }
 
+            void ScanDeadKeys()
+            {
+                const int vkmax = 256;
+                var state = new byte[vkmax];
+                var kbd = GetKeyboardLayout(0);
+                deadkeys = new List<int>();
+
+                for (int i = 0; i < vkmax; i++)
+                {
+                    var buf = new StringBuilder(4);
+                    var result = ToUnicodeEx((uint)i, 0, state, buf, buf.Capacity, 0, kbd);
+
+                    if (result == -1)
+                        deadkeys.Add(i);
+                }
+            }
+
             string MapKey(uint vk, uint sc)
             {
                 var state = new byte[256];
@@ -120,7 +141,15 @@ namespace IronAHK.Rusty
                 if (nCode >= 0 && pressed || wParam == (IntPtr)WM_KEYUP)
                 {
                     int vkCode = Marshal.ReadInt32(lParam);
-                    string typed = MapKey((uint)vkCode, (uint)Marshal.ReadInt32(lParam, 8));
+                    int sc = Marshal.ReadInt32(lParam, 8);
+
+                    if (dead || deadkeys.Contains(vkCode))
+                    {
+                        dead = !dead;
+                        goto chain;
+                    }
+
+                    string typed = MapKey((uint)vkCode, (uint)sc);
                     block = KeyReceived((Keys)vkCode, typed, pressed);
                 }
 
