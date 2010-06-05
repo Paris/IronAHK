@@ -9,7 +9,8 @@
 <body>
 <h1>AutoHotkey</h1>
 <div id="page">
-  <h3 id="syntax">Syntax</h3>
+  <p>While scripts will function identically to AutoHotkey in almost all cases there are several underlying changes and enhancements.</p>
+  <h2 id="syntax">Syntax</h2>
   <p>The script compiler automatically makes the following conversions to ease transition from AutoHotkey:</p>
   <ul>
     <li id="accessors"><em id="accessors">Set</em> commands such as <code>SetKeyDelay</code>, <code>AutoTrim</code> and <code>DetectHiddenWindows</code> have been replaced with accessors to their respective <code>A_</code> variables, i.e. <code>SetWorkingDir, %A_Temp%</code> is translated to <code>A_WorkingDir = %A_Temp%</code>;</li>
@@ -19,17 +20,19 @@
     <li id="debugging"><code>Edit</code>, <code>ListHotkeys</code>, <code>ListLines</code> and <code>ListVars</code> will do nothing until a future version which has improved debugging support.</li>
   </ul>
   <p>In future versions these conversions will be disabled, resulting in compiler errors.</p>
+  <h3>New Features</h3>
   <p id="null">Setting a variable to <code>null</code> will delete it.</p>
-  <p id="is">The <code>is</code> keyword has become an expression operator to compare types.</p>
+  <p id="is">The <code>is</code> keyword has become an expression operator to compare types. </p>
+  <p>Objects (associative arrays) and regular arrays can be defined with <a href="http://www.json.org/">JSON</a>. Consequently, the symbols <code>[</code> and <code>]</code> can no longer be used in variable names</p>
   <p id="parent"> <code>break</code> and <code>continue</code> now have a parameter to indicate which parent loop block should be used.</p>
-  <p id="each">An each-loop can be used to enumerate objects and arrays with variables <code>A_LoopKey</code> and <code>A_LoopField</code>. Strings can be accessed this way by every character.</p>
-  <p id="arrays"><strong>Arrays</strong></p>
-  <p>The symbols <code>[</code> and <code>]</code> are used as array indexers and can no longer be used in variable names.</p>
-  <h3 id="security">Security</h3>
-  <p>When scripts are <a href="../overview/compiling/">compiled</a> the source code is not attached to the resulting binary file so it cannot be decompiled. This is unlike AutoHotkey which stores a full copy of the script with the compiled .exe that can be extracted and decrypted or read from process memory when it is executed.</p>
-  <h3 id="portability">Portability</h3>
-  <p>Scripts will run the same natively on all operating systems and architectures (32/64 bit) with a .NET compatible runtime such as <a href="http://www.go-mono.com/">Mono</a>. Almost every version of Windows from XP onwards and most recent Linux desktop distributions have this installed by default.</p>
-  <h3 id="unicode">Encoding</h3>
+  <p id="each">An each-loop can be used to enumerate objects and arrays with variables <code>A_LoopKey</code> and <code>A_LoopField</code>. Strings can be accessed this way by every character. </p>
+  <h2>Commands</h2>
+  <p>A new set of <a href="../commands/#crypt">cryptographic functions</a> for encryption, decryption, calculating hashes and generating secure random numbers. </p>
+  <h2 id="security">Security</h2>
+  <p>When scripts are <a href="../overview/compiling/">compiled</a> the source code is not attached to the  binary file so it cannot be decompiled. This is unlike AutoHotkey which stores a full copy of the script with the compiled .exe which can be extracted and decrypted or read from process memory when it is executed. </p>
+  <h2 id="portability">Portability</h2>
+  <p>Scripts will run the same natively on all operating systems and architectures (32 or 64 bit) with a .NET compatible runtime such as <a href="http://www.go-mono.com/">Mono</a>. Almost every version of Windows from XP onwards and most recent Linux desktop distributions have this installed by default.</p>
+  <h2 id="unicode">Encoding</h2>
   <p>Source files are read as Unicode text. This is the same for all strings, hotkeys and hotstrings in a script.</p>
 </div>
 </body>
