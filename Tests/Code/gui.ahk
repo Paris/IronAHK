@@ -27,10 +27,10 @@ Gui, Add, Slider, vC17 ys Range1-10, 5
 Gui, Add, Progress, vC18 -Smooth, 50
 Gui, Add, StatusBar, , Started
 
-SB_SetParts, 150, 250, 350
+SB_SetParts(150, 250, 350)
 Loop, 3
-	SB_SetText, Part %A_Index%, %A_Index%, % A_Index - 1
-SB_SetIcon, %icon%, , 2
+	SB_SetText("Part " . A_Index, A_Index, A_Index - 1)
+SB_SetIcon(icon, "", 2)
 
 Gui, Show, xCenter y100, Example
 Return
