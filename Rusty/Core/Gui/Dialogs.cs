@@ -320,32 +320,33 @@ namespace IronAHK.Rusty
             {
                 IronDlgProgress = new DlgProgress();
                 IronDlgProgress.Show();
+                IronDlgProgress.Hide();
             }
-            try
+            lock(IronDlgProgress)
             {
-                IronDlgProgress.Invoke((SimpleDelegate)delegate { ProgressAssync(ProgressParam1,  SubText,  MainText,  WinTitle,  FontName); });
+                    if (ProgressParam1.Trim().Equals(Keyword_Off, StringComparison.OrdinalIgnoreCase))
+                        IronDlgProgress.Invoke((SimpleDelegate)delegate { IronDlgProgress.Hide(); });
+                    else
+                        IronDlgProgress.Invoke((SimpleDelegate)delegate { ProgressAssync(ProgressParam1, SubText, MainText, WinTitle, FontName); });
             }
-            catch (Exception e)
-            {
-                return;
-            }
-            return;
         }
 
         public static void ProgressAssync(string ProgressParam1, string SubText, string MainText, string WinTitle, string FontName)
         {
-            ProgressParam1 = ProgressParam1.ToLowerInvariant();
-            if (ProgressParam1.Contains("off"))
-            {
-                IronDlgProgress.Dispose();
-                return;
-            }
+            int ProgressValue;
             IronDlgProgress.Title = WinTitle;
-            IronDlgProgress.SubText = SubText;
-            IronDlgProgress.MainText = MainText;
-            IronDlgProgress.Value = Int32.Parse(ProgressParam1);
+            if (!SubText.Equals(""))
+                IronDlgProgress.SubText = SubText;
+            if (!MainText.Equals(""))
+                IronDlgProgress.MainText = MainText;
+            if (Int32.TryParse(ProgressParam1, out ProgressValue))
+                IronDlgProgress.Value = ProgressValue;
             IronDlgProgress.TopMost = true;
             IronDlgProgress.ShowInTaskbar = false;
+
+            if (!IronDlgProgress.Visible)
+                IronDlgProgress.Show();
+
             return;
         }
 
@@ -377,29 +378,26 @@ namespace IronAHK.Rusty
             {
                 IronDlgSplashImage = new DlgSplashImage();
                 IronDlgSplashImage.Show();
+                IronDlgSplashImage.Hide();
             }
-            try
+
+            lock (IronDlgSplashImage)
             {
-                IronDlgSplashImage.Invoke((SimpleDelegate)delegate { SplashImageAssync(ImageFile, Options, SubText, MainText, WinTitle, FontName); });
+                if (ImageFile.Trim().Equals(Keyword_Off, StringComparison.OrdinalIgnoreCase))
+                    IronDlgSplashImage.Invoke((SimpleDelegate)delegate { IronDlgSplashImage.Hide(); });
+                else
+                    IronDlgSplashImage.Invoke((SimpleDelegate)delegate { SplashImageAssync(ImageFile, Options, SubText, MainText, WinTitle, FontName); });
             }
-            catch(Exception e)
-            {
-                return;
-            }
-            return;
         }
         public static void SplashImageAssync(string ImageFile, string Options, string SubText, string MainText, string WinTitle, string FontName)
         {
-            string sImageFile = ImageFile.ToLowerInvariant();
-            if (sImageFile.Contains("off"))
-            {
-                IronDlgSplashImage.Dispose();
-                return;
-            }
             IronDlgSplashImage.PicturePath = ImageFile;
             IronDlgSplashImage.Title = WinTitle;
             IronDlgSplashImage.SubText = SubText;
             IronDlgSplashImage.MainText = MainText;
+            IronDlgSplashImage.TopMost = true;
+            if (!IronDlgSplashImage.Visible)
+                IronDlgSplashImage.Show();
         }
 
     }
@@ -630,9 +628,9 @@ namespace IronAHK.Rusty
             // 
             // Progress
             // 
-            this.mProgressBar.Location = new System.Drawing.Point(20, 70);
+            this.mProgressBar.Location = new System.Drawing.Point(10, 70);
             this.mProgressBar.Name = "Progress";
-            this.mProgressBar.Size = new System.Drawing.Size(230, 24);
+            this.mProgressBar.Size = new System.Drawing.Size(300, 24);
             this.mProgressBar.TabIndex = 3;
             this.mProgressBar.Value = 0;
             this.mProgressBar.Anchor = AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Bottom;
@@ -650,7 +648,7 @@ namespace IronAHK.Rusty
             // DialogForm
             // 
             this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-            this.ClientSize = new System.Drawing.Size(266, 151);
+            this.ClientSize = new System.Drawing.Size(320, 151);
             this.ControlBox = true;
             this.Controls.Add(this.mSubText);
             this.Controls.Add(this.mMainText);
@@ -746,7 +744,7 @@ namespace IronAHK.Rusty
             this.mPictureBox.TabIndex = 3;
             this.mPictureBox.Anchor = AnchorStyles.Left | AnchorStyles.Top;
             this.mPictureBox.SizeMode = PictureBoxSizeMode.AutoSize;
-
+            this.mPictureBox.ClientSizeChanged += new EventHandler(mPictureBox_ClientSizeChanged);
             // 
             // mSubText
             // 
@@ -776,7 +774,9 @@ namespace IronAHK.Rusty
             this.ResumeLayout(true);
             
         }
-
+        private  void mPictureBox_ClientSizeChanged(object sender,EventArgs e){
+            this.Location = new Point((Screen.PrimaryScreen.Bounds.Width - this.Size.Width) / 2, (Screen.PrimaryScreen.Bounds.Height - this.Size.Height) / 2);
+        }
 
     }
 
