@@ -166,6 +166,22 @@ namespace IronAHK.Rusty
 
         #endregion
 
+        #region Dialoges
+
+        static DlgProgress IronDlgProgress;
+
+        static DlgSplashImage IronDlgSplashImage;
+
+        #endregion
+
+        #region Tips
+
+        static ToolTip AlwaysToolTip;
+        static Form ToolTipForm;
+
+        #endregion
+
+
         #region RunAs
 
         [ThreadStatic]
@@ -225,6 +241,27 @@ namespace IronAHK.Rusty
 
         const int LoopFrequency = 50;
 
+        #endregion
+
+        #region Coordmode
+
+        [ThreadStatic]
+        static CoordModeTypes _COORDMODE;
+
+
+        struct CoordModeTypes
+        {
+            public Coordmodes Tooltip;
+            public Coordmodes Pixel;
+            public Coordmodes Mouse;
+            public Coordmodes Caret;
+            public Coordmodes Menu;
+        }
+        public enum Coordmodes
+        {
+            RELATIVE,
+            SCREEN
+        }
         #endregion
     }
 }
