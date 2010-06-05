@@ -631,7 +631,6 @@ namespace IronAHK.Rusty
 
         }
 
-
         static Dictionary<char, string> KeyValues(string Options, bool Lowercase, char[] Exceptions)
         {
             var table = new Dictionary<char, string>();
@@ -706,6 +705,14 @@ namespace IronAHK.Rusty
         static string[] ParseOptions(string options)
         {
             return options.Split(Keyword_Spaces, StringSplitOptions.RemoveEmptyEntries);
+        }
+
+        static bool IsOption(string options, string search)
+        {
+            if (string.IsNullOrEmpty(options) || string.IsNullOrEmpty(search))
+                return false;
+
+            return options.Trim().Equals(search, StringComparison.OrdinalIgnoreCase);
         }
     }
 }
