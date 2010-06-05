@@ -164,35 +164,17 @@ namespace IronAHK.Rusty
         /// </param>
         public  static void CoordMode(string Item, string Mode)
         {
-            CoordModeType TargetCoordMode;
-            Mode = Mode.ToLowerInvariant();
-            Item = Item.ToLowerInvariant();  
+            var target = IsOption(Mode, Keyword_Screen) ?  CoordModeType.Screen : CoordModeType.Relative;
 
-            if (Mode.Contains("screen"))
-                TargetCoordMode = CoordModeType.Screen;
-            else
-                TargetCoordMode = CoordModeType.Relative;
-            switch (Item)
+            switch (Item.ToLowerInvariant())
             {
-            case "tooltip":
-                    coords.Tooltip = TargetCoordMode;
-                    break;
-            case "pixel":
-                    coords.Pixel = TargetCoordMode;
-                    break;
-            case "mouse":
-                    coords.Mouse = TargetCoordMode;
-                    break;
-            case "caret":
-                    coords.Caret = TargetCoordMode;
-                    break;
-            case "menu":
-                    coords.Menu = TargetCoordMode;
-                    break;
+                case Keyword_ToolTip: coords.Tooltip = target; break;
+                case Keyword_Pixel: coords.Pixel = target; break;
+                case Keyword_Mouse: coords.Mouse = target; break;
+                case Keyword_Caret: coords.Caret = target; break;
+                case Keyword_Menu: coords.Menu = target; break;
             }
         }
-
-
 
         /// <summary>
         /// Retrieves the current position of the mouse cursor, and optionally which window and control it is hovering over.
