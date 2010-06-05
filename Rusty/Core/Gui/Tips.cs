@@ -1,4 +1,5 @@
-﻿using System.Windows.Forms;
+﻿using System.Drawing;
+using System.Windows.Forms;
 
 namespace IronAHK.Rusty
 {
@@ -18,28 +19,17 @@ namespace IronAHK.Rusty
         /// <param name="ID">Omit this parameter if you don't need multiple tooltips to appear simultaneously. Otherwise, this is a number between 1 and 20 to indicate which tooltip window to operate upon. If unspecified, that number is 1 (the first).</param>
         public static void ToolTip(string Text, int X, int Y, int ID)
         {
-
-            if (ToolTipForm == null)
+            if (tooltip == null)
             {
-                ToolTipForm = new Form();
-                //ToolTipForm.Opacity = 0.0;
-                ToolTipForm.Width = 0;
-                ToolTipForm.Height = 0;
-                ToolTipForm.Visible = false;
-                ToolTipForm.Show();
+                tooltip = new Form { Width = 0, Height = 0, Visible = false };
+                tooltip.Show();
             }
 
-            if (AlwaysToolTip == null)
-            {
-                AlwaysToolTip = new ToolTip();
-                // Set up the delays for the ToolTip.
-                AlwaysToolTip.AutoPopDelay = 0;
-                AlwaysToolTip.InitialDelay = 0;
-                AlwaysToolTip.ReshowDelay = 0;
-                AlwaysToolTip.ShowAlways = true;
-            }
-            AlwaysToolTip.Show(Text, ToolTipForm, new System.Drawing.Point(500, 500));
-            return;
+            if (persistentTooltip == null)
+                persistentTooltip = new ToolTip { AutomaticDelay = 0, InitialDelay = 0, ReshowDelay = 0, ShowAlways = true };
+
+            var bounds = Screen.PrimaryScreen.WorkingArea;
+            persistentTooltip.Show(Text, tooltip, new Point((bounds.Left - bounds.Right) / 2, (bounds.Bottom - bounds.Top) / 2));
         }
 
         /// <summary>

@@ -166,21 +166,21 @@ namespace IronAHK.Rusty
 
         #endregion
 
-        #region Dialoges
+        #region Dialogs
 
-        static DlgProgress IronDlgProgress;
+        static ProgressDialog progress;
 
-        static DlgSplashImage IronDlgSplashImage;
+        static SplashDialog splash;
 
         #endregion
 
         #region Tips
 
-        static ToolTip AlwaysToolTip;
-        static Form ToolTipForm;
+        static ToolTip persistentTooltip;
+
+        static Form tooltip;
 
         #endregion
-
 
         #region RunAs
 
@@ -246,22 +246,23 @@ namespace IronAHK.Rusty
         #region Coordmode
 
         [ThreadStatic]
-        static CoordModeTypes _COORDMODE;
+        static CoordModes coords;
 
+        struct CoordModes
+        {
+            public CoordModeType Tooltip { get; set; }
+            public CoordModeType Pixel { get; set; }
+            public CoordModeType Mouse { get; set; }
+            public CoordModeType Caret { get; set; }
+            public CoordModeType Menu { get; set; }
+        }
 
-        struct CoordModeTypes
+        enum CoordModeType
         {
-            public Coordmodes Tooltip;
-            public Coordmodes Pixel;
-            public Coordmodes Mouse;
-            public Coordmodes Caret;
-            public Coordmodes Menu;
+            Relative = 0,
+            Screen
         }
-        public enum Coordmodes
-        {
-            RELATIVE,
-            SCREEN
-        }
+
         #endregion
     }
 }
