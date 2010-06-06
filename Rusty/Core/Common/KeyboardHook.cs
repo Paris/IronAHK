@@ -498,9 +498,6 @@ namespace IronAHK.Rusty
             {
                 bool block = false;
 
-                if (typed.Length == 0)
-                    typed = "\0";
-
                 if (suspended)
                     goto next;
 
@@ -510,7 +507,8 @@ namespace IronAHK.Rusty
 
                 foreach (var hotkey in hotkeys)
                 {
-                    bool match = (hotkey.Keys & ~Keys.Modifiers) == key || hotkey.Typed.Equals(typed, StringComparison.CurrentCultureIgnoreCase);
+                    bool match = (hotkey.Keys & ~Keys.Modifiers) == key ||
+                        hotkey.Typed.Length != 0 && hotkey.Typed.Equals(typed, StringComparison.CurrentCultureIgnoreCase);
                     bool up = (hotkey.EnabledOptions & HotkeyDefinition.Options.Up) == HotkeyDefinition.Options.Up;
 
                     if (hotkey.Enabled && match && HasModifiers(hotkey) && up != down)
