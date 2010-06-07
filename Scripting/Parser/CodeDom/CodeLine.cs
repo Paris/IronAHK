@@ -7,7 +7,7 @@ namespace IronAHK.Scripting
         public CodeLine(string fileName, int lineNumber, string code)
             : base(fileName, lineNumber)
         {
-            this.Code = code;
+            Code = code;
         }
 
         public string Code { get; set; }

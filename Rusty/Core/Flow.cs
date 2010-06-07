@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
-using System.Timers;
 using System.Windows.Forms;
 using ThreadState = System.Threading.ThreadState;
 using Timer = System.Timers.Timer;

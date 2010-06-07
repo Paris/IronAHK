@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using WF = System.Windows.Forms;
 
 namespace IronAHK.Rusty
 {

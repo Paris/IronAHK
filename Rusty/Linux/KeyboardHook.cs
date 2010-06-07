@@ -1,9 +1,8 @@
 using System;
-using System.Threading;
-using System.Runtime.InteropServices;
-using WF = System.Windows.Forms;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading;
 
 namespace IronAHK.Rusty
 {

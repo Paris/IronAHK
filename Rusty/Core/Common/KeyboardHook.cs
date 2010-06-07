@@ -70,7 +70,7 @@ namespace IronAHK.Rusty
                 this.keys = keys;
                 this.extra = extra;
                 this.options = options;
-                this.Proc = proc;
+                Proc = proc;
                 Enabled = true;
             }
 
