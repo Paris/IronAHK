@@ -8,9 +8,9 @@ namespace IronAHK.Scripting
 
         public CodeTernaryOperatorExpression(CodeExpression condition, CodeExpression trueBranch, CodeExpression falseBranch)
         {
-            this.Condition = condition;
-            this.TrueBranch = trueBranch;
-            this.FalseBranch = falseBranch;
+            Condition = condition;
+            TrueBranch = trueBranch;
+            FalseBranch = falseBranch;
         }
 
         public CodeExpression Condition { get; set; }

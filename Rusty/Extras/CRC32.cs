@@ -1,10 +1,11 @@
-﻿// Adapted from http://tomkaminski.com/crc32-hashalgorithm-c-net
-// License: public domain
-
-using System.Security.Cryptography;
+﻿using System.Security.Cryptography;
 
 namespace IronAHK.Rusty
 {
+    /// <summary>
+    /// Adapted from http://tomkaminski.com/crc32-hashalgorithm-c-net
+    /// License: public domain
+    /// </summary>
     class CRC32 : HashAlgorithm
     {
         public const uint seed = 0xffffffff;
@@ -65,7 +66,7 @@ namespace IronAHK.Rusty
             0x2D02EF8D
         };
 
-        uint value = 0;
+        uint value;
 
         public override void Initialize()
         {
@@ -89,14 +90,14 @@ namespace IronAHK.Rusty
 
         protected override byte[] HashFinal()
         {
-            this.HashValue = new[]
+            HashValue = new[]
             {
                 (byte)((value >> 24) & 0xff), 
                 (byte)((value >> 16) & 0xff), 
                 (byte)((value >> 8) & 0xff), 
                 (byte)(value & 0xff) 
             };
-            return this.HashValue;
+            return HashValue;
         }
 
         public uint Value
