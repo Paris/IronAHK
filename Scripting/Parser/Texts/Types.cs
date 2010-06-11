@@ -22,14 +22,8 @@ namespace IronAHK.Scripting
             if (string.IsNullOrEmpty(token))
                 return false;
 
-            if (token.Length == 1)
-            {
-                switch (token[0])
-                {
-                    case TernaryA:
-                        return false;
-                }
-            }
+            if (token[0] == TernaryA && (token.Length == 1 || token.Length == 2 && token[1] == TernaryA))
+                return false;
 
             foreach (var sym in token)
             {
