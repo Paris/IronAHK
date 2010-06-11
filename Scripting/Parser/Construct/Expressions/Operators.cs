@@ -201,7 +201,10 @@ namespace IronAHK.Scripting
                     return Script.Operator.Concat;
 
                 case TernaryA:
-                    return Script.Operator.TernaryA;
+                    if (op.Length > 1 && op[1] == TernaryA)
+                        return Script.Operator.NullAssign;
+                    else
+                        return Script.Operator.TernaryA;
 
                 default:
                     switch (code.ToLowerInvariant())
@@ -290,6 +293,7 @@ namespace IronAHK.Scripting
 
                 case Script.Operator.TernaryA:
                 case Script.Operator.TernaryB:
+                case Script.Operator.NullAssign:
                     return -12;
 
                 case Script.Operator.Assign:

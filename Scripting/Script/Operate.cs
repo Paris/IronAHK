@@ -51,6 +51,7 @@ namespace IronAHK.Scripting
             TernaryB,
 
             Is,
+            NullAssign,
         };
 
         public static object Operate(Operator op, object left, object right)
@@ -127,6 +128,9 @@ namespace IronAHK.Scripting
 
                 case Operator.Is:
                     return IfLegacy(left, "is", ForceString(right));
+
+                case Operator.NullAssign:
+                    return IfTest(left) ? left : right;
 
                 default:
                     throw new ArgumentOutOfRangeException();

@@ -167,7 +167,7 @@ namespace IronAHK.Scripting
                                     break;
                             }
                         }
-                        else if (sym == Less && symNext == Greater)
+                        else if ((sym == Less && symNext == Greater) || (sym == TernaryA && symNext == TernaryA))
                         {
                             op.Append(sym);
                             op.Append(symNext);
