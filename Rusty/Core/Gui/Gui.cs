@@ -154,6 +154,8 @@ namespace IronAHK.Rusty
                             guis[id].Location = location;
                         }
 
+                        guis[id].Text = Param3;
+
                         if (min)
                             guis[id].WindowState = FormWindowState.Minimized;
                         else if (max)
