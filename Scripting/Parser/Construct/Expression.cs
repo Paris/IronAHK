@@ -735,6 +735,8 @@ namespace IronAHK.Scripting
                             parts.RemoveAt(i);
                         }
                         #endregion
+
+                        i--;
                     }
                     else
                     {
