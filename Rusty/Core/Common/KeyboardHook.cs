@@ -285,6 +285,13 @@ namespace IronAHK.Rusty
                     }
                 }
 
+                switch (value)
+                {
+                    case Keys.Control: value = Keys.ControlKey; break;
+                    case Keys.Shift: value = Keys.ShiftKey; break;
+                    case Keys.Alt: value = Keys.LMenu; break;
+                }
+
                 return value;
             }
 
@@ -507,7 +514,7 @@ namespace IronAHK.Rusty
 
                 foreach (var hotkey in hotkeys)
                 {
-                    bool match = (hotkey.Keys & ~Keys.Modifiers) == key ||
+                    bool match = KeyMatch(hotkey.Keys & ~Keys.Modifiers, key) ||
                         hotkey.Typed.Length != 0 && hotkey.Typed.Equals(typed, StringComparison.CurrentCultureIgnoreCase);
                     bool up = (hotkey.EnabledOptions & HotkeyDefinition.Options.Up) == HotkeyDefinition.Options.Up;
 
@@ -639,6 +646,26 @@ namespace IronAHK.Rusty
                 return block;
             }
 
+            bool KeyMatch(Keys expected, Keys received)
+            {
+                expected &= ~Keys.Modifiers;
+                received &= ~Keys.Modifiers;
+
+                if (expected == received)
+                    return true;
+
+                switch (expected)
+                {
+                    case Keys.ControlKey:
+                        return received == Keys.LControlKey || received == Keys.RControlKey;
+
+                    case Keys.ShiftKey:
+                        return received == Keys.LShiftKey || received == Keys.RShiftKey;
+                }
+
+                return false;
+            }
+
             bool HasModifiers(HotkeyDefinition hotkey)
             {
                 if (hotkey.Extra != Keys.None && !pressed[hotkey.Extra])
@@ -648,13 +675,13 @@ namespace IronAHK.Rusty
                     return true;
 
                 bool[,] modifiers = { 
-                                       { (hotkey.Keys & Keys.Alt) == Keys.Alt, pressed[Keys.Alt] || pressed[Keys.LMenu] || pressed[Keys.RMenu] },
-                                       { (hotkey.Keys & Keys.Control) == Keys.Control, pressed[Keys.Control] || pressed[Keys.LControlKey] || pressed[Keys.RControlKey] },
-                                       { (hotkey.Keys & Keys.Shift) == Keys.Shift, pressed[Keys.Shift] || pressed[Keys.LShiftKey] || pressed[Keys.RShiftKey] }
+                                       { (hotkey.Keys & Keys.Alt) == Keys.Alt, pressed[Keys.Alt] || pressed[Keys.LMenu] || pressed[Keys.RMenu], (hotkey.Keys & Keys.LMenu) == Keys.LMenu },
+                                       { (hotkey.Keys & Keys.Control) == Keys.Control, pressed[Keys.Control] || pressed[Keys.LControlKey] || pressed[Keys.RControlKey], (hotkey.Keys & Keys.ControlKey) == Keys.ControlKey },
+                                       { (hotkey.Keys & Keys.Shift) == Keys.Shift, pressed[Keys.Shift] || pressed[Keys.LShiftKey] || pressed[Keys.RShiftKey], (hotkey.Keys & Keys.ShiftKey) == Keys.ShiftKey }
                                    };
 
                 for (int i = 0; i < 3; i++)
-                    if ((modifiers[i, 0] && !modifiers[i, 1]) || (modifiers[i, 1] && !modifiers[i, 0]))
+                    if ((modifiers[i, 0] && !modifiers[i, 1]) || (modifiers[i, 1] && !modifiers[i, 0] && !modifiers[i, 2]))
                         return false;
 
                 return true;
