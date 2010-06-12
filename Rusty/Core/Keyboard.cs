@@ -127,21 +127,16 @@ namespace IronAHK.Rusty
             }
             else
             {
-                try
-                {
-                    var method = FindLocalMethod(Label);
-                    if (method == null)
-                        throw new ArgumentNullException();
-                    key.Proc = (GenericFunction)Delegate.CreateDelegate(typeof(GenericFunction), method);
-                    key.Precondition = keyCondition;
-                }
-                catch (Exception)
+                var method = FindLocalMethod(Label);
+
+                if (method == null)
                 {
                     ErrorLevel = 1;
-                    if (!error)
-                        throw new ArgumentException();
                     return;
                 }
+                
+                key.Proc = (GenericFunction)Delegate.CreateDelegate(typeof(GenericFunction), method);
+                key.Precondition = keyCondition;
 
                 hotkeys.Add(id, key);
                 keyboardHook.Add(key);
