@@ -820,6 +820,7 @@ namespace IronAHK.Rusty
                         parent.Controls.Add(date);
                         control = date;
                         opts = GuiApplyStyles(date, options);
+                        date.Value = ToDateTime(content);
 
                         foreach (var opt in ParseOptions(opts))
                         {
@@ -839,11 +840,19 @@ namespace IronAHK.Rusty
                                     {
                                         string[] range = mode.Substring(Keyword_Range.Length).Split(new[] { '-' }, 2);
 
+                                        if (range[0].Length != 0)
+                                            date.MinDate = ToDateTime(range[0]);
+
+                                        if (range.Length > 0 && range[1].Length != 0)
+                                            date.MaxDate = ToDateTime(range[1]);
+
                                     }
                                     else if (mode.StartsWith(Keyword_Choose))
                                     {
                                         mode = mode.Substring(Keyword_Choose.Length);
 
+                                        if (mode.Length != 0)
+                                            date.Value = ToDateTime(mode);
                                     }
                                     break;
                             }
