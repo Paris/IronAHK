@@ -12,6 +12,14 @@ namespace IronAHK
 {
     static partial class Program
     {
+        const bool debug =
+#if DEBUG
+ true
+#else
+ false
+#endif
+;
+
         const int ExitSuccess = 0;
         static bool gui;
 
@@ -230,21 +238,21 @@ namespace IronAHK
                         throw new Exception(ErrorCompilationFailed);
                     results.CompiledAssembly.EntryPoint.Invoke(null, null);
                 }
-#if DEBUG
-                catch (TargetInvocationException e)
-                {
-                    Console.WriteLine();
-                    Console.WriteLine(e.InnerException.ToString());
-                    throw;
-                }
-#endif
-#if !DEBUG
                 catch (Exception e)
                 {
-                    return Message("Could not execute: " + e.Message, ExitInvalidFunction);
+                    if (e is TargetInvocationException)
+                        e = e.InnerException;
+
+                    if (debug)
+                    {
+                        Console.WriteLine();
+                        Console.WriteLine("{0}: {1}", e.GetType().Name, e.Message);
+                        Console.WriteLine();
+                        Console.WriteLine(e.StackTrace);
+                    }
+                    else
+                        return Message("Could not execute: " + e.Message, ExitInvalidFunction);
                 }
-#endif
-                finally { }
             }
 
             #endregion
