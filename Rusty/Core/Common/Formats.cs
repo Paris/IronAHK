@@ -52,6 +52,10 @@ namespace IronAHK.Rusty
             for (int i = 0; i < stack.Length; i++)
             {
                 var type = stack[i].GetMethod().DeclaringType;
+
+                if (type == typeof(Core))
+                    continue;
+
                 var list = type.GetMethods();
 
                 for (int z = 0; z < list.Length; z++)
