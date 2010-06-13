@@ -131,9 +131,19 @@ namespace IronAHK.Scripting
                                 else
                                 {
                                     var statements = ParseMultiExpression(code);
+
                                     for (n = 0; n < statements.Length; n++)
+                                    {
+                                        var expr = OptimiseLoneExpression(statements[n].Expression);
+
+                                        if (expr == null)
+                                            continue;
+                                        else
+                                            statements[n] = new CodeExpressionStatement(expr);
+
                                         statements[n].LinePragma = lines[n];
-                                    parent.AddRange(statements);
+                                        parent.Add(statements[n]);
+                                    }
                                 }
                             }
                             break;
