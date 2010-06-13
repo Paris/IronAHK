@@ -169,6 +169,12 @@ namespace IronAHK.Scripting
                 Generator.Emit(OpCodes.Ldc_R8, ((float) ((double) Value)));
                 Generated = typeof(double);
             }
+            else if (T == typeof(long))
+            {
+                Debug("Pushing long: " + (long)Value);
+                Generator.Emit(OpCodes.Ldc_I8, (long)Value);
+                Generated = T;
+            }
             else
             {
                 Debug("Unhandled primitive: " + T);
