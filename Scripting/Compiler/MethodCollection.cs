@@ -9,7 +9,7 @@ namespace IronAHK.Scripting
         public MethodInfo BestMatch(string name, int length)
         {
             MethodInfo result = null;
-            int last = -1;
+            var last = int.MaxValue;
 
             foreach (var writer in this)
             {
@@ -21,7 +21,7 @@ namespace IronAHK.Scripting
 
                 if (param == length) // perfect match when parameter count is the same
                     return writer;
-                else if (param < length && param > last) // otherwise find a method with the next highest number of parameters
+                else if (param > length && param < last) // otherwise find a method with the next highest number of parameters
                 {
                     result = writer;
                     last = param;
