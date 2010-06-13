@@ -648,6 +648,34 @@ namespace IronAHK.Scripting
                             parts.Remove(y);
                             parts.RemoveRange(start, parts.Count - start);
                         }
+                        else if (op == Script.Operator.NullAssign)
+                        {
+                            if (x < 0)
+                                throw new ParseException("Nullable assignment with no condition.");
+
+                            int n = i + 1;
+
+                            if (n >= parts.Count)
+                                throw new ParseException("Nullable assignment with no right-hand operator");
+
+                            var id = InternalID.GetHashCode().ToString("x");
+                            var result = new CodeComplexVariableReferenceExpression(new[] { new CodePrimitiveExpression(id) });
+                            var left = new CodeComplexAssignStatement(result, WrappedComplexVar(parts[x]));
+
+                            var eval = (CodeMethodInvokeExpression)InternalMethods.IfElse;
+                            eval.Parameters.Add((CodeMethodInvokeExpression)left);
+                            var ternary = new CodeTernaryOperatorExpression { Condition = eval, TrueBranch = result };
+
+                            var right = new List<object>();
+
+                            while (n < parts.Count)
+                                right.Add(parts[n++]);
+
+                            ternary.FalseBranch = ParseExpression(right);
+
+                            parts[x] = ternary;
+                            parts.RemoveRange(i, parts.Count - i);
+                        }
                         #endregion
                         #region Unary
                         else if (x == -1)
