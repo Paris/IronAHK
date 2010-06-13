@@ -12,12 +12,6 @@ namespace IronAHK.Scripting
                 right = ForceString(right);
                 return typeof(string);
             }
-            else if (left is decimal || right is decimal)
-            {
-                left = ForceDecimal(left);
-                right = ForceDecimal(right);
-                return typeof(decimal);
-            }
             else if (left is long || right is long)
             {
                 left = ForceLong(left);

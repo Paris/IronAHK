@@ -59,7 +59,7 @@ namespace IronAHK.Scripting
             switch (op)
             {
                 case Operator.Add:
-                    return ForceDecimal(left) + ForceDecimal(right);
+                    return ForceDouble(left) + ForceDouble(right);
 
                 case Operator.BitShiftLeft:
                     return ForceLong(left) << ForceInt(right);
@@ -83,16 +83,16 @@ namespace IronAHK.Scripting
                     return string.Concat(ForceString(left), ForceString(right));
 
                 case Operator.Divide:
-                    return ForceDecimal(left) / ForceDecimal(right);
+                    return ForceDouble(left) / ForceDouble(right);
 
                 case Operator.FloorDivide:
-                    return Math.Floor(ForceDecimal(left) / ForceDecimal(right));
+                    return Math.Floor(ForceDouble(left) / ForceDouble(right));
 
                 case Operator.GreaterThan:
-                    return ForceDecimal(left) > ForceDecimal(right);
+                    return ForceDouble(left) > ForceDouble(right);
 
                 case Operator.GreaterThanOrEqual:
-                    return ForceDecimal(left) >= ForceDecimal(right);
+                    return ForceDouble(left) >= ForceDouble(right);
 
                 case Operator.IdentityEquality:
                     return left == null ? right == null : left.Equals(right);
@@ -101,22 +101,22 @@ namespace IronAHK.Scripting
                     return left == null ? right != null : !left.Equals(right);
 
                 case Operator.LessThan:
-                    return ForceDecimal(left) < ForceDecimal(right);
+                    return ForceDouble(left) < ForceDouble(right);
 
                 case Operator.LessThanOrEqual:
-                    return ForceDecimal(left) <= ForceDecimal(right);
+                    return ForceDouble(left) <= ForceDouble(right);
 
                 case Operator.Modulus:
-                    return ForceDecimal(left) % ForceDecimal(right);
+                    return ForceDouble(left) % ForceDouble(right);
 
                 case Operator.Multiply:
-                    return ForceDecimal(left) * ForceDecimal(right);
+                    return ForceDouble(left) * ForceDouble(right);
 
                 case Operator.Power:
-                    return Math.Pow((double)ForceDecimal(left), (double)ForceDecimal(right));
+                    return Math.Pow(ForceDouble(left), ForceDouble(right));
 
                 case Operator.Subtract:
-                    return ForceDecimal(left) - ForceDecimal(right);
+                    return ForceDouble(left) - ForceDouble(right);
 
                 case Operator.ValueEquality:
                     MatchTypes(ref left, ref right);
@@ -156,8 +156,8 @@ namespace IronAHK.Scripting
                 case Operator.Minus:
                 case Operator.Subtract:
                     {
-                        decimal value = ForceDecimal(right);
-                        return value == default(decimal) ? right : -value;
+                        var value = ForceDouble(right);
+                        return value == 0d ? right : -value;
                     }
 
                 case Operator.LogicalNot:
@@ -184,7 +184,7 @@ namespace IronAHK.Scripting
             if (result is bool)
                 return (bool)result;
             else if (IsNumeric(result))
-                return ForceDecimal(result) != 0;
+                return ForceDouble(result) != 0;
             else if (result is string)
                 return !string.IsNullOrEmpty((string)result);
             else
@@ -225,11 +225,11 @@ namespace IronAHK.Scripting
                         if (z == -1)
                             z = var.Length;
 
-                        decimal low = decimal.MinValue, high = int.MaxValue;
+                        double low = double.MinValue, high = double.MaxValue;
 
-                        if (decimal.TryParse(var.Substring(0, z), out low) && decimal.TryParse(var.Substring(z + And.Length), out high))
+                        if (double.TryParse(var.Substring(0, z), out low) && double.TryParse(var.Substring(z + And.Length), out high))
                         {
-                            decimal d = ForceDecimal(subject);
+                            var d = ForceDouble(subject);
                             return d >= low && d <= high;
                         }
                     }
