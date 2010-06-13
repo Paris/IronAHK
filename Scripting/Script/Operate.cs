@@ -129,9 +129,6 @@ namespace IronAHK.Scripting
                 case Operator.Is:
                     return IfLegacy(left, "is", ForceString(right));
 
-                case Operator.NullAssign:
-                    return IfTest(left) ? left : right;
-
                 default:
                     throw new ArgumentOutOfRangeException();
             }
