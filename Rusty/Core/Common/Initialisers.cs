@@ -5,6 +5,12 @@ namespace IronAHK.Rusty
 {
     partial class Core
     {
+        static void InitVariables()
+        {
+            if (variables == null)
+                variables = new Dictionary<string, object>();
+        }
+
         static void InitKeyboardHook()
         {
             if (hotkeys == null)

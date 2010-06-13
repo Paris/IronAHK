@@ -27,7 +27,7 @@ namespace IronAHK.Rusty
                 return GetReservedVariableReference(name, false).Invoke(null, new object[] { });
             }
 
-            name = NormaliseVariableName(name);
+            InitVariables();
 
             lock (variables)
             {
@@ -57,7 +57,7 @@ namespace IronAHK.Rusty
         /// <returns>The contents of the variable.</returns>
         public static object GetEnv(string name)
         {
-            name = NormaliseVariableName(name);
+            InitVariables();
 
             lock (variables)
             {
@@ -67,14 +67,6 @@ namespace IronAHK.Rusty
 
             var method = GetReservedVariableReference(name, false);
             return method == null ? null : method.Invoke(null, new object[] { });
-        }
-
-        static string NormaliseVariableName(string name)
-        {
-            if (variables == null)
-                variables = new Dictionary<string, object>();
-
-            return name.ToLowerInvariant();
         }
 
         static MethodInfo GetReservedVariableReference(string name, bool set)

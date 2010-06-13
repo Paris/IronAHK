@@ -105,7 +105,7 @@ namespace IronAHK.Scripting
 
         CodeComplexVariableReferenceExpression VarId(string name)
         {
-            return VarId(VarNameOrBasicString(name, true));
+            return VarId(VarNameOrBasicString(name.ToLowerInvariant(), true));
         }
 
         CodeComplexVariableReferenceExpression VarId(CodeExpression name)
