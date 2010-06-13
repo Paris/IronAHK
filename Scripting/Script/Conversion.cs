@@ -56,6 +56,22 @@ namespace IronAHK.Scripting
             return 0;
         }
 
+        public static decimal ForceDecimal(object input)
+        {
+            if (input is decimal)
+                return (decimal)input;
+            else if (input is string)
+            {
+                decimal result;
+                if (decimal.TryParse((string)input, out result))
+                    return result;
+            }
+            else
+                return Convert.ToDecimal(input);
+
+            return 0m;
+        }
+
         #endregion
 
         public static bool ForceBool(object input)
