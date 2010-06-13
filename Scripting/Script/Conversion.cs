@@ -8,70 +8,52 @@ namespace IronAHK.Scripting
     {
         #region Numeric
 
-        public static decimal ForceDecimal(object input)
+        public static double ForceDouble(object input)
         {
-            if (input is decimal)
-                return (decimal)input;
-            else if (input is double)
-                return (decimal)(double)input;
-            else if (input is float)
-                return (decimal)(float)input;
-            else if (input is long)
-                return (long)input;
-            else if (input is int)
-                return (int)input;
+            if (input is double)
+                return (double)input;
             else if (input is string)
             {
-                decimal result;
-                if (decimal.TryParse((string)input, out result))
+                double result;
+                if (double.TryParse((string)input, out result))
                     return result;
             }
+            else
+                return Convert.ToDouble(input);
 
-            return default(decimal);
+            return 0d;
         }
 
         public static long ForceLong(object input)
         {
             if (input is long)
                 return (long)input;
-            else if (input is decimal)
-                return (long)(decimal)input;
-            else if (input is double)
-                return (long)(double)input;
-            else if (input is float)
-                return (long)(float)input;
-            else if (input is int)
-                return (int)input;
             else if (input is string)
             {
                 long result;
                 if (long.TryParse((string)input, out result))
                     return result;
             }
+            else
+                return Convert.ToInt64(input);
 
-            return default(long);
+            return 0;
         }
 
         public static int ForceInt(object input)
         {
             if (input is int)
                 return (int)input;
-            else if (input is decimal)
-                return (int)(decimal)input;
-            else if (input is double)
-                return (int)(double)input;
-            else if (input is float)
-                return (int)(float)input;
-            else if (input is long)
-                return (int)(long)input;
             else if (input is string)
             {
                 int result;
                 if (int.TryParse((string)input, out result))
                     return result;
             }
+            else
+                return Convert.ToInt32(input);
 
-            return default(int);
+            return 0;
         }
 
         #endregion
@@ -83,7 +65,7 @@ namespace IronAHK.Scripting
             else if (input is string)
                 return !string.IsNullOrEmpty((string)input);
             else if (input is decimal || input is float || input is double || input is long || input is int)
-                return ForceDecimal(input) != 0;
+                return ForceDouble(input) != 0;
 
             return false;
         }
