@@ -14,18 +14,8 @@ namespace IronAHK.Rusty
         /// <returns>The new contents of the variable.</returns>
         public static object SetEnv(string name, object value)
         {
-            var method = GetReservedVariableReference(name, true);
-
-            if (method != null)
-            {
-                try { method.Invoke(null, new[] { value }); }
-                catch (ArgumentException)
-                {
-                    error = 1;
-                    return null;
-                }
-                return GetReservedVariableReference(name, false).Invoke(null, new object[] { });
-            }
+            if (SetReservedVariable(name, value))
+                return value;
 
             InitVariables();
 
@@ -65,11 +55,27 @@ namespace IronAHK.Rusty
                     return variables[name];
             }
 
-            var method = GetReservedVariableReference(name, false);
-            return method == null ? null : method.Invoke(null, new object[] { });
+            return GetReservedVariable(name);
         }
 
-        static MethodInfo GetReservedVariableReference(string name, bool set)
+        static bool SetReservedVariable(string name, object value)
+        {
+            var prop = FindReservedVariable(name);
+            var set = prop != null && prop.CanWrite;
+
+            if (set)
+                prop.SetValue(null, value, null);
+
+            return set;
+        }
+
+        static object GetReservedVariable(string name)
+        {
+            var prop = FindReservedVariable(name);
+            return prop == null || !prop.CanRead ? null : prop.GetValue(null, null);
+        }
+
+        static PropertyInfo FindReservedVariable(string name)
         {
             const string A_ = "A_";
             int z = name.LastIndexOf('.');
@@ -85,16 +91,13 @@ namespace IronAHK.Rusty
             if (!name.Substring(0, A_.Length).Equals(A_, StringComparison.OrdinalIgnoreCase))
                 return null;
 
-            name = (set ? "set_" : "get_") + name;
-            var list = typeof(Core).GetMethods();
+            PropertyInfo prop = null;
 
-            foreach (var method in list)
-            {
-                if (method.Name.Equals(name, StringComparison.OrdinalIgnoreCase) && method.IsStatic)
-                    return method;
-            }
+            foreach (var item in typeof(Core).GetProperties())
+                if (item.Name.Equals(name, StringComparison.OrdinalIgnoreCase))
+                    prop = item;
 
-            return null;
+            return prop;
         }
     }
 }
