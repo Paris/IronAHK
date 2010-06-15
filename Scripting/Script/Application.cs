@@ -1,4 +1,5 @@
-﻿using System.Windows.Forms;
+﻿using System;
+using System.Windows.Forms;
 
 namespace IronAHK.Scripting
 {
@@ -6,6 +7,9 @@ namespace IronAHK.Scripting
     {
         public static void Init()
         {
+            if (Environment.OSVersion.Platform == PlatformID.Unix)
+                Environment.SetEnvironmentVariable("MONO_VISUAL_STYLES", "gtkplus");
+
             Application.EnableVisualStyles();
         }
 
