@@ -171,6 +171,11 @@ namespace IronAHK.Scripting
             return new CodeMethodInvokeExpression(method, all);
         }
 
+        CodeComplexVariableReferenceExpression InternalVariable
+        {
+            get { return new CodeComplexVariableReferenceExpression(new CodePrimitiveExpression(".\0")); }
+        }
+
         #endregion
     }
 }
