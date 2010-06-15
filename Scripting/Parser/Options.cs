@@ -13,5 +13,7 @@ namespace IronAHK.Scripting
 ;
 
         const bool LegacyIf = LaxExpressions;
+
+        const bool LegacyLoop = LaxExpressions;
     }
 }

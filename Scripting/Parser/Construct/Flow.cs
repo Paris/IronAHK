@@ -171,11 +171,21 @@ namespace IronAHK.Scripting
 
                             foreach (var arg in SplitCommandParameters(parts[1]))
                                 iterator.Parameters.Add(ParseCommandParameter(arg));
+
+                            if (LegacyLoop)
+                                iterator.Parameters[0] = VarId(iterator.Parameters[0]);
                         }
                         else
                         {
                             iterator = (CodeMethodInvokeExpression)InternalMethods.Loop;
-                            iterator.Parameters.Add(new CodePrimitiveExpression(int.MaxValue));
+
+                            if (LegacyLoop)
+                            {
+                                var assign = new CodeBinaryOperatorExpression(InternalVariable, CodeBinaryOperatorType.Assign, new CodePrimitiveExpression(int.MaxValue));
+                                iterator.Parameters.Add(assign);
+                            }
+                            else
+                                iterator.Parameters.Add(new CodePrimitiveExpression(int.MaxValue));
                         }
                         #endregion
 
