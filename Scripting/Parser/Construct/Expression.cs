@@ -658,8 +658,7 @@ namespace IronAHK.Scripting
                             if (n >= parts.Count)
                                 throw new ParseException("Nullable assignment with no right-hand operator");
 
-                            var id = InternalID.GetHashCode().ToString("x");
-                            var result = new CodeComplexVariableReferenceExpression(new[] { new CodePrimitiveExpression(id) });
+                            var result = InternalVariable;
                             var left = new CodeComplexAssignStatement(result, WrappedComplexVar(parts[x]));
 
                             var eval = (CodeMethodInvokeExpression)InternalMethods.IfElse;
