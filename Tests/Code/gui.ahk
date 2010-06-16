@@ -39,10 +39,9 @@ ButtonClick:
 s =
 Loop, 18
 {
-	GuiControlGet, r, , C%A_Index%
-	s = %s%C%A_Index%: "%r%"
+	GuiControlGet, t, , C%A_Index%
 	GuiControlGet, r, Pos, C%A_Index%
-	s = %s% (%rx%, %ry%, %rw%, %rh%)`n
+	s .= "C" A_Index "`t(" r.x ", " r.y ", " r.w ", " r.h ")`t`t" t "`n"
 }
 Gui, +OwnDialogs
 MsgBox, %s%
