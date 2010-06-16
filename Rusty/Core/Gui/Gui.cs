@@ -215,7 +215,7 @@ namespace IronAHK.Rusty
                         if (int.TryParse(Param3, out d))
                             y = d;
 
-                        guis[id].Margin = new Padding(x, y, guis[id].Margin.Right, guis[id].Margin.Bottom);
+                        guis[id].Margin = new Padding(x, y, x, y);
                     }
                     break;
 
@@ -1150,6 +1150,9 @@ namespace IronAHK.Rusty
             var win = new Form { Name = name, Tag = new GuiInfo { Delimiter = '|' }, KeyPreview = true };
 
             win.SuspendLayout();
+
+            int x = (int)Math.Round(win.Font.Size * 1.25), y = (int)Math.Round(win.Font.Size * .75);
+            win.Margin = new Padding(x, y, x, y);
 
             win.FormClosed += delegate
             {
