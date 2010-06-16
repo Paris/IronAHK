@@ -1337,6 +1337,12 @@ namespace IronAHK.Rusty
             {
                 var last = control.Parent.Controls[control.Parent.Controls.Count - 2];
 
+                if (last is MonthCalendar && !last.Parent.Visible) // strange bug
+                {
+                    last.Parent.Show();
+                    last.Parent.Hide();
+                }
+
                 var loc = new Point(last.Location.X + last.Size.Width + last.Margin.Right + control.Margin.Left,
                     last.Location.Y + last.Size.Height + last.Margin.Bottom + control.Margin.Top);
 
