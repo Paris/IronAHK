@@ -66,37 +66,25 @@ namespace IronAHK.Scripting
                 EmitExpression(Right, ForceTypes);
                 Generator.Emit(OpCodes.Stloc, Var);
             }
-            if(Left is CodeComplexVariableReferenceExpression)
+            else if (Left is CodeArrayIndexerExpression)
             {
-                // native AHK variables
-                var Reference = Left as CodeComplexVariableReferenceExpression;
+                var index = (CodeArrayIndexerExpression)Left;
 
-                EmitComplexVariableReference(Reference, false);
-                Type Top = EmitExpression(Right);
-                ForceTopStack(Top, typeof(object));
-                EmitSaveVar();
+                // HACK: generic way of setting indexers from properties (cil)
+
+                var vars = typeof(Script).GetProperty("Vars");
+                Generator.Emit(OpCodes.Nop);
+                Generator.Emit(OpCodes.Call, vars.GetGetMethod());
+
+                EmitExpression(index.Indices[0]);
+                EmitExpression(Right, ForceTypes);
+
+                Generator.Emit(OpCodes.Callvirt, vars.PropertyType.GetProperty("Item").GetSetMethod());
+                Generator.Emit(OpCodes.Nop);
             }
             else throw new CompileException(Left, "Left hand is unassignable");
 
             Depth--;
-        }
-
-        Type EmitComplexVariableReference(CodeComplexVariableReferenceExpression Ref)
-        {
-            return EmitComplexVariableReference(Ref, true);
-        }
-
-        Type EmitComplexVariableReference(CodeComplexVariableReferenceExpression Ref, bool Resolve)
-        {
-            Depth++;
-            Debug("Emitting complex variable reference");
-
-            EmitExpression(Ref.QualifiedName);
-
-            Depth--;
-
-            if(Resolve) return EmitResolveVar();
-            else return typeof(string);
         }
         
         Type EmitDynamicName(CodeArrayCreateExpression Dynamic)
@@ -130,18 +118,6 @@ namespace IronAHK.Scripting
             ForceTopStack(Generated, ElementType);
             Generator.Emit(OpCodes.Stelem_Ref);
             return ElementType.MakeArrayType();
-        }
-
-        Type EmitResolveVar()
-        {
-            Generator.Emit(OpCodes.Call, typeof(Core).GetMethod("GetEnv"));
-            return typeof(object);
-        }
-
-        Type EmitSaveVar()
-        {
-            Generator.Emit(OpCodes.Call, typeof(Core).GetMethod("SetEnv"));
-            return typeof(object);
         }
 
         void ConditionalBox(Type Top)

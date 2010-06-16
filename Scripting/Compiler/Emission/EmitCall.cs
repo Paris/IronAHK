@@ -115,8 +115,6 @@ namespace IronAHK.Scripting
                         Generator.Emit(OpCodes.Stloc, Temporary);
                         Generator.Emit(OpCodes.Ldloca, Temporary);
 
-                        if(invoke.Parameters[p] is CodeComplexVariableReferenceExpression)
-                            ByRef.Add(Temporary, invoke.Parameters[p] as CodeComplexVariableReferenceExpression);
                         if(invoke.Parameters[p] is CodeMethodInvokeExpression)
                         {
                             var inv = invoke.Parameters[p] as CodeMethodInvokeExpression;
@@ -156,14 +154,7 @@ namespace IronAHK.Scripting
             // Save the variables passed to reference back in Rusty's variable handling
             foreach(var Builder in ByRef.Keys)
             {
-                if(ByRef[Builder] is CodeComplexVariableReferenceExpression)
-                {
-                    EmitComplexVariableReference(ByRef[Builder] as CodeComplexVariableReferenceExpression, false);
-                    Generator.Emit(OpCodes.Ldloc, Builder);
-                    EmitSaveVar();
-                    Generator.Emit(OpCodes.Pop);
-                }
-                else if(ByRef[Builder] is CodeMethodInvokeExpression)
+                if(ByRef[Builder] is CodeMethodInvokeExpression)
                 {
                     var inv = ByRef[Builder] as CodeMethodInvokeExpression;
                     EmitExpression(inv.Parameters[1]);
