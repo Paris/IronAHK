@@ -1588,7 +1588,7 @@ namespace IronAHK.Rusty
         /// <param name="Param4"></param>
         public static void GuiControlGet(out object OutputVar, string Command, string ControlID, string Param4)
         {
-            OutputVar = null;
+            OutputVar = string.Empty;
 
             var ctrl = GuiFindControl(ControlID);
 
