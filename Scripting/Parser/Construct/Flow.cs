@@ -108,6 +108,7 @@ namespace IronAHK.Scripting
                         CodeMethodInvokeExpression iterator;
                         bool skip = true;
                         bool checkBrace = true;
+                        bool byref = false;
 
                         #region Loop types
                         if (parts.Length > 1)
@@ -118,11 +119,13 @@ namespace IronAHK.Scripting
                             switch (sub[0].ToUpperInvariant())
                             {
                                 case "READ":
+                                    byref = true;
                                     iterator = (CodeMethodInvokeExpression)InternalMethods.LoopRead;
                                     break;
 
                                 case "PARSE":
                                     checkBrace = false;
+                                    byref = true;
                                     iterator = (CodeMethodInvokeExpression)InternalMethods.LoopParse;
                                     break;
 
@@ -140,6 +143,7 @@ namespace IronAHK.Scripting
                                     break;
 
                                 case "EACH":
+                                    byref = true;
                                     iterator = (CodeMethodInvokeExpression)InternalMethods.LoopEach;
                                     break;
 
@@ -172,20 +176,13 @@ namespace IronAHK.Scripting
                             foreach (var arg in SplitCommandParameters(parts[1]))
                                 iterator.Parameters.Add(ParseCommandParameter(arg));
 
-                            if (LegacyLoop)
+                            if (LegacyLoop && byref)
                                 iterator.Parameters[0] = VarId(iterator.Parameters[0]);
                         }
                         else
                         {
                             iterator = (CodeMethodInvokeExpression)InternalMethods.Loop;
-
-                            if (LegacyLoop)
-                            {
-                                var assign = new CodeBinaryOperatorExpression(InternalVariable, CodeBinaryOperatorType.Assign, new CodePrimitiveExpression(int.MaxValue));
-                                iterator.Parameters.Add(assign);
-                            }
-                            else
-                                iterator.Parameters.Add(new CodePrimitiveExpression(int.MaxValue));
+                            iterator.Parameters.Add(new CodePrimitiveExpression(int.MaxValue));
                         }
                         #endregion
 
