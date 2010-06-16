@@ -238,7 +238,7 @@ namespace IronAHK.Scripting
                         int n = i - 1;
 
                         if (i > 0 && IsJsonObject(parts[n])) { }
-                        else if (n < 0 || !(parts[n] is CodeComplexVariableReferenceExpression))
+                        else if (n < 0 || !IsVarAssignment(parts[n]))
                         {
                             if (LaxExpressions)
                             {
@@ -250,7 +250,7 @@ namespace IronAHK.Scripting
                         }
                         
                         // (x += y) => (x = x + y)
-                        parts[i] = new CodeComplexAssignStatement();
+                        parts[i] = CodeBinaryOperatorType.Assign;
                         if (part[0] != AssignPre && part.Length != 1)
                         {
                             parts.Insert(++i, ParenOpen.ToString());
@@ -333,7 +333,7 @@ namespace IronAHK.Scripting
 
                             #endregion
 
-                            if (x > -1 && parts[x] is CodeComplexVariableReferenceExpression)
+                            if (x > -1 && IsVarReference(parts[x]))
                                 z = x;
 
                             if (y < parts.Count && parts[y] is string && !IsOperator((string)parts[y]))
@@ -359,7 +359,7 @@ namespace IronAHK.Scripting
                                         var zx = new[] { z + 1, z + 2 };
                                         if (zx[1] < parts.Count &&
                                             parts[zx[1]] is string && ((string)parts[zx[1]]).Length == 1 && ((string)parts[zx[1]])[0] == ParenClose &&
-                                            (parts[zx[0]] is string && IsDynamicReference((string)parts[zx[0]]) || parts[zx[0]] is CodeComplexVariableReferenceExpression))
+                                            (parts[zx[0]] is string && IsDynamicReference((string)parts[zx[0]]) || IsVarReference(parts[zx[0]])))
                                         {
                                             parts.RemoveAt(zx[1]);
                                             parts.RemoveAt(z);
@@ -400,7 +400,7 @@ namespace IronAHK.Scripting
                             if (LaxExpressions)
                             {
                                 int w = z + (z == x ? 2 : 1);
-                                if (w < parts.Count && (parts[w] is string && IsAssignOp((string)parts[w]) || parts[w] is CodeComplexAssignStatement))
+                                if (w < parts.Count && (parts[w] is string && IsAssignOp((string)parts[w]) || IsVarReference(parts[w])))
                                 {
                                     int l = parts.Count - w;
                                     var sub = new List<object>(l + 1);
@@ -452,14 +452,14 @@ namespace IronAHK.Scripting
                                 else
                                 {
                                     int x = i - 1;
-                                    deref = parts[x] is Script.Operator || parts[x] is CodeComplexAssignStatement ||
+                                    deref = parts[x] is Script.Operator || IsVarAssignment(parts[x]) ||
                                         (parts[x] is string && ((string)parts[x]).Length == 1 && ((string)parts[x])[0] == '(');
                                 }
 
                                 if (deref)
                                 {
                                     int y = i + 1;
-                                    if (y < parts.Count && (parts[y] is CodeComplexVariableReferenceExpression ||
+                                    if (y < parts.Count && (IsVarReference(parts[y]) ||
                                         (parts[y] is string && IsIdentifier((string)parts[y]) && !IsKeyword((string)parts[y]))))
                                         ops = Script.Operator.Dereference;
                                 }
@@ -484,7 +484,7 @@ namespace IronAHK.Scripting
 
             for (int i = 1; i < parts.Count; i++)
             {
-                if (parts[i] is Script.Operator && (parts[i - 1] is Script.Operator || parts[i - 1] is CodeComplexAssignStatement) && IsUnaryOperator((Script.Operator)parts[i]))
+                if (parts[i] is Script.Operator && (parts[i - 1] is Script.Operator || IsVarAssignment(parts[i - 1])) && IsUnaryOperator((Script.Operator)parts[i]))
                 {
                     int n = i + 1, m = n + 1;
 
@@ -517,7 +517,7 @@ namespace IronAHK.Scripting
                         parts.Insert(n, ParseExpression(sub));
                     }
 
-                    if (m + 1 < parts.Count && parts[n] is CodeComplexVariableReferenceExpression && parts[m] is CodeComplexAssignStatement)
+                    if (m + 1 < parts.Count && IsVarReference(parts[n]) && IsVarAssignment(parts[m]))
                         MergeAssignmentAt(parts, i + 2);
 
                     if (m > parts.Count)
@@ -553,7 +553,7 @@ namespace IronAHK.Scripting
 
                         if (LaxExpressions)
                         {
-                            if (!(parts[n] is CodeComplexVariableReferenceExpression || parts[n] is CodeComplexAssignStatement))
+                            if (!(IsVarReference(parts[n]) || IsVarAssignment(parts[n])))
                             {
                                 invoke.Parameters.Add(new CodePrimitiveExpression(null));
                                 goto next;
@@ -591,7 +591,7 @@ namespace IronAHK.Scripting
                         int x = i - 1, y = i + 1;
                         var invoke = new CodeMethodInvokeExpression();
 
-                        if (i + 3 < parts.Count && parts[i + 1] is CodeComplexVariableReferenceExpression && parts[i + 2] is CodeComplexAssignStatement)
+                        if (i + 3 < parts.Count && IsVarReference(parts[i + 1]) && IsVarAssignment(parts[i + 2]))
                             MergeAssignmentAt(parts, i + 2);
 
                         #region Ternary
@@ -659,10 +659,10 @@ namespace IronAHK.Scripting
                                 throw new ParseException("Nullable assignment with no right-hand operator");
 
                             var result = InternalVariable;
-                            var left = new CodeComplexAssignStatement(result, WrappedComplexVar(parts[x]));
+                            var left = new CodeBinaryOperatorExpression(result, CodeBinaryOperatorType.Assign, WrappedComplexVar(parts[x]));
 
                             var eval = (CodeMethodInvokeExpression)InternalMethods.IfElse;
-                            eval.Parameters.Add((CodeMethodInvokeExpression)left);
+                            eval.Parameters.Add(left);
                             var ternary = new CodeTernaryOperatorExpression { Condition = eval, TrueBranch = result };
 
                             var right = new List<object>();
@@ -680,7 +680,7 @@ namespace IronAHK.Scripting
                         else if (x == -1)
                         {
                             int z = y + 1;
-                            if (op == Script.Operator.LogicalNotEx && parts[y] is CodeComplexVariableReferenceExpression && z < parts.Count)
+                            if (op == Script.Operator.LogicalNotEx && IsVarReference(parts[y]) && z < parts.Count)
                                 MergeAssignmentAt(parts, z);
 
                             if (LaxExpressions)
@@ -746,7 +746,7 @@ namespace IronAHK.Scripting
                                 invoke.Parameters.Add(OperatorAsFieldReference(op));
 
 #pragma warning disable 0162
-                                if (LaxExpressions && parts[i] is Script.Operator && (Script.Operator)parts[i] == Script.Operator.Concat && parts[x] is CodeComplexAssignStatement)
+                                if (LaxExpressions && parts[i] is Script.Operator && (Script.Operator)parts[i] == Script.Operator.Concat && IsVarAssignment(parts[x]))
                                     invoke.Parameters.Add(new CodePrimitiveExpression(string.Empty));
                                 else
                                     invoke.Parameters.Add(WrappedComplexVar(parts[x]));
@@ -769,9 +769,9 @@ namespace IronAHK.Scripting
                     {
                         int x = i - 1, y = i + 1;
 
-                        if (x > 0 && y < parts.Count && !(parts[i] is CodeComplexAssignStatement) &&
-                            (parts[x] is CodeMethodInvokeExpression || parts[x] is CodePrimitiveExpression || parts[x] is CodeComplexVariableReferenceExpression) &&
-                            (parts[y] is CodeMethodInvokeExpression || parts[y] is CodePrimitiveExpression || parts[y] is CodeComplexVariableReferenceExpression))
+                        if (x > 0 && y < parts.Count && !IsVarAssignment(parts[i]) &&
+                            (parts[x] is CodeMethodInvokeExpression || parts[x] is CodePrimitiveExpression || IsVarReference(parts[x])) &&
+                            (parts[y] is CodeMethodInvokeExpression || parts[y] is CodePrimitiveExpression || IsVarReference(parts[y])))
                             parts.Insert(y, Script.Operator.Concat);
                     }
                 }
@@ -796,7 +796,7 @@ namespace IronAHK.Scripting
                     bool typed = false;
 
                     if (LaxExpressions)
-                        typed = parts[i] is CodeComplexAssignStatement || parts[i] is CodeComplexVariableReferenceExpression;
+                        typed = IsVarAssignment(parts[i]) || IsVarReference(parts[i]);
 
                     if (!(typed || parts[i] is CodeMethodInvokeExpression || parts[i] is CodePrimitiveExpression || parts[i] is CodeTernaryOperatorExpression || parts[i] is CodeBinaryOperatorExpression))
                         throw new ArgumentOutOfRangeException();
@@ -812,8 +812,8 @@ namespace IronAHK.Scripting
             if (parts.Count != 1)
                 throw new ArgumentOutOfRangeException();
 
-            if (parts[0] is CodeComplexAssignStatement)
-                return (CodeBinaryOperatorExpression)(CodeComplexAssignStatement)parts[0];
+            if (IsVarAssignment(parts[0]))
+                return (CodeBinaryOperatorExpression)parts[0];
             else
                 return (CodeExpression)parts[0];
 

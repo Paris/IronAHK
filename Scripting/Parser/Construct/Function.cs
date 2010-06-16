@@ -155,7 +155,7 @@ namespace IronAHK.Scripting
 
                     if (part.Equals(FunctionParamRef, StringComparison.OrdinalIgnoreCase))
                     {
-                        byref = true; // TODO: handle byref variables in SetEnv/GetEnv
+                        byref = true; // TODO: handle byref variables
 
                         do { i++; } while (i < code.Length && IsSpace(code[i]));
                         x = i;

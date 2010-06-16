@@ -39,10 +39,6 @@ namespace IronAHK.Scripting
                 EmitDynamicName(Expression as CodeArrayCreateExpression);
                 Generated = typeof(string[]);
             }
-            else if(Expression is CodeComplexVariableReferenceExpression)
-            {
-                Generated = EmitComplexVariableReference(Expression as CodeComplexVariableReferenceExpression);
-            }
             else if(Expression is CodePrimitiveExpression)
             {
                 Generated = EmitPrimitive(Expression as CodePrimitiveExpression);

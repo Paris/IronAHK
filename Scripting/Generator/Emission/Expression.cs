@@ -21,8 +21,6 @@ namespace IronAHK.Scripting
                 EmitInvoke((CodeMethodInvokeExpression)expr);
             else if (expr is CodeArrayCreateExpression)
                 EmitArray((CodeArrayCreateExpression)expr);
-            else if (expr is CodeComplexVariableReferenceExpression)
-                EmitComplexReference((CodeComplexVariableReferenceExpression)expr);
             else if (expr is CodePrimitiveExpression)
                 EmitPrimitive((CodePrimitiveExpression)expr);
             else if (expr is CodeBinaryOperatorExpression)
@@ -264,20 +262,6 @@ namespace IronAHK.Scripting
 
         #region Complex
 
-        void EmitComplexReference(CodeComplexVariableReferenceExpression var)
-        {
-            var name = var.QualifiedName;
-
-            if (name is CodePrimitiveExpression)
-                EmitComplexReference((CodePrimitiveExpression)name);
-            else if (name is CodeArrayCreateExpression)
-                EmitComplexReference((CodeArrayCreateExpression)name);
-            else if (name is CodeMethodInvokeExpression)
-                EmitComplexReference((CodeMethodInvokeExpression)name);
-            else
-                throw new ArgumentOutOfRangeException();
-        }
-
         void EmitComplexReference(CodePrimitiveExpression var)
         {
             if (var.Value is string)
@@ -292,12 +276,6 @@ namespace IronAHK.Scripting
             {
                 if (part is CodePrimitiveExpression)
                     EmitComplexReference((CodePrimitiveExpression)part);
-                else if (part is CodeComplexVariableReferenceExpression)
-                {
-                    writer.Write(Parser.Resolve);
-                    EmitComplexReference((CodeComplexVariableReferenceExpression)part);
-                    writer.Write(Parser.Resolve);
-                }
                 else if (part is CodeMethodInvokeExpression)
                     EmitComplexReference((CodeMethodInvokeExpression)part);
                 else

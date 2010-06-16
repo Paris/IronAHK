@@ -6,20 +6,6 @@ namespace IronAHK.Scripting
     {
         internal class InternalMethods
         {
-            #region Variables
-
-            public static MethodReference GetEnv
-            {
-                get { return new MethodReference(typeof(Core), "GetEnv"); }
-            }
-
-            public static MethodReference SetEnv
-            {
-                get { return new MethodReference(typeof(Core), "SetEnv"); }
-            }
-
-            #endregion
-
             #region Hotkeys
 
             public static MethodReference Hotkey

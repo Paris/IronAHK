@@ -89,6 +89,7 @@
     <Compile Include="Script\Call.cs" />
     <Compile Include="Script\Conversion.cs" />
     <Compile Include="Script\Application.cs" />
+    <Compile Include="Script\Variables.cs" />
     <Compile Include="Script\Objects.cs" />
     <Compile Include="Script\Labels.cs" />
     <Compile Include="Script\Operate.cs" />
@@ -104,8 +105,6 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Parser\CodeDom\CodeBlock.cs" />
-    <Compile Include="Parser\CodeDom\CodeComplexAssignStatement.cs" />
-    <Compile Include="Parser\CodeDom\CodeComplexVariableReferenceExpression.cs" />
     <Compile Include="Parser\Statements.cs" />
     <Compile Include="Parser\Construct\Hotkey.cs" />
     <Compile Include="Parser\CodeDom\CodeLine.cs" />

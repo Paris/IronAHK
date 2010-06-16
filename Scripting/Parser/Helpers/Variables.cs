@@ -66,7 +66,7 @@ namespace IronAHK.Scripting
             if (asValue)
                 return StringConcat(all);
             else
-                return ComplexVarRef(new CodeComplexVariableReferenceExpression(all));
+                return VarRef(all);
         }
 
         CodeExpression VarIdOrConstant(string name)
@@ -103,43 +103,62 @@ namespace IronAHK.Scripting
 
         #region Wrappers
 
-        CodeComplexVariableReferenceExpression VarId(string name)
+        CodeArrayIndexerExpression VarId(string name)
         {
             return VarId(VarNameOrBasicString(name.ToLowerInvariant(), true));
         }
 
-        CodeComplexVariableReferenceExpression VarId(CodeExpression name)
+        CodeArrayIndexerExpression VarId(CodeExpression name)
         {
-            return new CodeComplexVariableReferenceExpression(new CodePrimitiveExpression(Scope + ScopeVar), name);
+            var scope = Scope + ScopeVar;
+
+            if (name is CodePrimitiveExpression)
+            {
+                var raw = (CodePrimitiveExpression)name;
+
+                if (raw.Value is string)
+                    return VarRef(scope + (string)raw.Value);
+            }
+
+            return VarRef(StringConcat(new CodePrimitiveExpression(scope), name));
         }
 
         #endregion
 
         #region Complex
 
+        bool IsVarAssignment(object expr)
+        {
+            return expr is CodeBinaryOperatorExpression && ((CodeBinaryOperatorExpression)expr).Operator == CodeBinaryOperatorType.Assign;
+        }
+
+        bool IsVarReference(object expr)
+        {
+            return expr is CodeArrayIndexerExpression;
+        }
+
         CodeExpression ComplexVarRef(object var)
         {
             if (var is CodePrimitiveExpression)
                 return (CodePrimitiveExpression)var;
 
-            if (!(var is CodeComplexVariableReferenceExpression))
+            if (!IsVarReference(var))
                 throw new ArgumentException();
 
-            return (CodeComplexVariableReferenceExpression)var;
+            return (CodeArrayIndexerExpression)var;
         }
 
-        CodeExpression ComplexVarAssign(object var)
+        CodeBinaryOperatorExpression ComplexVarAssign(object var)
         {
-            if (!(var is CodeComplexAssignStatement))
+            if (!IsVarAssignment(var as CodeExpression))
                 throw new ArgumentException();
 
-            return (CodeBinaryOperatorExpression)(CodeComplexAssignStatement)var;
+            return (CodeBinaryOperatorExpression)var;
         }
 
         CodeExpression WrappedComplexVar(object part)
         {
-            return part is CodeComplexVariableReferenceExpression ? ComplexVarRef(part) :
-                part is CodeComplexAssignStatement ? ComplexVarAssign(part) : (CodeExpression)part;
+            return IsVarReference(part) ? ComplexVarRef(part) : IsVarAssignment(part) ? ComplexVarAssign(part) : (CodeExpression)part;
         }
 
         #endregion
@@ -171,9 +190,9 @@ namespace IronAHK.Scripting
             return new CodeMethodInvokeExpression(method, all);
         }
 
-        CodeComplexVariableReferenceExpression InternalVariable
+        CodeArrayIndexerExpression InternalVariable
         {
-            get { return new CodeComplexVariableReferenceExpression(new CodePrimitiveExpression(".\0")); }
+            get { return VarRef("\0" + ScopeVar); }
         }
 
         #endregion

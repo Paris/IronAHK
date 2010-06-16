@@ -52,7 +52,7 @@ namespace IronAHK.Scripting
 
         CodeExpression OptimiseLoneExpression(CodeExpression expr)
         {
-            if (expr is CodeBinaryOperatorExpression && ((CodeBinaryOperatorExpression)expr).Operator == CodeBinaryOperatorType.Assign)
+            if (IsVarAssignment(expr))
             {
                 var assign = (CodeBinaryOperatorExpression)expr;
                 assign.Right = OptimiseExpression(assign.Right);

@@ -12,7 +12,7 @@ namespace IronAHK.Scripting
             if (!((parts[i] is string) && ((string)parts[i]).Length == 1 && ((string)parts[i])[0] == Equal))
                 return false;
 
-            if (x < 0 || !(parts[x] is CodeComplexVariableReferenceExpression))
+            if (x < 0 || !IsVarAssignment(parts[x]))
                 return false;
 
             if (!(y < parts.Count && parts[y] is string && IsVariable((string)parts[y])))
@@ -23,7 +23,7 @@ namespace IronAHK.Scripting
             if (z < 0)
                 return true;
 
-            if (parts[z] is CodeComplexAssignStatement)
+            if (IsVarAssignment(parts[z]))
                 return true;
 
             if (!(parts[z] is Script.Operator) || (Script.Operator)parts[z] == Script.Operator.IdentityEquality)
@@ -37,7 +37,7 @@ namespace IronAHK.Scripting
             int x = i - 1, y = i + 1;
             bool right = y < parts.Count;
 
-            if (!(parts[i] is CodeComplexAssignStatement))
+            if (parts[i] as CodeBinaryOperatorType? != CodeBinaryOperatorType.Assign)
                 return;
 
             if (i > 0 && IsJsonObject(parts[x]))
@@ -55,7 +55,8 @@ namespace IronAHK.Scripting
                 return;
             }
 
-            var assign = (CodeComplexAssignStatement)parts[i];
+            var assign = new CodeBinaryOperatorExpression();
+            parts[i] = assign;
 
             if (assign.Left != null)
                 return;
@@ -63,10 +64,10 @@ namespace IronAHK.Scripting
             if (parts[x] is CodeBinaryOperatorExpression)
             {
                 var binary = (CodeBinaryOperatorExpression)parts[x];
-                assign.Left = (CodeComplexVariableReferenceExpression)binary.Left;
+                assign.Left = (CodeArrayIndexerExpression)binary.Left;
             }
-            else if (parts[x] is CodeComplexVariableReferenceExpression)
-                assign.Left = (CodeComplexVariableReferenceExpression)parts[x];
+            else if (IsVarReference(parts[x]))
+                assign.Left = (CodeArrayIndexerExpression)parts[x];
             else
                 assign.Left = VarId((CodeExpression)parts[x]);
             assign.Right = right ? WrappedComplexVar(parts[y]) : new CodePrimitiveExpression(null);
