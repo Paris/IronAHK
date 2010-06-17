@@ -581,7 +581,7 @@ namespace IronAHK.Scripting
                 scan = false;
                 for (int i = 0; i < parts.Count; i++)
                 {
-                    if (parts[i] is Script.Operator)
+                    if (parts[i] is Script.Operator && (Script.Operator)parts[i] != Script.Operator.Assign)
                     {
                         scan = true;
                         var op = (Script.Operator)parts[i];
