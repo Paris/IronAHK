@@ -7,7 +7,7 @@ namespace IronAHK.Scripting
     {
         CodeArrayIndexerExpression VarRef(params CodeExpression[] name)
         {
-            var vars = new CodePropertyReferenceExpression(new CodeTypeReferenceExpression(typeof(Script)), "Vars");
+            var vars = new CodePropertyReferenceExpression(new CodeTypeReferenceExpression(typeof(Script)), VarProperty);
             return new CodeArrayIndexerExpression(vars, name);
         }
 
