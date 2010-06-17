@@ -41,7 +41,6 @@ namespace IronAHK.Scripting
         void EmitAssignStatement(CodeAssignStatement Assign, bool ForceTypes)
         {
             EmitAssignment(Assign.Left, Assign.Right, ForceTypes);
-            Generator.Emit(OpCodes.Pop);
         }
 
         void EmitAssignment(CodeExpression Left, CodeExpression Right, bool ForceTypes)
@@ -65,6 +64,7 @@ namespace IronAHK.Scripting
 
                 EmitExpression(Right, ForceTypes);
                 Generator.Emit(OpCodes.Stloc, Var);
+                Generator.Emit(OpCodes.Pop);
             }
             else if (Left is CodeArrayIndexerExpression)
             {
@@ -73,14 +73,13 @@ namespace IronAHK.Scripting
                 // HACK: generic way of setting indexers from properties (cil)
 
                 var vars = typeof(Script).GetProperty(Parser.VarProperty);
-                Generator.Emit(OpCodes.Nop);
                 Generator.Emit(OpCodes.Call, vars.GetGetMethod());
 
                 EmitExpression(index.Indices[0]);
                 EmitExpression(Right, ForceTypes);
-
+                
+                // "Item" is the property for this-indexers
                 Generator.Emit(OpCodes.Callvirt, vars.PropertyType.GetProperty("Item").GetSetMethod());
-                Generator.Emit(OpCodes.Nop);
             }
             else throw new CompileException(Left, "Left hand is unassignable");
 
