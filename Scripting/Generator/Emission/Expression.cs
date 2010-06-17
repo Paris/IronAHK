@@ -35,6 +35,10 @@ namespace IronAHK.Scripting
                 EmitFieldReference((CodeFieldReferenceExpression)expr);
             else if (expr is CodeTypeReferenceExpression)
                 EmitTypeReference((CodeTypeReferenceExpression)expr);
+            else if (expr is CodeArrayIndexerExpression)
+                EmitArrayIndexer((CodeArrayIndexerExpression)expr);
+            else if (expr is CodePropertyReferenceExpression)
+                EmitPropertyReference((CodePropertyReferenceExpression)expr);
             else
                 throw new ArgumentException("Unrecognised expression: " + expr.GetType());
         }
@@ -187,6 +191,36 @@ namespace IronAHK.Scripting
         #endregion
 
         #region Variables
+
+        void EmitArrayIndexer(CodeArrayIndexerExpression array)
+        {
+            if (array.TargetObject is CodePropertyReferenceExpression &&
+                ((CodePropertyReferenceExpression)array.TargetObject).PropertyName == Parser.VarProperty &&
+                array.Indices.Count == 1 && array.Indices[0] is CodePrimitiveExpression)
+            {
+                var name = ((CodePrimitiveExpression)array.Indices[0]).Value as string;
+
+                if (name != null)
+                {
+                    var sep = name.IndexOf(Parser.ScopeVar);
+
+                    if (sep != -1)
+                        name = name.Substring(sep + 1);
+
+                    writer.Write(name);
+                    return;
+                }
+            }
+
+            EmitExpression(array.TargetObject);
+
+            foreach (CodeExpression index in array.Indices)
+            {
+                writer.Write(Parser.ArrayOpen);
+                EmitExpression(index);
+                writer.Write(Parser.ArrayClose);
+            }
+        }
 
         void EmitVariableDeclaration(CodeVariableDeclarationStatement var)
         {
@@ -346,6 +380,12 @@ namespace IronAHK.Scripting
         #endregion
 
         #region Misc
+
+        void EmitPropertyReference(CodePropertyReferenceExpression property)
+        {
+            EmitExpression(property.TargetObject);
+            writer.Write(property.PropertyName);
+        }
 
         void EmitPrimitive(CodePrimitiveExpression primitive)
         {
