@@ -180,8 +180,12 @@ namespace IronAHK.Rusty
                         if (!Keyword_NoHide.Equals(Param2, StringComparison.OrdinalIgnoreCase))
                             guis[id].Hide();
 
+                        var table = new Dictionary<string, string>();
+
                         foreach (Control ctrl in guis[id].Controls)
-                            SetEnv("." + ctrl.Name, ctrl.Text);
+                            table.Add(ctrl.Name, ctrl.Text);
+
+                        // TODO: way to return multipart variable (A_LastResult?) for Gui,Submit and GuiControlGet,,Pos
                     }
                     break;
 
