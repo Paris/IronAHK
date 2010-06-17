@@ -55,7 +55,7 @@ namespace IronAHK.Scripting
                 return;
             }
 
-            var assign = new CodeBinaryOperatorExpression();
+            var assign = new CodeBinaryOperatorExpression { Operator = CodeBinaryOperatorType.Assign };
             parts[i] = assign;
 
             if (assign.Left != null)
