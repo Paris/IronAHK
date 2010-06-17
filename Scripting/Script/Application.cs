@@ -18,11 +18,6 @@ namespace IronAHK.Scripting
             Application.EnableVisualStyles();
         }
 
-        public static void InitX()
-        {
-            Vars["hi"] = "lol";
-        }
-
         public static void Run()
         {
             Application.Run();
