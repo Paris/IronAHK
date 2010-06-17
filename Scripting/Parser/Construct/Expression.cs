@@ -593,7 +593,7 @@ namespace IronAHK.Scripting
                         int x = i - 1, y = i + 1;
                         var invoke = new CodeMethodInvokeExpression();
 
-                        if (i + 3 < parts.Count && IsVarReference(parts[i + 1]) && IsVarAssignment(parts[i + 2]))
+                        if (i + 3 < parts.Count && IsVarReference(parts[i + 1]) && parts[i + 2] as CodeBinaryOperatorType? == CodeBinaryOperatorType.Assign)
                             MergeAssignmentAt(parts, i + 2);
 
                         #region Ternary
@@ -748,7 +748,7 @@ namespace IronAHK.Scripting
                                 invoke.Parameters.Add(OperatorAsFieldReference(op));
 
 #pragma warning disable 0162
-                                if (LaxExpressions && parts[i] is Script.Operator && (Script.Operator)parts[i] == Script.Operator.Concat && IsVarAssignment(parts[x]))
+                                if (LaxExpressions && parts[i] is Script.Operator && (Script.Operator)parts[i] == Script.Operator.Concat && parts[x] as CodeBinaryOperatorType? == CodeBinaryOperatorType.Assign)
                                     invoke.Parameters.Add(new CodePrimitiveExpression(string.Empty));
                                 else
                                     invoke.Parameters.Add(WrappedComplexVar(parts[x]));
