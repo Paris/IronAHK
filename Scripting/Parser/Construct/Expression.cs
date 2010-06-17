@@ -419,18 +419,18 @@ namespace IronAHK.Scripting
                             var list = new List<object>(9);
                             list.Add(parts[z]);
                             list.Add(new string(new[] { Add, Equal }));
-                            list.Add(d.ToString());
+                            list.Add(new CodePrimitiveExpression(d));
                             if (shadow != null)
                             {
-                                list.Add(Add.ToString());
+                                list.Add(Script.Operator.Add);
                                 list.Add(shadow);
                             }
                             if (z < i) // postfix, so adjust
                             {
                                 list.Insert(0, ParenOpen.ToString());
                                 list.Add(ParenClose.ToString());
-                                list.Add(Add.ToString());
-                                list.Add((-d).ToString());
+                                list.Add(d > 0 ? Script.Operator.Minus : Script.Operator.Add);
+                                list.Add(new CodePrimitiveExpression(d));
                             }
 
                             x = Math.Min(i, z);
