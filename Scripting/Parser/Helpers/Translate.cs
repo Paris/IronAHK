@@ -103,6 +103,16 @@ namespace IronAHK.Scripting
                     replaced.Append(param);
                     break;
 
+                case "setenv":
+                    replaced.Append(parts[0].Substring(1, parts[0].Length - 2));
+                    replaced.Append(AssignPre);
+                    replaced.Append(Equal);
+                    if (parts.Length > 1)
+                        replaced.Append(parts[1]);
+                    else
+                        replaced.Append(NullTxt);
+                    break;
+
                 case "autotrim":
                 case "detecthiddentext":
                 case "detecthiddenwindows":
