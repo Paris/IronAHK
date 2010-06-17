@@ -111,7 +111,6 @@
     <Compile Include="Core\Sound.cs" />
     <Compile Include="Core\Accessors.cs" />
     <Compile Include="Core\String.cs" />
-    <Compile Include="Core\Variables.cs" />
     <Compile Include="Core\Window.cs" />
     <Compile Include="Extras\CRC32.cs" />
     <Compile Include="Extras\SimpleJson\SimpleJSON.cs" />
