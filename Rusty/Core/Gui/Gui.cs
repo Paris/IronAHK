@@ -883,13 +883,18 @@ namespace IronAHK.Rusty
                                 case "4": break;
                                 case "8": break;
                                 case "16": break;
-                                case Keyword_Multi: break;
+                                case Keyword_Multi: cal.MaxSelectionCount = int.MaxValue; break;
 
                                 default:
                                     if (mode.StartsWith(Keyword_Range, StringComparison.OrdinalIgnoreCase))
                                     {
                                         string[] range = mode.Substring(Keyword_Range.Length).Split(new[] { '-' }, 2);
 
+                                        if (!string.IsNullOrEmpty(range[0]))
+                                            cal.MinDate = ToDateTime(range[0]);
+
+                                        if (range.Length > 1 && !string.IsNullOrEmpty(range[1]))
+                                            cal.MaxDate = ToDateTime(range[1]);
                                     }
                                     break;
                             }
@@ -906,6 +911,8 @@ namespace IronAHK.Rusty
                         control = slider;
                         opts = GuiApplyStyles(slider, options);
 
+                        int n;
+
                         foreach (var opt in ParseOptions(opts))
                         {
                             bool on = opt[0] != '-';
@@ -913,40 +920,50 @@ namespace IronAHK.Rusty
 
                             switch (mode)
                             {
+                                // UNDONE: misc slider properties
                                 case Keyword_Center: break;
                                 case Keyword_Invert: break;
                                 case Keyword_Left: break;
-                                case Keyword_NoTicks: break;
+                                case Keyword_NoTicks: slider.TickStyle = TickStyle.None; break;
                                 case Keyword_Thick: break;
-                                case Keyword_Vertical: break;
+                                case Keyword_Vertical: slider.Orientation = Orientation.Vertical; break;
 
                                 default:
                                     if (mode.StartsWith(Keyword_Line))
                                     {
                                         mode = mode.Substring(Keyword_Line.Length);
 
+                                        // UNDONE: slider line property
                                     }
                                     else if (mode.StartsWith(Keyword_Page))
                                     {
                                         mode = mode.Substring(Keyword_Page.Length);
 
+                                        // UNDONE: slider page property
                                     }
                                     else if (mode.StartsWith(Keyword_Range))
                                     {
                                         mode = mode.Substring(Keyword_Range.Length);
                                         string[] parts = mode.Split(new[] { '-' }, 2);
 
+                                        if (parts[0].Length != 0 && int.TryParse(parts[0], out n))
+                                            slider.Minimum = n;
+
+                                        if (parts.Length > 0 && parts[1].Length != 0 && int.TryParse(parts[1], out n))
+                                            slider.Maximum = n;
                                     }
                                     else if (mode.StartsWith(Keyword_TickInterval))
                                     {
                                         mode = mode.Substring(Keyword_TickInterval.Length);
 
+                                        if (mode.Length != 0 && int.TryParse(mode, out n))
+                                            slider.TickFrequency = n;
                                     }
                                     else if (mode.StartsWith(Keyword_ToolTip))
                                     {
                                         mode = mode.Substring(Keyword_ToolTip.Length);
 
-                                        switch (mode)
+                                        switch (mode) // UNDONE: slider tooltip alignment
                                         {
                                             case Keyword_Left: break;
                                             case Keyword_Right: break;
@@ -957,10 +974,6 @@ namespace IronAHK.Rusty
                                     break;
                             }
                         }
-
-
-
-                        int n;
 
                         if (!string.IsNullOrEmpty(content) && int.TryParse(content, out n))
                             slider.Value = Math.Max(slider.Minimum, Math.Min(slider.Maximum, n));
@@ -984,7 +997,7 @@ namespace IronAHK.Rusty
                             switch (mode)
                             {
                                 case Keyword_Smooth: break;
-                                case Keyword_Vertical: break;
+                                case Keyword_Vertical: break; // TODO: vertical progress bar Gui control
 
                                 default:
                                     if (mode.StartsWith(Keyword_Range))
@@ -1004,14 +1017,16 @@ namespace IronAHK.Rusty
 
                                         int x, y;
 
-                                        if (int.TryParse(a, out x) && int.TryParse(b, out y))
-                                        {
+                                        if (int.TryParse(a, out x))
+                                            progress.Minimum = x;
 
-                                        }
+                                        if (int.TryParse(b, out y) && y > x)
+                                            progress.Maximum = y;
                                     }
                                     else if (mode.StartsWith(Keyword_Background))
                                     {
                                         mode = mode.Substring(Keyword_Background.Length);
+                                        progress.ForeColor = ParseColor(mode);
                                     }
                                     break;
                             }
@@ -1040,7 +1055,7 @@ namespace IronAHK.Rusty
                 case Keyword_Tab:
                 case Keyword_Tab2:
                     {
-                        var tab = (TabPage)(control ?? new TabPage());
+                        var tab = (TabControl)(control ?? new TabControl());
                         parent.Controls.Add(tab);
                         control = tab;
                         opts = GuiApplyStyles(tab, options);
@@ -1054,16 +1069,20 @@ namespace IronAHK.Rusty
                             {
                                 case Keyword_Background: break;
                                 case Keyword_Buttons: break;
-                                case Keyword_Top: break;
-                                case Keyword_Left: break;
-                                case Keyword_Right: break;
-                                case Keyword_Bottom: break;
+                                case Keyword_Top: tab.Alignment = TabAlignment.Top; break;
+                                case Keyword_Left: tab.Alignment = TabAlignment.Left; break;
+                                case Keyword_Right: tab.Alignment = TabAlignment.Right; break;
+                                case Keyword_Bottom: tab.Alignment = TabAlignment.Bottom; break;
                                 case Keyword_Wrap: break;
 
                                 default:
                                     if (mode.StartsWith(Keyword_Choose, StringComparison.OrdinalIgnoreCase))
                                     {
                                         mode = mode.Substring(Keyword_Choose.Length);
+                                        int n;
+
+                                        if (int.TryParse(mode, out n) && n > -1 && n < tab.TabPages.Count)
+                                            tab.SelectedIndex = n;
                                     }
                                     break;
                             }
@@ -1461,7 +1480,7 @@ namespace IronAHK.Rusty
                         if (offset)
                         {
                             int n = control.Parent.Controls.Count - 2;
-                            
+
                             if (n < 0)
                                 return;
 
