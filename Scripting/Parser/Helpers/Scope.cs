@@ -4,6 +4,7 @@ namespace IronAHK.Scripting
     partial class Parser
     {
         const string ScopeVar = ".";
+        internal const string VarProperty = "Vars";
         int internalID;
 
         string InternalID

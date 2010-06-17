@@ -72,7 +72,7 @@ namespace IronAHK.Scripting
 
                 // HACK: generic way of setting indexers from properties (cil)
 
-                var vars = typeof(Script).GetProperty("Vars");
+                var vars = typeof(Script).GetProperty(Parser.VarProperty);
                 Generator.Emit(OpCodes.Nop);
                 Generator.Emit(OpCodes.Call, vars.GetGetMethod());
 
