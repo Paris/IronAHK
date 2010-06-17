@@ -163,6 +163,7 @@ namespace IronAHK.Scripting
                     Generator.Emit(OpCodes.Newarr, typeof(object));
                     Generator.Emit(OpCodes.Ldloc, Builder);
                     Generator.Emit(OpCodes.Call, typeof(Script).GetMethod("SetObject"));
+                    
                     Generator.Emit(OpCodes.Pop);
                 }
             }

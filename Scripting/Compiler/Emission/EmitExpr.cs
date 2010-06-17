@@ -64,6 +64,11 @@ namespace IronAHK.Scripting
                 EmitArgumentReference(Expression as CodeArgumentReferenceExpression);
                 Generated = typeof(object[]);
             }
+            else if (Expression is CodeArrayIndexerExpression)
+            {
+                EmitArrayIndexerExpression(Expression as CodeArrayIndexerExpression);
+                Generated = typeof(object);
+            }
             else
             {
                 Depth++;
@@ -81,6 +86,19 @@ namespace IronAHK.Scripting
         {
             return EmitExpression(Expression, true);
         }
+        
+        void EmitArrayIndexerExpression(CodeArrayIndexerExpression Indexer)
+        {
+            var index = (CodeArrayIndexerExpression)Indexer;
+   
+            var vars = typeof(Script).GetProperty(Parser.VarProperty);
+            Generator.Emit(OpCodes.Call, vars.GetGetMethod());
+
+            EmitExpression(index.Indices[0]);
+            
+            // "Item" is the property for this-indexers
+            Generator.Emit(OpCodes.Callvirt, vars.PropertyType.GetProperty("Item").GetGetMethod());
+        }
 
         Type EmitBinaryOperator(CodeBinaryOperatorExpression Binary, bool ForceTypes)
         {
@@ -90,7 +108,7 @@ namespace IronAHK.Scripting
             if(Binary.Operator == CodeBinaryOperatorType.Assign)
             {
                 EmitAssignment(Binary.Left, Binary.Right, ForceTypes);
-                return typeof(object);
+                return typeof(void);
             }
 
             Type Generated;
