@@ -221,10 +221,15 @@ namespace IronAHK.Rusty
             OutputVarY = pos.Y;
             if (coords.Mouse == CoordModeType.Relative)
             {
-                Windows.RECT rect;
-                Windows.GetWindowRect(Windows.GetForegroundWindow(), out rect);
-                OutputVarX -= rect.Left;
-                OutputVarY -= rect.Top;
+                if (Environment.OSVersion.Platform == PlatformID.Win32NT)
+                {
+                    Windows.RECT rect;
+                    Windows.GetWindowRect(Windows.GetForegroundWindow(), out rect);
+                    OutputVarX -= rect.Left;
+                    OutputVarY -= rect.Top;
+                }else{
+                    // ToDo: X11 get topstack window Rect(last in XQueryTree)  
+                }
             }
         }
 
