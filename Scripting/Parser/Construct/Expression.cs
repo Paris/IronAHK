@@ -484,8 +484,9 @@ namespace IronAHK.Scripting
 
             for (int i = 1; i < parts.Count; i++)
             {
-                if (parts[i] is Script.Operator && (parts[i - 1] is Script.Operator || IsVarAssignment(parts[i - 1])) && IsUnaryOperator((Script.Operator)parts[i]) &&
-                    (i + 1 < parts.Count ? !(parts[i + 1] is CodePrimitiveExpression) : true))
+                if (parts[i] is Script.Operator &&
+                    (parts[i - 1] is Script.Operator || parts[i - 1] as CodeBinaryOperatorType? == CodeBinaryOperatorType.Assign || IsVarAssignment(parts[i - 1])) &&
+                    IsUnaryOperator((Script.Operator)parts[i]))
                 {
                     int n = i + 1, m = n + 1;
 
