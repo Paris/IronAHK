@@ -76,7 +76,10 @@ namespace IronAHK.Scripting
                 Generator.Emit(OpCodes.Call, vars.GetGetMethod());
 
                 EmitExpression(index.Indices[0]);
-                EmitExpression(Right, ForceTypes);
+                var resultType = EmitExpression(Right, ForceTypes);
+
+                if (resultType.IsValueType)
+                    Generator.Emit(OpCodes.Box, resultType);
                 
                 // "Item" is the property for this-indexers
                 Generator.Emit(OpCodes.Callvirt, vars.PropertyType.GetProperty("Item").GetSetMethod());
