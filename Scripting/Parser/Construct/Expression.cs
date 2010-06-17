@@ -238,7 +238,7 @@ namespace IronAHK.Scripting
                         int n = i - 1;
 
                         if (i > 0 && IsJsonObject(parts[n])) { }
-                        else if (n < 0 || !IsVarAssignment(parts[n]))
+                        else if (n < 0 || !IsVarReference(parts[n]))
                         {
                             if (LaxExpressions)
                             {
@@ -400,7 +400,7 @@ namespace IronAHK.Scripting
                             if (LaxExpressions)
                             {
                                 int w = z + (z == x ? 2 : 1);
-                                if (w < parts.Count && (parts[w] is string && IsAssignOp((string)parts[w]) || IsVarReference(parts[w])))
+                                if (w < parts.Count && (parts[w] is string && IsAssignOp((string)parts[w]) || IsVarAssignment(parts[w])))
                                 {
                                     int l = parts.Count - w;
                                     var sub = new List<object>(l + 1);
