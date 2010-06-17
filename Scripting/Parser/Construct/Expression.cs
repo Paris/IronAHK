@@ -766,7 +766,7 @@ namespace IronAHK.Scripting
 
                         i--;
                     }
-                    else
+                    else if (parts[i] as CodeBinaryOperatorType? != CodeBinaryOperatorType.Assign)
                     {
                         int x = i - 1, y = i + 1;
 
