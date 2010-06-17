@@ -12,7 +12,7 @@ namespace IronAHK.Scripting
             if (!((parts[i] is string) && ((string)parts[i]).Length == 1 && ((string)parts[i])[0] == Equal))
                 return false;
 
-            if (x < 0 || !IsVarAssignment(parts[x]))
+            if (x < 0 || !IsVarReference(parts[x]))
                 return false;
 
             if (!(y < parts.Count && parts[y] is string && IsVariable((string)parts[y])))

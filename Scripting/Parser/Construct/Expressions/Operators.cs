@@ -376,7 +376,7 @@ namespace IronAHK.Scripting
 
         bool IsObject(object item)
         {
-            if (item == null || item is Script.Operator || IsVarReference(item))
+            if (item == null || item is Script.Operator || IsVarAssignment(item))
                 return false;
 
             return true;
