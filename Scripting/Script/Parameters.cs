@@ -16,7 +16,7 @@ namespace IronAHK.Scripting
                 else
                     init = null;
 
-                SetEnv(names[i], init);
+                Vars[names[i]] = init;
             }
         }
     }
