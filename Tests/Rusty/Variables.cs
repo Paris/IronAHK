@@ -1,4 +1,4 @@
-﻿using IronAHK.Rusty;
+﻿using IronAHK.Scripting;
 using NUnit.Framework;
 
 namespace IronAHK.Tests
@@ -8,7 +8,7 @@ namespace IronAHK.Tests
         [Test, Category("Variables")]
         public void ReservedVariables()
         {
-            Assert.IsTrue((int)Core.GetEnv("a_tickCount") > 0);
+            Assert.IsTrue((int)Script.Vars["a_tickCount"] > 0);
         }
     }
 }
