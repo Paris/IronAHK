@@ -67,8 +67,9 @@ namespace IronAHK.Rusty
             if (save)
             {
                 var saveas = new SaveFileDialog { CheckPathExists = check, CreatePrompt = create, OverwritePrompt = overwite, DereferenceLinks = shortcuts, Filter = Filter };
+                var selected = dialogOwner == null ? saveas.ShowDialog() : saveas.ShowDialog(dialogOwner);
 
-                if (saveas.ShowDialog() == DialogResult.OK)
+                if (selected == DialogResult.OK)
                     OutputVar = saveas.FileName;
                 else
                     error = 1;
@@ -76,8 +77,9 @@ namespace IronAHK.Rusty
             else
             {
                 var open = new OpenFileDialog { Multiselect = multi, CheckFileExists = check, DereferenceLinks = shortcuts, Filter = Filter };
+                var selected = dialogOwner == null ? open.ShowDialog() : open.ShowDialog(dialogOwner);
 
-                if (open.ShowDialog() == DialogResult.OK)
+                if (selected == DialogResult.OK)
                     OutputVar = multi ? string.Join("\n", open.FileNames) : open.FileName;
                 else
                     error = 1;
@@ -115,7 +117,9 @@ namespace IronAHK.Rusty
 
             error = 0;
 
-            if (select.ShowDialog() == DialogResult.OK)
+            var selected = dialogOwner == null ? select.ShowDialog() : select.ShowDialog(dialogOwner);
+
+            if (selected == DialogResult.OK)
                 OutputVar = select.SelectedPath;
             else
             {
@@ -141,6 +145,9 @@ namespace IronAHK.Rusty
         public static DialogResult InputBox(out string OutputVar, string Title, string Prompt, string Hide, string Width, string Height, string X, string Y, string Font, string Timeout, string Default)
         {
             var input = new InputDialog { Title = Title, Prompt = Prompt };
+
+            if (dialogOwner != null)
+                input.Owner = dialogOwner;
 
             int n;
 
@@ -174,7 +181,10 @@ namespace IronAHK.Rusty
         /// <param name="Text">The text to show in the prompt.</param>
         public static void MsgBox(string Text)
         {
-            MessageBox.Show(Text);
+            if (dialogOwner != null)
+                MessageBox.Show(dialogOwner, Text);
+            else
+                MessageBox.Show(Text);
         }
 
         /// <summary>
@@ -225,7 +235,7 @@ namespace IronAHK.Rusty
                 case 512: defaultbutton = MessageBoxDefaultButton.Button3; break;
             }
 
-            MessageBoxOptions? options = null;
+            var options = default(MessageBoxOptions);
             switch (Options & 0xf0000)
             {
                 case 131072: options = MessageBoxOptions.DefaultDesktopOnly; break;
@@ -234,9 +244,16 @@ namespace IronAHK.Rusty
                 case 1048576: options = MessageBoxOptions.RtlReading; break;
             }
 
-            return MessageBox.Show(Text, Title, buttons, icon, defaultbutton,
-                options ?? default(MessageBoxOptions),
-                (Options & 0xf000) == 16384);
+            bool help = (Options & 0xf000) == 16384;
+
+            var result = DialogResult.None;
+
+            if (dialogOwner != null)
+                result = MessageBox.Show(dialogOwner, Text, Title, buttons, icon, defaultbutton, options);
+            else
+                result = MessageBox.Show(Text, Title, buttons, icon, defaultbutton, options, help);
+
+            return result;
         }
 
         /// <summary>
