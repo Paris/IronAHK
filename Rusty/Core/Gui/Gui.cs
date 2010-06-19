@@ -597,6 +597,7 @@ namespace IronAHK.Rusty
                         parent.Controls.Add(ddl);
                         control = ddl;
                         ddl.Text = content;
+                        ddl.DropDownStyle = ComboBoxStyle.DropDownList;
                         opts = GuiApplyStyles(ddl, options);
 
                         int select;
@@ -901,7 +902,7 @@ namespace IronAHK.Rusty
                                     }
                                     break;
                             }
-                        }
+                        }   
                     }
                     break;
                 #endregion
