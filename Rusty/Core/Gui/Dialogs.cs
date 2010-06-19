@@ -61,7 +61,7 @@ namespace IronAHK.Rusty
                     shortcuts = true;
             }
 
-            error = 0;
+            ErrorLevel = 0;
             OutputVar = null;
 
             if (save)
@@ -72,7 +72,7 @@ namespace IronAHK.Rusty
                 if (selected == DialogResult.OK)
                     OutputVar = saveas.FileName;
                 else
-                    error = 1;
+                    ErrorLevel = 1;
             }
             else
             {
@@ -82,7 +82,7 @@ namespace IronAHK.Rusty
                 if (selected == DialogResult.OK)
                     OutputVar = multi ? string.Join("\n", open.FileNames) : open.FileName;
                 else
-                    error = 1;
+                    ErrorLevel = 1;
             }
         }
 
@@ -115,7 +115,7 @@ namespace IronAHK.Rusty
                 // TODO: convert CLSID to special folder enumeration for folder select dialog
             }
 
-            error = 0;
+            ErrorLevel = 0;
 
             var selected = dialogOwner == null ? select.ShowDialog() : select.ShowDialog(dialogOwner);
 
@@ -124,7 +124,7 @@ namespace IronAHK.Rusty
             else
             {
                 OutputVar = string.Empty;
-                error = 1;
+                ErrorLevel = 1;
             }
         }
 

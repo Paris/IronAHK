@@ -69,11 +69,11 @@ namespace IronAHK.Rusty
                         File.AppendAllText(Filename, Text);
                 }
 
-                error = 0;
+                ErrorLevel = 0;
             }
             catch (Exception)
             {
-                error = 1;
+                ErrorLevel = 1;
             }
         }
 
@@ -96,9 +96,9 @@ namespace IronAHK.Rusty
             try
             {
                 File.Copy(Source, Dest, Flag != 0);
-                error = 0;
+                ErrorLevel = 0;
             }
-            catch (Exception) { error = 1; }
+            catch (Exception) { ErrorLevel = 1; }
         }
 
         /// <summary>
@@ -146,9 +146,9 @@ namespace IronAHK.Rusty
             try
             {
                 Directory.CreateDirectory(Path);
-                error = 0;
+                ErrorLevel = 0;
             }
-            catch (Exception) { error = 1; }
+            catch (Exception) { ErrorLevel = 1; }
         }
 
         /// <summary>
@@ -190,9 +190,9 @@ namespace IronAHK.Rusty
             try
             {
                 File.Delete(FilePattern);
-                error = 0;
+                ErrorLevel = 0;
             }
-            catch (Exception) { error = 1; }
+            catch (Exception) { ErrorLevel = 1; }
         }
 
         /// <summary>
@@ -217,9 +217,9 @@ namespace IronAHK.Rusty
             try
             {
                 OutputVar = FromFileAttribs(File.GetAttributes(Filename));
-                error = 0;
+                ErrorLevel = 0;
             }
-            catch (Exception) { error = 1; }
+            catch (Exception) { ErrorLevel = 1; }
         }
 
         /// <summary>
@@ -292,7 +292,7 @@ namespace IronAHK.Rusty
             catch (Exception)
             {
                 OutputVar = 0;
-                error = 1;
+                ErrorLevel = 1;
             }
         }
 
@@ -348,9 +348,9 @@ namespace IronAHK.Rusty
             {
                 FileVersionInfo info = FileVersionInfo.GetVersionInfo(Filename);
                 OutputVar = info.FileVersion;
-                error = 0;
+                ErrorLevel = 0;
             }
-            catch (Exception) { error = 1; }
+            catch (Exception) { ErrorLevel = 1; }
         }
 
 
@@ -375,9 +375,9 @@ namespace IronAHK.Rusty
             try
             {
                 File.Move(Source, Dest);
-                error = 0;
+                ErrorLevel = 0;
             }
-            catch (Exception) { error = 1; }
+            catch (Exception) { ErrorLevel = 1; }
         }
 
         /// <summary>
@@ -394,7 +394,7 @@ namespace IronAHK.Rusty
         /// </param>
         public static void FileMoveDir(string Source, string Dest, string Flag)
         {
-            error = 0;
+            ErrorLevel = 0;
 
             switch (Flag)
             {
@@ -404,7 +404,7 @@ namespace IronAHK.Rusty
                     break;
 
                 default:
-                    error = 1;
+                    ErrorLevel = 1;
                     return;
             }
 
@@ -428,11 +428,11 @@ namespace IronAHK.Rusty
             #region Variables
 
             OutputVar = null;
-            error = 0;
+            ErrorLevel = 0;
 
             if (string.IsNullOrEmpty(Filename))
             {
-                error = 1;
+                ErrorLevel = 1;
                 return;
             }
 
@@ -490,7 +490,7 @@ namespace IronAHK.Rusty
 
             if (Filename.Length == 0)
             {
-                error = 1;
+                ErrorLevel = 1;
                 return;
             }
 
@@ -509,7 +509,7 @@ namespace IronAHK.Rusty
                 }
                 catch (Exception)
                 {
-                    error = 1;
+                    ErrorLevel = 1;
                     return;
                 }
             }
@@ -523,7 +523,7 @@ namespace IronAHK.Rusty
                 }
                 catch (Exception)
                 {
-                    error = 1;
+                    ErrorLevel = 1;
                     return;
                 }
 
@@ -556,9 +556,9 @@ namespace IronAHK.Rusty
                     line = sr.ReadLine();
                 sr.Close();
                 OutputVar = line;
-                error = 0;
+                ErrorLevel = 0;
             }
-            catch (Exception) { error = 1; }
+            catch (Exception) { ErrorLevel = 1; }
         }
 
         /// <summary>
@@ -582,9 +582,9 @@ namespace IronAHK.Rusty
             try
             {
                 Windows.SHEmptyRecycleBin(IntPtr.Zero, Root, Windows.SHERB_NOCONFIRMATION | Windows.SHERB_NOPROGRESSUI | Windows.SHERB_NOSOUND);
-                error = 0;
+                ErrorLevel = 0;
             }
-            catch (Exception) { error = 1; }
+            catch (Exception) { ErrorLevel = 1; }
         }
 
         /// <summary>
@@ -602,9 +602,9 @@ namespace IronAHK.Rusty
             try
             {
                 Directory.Delete(Path, Recurse);
-                error = 0;
+                ErrorLevel = 0;
             }
-            catch (Exception) { error = 1; }
+            catch (Exception) { ErrorLevel = 1; }
         }
 
         /// <summary>
@@ -633,7 +633,8 @@ namespace IronAHK.Rusty
         {
             try
             {
-                error = 0;
+                int error = 0;
+
                 foreach (var path in ToFiles(FilePattern, OperateOnFolders != 2, OperateOnFolders != 0, Recurse != 0))
                 {
                     FileAttributes set = ToFileAttribs(Attributes, File.GetAttributes(path));
@@ -641,8 +642,10 @@ namespace IronAHK.Rusty
                     if (File.GetAttributes(path) != set)
                         error++;
                 }
+
+                ErrorLevel = error;
             }
-            catch (Exception) { error = 1; }
+            catch (Exception) { ErrorLevel = 1; }
         }
 
         /// <summary>
@@ -680,7 +683,8 @@ namespace IronAHK.Rusty
 
             try
             {
-                error = 0;
+                int error = 0;
+
                 foreach (var path in ToFiles(FilePattern, OperateOnFolders != 2, OperateOnFolders != 0, Recurse != 0))
                 {
                     var set = new DateTime();
@@ -712,8 +716,10 @@ namespace IronAHK.Rusty
                     if (set != time)
                         error++;
                 }
+
+                ErrorLevel = error;
             }
-            catch (Exception) { error = 1; }
+            catch (Exception) { ErrorLevel = 1; }
         }
 
         /// <summary>
@@ -739,7 +745,7 @@ namespace IronAHK.Rusty
             try { InputVar = Path.GetFullPath(InputVar); }
             catch (Exception)
             {
-                error = 1;
+                ErrorLevel = 1;
                 OutFileName = OutDir = OutExtension = OutNameNoExt = OutDrive = null;
                 return;
             }
@@ -768,7 +774,7 @@ namespace IronAHK.Rusty
             }
 
             try { (new WebClient()).DownloadFile(URL, Filename); }
-            catch (Exception) { error = 1; }
+            catch (Exception) { ErrorLevel = 1; }
         }
     }
 }

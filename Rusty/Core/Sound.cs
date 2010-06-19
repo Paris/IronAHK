@@ -75,7 +75,7 @@ namespace IronAHK.Rusty
         /// <remarks><see cref="ErrorLevel"/> is set to <c>1</c> if an error occured, <c>0</c> otherwise.</remarks>
         public static void SoundPlay(string filename, bool wait)
         {
-            error = 0;
+            ErrorLevel = 0;
 
             if (filename.Length > 1 && filename[0] == '*')
             {
@@ -83,7 +83,7 @@ namespace IronAHK.Rusty
 
                 if (!int.TryParse(filename.Substring(1), out n))
                 {
-                    error = 1;
+                    ErrorLevel = 1;
                     return;
                 }
 
@@ -94,7 +94,7 @@ namespace IronAHK.Rusty
                     case 32: SystemSounds.Question.Play(); break;
                     case 48: SystemSounds.Exclamation.Play(); break;
                     case 64: SystemSounds.Asterisk.Play(); break;
-                    default: error = 1; break;
+                    default: ErrorLevel = 1; break;
                 }
 
                 return;
@@ -111,7 +111,7 @@ namespace IronAHK.Rusty
             }
             catch (Exception)
             {
-                error = 1;
+                ErrorLevel = 1;
             }
         }
 

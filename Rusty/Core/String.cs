@@ -191,7 +191,7 @@ namespace IronAHK.Rusty
             catch (ArgumentException)
             {
                 output = new string[] { };
-                error = 2;
+                ErrorLevel = 2;
                 return 0;
             }
 
@@ -235,7 +235,7 @@ namespace IronAHK.Rusty
             catch (ArgumentException)
             {
                 output = 0;
-                error = 2;
+                ErrorLevel = 2;
                 return null;
             }
 
@@ -452,13 +452,14 @@ namespace IronAHK.Rusty
 
             if (unique)
             {
-                error = 0;
+                int error = 0;
                 var ulist = new List<string>(list.Length);
                 foreach (var item in list)
                     if (!ulist.Contains(item))
                         ulist.Add(item);
                     else
                         error++;
+                ErrorLevel = error;
                 list = ulist.ToArray();
             }
 

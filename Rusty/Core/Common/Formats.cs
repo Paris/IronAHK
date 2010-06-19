@@ -176,7 +176,7 @@ namespace IronAHK.Rusty
             }
             catch (CryptographicException)
             {
-                error = 2;
+                ErrorLevel = 2;
                 return new byte[] { };
             }
 

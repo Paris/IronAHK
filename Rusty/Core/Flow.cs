@@ -71,7 +71,7 @@ namespace IronAHK.Rusty
         /// <param name="label">The name of a label. Leave blank to remove an existing label, if any.</param>
         public static void OnExit(string label)
         {
-            error = 0;
+            ErrorLevel = 0;
 
             if (onExit != null)
             {
@@ -86,7 +86,7 @@ namespace IronAHK.Rusty
 
             if (method == null)
             {
-                error = 1;
+                ErrorLevel = 1;
                 return;
             }
 
@@ -201,7 +201,7 @@ namespace IronAHK.Rusty
                     if (timers.ContainsKey(label))
                         timers[label].Stop();
                     else
-                        error = 1;
+                        ErrorLevel = 1;
                     return;
             }
 
@@ -209,7 +209,7 @@ namespace IronAHK.Rusty
 
             if (!string.IsNullOrEmpty(mode) && !int.TryParse(mode, out interval))
             {
-                error = 2;
+                ErrorLevel = 2;
                 return;
             }
 

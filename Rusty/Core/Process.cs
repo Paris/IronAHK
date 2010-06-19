@@ -37,18 +37,18 @@ namespace IronAHK.Rusty
                 case Keyword_Exist:
                     if (PID_or_Name == null)
                     {
-                        error = System.Diagnostics.Process.GetCurrentProcess().Id;
+                        ErrorLevel = System.Diagnostics.Process.GetCurrentProcess().Id;
                     }
                     else
                     {
                         prc = ToProcess(PID_or_Name);
                         try
                         {
-                            error = prc.Id;
+                            ErrorLevel = prc.Id;
                         }
                         catch
                         {
-                            error = 0;
+                            ErrorLevel = 0;
                         }
                     }
                     break;
@@ -63,12 +63,12 @@ namespace IronAHK.Rusty
                     }
                     try
                     {
-                        error = prc.Id;
+                        ErrorLevel = prc.Id;
                         prc.Kill();
                     }
                     catch
                     {
-                        error = 0;
+                        ErrorLevel = 0;
                     }
                     break;
                 case Keyword_Priority:
@@ -82,13 +82,13 @@ namespace IronAHK.Rusty
                         case 'h': prc.PriorityClass = ProcessPriorityClass.High; break;
                         case 'r': prc.PriorityClass = ProcessPriorityClass.RealTime; break;
                     }
-                    error = prc.Id;
+                    ErrorLevel = prc.Id;
                     break;
                 case Keyword_Wait:
                     timeout = (int)(double.Parse(Param3) * 1000);
                     start = Environment.TickCount;
                     if (timeout == 0) timeout = -1;
-                    while (0 == (error = ToProcess(PID_or_Name).Id))
+                    while (0 == (ErrorLevel = ToProcess(PID_or_Name).Id))
                     {
                         System.Threading.Thread.Sleep(LoopFrequency);
                         if (timeout != -1 && Environment.TickCount - start > timeout)
@@ -99,7 +99,7 @@ namespace IronAHK.Rusty
                     timeout = (int)(double.Parse(Param3) * 1000);
                     start = Environment.TickCount;
                     if (timeout == 0) timeout = -1;
-                    while (0 != (error = ToProcess(PID_or_Name).Id))
+                    while (0 != (ErrorLevel = ToProcess(PID_or_Name).Id))
                     {
                         System.Threading.Thread.Sleep(LoopFrequency);
                         if (timeout != -1 && Environment.TickCount - start > timeout)
@@ -158,7 +158,7 @@ namespace IronAHK.Rusty
                 case 'e': UseErrorLevel = true; break;
             }
 
-            error = 0;
+            ErrorLevel = 0;
             try
             {
                 prc.Start();
@@ -168,9 +168,9 @@ namespace IronAHK.Rusty
             catch (Exception)
             {
                 if (UseErrorLevel)
-                    error = 2;
+                    ErrorLevel = 2;
                 else if (Wait)
-                    error = prc.ExitCode;
+                    ErrorLevel = prc.ExitCode;
             }
 
             OutputVarPID = prc.Id;
