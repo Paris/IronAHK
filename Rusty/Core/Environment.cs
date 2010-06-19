@@ -19,13 +19,13 @@ namespace IronAHK.Rusty
             {
                 if ((!type && Clipboard.ContainsText()) || Clipboard.ContainsData(DataFormats.WaveAudio))
                 {
-                    error = 0;
+                    ErrorLevel = 0;
                     return;
                 }
                 System.Threading.Thread.Sleep(frequency);
             }
 
-            error = 1;
+            ErrorLevel = 1;
         }
 
         /// <summary>
@@ -53,11 +53,11 @@ namespace IronAHK.Rusty
         /// </summary>
         public static void EnvUpdate()
         {
-            error = 0;
+            ErrorLevel = 0;
             if (Environment.OSVersion.Platform == PlatformID.Win32NT)
             {
                 try { Windows.SendMessage(new IntPtr(Windows.HWND_BROADCAST), Windows.WM_SETTINGCHANGE, IntPtr.Zero, IntPtr.Zero); }
-                catch (Exception) { error = 1; }
+                catch (Exception) { ErrorLevel = 1; }
             }
         }
 

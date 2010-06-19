@@ -14,12 +14,12 @@ namespace IronAHK.Rusty
         {
             try
             {
-                error = 0;
+                ErrorLevel = 0;
                 return SimpleJson.Decode(source);
             }
             catch (Exception)
             {
-                error = 1;
+                ErrorLevel = 1;
                 return null;
             }
         }

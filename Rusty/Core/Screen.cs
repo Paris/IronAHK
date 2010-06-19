@@ -110,7 +110,7 @@ namespace IronAHK.Rusty
 
             if (Variation < 0 || Variation > 255)
             {
-                error = 2;
+                ErrorLevel = 2;
                 return;
             }
 
@@ -136,12 +136,12 @@ namespace IronAHK.Rusty
                     {
                         OutputVarX = row;
                         OutputVarY = col;
-                        error = 0;
+                        ErrorLevel = 0;
                         return;
                     }
                 }
 
-            error = 1;
+            ErrorLevel = 1;
         }
     }
 }

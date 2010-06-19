@@ -18,7 +18,7 @@ namespace IronAHK.Rusty
             if (Environment.OSVersion.Platform != PlatformID.Win32NT)
                 return;
 
-            error = Windows.WritePrivateProfileString(section, key.Length == 0 ? null : key, null, filename) ? 0 : 1;
+            ErrorLevel = Windows.WritePrivateProfileString(section, key.Length == 0 ? null : key, null, filename) ? 0 : 1;
         }
 
         /// <summary>
@@ -54,7 +54,7 @@ namespace IronAHK.Rusty
             if (Environment.OSVersion.Platform != PlatformID.Win32NT)
                 return;
 
-            error = Windows.WritePrivateProfileString(section, key, value, filename) ? 0 : 1;
+            ErrorLevel = Windows.WritePrivateProfileString(section, key, value, filename) ? 0 : 1;
         }
     }
 }

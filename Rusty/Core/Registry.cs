@@ -28,7 +28,7 @@ namespace IronAHK.Rusty
                     ToRegKey(RootKey, ref sub, false).DeleteValue(val, true);
                 }
             }
-            catch (Exception) { error = 1; }
+            catch (Exception) { ErrorLevel = 1; }
         }
 
         /// <summary>
@@ -49,7 +49,7 @@ namespace IronAHK.Rusty
 
                 OutputVar = ToRegKey(RootKey, ref sub, false).GetValue(val).ToString();
             }
-            catch (Exception) { error = 1; }
+            catch (Exception) { ErrorLevel = 1; }
         }
 
         /// <summary>
@@ -70,7 +70,7 @@ namespace IronAHK.Rusty
 
                 ToRegKey(RootKey, ref sub, false).SetValue(val, Value);
             }
-            catch (Exception) { error = 1; }
+            catch (Exception) { ErrorLevel = 1; }
         }
     }
 }
