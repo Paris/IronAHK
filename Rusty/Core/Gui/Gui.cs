@@ -298,7 +298,7 @@ namespace IronAHK.Rusty
                                 case Keyword_LastFoundExist: break;
                                 case Keyword_MaximizeBox: guis[id].MaximizeBox = on; break;
                                 case Keyword_MinimizeBox: guis[id].MinimizeBox = on; break;
-                                case Keyword_OwnDialogs: ((GuiInfo)guis[id].Tag).OwnDialogs = on; break;
+                                case Keyword_OwnDialogs: dialogOwner = guis[id]; break;
                                 case Keyword_Owner: break;
                                 case Keyword_Resize: break;
                                 case Keyword_SysMenu: break;

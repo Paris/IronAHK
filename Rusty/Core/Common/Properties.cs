@@ -70,6 +70,9 @@ namespace IronAHK.Rusty
         [ThreadStatic]
         static int eventinfo;
 
+        [ThreadStatic]
+        static Form dialogOwner;
+
         static Dictionary<string, Form> guis;
 
         [ThreadStatic]

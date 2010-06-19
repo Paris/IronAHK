@@ -9,8 +9,6 @@ namespace IronAHK.Rusty
         {
             public char Delimiter { get; set; }
 
-            public bool OwnDialogs { get; set; }
-
             public Point Section { get; set; }
 
             public StatusBar StatusBar { get; set; }
