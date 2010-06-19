@@ -873,6 +873,9 @@ namespace IronAHK.Rusty
                         control = cal;
                         opts = GuiApplyStyles(cal, options);
 
+                        if (!string.IsNullOrEmpty(content))
+                            cal.SetDate(ToDateTime(content));
+
                         foreach (var opt in ParseOptions(opts))
                         {
                             bool on = opt[0] != '-';
