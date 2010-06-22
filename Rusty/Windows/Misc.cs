@@ -68,5 +68,12 @@ namespace IronAHK.Rusty
         static extern IntPtr CallNextHookEx(IntPtr hhk, int nCode, IntPtr wParam, IntPtr lParam);
 
         #endregion
+
+        #region Icons
+
+        [DllImport("shell32.dll")]
+        public static extern IntPtr ExtractIcon(IntPtr hInst, string lpszExeFileName, int nIconIndex);
+
+        #endregion
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Windows.Forms;
 
 namespace IronAHK.Rusty
 {
@@ -26,6 +27,12 @@ namespace IronAHK.Rusty
                 keyboardHook = new Windows.KeyboardHook();
             else
                 keyboardHook = new Linux.KeyboardHook();
+        }
+
+        static void InitGui()
+        {
+            if (imageLists == null)
+                imageLists = new Dictionary<long, ImageList>();
         }
     }
 }
