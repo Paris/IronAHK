@@ -124,6 +124,13 @@ namespace IronAHK.Scripting
             #endregion
 
             methods.Add(method.Name, method);
+
+            var type = typeof(Rusty.Core.GenericFunction);
+            var typeref = new CodeTypeReference();
+            typeref.UserData.Add(RawData, type);
+            var del = new CodeDelegateCreateExpression(typeref, new CodeTypeReferenceExpression(className), method.Name);
+            var obj = VarAssign(VarRef(mainScope + ScopeVar + method.Name), del);
+            prepend.Add(new CodeExpressionStatement(obj));
         }
 
         #region Parameters
