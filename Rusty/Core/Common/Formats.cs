@@ -122,6 +122,20 @@ namespace IronAHK.Rusty
             return pre.Length == 0 ? id : pre;
         }
 
+        static Icon GetIcon(string source, int n)
+        {
+            if (Environment.OSVersion.Platform == PlatformID.Win32NT)
+            {
+                var prc = System.Diagnostics.Process.GetCurrentProcess().Handle;
+                var icon = Windows.ExtractIcon(prc, source, n);
+
+                if (icon != IntPtr.Zero)
+                    return Icon.FromHandle(icon);
+            }
+
+            return Icon.ExtractAssociatedIcon(source);
+        }
+
         static string ToString(byte[] array)
         {
             var buf = new StringBuilder(array.Length * 2);

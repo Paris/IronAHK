@@ -1,4 +1,4 @@
-﻿using System;
+﻿using System.Windows.Forms;
 
 namespace IronAHK.Rusty
 {
@@ -13,9 +13,19 @@ namespace IronAHK.Rusty
         /// <param name="Filename"></param>
         /// <param name="IconNumber"></param>
         /// <param name="ResizeNonIcon"></param>
-        public static void IL_Add(int ImageListID, string Filename, int IconNumber, bool ResizeNonIcon)
+        public static void IL_Add(long ImageListID, string Filename, int IconNumber, bool ResizeNonIcon)
         {
-            throw new NotImplementedException();
+            InitGui();
+
+            ImageList il = null;
+
+            if (imageLists.ContainsKey(ImageListID))
+                il = imageLists[ImageListID];
+            else
+                imageLists.Add(ImageListID, il = new ImageList());
+
+            var icon = GetIcon(Filename, IconNumber);
+            imageLists[ImageListID].Images.Add(icon);
         }
 
         /// <summary>
@@ -25,18 +35,30 @@ namespace IronAHK.Rusty
         /// <param name="GrowCount"></param>
         /// <param name="LargeIcons"></param>
         /// <returns></returns>
-        public static int IL_Create(string InitialCount, string GrowCount, int LargeIcons)
+        public static long IL_Create(string InitialCount, string GrowCount, int LargeIcons)
         {
-            throw new NotImplementedException();
+            InitGui();
+
+            var il = new ImageList();
+            var ptr = il.Handle.ToInt64();
+            imageLists.Add(ptr, il);
+            return ptr;
         }
 
         /// <summary>
         /// Deletes the specified ImageList and returns 1 upon success and 0 upon failure. It is normally not necessary to destroy ImageLists because once attached to a ListView, they are destroyed automatically when the ListView or its parent window is destroyed. However, if the ListView shares ImageLists with other ListViews (by having 0x40 in its options), the script should explicitly destroy the ImageList after destroying all the ListViews that use it. Similarly, if the script replaces one of a ListView's old ImageLists with a new one, it should explicitly destroy the old one.
         /// </summary>
         /// <param name="ImageListID"></param>
-        public static void IL_Destroy(int ImageListID)
+        public static bool IL_Destroy(int ImageListID)
         {
-            throw new NotImplementedException();
+            InitGui();
+
+            if (!imageLists.ContainsKey(ImageListID))
+                return false;
+
+            imageLists[ImageListID].Dispose();
+            imageLists.Remove(ImageListID);
+            return true;
         }
     }
 }

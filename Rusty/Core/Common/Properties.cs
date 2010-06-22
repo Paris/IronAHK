@@ -73,6 +73,8 @@ namespace IronAHK.Rusty
         [ThreadStatic]
         static Form dialogOwner;
 
+        static Dictionary<long, ImageList> imageLists;
+
         static Dictionary<string, Form> guis;
 
         [ThreadStatic]
