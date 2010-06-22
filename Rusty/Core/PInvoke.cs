@@ -239,6 +239,21 @@ namespace IronAHK.Rusty
         }
 
         /// <summary>
+        /// Find a function in the local scope.
+        /// </summary>
+        /// <param name="name">The name of the function to look for.</param>
+        /// <returns>A delegate (function pointer).</returns>
+        public static GenericFunction FunctionReference(string name)
+        {
+            var method = FindLocalMethod(name);
+
+            if (method == null)
+                return null;
+
+            return (GenericFunction)Delegate.CreateDelegate(typeof(GenericFunction), method);
+        }
+
+        /// <summary>
         /// Returns the binary number stored at the specified address+offset. For VarOrAddress, passing MyVar is equivalent to passing &amp;MyVar. However, omitting the "&amp;" performs better and ensures that the target address is valid (invalid addresses return ""). By contrast, anything other than a naked variable passed to VarOrAddress is treated as a raw address; consequently, specifying MyVar+0 forces the number in MyVar to be used instead of the address of MyVar itself. For Type, specify UInt, Int, Int64, Short, UShort, Char, UChar, Double, or Float (though unlike DllCall, these must be enclosed in quotes when used as literal strings); for details see DllCall Types.
         /// </summary>
         /// <param name="VarOrAddress"></param>
