@@ -118,10 +118,31 @@ namespace IronAHK.Scripting
                         int n = i + 1;
                         var paren = Dissect(parts, n, Set(parts, i));
                         parts.RemoveAt(n);
-                        if (paren.Count == 0)
-                            parts.RemoveAt(i);
+                        n -= 2;
+
+                        if (n > -1 && !(parts[n] is Script.Operator || parts[n] is CodeBinaryOperatorType))
+                        {
+                            var invoke = (CodeMethodInvokeExpression)InternalMethods.Invoke;
+
+                            invoke.Parameters.Add((CodeExpression)parts[n]);
+
+                            if (paren.Count != 0)
+                            {
+                                var passed = ParseMultiExpression(paren.ToArray());
+                                invoke.Parameters.AddRange(passed);
+                            }
+
+
+                            parts[i] = invoke;
+                            parts.RemoveAt(n);
+                        }
                         else
-                            parts[i] = ParseExpression(paren);
+                        {
+                            if (paren.Count == 0)
+                                parts.RemoveAt(i);
+                            else
+                                parts[i] = ParseExpression(paren);
+                        }
                     }
                     else if (part[0] == ParenClose)
                         rescan = true;

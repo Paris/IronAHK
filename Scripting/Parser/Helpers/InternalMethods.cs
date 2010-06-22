@@ -106,6 +106,11 @@ namespace IronAHK.Scripting
                 get { return new MethodReference(typeof(Script), "FunctionCall"); }
             }
 
+            public static MethodReference Invoke
+            {
+                get { return new MethodReference(typeof(Script), "Invoke"); }
+            }
+
             #endregion
 
             #region Objects
