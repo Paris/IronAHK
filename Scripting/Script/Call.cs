@@ -6,6 +6,21 @@ namespace IronAHK.Scripting
 {
     partial class Script
     {
+        public static object Invoke(object del, params object[] parameters)
+        {
+            if (!(del is Delegate))
+                return null;
+
+            try
+            {
+                return ((Delegate)del).DynamicInvoke(new object[] { parameters });
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
         public static object FunctionCall(string name, params object[] parameters)
         {
             var stack = new StackTrace(false).GetFrames();
