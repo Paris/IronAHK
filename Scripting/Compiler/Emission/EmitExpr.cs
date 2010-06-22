@@ -69,6 +69,10 @@ namespace IronAHK.Scripting
                 EmitArrayIndexerExpression(Expression as CodeArrayIndexerExpression);
                 Generated = typeof(object);
             }
+            else if (Expression is CodeDelegateCreateExpression)
+            {
+                Generated = EmitDelegateCreateExpression((CodeDelegateCreateExpression)Expression);
+            }
             else
             {
                 Depth++;
@@ -85,6 +89,33 @@ namespace IronAHK.Scripting
         Type EmitExpression(CodeExpression Expression)
         {
             return EmitExpression(Expression, true);
+        }
+
+        Type EmitDelegateCreateExpression(CodeDelegateCreateExpression del)
+        {
+            Depth++;
+            Debug("Emitting delegate: " + del.MethodName);
+
+            // HACK: use generic method lookup for emitting delegates
+
+            if (!Methods.ContainsKey(del.MethodName))
+                throw new CompileException(del, "Delegate function does not exist in local scope");
+
+            var method = (MethodInfo)Methods[del.MethodName].Method;
+            Generator.Emit(OpCodes.Ldnull);
+            Generator.Emit(OpCodes.Ldftn, method);
+
+            var type = del.DelegateType.UserData[Parser.RawData] as Type ?? Type.GetType(del.DelegateType.BaseType);
+
+            if (type == null)
+                throw new CompileException(del, "Invalid delegate type");
+
+            var ctor = type.GetConstructors();
+            Generator.Emit(OpCodes.Newobj, type.GetConstructors()[0]);
+
+            Depth--;
+           
+            return type;
         }
         
         void EmitArrayIndexerExpression(CodeArrayIndexerExpression Indexer)
