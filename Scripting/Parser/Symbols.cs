@@ -11,6 +11,8 @@ namespace IronAHK.Scripting
         const char Reserved = '\0';
         readonly char[] Spaces = { CR, LF, SingleSpace, '\t', '\xA0' };
 
+        public const string RawData = "raw";
+
         const string LibEnv = "AHKLIBPATH";
         const string LibDir = "lib";
         const string LibExt = "ahk";

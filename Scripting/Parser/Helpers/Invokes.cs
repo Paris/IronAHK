@@ -20,7 +20,7 @@ namespace IronAHK.Scripting
         {
             var method = new CodeMemberMethod { Name = name, ReturnType = new CodeTypeReference(typeof(object)) };
             var param = new CodeParameterDeclarationExpression(typeof(object[]), args);
-            param.UserData.Add("rawtype", typeof(object[]));
+            param.UserData.Add(Parser.RawData, typeof(object[]));
             method.Parameters.Add(param);
             return method;
         }

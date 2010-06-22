@@ -6,8 +6,6 @@ namespace IronAHK.Scripting
 {
     partial class Parser
     {
-        const string raw = "raw";
-
         bool IsOptimisableExpression(CodeExpression expr)
         {
             if (!(expr is CodeMethodInvokeExpression))
@@ -33,7 +31,7 @@ namespace IronAHK.Scripting
 
                 try
                 {
-                    result = Script.Operate((Script.Operator)invoke.Parameters[0].UserData[raw],
+                    result = Script.Operate((Script.Operator)invoke.Parameters[0].UserData[RawData],
                         ((CodePrimitiveExpression)invoke.Parameters[1]).Value,
                         ((CodePrimitiveExpression)invoke.Parameters[2]).Value);
 
