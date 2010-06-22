@@ -16,10 +16,13 @@ namespace IronAHK.Scripting
         {
             get
             {
-                if (blocks.Count == 0)
-                    return mainScope;
-                var block = blocks.Peek();
-                return block.Kind == CodeBlock.BlockKind.Label ? mainScope : block.Method;
+                foreach (var block in blocks)
+                {
+                    if (block.Kind == CodeBlock.BlockKind.Function)
+                        return block.Method ?? mainScope;
+                }
+
+                return mainScope;
             }
         }
     }
