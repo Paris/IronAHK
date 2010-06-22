@@ -40,10 +40,8 @@ namespace IronAHK.Scripting
 
             for (int i = 0; i < types.Length; i++)
             {
-                const string raw = "rawtype";
-
-                if (param[i].UserData.Contains(raw))
-                    types[i] = param[i].UserData[raw] as Type;
+                if (param[i].UserData.Contains(Parser.RawData))
+                    types[i] = param[i].UserData[Parser.RawData] as Type;
                 else
                     types[i] = Type.GetType(param[i].Type.BaseType);
             }

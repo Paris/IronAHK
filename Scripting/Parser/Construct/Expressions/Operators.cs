@@ -329,7 +329,7 @@ namespace IronAHK.Scripting
             var field = new CodeFieldReferenceExpression();
             field.TargetObject = new CodeTypeReferenceExpression(typeof(Script.Operator));
             field.FieldName = op.ToString();
-            field.UserData.Add(raw, op);
+            field.UserData.Add(RawData, op);
             return field;
         }
 
