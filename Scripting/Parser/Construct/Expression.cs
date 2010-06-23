@@ -120,7 +120,12 @@ namespace IronAHK.Scripting
                         parts.RemoveAt(n);
                         n -= 2;
 
-                        if (n > -1 && !(parts[n] is Script.Operator || parts[n] is CodeBinaryOperatorType))
+                        bool call = n > -1 && parts[n] is CodeExpression && !(parts[n] is CodePrimitiveExpression);
+
+                        if (call && parts[n] is CodeMethodInvokeExpression && ((CodeMethodInvokeExpression)parts[n]).Parameters[0] is CodeFieldReferenceExpression)
+                            call = false;
+
+                        if (call)
                         {
                             var invoke = (CodeMethodInvokeExpression)InternalMethods.Invoke;
 
