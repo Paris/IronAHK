@@ -153,14 +153,10 @@ namespace IronAHK.Scripting
                 if(ByRef[Builder] is CodeArrayIndexerExpression)
                 {
                     var Ref = ByRef[Builder] as CodeArrayIndexerExpression;
-                    
-                    var vars = typeof(Script).GetProperty(Parser.VarProperty);
-                    Generator.Emit(OpCodes.Call, vars.GetGetMethod());
-    
+                    Generator.Emit(OpCodes.Call, GetVarsProperty);
                     EmitExpression(Ref.Indices[0]);
                     Generator.Emit(OpCodes.Ldloc, Builder);
-                    
-                    Generator.Emit(OpCodes.Callvirt, vars.PropertyType.GetProperty("Item").GetSetMethod());
+                    Generator.Emit(OpCodes.Callvirt, SetVariable);
                 }
             }
             #endregion
