@@ -107,8 +107,8 @@ namespace IronAHK.Scripting
                 codeTrim = codeTrim.Substring(0, e);
             }
 
-            decimal d;
-            if (decimal.TryParse(codeTrim, NumberStyles.Any, info, out d))
+            double d;
+            if (double.TryParse(codeTrim, NumberStyles.Any, info, out d))
             {
                 result = d;
                 goto exp;
@@ -137,7 +137,7 @@ namespace IronAHK.Scripting
             {
                 if (!xf)
                     throw new ParseException(ExInvalidExponent);
-                result = decimal.ToDouble((decimal)result) * Math.Pow(10, x);
+                result = (double)result * Math.Pow(10, x);
             }
             return true;
         }

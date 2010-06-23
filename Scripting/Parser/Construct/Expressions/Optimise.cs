@@ -34,11 +34,6 @@ namespace IronAHK.Scripting
                     result = Script.Operate((Script.Operator)invoke.Parameters[0].UserData[RawData],
                         ((CodePrimitiveExpression)invoke.Parameters[1]).Value,
                         ((CodePrimitiveExpression)invoke.Parameters[2]).Value);
-
-                    if (result is double)
-                        result = (decimal)(double)result;
-                    else if (result is int)
-                        result = (decimal)(int)result;
                 }
                 catch (Exception) { }
 
