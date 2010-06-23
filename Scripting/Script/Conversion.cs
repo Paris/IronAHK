@@ -112,7 +112,7 @@ namespace IronAHK.Scripting
                     if (!hex)
                         format = "d";
 
-                    var result = simple ? ((long)input).ToString(format) : ((int)(double)input).ToString("d");
+                    var result = simple ? ForceLong(input).ToString(format) : ((int)(double)input).ToString("d");
 
                     if (hex)
                         result = hexpre + result;
