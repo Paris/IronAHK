@@ -115,12 +115,8 @@ namespace IronAHK.Scripting
                         Generator.Emit(OpCodes.Stloc, Temporary);
                         Generator.Emit(OpCodes.Ldloca, Temporary);
 
-                        if(invoke.Parameters[p] is CodeMethodInvokeExpression)
-                        {
-                            var inv = invoke.Parameters[p] as CodeMethodInvokeExpression;
-                            if(inv.Method.MethodName == "Index")
-                                ByRef.Add(Temporary, inv);
-                        }
+                        if(invoke.Parameters[p] is CodeArrayIndexerExpression)
+                            ByRef.Add(Temporary, invoke.Parameters[p]);
                     }
                     else
                     {
@@ -154,17 +150,17 @@ namespace IronAHK.Scripting
             // Save the variables passed to reference back in Rusty's variable handling
             foreach(var Builder in ByRef.Keys)
             {
-                if(ByRef[Builder] is CodeMethodInvokeExpression)
+                if(ByRef[Builder] is CodeArrayIndexerExpression)
                 {
-                    var inv = ByRef[Builder] as CodeMethodInvokeExpression;
-                    EmitExpression(inv.Parameters[1]);
-                    EmitExpression(inv.Parameters[0]);
-                    Generator.Emit(OpCodes.Ldc_I4, 0);
-                    Generator.Emit(OpCodes.Newarr, typeof(object));
-                    Generator.Emit(OpCodes.Ldloc, Builder);
-                    Generator.Emit(OpCodes.Call, typeof(Script).GetMethod("SetObject"));
+                    var Ref = ByRef[Builder] as CodeArrayIndexerExpression;
                     
-                    Generator.Emit(OpCodes.Pop);
+                    var vars = typeof(Script).GetProperty(Parser.VarProperty);
+                    Generator.Emit(OpCodes.Call, vars.GetGetMethod());
+    
+                    EmitExpression(Ref.Indices[0]);
+                    Generator.Emit(OpCodes.Ldloc, Builder);
+                    
+                    Generator.Emit(OpCodes.Callvirt, vars.PropertyType.GetProperty("Item").GetSetMethod());
                 }
             }
             #endregion
