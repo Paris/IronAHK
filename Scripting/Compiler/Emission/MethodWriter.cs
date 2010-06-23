@@ -166,7 +166,7 @@ namespace IronAHK.Scripting
             else if(T == typeof(double))
             {
                 Debug("Pushing double: "+((double) Value));
-                Generator.Emit(OpCodes.Ldc_R8, ((float) ((double) Value)));
+                Generator.Emit(OpCodes.Ldc_R8, ((double)Value));
                 Generated = typeof(double);
             }
             else if (T == typeof(long))
