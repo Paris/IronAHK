@@ -73,6 +73,9 @@ namespace IronAHK.Scripting
                 case Operator.BitwiseOr:
                     return ForceLong(left) | ForceLong(right);
 
+                case Operator.BitwiseXor:
+                    return ForceLong(left) ^ ForceLong(right);
+
                 case Operator.BooleanAnd:
                     return ForceBool(left) && ForceBool(right);
 
