@@ -228,10 +228,7 @@ namespace IronAHK.Rusty
         static StringComparison? _StringCaseSense;
 
         [ThreadStatic]
-        static string _FormatFloat;
-
-        [ThreadStatic]
-        static char? _FormatInteger;
+        static string _FormatNumeric;
 
         [ThreadStatic]
         static string _UserAgent;

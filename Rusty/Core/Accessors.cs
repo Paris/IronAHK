@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
@@ -195,19 +196,105 @@ namespace IronAHK.Rusty
         /// <summary>
         /// The current floating point number format.
         /// </summary>
+        [Obsolete]
         public static string A_FormatFloat
         {
-            get { return _FormatFloat ?? "0.6"; }
-            set { _FormatFloat = value; }
+            get
+            {
+                if (A_FormatNumeric.IndexOf("e", StringComparison.OrdinalIgnoreCase) != -1)
+                    return A_FormatNumeric;
+
+                if (A_FormatNumeric.IndexOf("f", StringComparison.OrdinalIgnoreCase) != -1)
+                {
+                    var format = A_FormatNumeric.Replace("f", string.Empty).Replace("F", string.Empty);
+                    return string.Concat(format.Length == 0 ? "0" : int.Parse(format).ToString(), ".",
+                            System.Threading.Thread.CurrentThread.CurrentCulture.NumberFormat.NumberDecimalDigits.ToString());
+                }
+
+                return string.Empty;
+            }
+            set
+            {
+                var e = false;
+
+                foreach (var exp in new[] { value.IndexOf('e'), value.IndexOf('E') })
+                {
+                    A_FormatNumeric = value.Substring(exp);
+                    value = value.Substring(0, exp);
+                    e = true;
+                }
+
+                var parts = value.Split(new[] { '.' }, 2);
+                int n;
+
+                if (!e && int.TryParse(parts[0], out n) && n != 0)
+                    A_FormatNumeric = "f" + n;
+
+                if (parts.Length > 1 && int.TryParse(parts[1], out n))
+                {
+                    var t = System.Threading.Thread.CurrentThread;
+                    var ci = new CultureInfo(t.CurrentCulture.LCID);
+                    ci.NumberFormat.NumberDecimalDigits = n;
+                    t.CurrentCulture = ci;
+                }
+            }
+        }
+
+        [Obsolete]
+        public static string A_FormatFloatFast
+        {
+            get { return A_FormatFloat; }
+            set { A_FormatFloat = value; }
         }
 
         /// <summary>
-        /// The current integer format (<c>H</c> or <c>D</c>).
+        /// The current integer format, either <c>H</c> or <c>D</c>.
         /// </summary>
-        public static char A_FormatInteger
+        [Obsolete]
+        public static string A_FormatInteger
         {
-            get { return _FormatInteger ?? 'D'; }
-            set { _FormatInteger = value; }
+            get { return A_FormatNumeric == "f" ? "D" : A_FormatNumeric == "x" ? "H" : string.Empty; }
+            set
+            {
+                switch (value.ToLowerInvariant())
+                {
+                    case Keyword_Hex:
+                    case Keyword_FormatHex:
+                        A_FormatNumeric = "x";
+                        break;
+
+                    case Keyword_FormatDecimal:
+                        A_FormatNumeric = "f";
+                        break;
+                }
+            }
+        }
+
+        [Obsolete]
+        public static string A_FormatIntegerFast
+        {
+            get { return A_FormatInteger; }
+            set { A_FormatInteger = value; }
+        }
+
+        /// <summary>
+        /// The current numeric format.
+        /// </summary>
+        public static string A_FormatNumeric
+        {
+            get
+            {
+                if (_FormatNumeric != null)
+                    return _FormatNumeric;
+
+                var t = System.Threading.Thread.CurrentThread;
+                var ci = new CultureInfo(t.CurrentCulture.LCID);
+                ci.NumberFormat.NumberDecimalDigits = 6;
+                t.CurrentCulture = ci;
+
+                return "f";
+            }
+            set { _FormatNumeric = value; }
         }
 
         /// <summary>
