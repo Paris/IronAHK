@@ -16,6 +16,10 @@ namespace IronAHK.Scripting
         MethodInfo ForceInt;
         MethodInfo ForceBool;
         MethodInfo ForceString;
+        
+        MethodInfo SetVariable;
+        MethodInfo GetVariable;
+        MethodInfo GetVarsProperty;
 
         MethodCollection Lookup;
 
@@ -56,6 +60,11 @@ namespace IronAHK.Scripting
             ForceLong = typeof(Script).GetMethod("ForceLong");
             ForceInt = typeof(Script).GetMethod("ForceInt");
             ForceBool = typeof(Script).GetMethod("ForceBool");
+            
+            GetVarsProperty = typeof(Script).GetProperty(Parser.VarProperty).GetGetMethod();
+            // "Item" is the property for this-indexers
+            SetVariable = GetVarsProperty.ReturnType.GetProperty("Item").GetSetMethod();
+            GetVariable = GetVarsProperty.ReturnType.GetProperty("Item").GetGetMethod();
             
             Locals = new Dictionary<string, LocalBuilder>();
             Labels = new Dictionary<string, LabelMetadata>();

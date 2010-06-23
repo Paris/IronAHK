@@ -70,19 +70,14 @@ namespace IronAHK.Scripting
             {
                 var index = (CodeArrayIndexerExpression)Left;
 
-                // HACK: generic way of setting indexers from properties (cil)
-
-                var vars = typeof(Script).GetProperty(Parser.VarProperty);
-                Generator.Emit(OpCodes.Call, vars.GetGetMethod());
+                Generator.Emit(OpCodes.Call, GetVarsProperty);
 
                 EmitExpression(index.Indices[0]);
-                var resultType = EmitExpression(Right, ForceTypes);
-
+                Type resultType = EmitExpression(Right, ForceTypes);
                 if (resultType.IsValueType)
                     Generator.Emit(OpCodes.Box, resultType);
                 
-                // "Item" is the property for this-indexers
-                Generator.Emit(OpCodes.Callvirt, vars.PropertyType.GetProperty("Item").GetSetMethod());
+                Generator.Emit(OpCodes.Callvirt, SetVariable);
             }
             else throw new CompileException(Left, "Left hand is unassignable");
 

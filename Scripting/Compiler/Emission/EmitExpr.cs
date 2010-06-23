@@ -122,13 +122,10 @@ namespace IronAHK.Scripting
         {
             var index = (CodeArrayIndexerExpression)Indexer;
    
-            var vars = typeof(Script).GetProperty(Parser.VarProperty);
-            Generator.Emit(OpCodes.Call, vars.GetGetMethod());
-
+            Generator.Emit(OpCodes.Call, GetVarsProperty);
             EmitExpression(index.Indices[0]);
             
-            // "Item" is the property for this-indexers
-            Generator.Emit(OpCodes.Callvirt, vars.PropertyType.GetProperty("Item").GetGetMethod());
+            Generator.Emit(OpCodes.Callvirt, GetVariable);
         }
 
         Type EmitBinaryOperator(CodeBinaryOperatorExpression Binary, bool ForceTypes)
