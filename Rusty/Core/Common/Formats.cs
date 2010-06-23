@@ -575,27 +575,15 @@ namespace IronAHK.Rusty
             return options;
         }
 
-        static Process ToProcess(string id)
+        static Process FindProcess(string name)
         {
-            int pid = 0;
-            var Proc = new Process();
+            int id;
 
-            if (int.TryParse(id, out pid))
-            {
-                try
-                {
-                    Proc = System.Diagnostics.Process.GetProcessById(pid);
-                }
-                catch {}
-                return Proc;
-            }
-            else
-            {
-                Process[] localByName = System.Diagnostics.Process.GetProcessesByName(id);
-                if (localByName.Length > 0)
-                    Proc = localByName[0];
-                return Proc;
-            }
+            if (int.TryParse(name, out id))
+                return System.Diagnostics.Process.GetProcessById(id);
+
+            var prc = System.Diagnostics.Process.GetProcessesByName(name);
+            return prc.Length > 0 ? prc[0] : null;
         }
 
         static Regex ParseRegEx(string exp, bool reverse)
