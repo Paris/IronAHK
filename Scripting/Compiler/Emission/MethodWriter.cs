@@ -153,7 +153,6 @@ namespace IronAHK.Scripting
                     array.Initializers.Add(new CodePrimitiveExpression(sub));
 
                 EmitDynamicName(array);
-                Generated = typeof(object[]);
             }
             else if(T == typeof(bool))
             {
@@ -161,19 +160,16 @@ namespace IronAHK.Scripting
                 Debug("Pushing bool: "+Value);
                 
                 Generator.Emit(val ? OpCodes.Ldc_I4_1 : OpCodes.Ldc_I4_0);
-                Generated = typeof(bool);
             }
             else if(T == typeof(double))
             {
                 Debug("Pushing double: "+((double) Value));
                 Generator.Emit(OpCodes.Ldc_R8, ((double)Value));
-                Generated = typeof(double);
             }
             else if (T == typeof(long))
             {
                 Debug("Pushing long: " + (long)Value);
                 Generator.Emit(OpCodes.Ldc_I8, (long)Value);
-                Generated = T;
             }
             else
             {
