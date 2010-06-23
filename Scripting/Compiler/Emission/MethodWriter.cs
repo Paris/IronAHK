@@ -130,8 +130,23 @@ namespace IronAHK.Scripting
             }
             else if(T == typeof(int))
             {
-                Debug("Pushing primitive integer : "+((int) Value));
-                Generator.Emit(OpCodes.Ldc_I4, (int) Value);
+                var val = (int)Value;
+                Debug("Pushing primitive integer : " + val);
+
+                switch (val)
+                {
+                    case -1: Generator.Emit(OpCodes.Ldc_I4_M1); break;
+                    case 0: Generator.Emit(OpCodes.Ldc_I4_0); break;
+                    case 1: Generator.Emit(OpCodes.Ldc_I4_1); break;
+                    case 2: Generator.Emit(OpCodes.Ldc_I4_2); break;
+                    case 3: Generator.Emit(OpCodes.Ldc_I4_3); break;
+                    case 4: Generator.Emit(OpCodes.Ldc_I4_4); break;
+                    case 5: Generator.Emit(OpCodes.Ldc_I4_5); break;
+                    case 6: Generator.Emit(OpCodes.Ldc_I4_6); break;
+                    case 7: Generator.Emit(OpCodes.Ldc_I4_7); break;
+                    case 8: Generator.Emit(OpCodes.Ldc_I4_8); break;
+                    default: Generator.Emit(OpCodes.Ldc_I4, val); break;
+                }
             }
             else if(T == typeof(decimal))
             {
