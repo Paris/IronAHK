@@ -577,11 +577,11 @@ namespace IronAHK.Rusty
         /// <summary>
         /// Retrieves one or more characters from the specified position in a string.
         /// </summary>
-        /// <param name="input">The string to operate on.</param>
+        /// <param name="input">The string to use.</param>
         /// <param name="index">The one-based starting character position.
         /// If this is less than one it is considered an offset from the end of the string.</param>
         /// <param name="length">The maximum number of characters to retrieve.
-        /// Using a value of zero will return the entire leading part of the string.
+        /// A value of zero will return the entire leading part of the string.
         /// Specify a negative value to omit that many characters from the end of the string.</param>
         /// <returns>The new substring.</returns>
         public static string SubStr(string input, int index, int length)
@@ -589,14 +589,19 @@ namespace IronAHK.Rusty
             if (string.IsNullOrEmpty(input))
                 return string.Empty;
 
-            if (index < 0)
-                index = Math.Min(0, input.Length - 1 - index);
+            if (index < 1)
+                index += input.Length;
+
+            index--;
+
+            if (index < 0 || index >= input.Length)
+                return string.Empty;
 
             if (length == 0)
                 return input.Substring(index);
 
             if (length < 0)
-                length += input.Length - 1 - index;
+                length += input.Length - index;
 
             return input.Substring(index, length);
         }
