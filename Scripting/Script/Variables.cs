@@ -78,7 +78,10 @@ namespace IronAHK.Scripting
                 var set = prop != null && prop.CanWrite;
 
                 if (set)
+                {
+                    value = ForceType(prop.PropertyType, value);
                     prop.SetValue(null, value, null);
+                }
 
                 return set;
             }

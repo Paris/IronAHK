@@ -99,7 +99,39 @@ namespace IronAHK.Scripting
             else if (input is byte[])
                 return Encoding.Unicode.GetString((byte[])input);
             else if (IsNumeric(input))
-                return input.ToString();
+            {
+                var t = input.GetType();
+                var simple = t == typeof(int) || t == typeof(long);
+                var integer = simple || (t == typeof(double) && Math.IEEERemainder((double)input, 1) == 0);
+                var format = A_FormatNumeric;
+                var hex = format.IndexOf('x') != -1;
+                const string hexpre = "0x";
+
+                if (integer)
+                {
+                    if (!hex)
+                        format = "d";
+
+                    var result = simple ? ForceLong(input).ToString(format) : ((int)(double)input).ToString("d");
+
+                    if (hex)
+                        result = hexpre + result;
+
+                    return result;
+                }
+
+                var d = (double)input;
+
+                if (hex)
+                {
+                    A_FormatNumeric = null;
+                    var result = d.ToString(A_FormatNumeric);
+                    A_FormatNumeric = format;
+                    return hexpre + result;
+                }
+
+                return d.ToString(format);
+            }
 
             var type = input.GetType();
             var buffer = new StringBuilder();
