@@ -179,6 +179,8 @@ namespace IronAHK.Scripting
                 return default(decimal);
             else if (t == typeof(float))
                 return default(float);
+            else if (t.IsGenericType && t.GetGenericTypeDefinition() == typeof(Nullable<>))
+                return null;
             else if (!t.IsInterface && !t.IsClass)
                 return t.GetConstructor(new Type[] { }).Invoke(new object[] { });
             else
