@@ -507,7 +507,7 @@ namespace IronAHK.Rusty
                 return;
             }
 
-            var compare = _StringCaseSense ?? StringComparison.OrdinalIgnoreCase;
+            var compare = _StringComparison ?? StringComparison.OrdinalIgnoreCase;
 
             if (all && compare == StringComparison.Ordinal)
                 output = input.Replace(search, replace);

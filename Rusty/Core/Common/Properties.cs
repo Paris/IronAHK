@@ -225,7 +225,7 @@ namespace IronAHK.Rusty
         #region Strings
 
         [ThreadStatic]
-        static StringComparison? _StringCaseSense;
+        static StringComparison? _StringComparison;
 
         [ThreadStatic]
         static string _FormatNumeric;
