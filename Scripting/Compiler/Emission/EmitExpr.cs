@@ -122,7 +122,7 @@ namespace IronAHK.Scripting
         {
             var index = (CodeArrayIndexerExpression)Indexer;
    
-            Generator.Emit(OpCodes.Call, GetVarsProperty);
+            Generator.Emit(OpCodes.Ldloc, VarsProperty);
             EmitExpression(index.Indices[0]);
             
             Generator.Emit(OpCodes.Callvirt, GetVariable);
