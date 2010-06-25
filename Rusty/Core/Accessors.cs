@@ -1265,7 +1265,7 @@ namespace IronAHK.Rusty
             get { return Environment.CurrentDirectory; }
             set
             {
-                if (!string.IsNullOrEmpty(value))
+                if (!string.IsNullOrEmpty(value) && Directory.Exists(value))
                     Environment.CurrentDirectory = value;
             }
         }
