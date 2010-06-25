@@ -35,5 +35,28 @@ namespace IronAHK.Scripting
                 return null;
             }
         }
+
+        static object ForceType(Type requested, object value)
+        {
+            if (requested == typeof(object) || requested.IsAssignableFrom(value.GetType()))
+                return value;
+
+            if (requested == typeof(decimal))
+                return ForceDecimal(value);
+
+            if (requested == typeof(double))
+                return ForceDouble(value);
+
+            if (requested == typeof(int))
+                return ForceInt(value);
+
+            if (requested == typeof(long))
+                return ForceLong(value);
+
+            if (requested == typeof(string))
+                return ForceString(value);
+
+            return value;
+        }
     }
 }

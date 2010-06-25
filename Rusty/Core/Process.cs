@@ -11,7 +11,7 @@ namespace IronAHK.Rusty
         /// <summary>
         /// Performs one of the following operations on a process: checks if it exists; changes its priority; closes it; waits for it to close.
         /// </summary>
-        /// <param name="Cmd">
+        /// <param name="command">
         /// <para>One of the following words:</para>
         /// <para>Exist: Sets ErrorLevel to the Process ID (PID) if a matching process exists, or 0 otherwise. If the PID-or-Name parameter is blank, the script's own PID is retrieved. An alternate, single-line method to retrieve the script's PID is PID := DllCall("GetCurrentProcessId")</para>
         /// <para>Close: If a matching process is successfully terminated, ErrorLevel is set to its former Process ID (PID). Otherwise (there was no matching process or there was a problem terminating it), it is set to 0. Since the process will be abruptly terminated -- possibly interrupting its work at a critical point or resulting in the loss of unsaved data in its windows (if it has any) -- this method should be used only if a process cannot be closed by using WinClose on one of its windows.</para>
@@ -21,89 +21,85 @@ namespace IronAHK.Rusty
         /// <para>Wait: Waits up to Param3 seconds (can contain a decimal point) for a matching process to exist. If Param3 is omitted, the command will wait indefinitely. If a matching process is discovered, ErrorLevel is set to its Process ID (PID). If the command times out, ErrorLevel is set to 0.</para>
         /// <para>WaitClose: Waits up to Param3 seconds (can contain a decimal point) for ALL matching processes to close. If Param3 is omitted, the command will wait indefinitely. If all matching processes are closed, ErrorLevel is set to 0. If the command times out, ErrorLevel is set to the Process ID (PID) of the first matching process that still exists.</para>
         /// </param>
-        /// <param name="PID_or_Name">
+        /// <param name="name">
         /// <para>This parameter can be either a number (the PID) or a process name as described below. It can also be left blank to change the priority of the script itself.</para>
         /// <para>PID: The Process ID, which is a number that uniquely identifies one specific process (this number is valid only during the lifetime of that process). The PID of a newly launched process can be determined via the Run command. Similarly, the PID of a window can be determined with WinGet. The Process command itself can also be used to discover a PID.</para>
         /// <para>Name: The name of a process is usually the same as its executable (without path), e.g. notepad.exe or winword.exe. Since a name might match multiple running processes, only the first process will be operated upon. The name is not case sensitive.</para>
         /// </param>
-        /// <param name="Param3">See Cmd above for details.</param>
-        public static void Process(string Cmd, string PID_or_Name, string Param3)
+        /// <param name="arg">See Cmd above for details.</param>
+        public static void Process(string command, string name, string arg)
         {
-            Process prc;
-            int timeout = 0, start = 0;
+            var prc = string.IsNullOrEmpty(name) ? System.Diagnostics.Process.GetCurrentProcess() : FindProcess(name);
+            var none = prc == null;
+            const int scale = 1000;
+            command = command.ToLowerInvariant();
+            ErrorLevel = none ? 0 : prc.Id;
 
-            switch (Cmd.ToLowerInvariant())
+            if (none && command != Keyword_WaitClose)
+                return;
+
+            switch (command)
             {
                 case Keyword_Exist:
-                    if (PID_or_Name == null)
-                    {
-                        ErrorLevel = System.Diagnostics.Process.GetCurrentProcess().Id;
-                    }
-                    else
-                    {
-                        prc = ToProcess(PID_or_Name);
-                        try
-                        {
-                            ErrorLevel = prc.Id;
-                        }
-                        catch
-                        {
-                            ErrorLevel = 0;
-                        }
-                    }
                     break;
+
                 case Keyword_Close:
-                    if (PID_or_Name == null)
+                    try { prc.Kill(); }
+                    catch (System.ComponentModel.Win32Exception) { }
+                    break;
+
+                case Keyword_Priority:
+                    arg = string.IsNullOrEmpty(arg) ? string.Empty : arg.ToLowerInvariant();
+
+                    if (arg.Length == 1)
                     {
-                        prc = System.Diagnostics.Process.GetCurrentProcess();
+                        foreach (var mode in new[] { Keyword_Low, Keyword_BelowNormal, Keyword_Normal, Keyword_AboveNormal, Keyword_High, Keyword_Realtime })
+                            if (mode[0] == arg[0])
+                                arg = mode;
                     }
+
+                    switch (arg.ToLowerInvariant())
+                    {
+                        case Keyword_Low: prc.PriorityClass = ProcessPriorityClass.Idle; break;
+                        case Keyword_BelowNormal: prc.PriorityClass = ProcessPriorityClass.BelowNormal; break;
+                        case Keyword_Normal: prc.PriorityClass = ProcessPriorityClass.Normal; break;
+                        case Keyword_AboveNormal: prc.PriorityClass = ProcessPriorityClass.AboveNormal; break;
+                        case Keyword_High: prc.PriorityClass = ProcessPriorityClass.High; break;
+                        case Keyword_Realtime: prc.PriorityClass = ProcessPriorityClass.RealTime; break;
+                    }
+                    break;
+
+                case Keyword_Wait:
+                    {
+                        int t = -1;
+                        double d;
+
+                        if (!string.IsNullOrEmpty(arg) && double.TryParse(arg, out d))
+                            t = (int)(d * scale);
+
+                        var start = Environment.TickCount;
+
+                        while (0 == (ErrorLevel = FindProcess(name).Id))
+                        {
+                            System.Threading.Thread.Sleep(LoopFrequency);
+
+                            if (t != -1 && Environment.TickCount - start > t)
+                                break;
+                        }
+                    }
+                    break;
+
+                case Keyword_WaitClose:
+                    if (string.IsNullOrEmpty(arg))
+                        prc.WaitForExit();
                     else
                     {
-                        prc = ToProcess(PID_or_Name);
-                    }
-                    try
-                    {
-                        ErrorLevel = prc.Id;
-                        prc.Kill();
-                    }
-                    catch
-                    {
-                        ErrorLevel = 0;
-                    }
-                    break;
-                case Keyword_Priority:
-                    prc = PID_or_Name == null ? System.Diagnostics.Process.GetCurrentProcess() : ToProcess(PID_or_Name);
-                    switch ((Param3).Trim().Substring(0, 1).ToLowerInvariant().ToCharArray()[0])
-                    {
-                        case 'l': prc.PriorityClass = ProcessPriorityClass.Idle; break;
-                        case 'b': prc.PriorityClass = ProcessPriorityClass.BelowNormal; break;
-                        case 'n': prc.PriorityClass = ProcessPriorityClass.Normal; break;
-                        case 'a': prc.PriorityClass = ProcessPriorityClass.AboveNormal; break;
-                        case 'h': prc.PriorityClass = ProcessPriorityClass.High; break;
-                        case 'r': prc.PriorityClass = ProcessPriorityClass.RealTime; break;
-                    }
-                    ErrorLevel = prc.Id;
-                    break;
-                case Keyword_Wait:
-                    timeout = (int)(double.Parse(Param3) * 1000);
-                    start = Environment.TickCount;
-                    if (timeout == 0) timeout = -1;
-                    while (0 == (ErrorLevel = ToProcess(PID_or_Name).Id))
-                    {
-                        System.Threading.Thread.Sleep(LoopFrequency);
-                        if (timeout != -1 && Environment.TickCount - start > timeout)
-                            break;
-                    }
-                    break;
-                case Keyword_WaitClose:
-                    timeout = (int)(double.Parse(Param3) * 1000);
-                    start = Environment.TickCount;
-                    if (timeout == 0) timeout = -1;
-                    while (0 != (ErrorLevel = ToProcess(PID_or_Name).Id))
-                    {
-                        System.Threading.Thread.Sleep(LoopFrequency);
-                        if (timeout != -1 && Environment.TickCount - start > timeout)
-                            break;
+                        double d;
+
+                        if (double.TryParse(arg, out d))
+                            prc.WaitForExit((int)(d * scale));
+                        else
+                            prc.WaitForExit();
                     }
                     break;
             }
