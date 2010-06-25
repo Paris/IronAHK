@@ -148,28 +148,21 @@ namespace IronAHK.Rusty
         /// <param name="needle">The substring to search for.</param>
         /// <param name="caseSensitive"><c>true</c> to use a case sensitive comparison, <c>false</c> otherwise.</param>
         /// <param name="index">The one-based starting character position.
-        /// If this is -1 the search will happen in reverse, i.e. right to left.</param>
+        /// Specify zero or leave blank to search in reverse, i.e. right to left.</param>
         /// <returns>The one-based index of the position of <paramref name="needle"/> in <paramref name="input"/>.
         /// A value of zero indicates no match.</returns>
-        public static int InStr(string input, string needle, bool caseSensitive, int index)
+        public static int InStr(string input, string needle, bool caseSensitive = false, int index = 1)
         {
-            bool reverse = index == -1;
+            var compare = caseSensitive ? StringComparison.Ordinal : A_StringComparison;
+            const int offset = 1;
 
-            if (reverse || index == 0)
-                index = 1;
+            if (index == 0)
+                return offset + input.LastIndexOf(needle, compare);
 
-            if (index >= input.Length || index < 1)
+            if (index < 0 || index > input.Length)
                 return 0;
 
-            int z;
-            index--;
-
-            if (caseSensitive)
-                z = reverse ? input.LastIndexOf(needle, index, StringComparison.CurrentCulture) : input.IndexOf(needle, index, StringComparison.CurrentCulture);
-            else
-                z = reverse ? input.LastIndexOf(needle, index) : input.IndexOf(needle, index);
-
-            return z + 1;
+            return offset + input.IndexOf(needle, index - 1, compare);
         }
 
         /// <summary>
