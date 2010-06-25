@@ -581,12 +581,12 @@ namespace IronAHK.Rusty
         /// <param name="index">The one-based starting character position.
         /// If this is less than one it is considered an offset from the end of the string.</param>
         /// <param name="length">The maximum number of characters to retrieve.
-        /// A value of zero will return the entire leading part of the string.
+        /// Leave this parameter blank to return the entire leading part of the string.
         /// Specify a negative value to omit that many characters from the end of the string.</param>
         /// <returns>The new substring.</returns>
-        public static string SubStr(string input, int index, int length)
+        public static string SubStr(string input, int index, int length = int.MaxValue)
         {
-            if (string.IsNullOrEmpty(input))
+            if (string.IsNullOrEmpty(input) || length == 0)
                 return string.Empty;
 
             if (index < 1)
@@ -597,12 +597,12 @@ namespace IronAHK.Rusty
             if (index < 0 || index >= input.Length)
                 return string.Empty;
 
-            if (length == 0)
-                return input.Substring(index);
+            int d = input.Length - index;
 
             if (length < 0)
-                length += input.Length - index;
+                length += d;
 
+            length = Math.Min(length, d);
             return input.Substring(index, length);
         }
     }

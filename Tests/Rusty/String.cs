@@ -12,10 +12,14 @@ namespace IronAHK.Tests
         {
             const string subject = "abcdefghi";
 
-            Assert.AreEqual("i", Core.SubStr(subject, 0, 0));
+            Assert.AreEqual(string.Empty, Core.SubStr(subject, 0, 0));
+            Assert.AreEqual(string.Empty, Core.SubStr(subject, -3, 0));
+            Assert.AreEqual("i", Core.SubStr(subject, 0, 5));
             Assert.AreEqual("bcd", Core.SubStr(subject, 2, 3));
-            Assert.AreEqual("fghi", Core.SubStr(subject, -3, 0));
+            Assert.AreEqual("efg", Core.SubStr(subject, 5, -2));
+            Assert.AreEqual("cde", Core.SubStr(subject, -6, 3));
             Assert.AreEqual("efg", Core.SubStr(subject, -4, -2));
+            Assert.AreEqual("ghi", Core.SubStr(subject, 7));
         }
     }
 }
