@@ -128,18 +128,17 @@ namespace IronAHK.Scripting
             }
             
             // Anything not specified pads to the default IL value
-            // Not to be confused with default values for parameters (ahk-style)
             while(p < types.Length)
             {
                 if(types[p].IsByRef)
                 {
                     Type NotRef = types[p].GetElementType();
-                    EmitLiteral(NotRef, GetDefaultValueOfType(NotRef));
+                    EmitLiteral(NotRef, GetDefaultValue(target.GetParameters()[p]));
                     LocalBuilder Temporary = Generator.DeclareLocal(NotRef);
                     Generator.Emit(OpCodes.Stloc, Temporary);
                     Generator.Emit(OpCodes.Ldloca, Temporary);
                 }
-                else EmitLiteral(types[p], GetDefaultValueOfType(types[p])); 
+                else EmitLiteral(types[p], GetDefaultValue(target.GetParameters()[p])); 
                 p++;
             }
             #endregion
@@ -163,6 +162,12 @@ namespace IronAHK.Scripting
             
             Depth--;
             return target.ReturnType;
+        }
+
+        object GetDefaultValue(ParameterInfo param)
+        {
+            var raw = param.RawDefaultValue;
+            return raw is DBNull ? GetDefaultValueOfType(param.ParameterType) : raw;
         }
 
         object GetDefaultValueOfType(Type t)
