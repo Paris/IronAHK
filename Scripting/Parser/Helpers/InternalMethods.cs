@@ -139,11 +139,6 @@ namespace IronAHK.Scripting
 
             #region Misc
 
-            public static MethodReference Init
-            {
-                get { return new MethodReference(typeof(Script), "Init"); }
-            }
-
             public static MethodReference Run
             {
                 get { return new MethodReference(typeof(Script), "Run"); }

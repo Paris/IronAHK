@@ -1,4 +1,4 @@
-﻿using IronAHK.Scripting;
+using IronAHK.Scripting;
 using NUnit.Framework;
 
 namespace IronAHK.Tests
@@ -8,7 +8,6 @@ namespace IronAHK.Tests
         [Test, Category("Variables")]
         public void ReservedVariables()
         {
-            Script.Init();
             Assert.IsTrue((int)Script.Vars["a_tickCount"] > 0);
         }
     }
