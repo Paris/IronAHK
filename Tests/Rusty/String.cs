@@ -21,5 +21,21 @@ namespace IronAHK.Tests
             Assert.AreEqual("efg", Core.SubStr(subject, -4, -2));
             Assert.AreEqual("ghi", Core.SubStr(subject, 7));
         }
+
+        [Test, Category("String")]
+        public void InStr()
+        {
+            const string find = "AbC", subject = "abc ABC " + find + " abc";
+
+            Assert.AreEqual(1, Core.InStr(subject, find));
+            Assert.AreEqual(9, Core.InStr(subject, find, true));
+            Assert.AreEqual(1, Core.InStr(subject, find, false, 1));
+            Assert.AreEqual(5, Core.InStr(subject, find, false, 2));
+            Assert.AreEqual(13, Core.InStr(subject, find, false, 0));
+            Assert.AreEqual(9, Core.InStr(subject, find, true, 0));
+            Assert.AreEqual(0, Core.InStr(subject, find, true, -1));
+            Assert.AreEqual(0, Core.InStr(subject, find, true, subject.Length));
+
+        }
     }
 }
