@@ -19,7 +19,7 @@ namespace IronAHK.Scripting
         
         MethodInfo SetVariable;
         MethodInfo GetVariable;
-        MethodInfo GetVarsProperty;
+        LocalBuilder VarsProperty;
 
         MethodCollection Lookup;
 
@@ -52,22 +52,25 @@ namespace IronAHK.Scripting
             
             Generator = Method.GetILGenerator();
 
-            if(IsEntryPoint)
-                GenerateEntryPointHeader();
-
             ForceString = typeof(Script).GetMethod("ForceString");
             ForceDecimal = typeof(Script).GetMethod("ForceDecimal");
             ForceLong = typeof(Script).GetMethod("ForceLong");
             ForceInt = typeof(Script).GetMethod("ForceInt");
             ForceBool = typeof(Script).GetMethod("ForceBool");
             
-            GetVarsProperty = typeof(Script).GetProperty(Parser.VarProperty).GetGetMethod();
-            // "Item" is the property for this-indexers
-            SetVariable = GetVarsProperty.ReturnType.GetProperty("Item").GetSetMethod();
-            GetVariable = GetVarsProperty.ReturnType.GetProperty("Item").GetGetMethod();
-            
             Locals = new Dictionary<string, LocalBuilder>();
             Labels = new Dictionary<string, LabelMetadata>();
+            
+            if(IsEntryPoint)
+                GenerateEntryPointHeader();
+            
+            // "Item" is the property for this-indexers
+            SetVariable = typeof(Script.Variables).GetProperty("Item").GetSetMethod();
+            GetVariable = typeof(Script.Variables).GetProperty("Item").GetGetMethod();
+            
+            VarsProperty = Generator.DeclareLocal(typeof(Script.Variables));
+            Generator.Emit(OpCodes.Call, typeof(Script).GetProperty(Parser.VarProperty).GetGetMethod());
+            Generator.Emit(OpCodes.Stloc, VarsProperty);            
         }
 
         void GenerateEntryPointHeader()
