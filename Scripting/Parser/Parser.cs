@@ -82,7 +82,6 @@ namespace IronAHK.Scripting
         public Parser()
         {
             main.CustomAttributes.Add(new CodeAttributeDeclaration(new CodeTypeReference(typeof(STAThreadAttribute))));
-            prepend.Add((CodeMethodInvokeExpression)InternalMethods.Init);
             methods.Add(mainScope, main);
         }
 

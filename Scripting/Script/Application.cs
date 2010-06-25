@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Windows.Forms;
 
 namespace IronAHK.Scripting
@@ -7,7 +7,7 @@ namespace IronAHK.Scripting
     {
         public static Variables Vars { get; private set; }
 
-        public static void Init()
+        static Script()
         {
             if (Vars == null)
                 Vars = new Variables();
