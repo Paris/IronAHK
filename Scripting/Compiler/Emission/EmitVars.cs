@@ -70,7 +70,7 @@ namespace IronAHK.Scripting
             {
                 var index = (CodeArrayIndexerExpression)Left;
 
-                Generator.Emit(OpCodes.Call, GetVarsProperty);
+                Generator.Emit(OpCodes.Ldloc, VarsProperty);
 
                 EmitExpression(index.Indices[0]);
                 Type resultType = EmitExpression(Right, ForceTypes);
