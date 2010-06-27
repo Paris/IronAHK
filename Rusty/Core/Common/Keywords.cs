@@ -331,6 +331,8 @@ namespace IronAHK.Rusty
         const string Keyword_Hex = "hex";
         const string Keyword_FormatHex = "h";
         const string Keyword_FormatDecimal = "d";
+        const string Keyword_IniSectionOpen = "[";
+        const char Keyword_IniKeyAssign = '=';
 
         const char Keyword_ModifierWin = '#';
         const char Keyword_ModifierAlt = '!';
