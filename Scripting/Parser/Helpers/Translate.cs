@@ -64,6 +64,8 @@ namespace IronAHK.Scripting
 
             #endregion
 
+            // TODO: missing legacy command translations
+
             switch (cmd.ToLowerInvariant())
             {
                 #region Repeat
@@ -512,6 +514,45 @@ namespace IronAHK.Scripting
                     replaced.Append(Multicast);
                     replaced.Append(SingleSpace);
                     replaced.Append(param);
+                    break;
+
+                #endregion
+
+                #region Mouse
+
+                case "leftclick":
+                    break;
+
+                case "leftclickdrag":
+                    break;
+
+                case "mouseclick":
+                    break;
+
+                case "mouseclickdrag":
+                    break;
+
+                case "mousemove":
+                    break;
+
+                #endregion
+
+                #region Debug
+
+                case "edit":
+                    break;
+
+                case "listlines":
+                    break;
+
+                case "listvars":
+                    break;
+
+                #endregion
+
+                #region Other
+
+                case "filegetattrib":
                     break;
 
                 #endregion

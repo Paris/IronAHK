@@ -104,7 +104,6 @@
     <Compile Include="Core\Math.cs" />
     <Compile Include="Core\Screen.cs" />
     <Compile Include="Core\Mouse.cs" />
-    <Compile Include="Core\Obsolete.cs" />
     <Compile Include="Core\Process.cs" />
     <Compile Include="Core\Common\Properties.cs" />
     <Compile Include="Core\Registry.cs" />
