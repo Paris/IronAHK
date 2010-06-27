@@ -215,6 +215,11 @@ namespace IronAHK.Rusty
             return ToString(result);
         }
 
+        static string[] Glob(string pattern)
+        {
+            return new string[] { };
+        }
+
         static Color ParseColor(string name)
         {
             name = name.Trim();
