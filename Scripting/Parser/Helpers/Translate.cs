@@ -64,8 +64,6 @@ namespace IronAHK.Scripting
 
             #endregion
 
-            // TODO: missing legacy command translations
-
             switch (cmd.ToLowerInvariant())
             {
                 #region Repeat
@@ -521,18 +519,26 @@ namespace IronAHK.Scripting
                 #region Mouse
 
                 case "leftclick":
+                case "mouseclick":
+                    replaced.Append("Click");
+                    replaced.Append(Multicast);
+                    replaced.Append(param);
                     break;
 
                 case "leftclickdrag":
-                    break;
-
-                case "mouseclick":
-                    break;
-
-                case "mouseclickdrag":
+                    replaced.Append("MouseClickDrag");
+                    replaced.Append(Multicast);
+                    replaced.Append("Left");
+                    replaced.Append(Multicast);
+                    replaced.Append(param);
                     break;
 
                 case "mousemove":
+                    replaced.Append("Click");
+                    replaced.Append(Multicast);
+                    replaced.Append(param);
+                    replaced.Append(Multicast);
+                    replaced.Append("0");
                     break;
 
                 #endregion
@@ -540,12 +546,9 @@ namespace IronAHK.Scripting
                 #region Debug
 
                 case "edit":
-                    break;
-
                 case "listlines":
-                    break;
-
                 case "listvars":
+                    replaced = null;
                     break;
 
                 #endregion
@@ -553,12 +556,26 @@ namespace IronAHK.Scripting
                 #region Other
 
                 case "filegetattrib":
+                    if (parts.Length != 2)
+                        replaced = null;
+                    else
+                    {
+                        replaced.Append(parts[0].Substring(1, parts[0].Length - 2));
+                        replaced.Append(AssignPre);
+                        replaced.Append(Equal);
+                        replaced.Append("FileExist");
+                        replaced.Append(ParenOpen);
+                        replaced.Append(parts[1]);
+                        replaced.Append(ParenClose);
+                    }
                     break;
 
                 #endregion
             }
 
-            if (replaced.Length > 0)
+            if (replaced == null)
+                code = string.Empty;
+            else if (replaced.Length > 0)
                 code = replaced.ToString();
         }
 
