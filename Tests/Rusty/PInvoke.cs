@@ -11,12 +11,13 @@ namespace IronAHK.Tests
         public void Address()
         {
             const int length = 9000, fill = 46;
-            byte[] var;
-            Core.VarSetCapacity(out var, length, fill);
+            object var = null;
+            Core.VarSetCapacity(ref var, length, fill);
+            var array = (byte[])var;
 
-            Assert.AreEqual(var.Length, length, "byte[] length");
-            Assert.AreEqual(var[0], fill, "byte[] at index 0");
-            Assert.AreEqual(var[length - 1], fill, "byte[] at index n-1");
+            Assert.AreEqual(array.Length, length, "byte[] length");
+            Assert.AreEqual(array[0], fill, "byte[] at index 0");
+            Assert.AreEqual(array[length - 1], fill, "byte[] at index n-1");
         }
     }
 }
