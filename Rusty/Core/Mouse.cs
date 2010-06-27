@@ -116,6 +116,36 @@ namespace IronAHK.Rusty
         }
 
         /// <summary>
+        /// Clicks and holds the specified mouse button, moves the mouse to the destination coordinates, then releases the button.
+        /// </summary>
+        /// <param name="button">Either <c>Left</c> (default), <c>Middle</c>, <c>Right</c>, <c>X1</c> or <c>X2</c>.</param>
+        /// <param name="x1">The starting x-coordinate.</param>
+        /// <param name="y1">The starting y-coordinate.</param>
+        /// <param name="x2">The final x-coordinate.</param>
+        /// <param name="y2">The final y-coordinate.</param>
+        /// <param name="speed">The speed to move the mouse from 0 (fastest) to 100 (slowest).
+        /// The default speed is determined by <see cref="A_DefaultMouseSpeed"/>.</param>
+        /// <param name="relative"><c>true</c> to treat the first set of coordinates as relative offsets from the current mouse position
+        /// and the second set as offsets from the first, <c>false</c> otherwise.</param>
+        public static void MouseClickDrag(string button, int x1, int y1, int x2, int y2, int? speed = null, bool relative = false)
+        {
+            var oldSpeed = A_DefaultMouseSpeed;
+
+            if (speed != null)
+                A_DefaultMouseSpeed = (int)speed;
+
+            var opts = new[] { x1.ToString(), y1.ToString(), relative ? Keyword_Relative : string.Empty };
+            Click(opts);
+
+            opts[0] = x2.ToString();
+            opts[1] = y2.ToString();
+            Click(opts);
+
+            if (speed != null)
+                A_DefaultMouseSpeed = oldSpeed;
+        }
+
+        /// <summary>
         /// Change the coordinate modes.
         /// </summary>
         /// <param name="item">
