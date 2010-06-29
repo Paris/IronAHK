@@ -1049,19 +1049,28 @@ namespace IronAHK.Rusty
         /// <item><term>Locale</term>: <description>comparisons are case insensitive according to the rules of the current locale.</description></item>
         /// </list>
         /// </value>
+        [Obsolete]
         public static string A_StringCaseSense
         {
-            get { return ToStringCaseSense(_StringCaseSense ?? StringComparison.OrdinalIgnoreCase); }
+            get { return ToStringCaseSense(A_StringComparison);}
             set
             {
                 switch (value.ToLowerInvariant())
                 {
-                    case Keyword_On: _StringCaseSense = StringComparison.Ordinal; break;
-                    case Keyword_Off: _StringCaseSense = StringComparison.OrdinalIgnoreCase; break;
-                    case Keyword_Locale: _StringCaseSense = StringComparison.CurrentCulture; break;
-                    default: _StringCaseSense = null; break;
+                    case Keyword_On: _StringComparison = StringComparison.Ordinal; break;
+                    default: case Keyword_Off: _StringComparison = StringComparison.OrdinalIgnoreCase; break;
+                    case Keyword_Locale: _StringComparison = StringComparison.CurrentCulture; break;
                 }
             }
+        }
+
+        /// <summary>
+        /// The culture, case and sort rules to use when comparing strings.
+        /// </summary>
+        static StringComparison A_StringComparison
+        {
+            get { return _StringComparison ?? StringComparison.OrdinalIgnoreCase; }
+            set { _StringComparison = value; }
         }
 
         /// <summary>
@@ -1256,7 +1265,7 @@ namespace IronAHK.Rusty
             get { return Environment.CurrentDirectory; }
             set
             {
-                if (!string.IsNullOrEmpty(value))
+                if (!string.IsNullOrEmpty(value) && Directory.Exists(value))
                     Environment.CurrentDirectory = value;
             }
         }

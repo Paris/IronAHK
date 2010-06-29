@@ -200,9 +200,12 @@ namespace IronAHK.Scripting
         {
             switch (code.ToLowerInvariant())
             {
-                case NotTxt:
-                case OrTxt:
                 case AndTxt:
+                case OrTxt:
+                case NotTxt:
+                case TrueTxt:
+                case FalseTxt:
+                case NullTxt:
                 case IsTxt:
                     return true;
 

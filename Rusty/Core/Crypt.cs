@@ -15,7 +15,7 @@ namespace IronAHK.Rusty
         /// <param name="decrypt"><code>true</code> to decrypt the given <paramref name="value"/>, otherwise encrypt.</param>
         /// <returns>The corresponding encrypted or decrypted data.</returns>
         /// <remarks>A key length of 64 bits is supported.</remarks>
-        public static byte[] DES(object value, object key, bool decrypt)
+        public static byte[] DES(object value, object key, bool decrypt = false)
         {
             return Encrypt(value, key, decrypt, new DESCryptoServiceProvider());
         }
@@ -28,7 +28,7 @@ namespace IronAHK.Rusty
         /// <param name="decrypt"><code>true</code> to decrypt the given <paramref name="value"/>, otherwise encrypt.</param>
         /// <returns>The corresponding encrypted or decrypted data.</returns>
         /// <remarks>Key lengths from 40 bits to 128 bits in increments of 8 bits are supported.</remarks>
-        public static byte[] RC2(object value, object key, bool decrypt)
+        public static byte[] RC2(object value, object key, bool decrypt = false)
         {
             return Encrypt(value, key, decrypt, new RC2CryptoServiceProvider());
         }
@@ -41,7 +41,7 @@ namespace IronAHK.Rusty
         /// <param name="decrypt"><code>true</code> to decrypt the given <paramref name="value"/>, otherwise encrypt.</param>
         /// <returns>The corresponding encrypted or decrypted data.</returns>
         /// <remarks>Key lengths of 128, 192, or 256 bits are supported.</remarks>
-        public static byte[] Rijndael(object value, object key, bool decrypt)
+        public static byte[] Rijndael(object value, object key, bool decrypt = false)
         {
             return Encrypt(value, key, decrypt, new RijndaelManaged());
         }
@@ -57,7 +57,7 @@ namespace IronAHK.Rusty
         /// <para>Three successive iterations of the <see cref="DES"/> algorithm are used, with either two or three 56-bit keys.</para>
         /// <para>Key lengths from 128 bits to 192 bits in increments of 64 bits are supported.</para>
         /// </remarks>
-        public static byte[] TripleDES(object value, object key, bool decrypt)
+        public static byte[] TripleDES(object value, object key, bool decrypt = false)
         {
             return Encrypt(value, key, decrypt, new TripleDESCryptoServiceProvider());
         }
@@ -152,11 +152,8 @@ namespace IronAHK.Rusty
         /// If <paramref name="min"/> and <paramref name="max"/> are both pure integers, the result would also be an integer without a remainder.</returns>
         /// <remarks>A cryptographic random number generator produces an output that is computationally infeasible to predict with a probability that is better than one half.
         /// <see cref="Random"/> uses a simpler algorithm which is much faster but less secure.</remarks>
-        public static decimal SecureRandom(decimal min, decimal max)
+        public static decimal SecureRandom(decimal min = decimal.MinValue, decimal max = decimal.MaxValue)
         {
-            if (min == 0 && max != 0)
-                min = decimal.MinValue;
-
             var diff = Math.Abs(min - max);
 
             if (diff == 0 && !(min == 0 && max == 0))

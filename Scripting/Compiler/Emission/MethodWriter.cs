@@ -186,6 +186,11 @@ namespace IronAHK.Scripting
                 Debug("Pushing long: " + (long)Value);
                 Generator.Emit(OpCodes.Ldc_I8, (long)Value);
             }
+            else if (T.IsGenericType && T.GetGenericTypeDefinition() == typeof(Nullable<>))
+            {
+                Debug("Pushing nullable: " + Value);
+                EmitLiteral(Value == null ? typeof(Nullable) : T.GetGenericArguments()[0], Value);
+            }
             else
             {
                 Debug("Unhandled primitive: " + T);
