@@ -101,6 +101,7 @@
   <ItemGroup>
     <None Include=".gitignore" />
     <None Include="Code\.gitignore" />
+    <None Include="Code\Benchmarks\increment.ahk" />
     <None Include="Code\comments.ahk" />
     <Content Include="Code\copyright.txt" />
     <Content Include="Code\select.txt" />
@@ -147,6 +148,7 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

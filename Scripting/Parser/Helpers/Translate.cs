@@ -515,9 +515,67 @@ namespace IronAHK.Scripting
                     break;
 
                 #endregion
+
+                #region Mouse
+
+                case "leftclick":
+                case "mouseclick":
+                    replaced.Append("Click");
+                    replaced.Append(Multicast);
+                    replaced.Append(param);
+                    break;
+
+                case "leftclickdrag":
+                    replaced.Append("MouseClickDrag");
+                    replaced.Append(Multicast);
+                    replaced.Append("Left");
+                    replaced.Append(Multicast);
+                    replaced.Append(param);
+                    break;
+
+                case "mousemove":
+                    replaced.Append("Click");
+                    replaced.Append(Multicast);
+                    replaced.Append(param);
+                    replaced.Append(Multicast);
+                    replaced.Append("0");
+                    break;
+
+                #endregion
+
+                #region Debug
+
+                case "edit":
+                case "listlines":
+                case "listvars":
+                    replaced = null;
+                    break;
+
+                #endregion
+
+                #region Other
+
+                case "filegetattrib":
+                    if (parts.Length != 2)
+                        replaced = null;
+                    else
+                    {
+                        replaced.Append(parts[0].Substring(1, parts[0].Length - 2));
+                        replaced.Append(AssignPre);
+                        replaced.Append(Equal);
+                        replaced.Append("FileExist");
+                        replaced.Append(ParenOpen);
+                        replaced.Append(parts[1]);
+                        replaced.Append(ParenClose);
+                    }
+                    break;
+
+                #endregion
             }
 
-            if (replaced.Length > 0)
+            if (replaced == null)
+                code = string.Empty;
+            else if (replaced.Length > 0)
                 code = replaced.ToString();
         }
 

@@ -68,6 +68,11 @@
   </Target>
   -->
   <ItemGroup>
+    <Compile Include="Core\Common\Conversions.cs" />
+    <Compile Include="Core\Common\Gui.cs" />
+    <Compile Include="Core\Common\Crypt.cs" />
+    <Compile Include="Core\Common\Options.cs" />
+    <Compile Include="Core\Common\Reflection.cs" />
     <Compile Include="Core\Common\Initialisers.cs" />
     <Compile Include="Core\Crypt.cs" />
     <Compile Include="Core\Core.cs" />
@@ -89,13 +94,12 @@
     <Compile Include="Core\PInvoke.cs" />
     <Compile Include="Core\Environment.cs" />
     <Compile Include="Core\Flow.cs" />
-    <Compile Include="Core\Common\Formats.cs" />
+    <Compile Include="Core\Common\Misc.cs" />
     <Compile Include="Core\Gui\Gui.cs" />
     <Compile Include="Core\Gui\ImageList.cs" />
     <Compile Include="Core\Gui\ListView.cs" />
     <Compile Include="Core\Gui\StatusBar.cs" />
     <Compile Include="Core\Gui\TreeView.cs" />
-    <Compile Include="Core\Helpers.cs" />
     <Compile Include="Core\Ini.cs" />
     <Compile Include="Core\Json.cs" />
     <Compile Include="Core\Keyboard.cs" />
@@ -104,7 +108,6 @@
     <Compile Include="Core\Math.cs" />
     <Compile Include="Core\Screen.cs" />
     <Compile Include="Core\Mouse.cs" />
-    <Compile Include="Core\Obsolete.cs" />
     <Compile Include="Core\Process.cs" />
     <Compile Include="Core\Common\Properties.cs" />
     <Compile Include="Core\Registry.cs" />

@@ -25,6 +25,40 @@ namespace IronAHK.Rusty
         }
 
         /// <summary>
+        /// Sends a mouse button or mouse wheel event to a control.
+        /// </summary>
+        /// <param name="Target">
+        /// <para>If this parameter is blank, the target window's topmost control will be clicked (or the target window itself if it has no controls). Otherwise, one of the two modes below will be used.</para>
+        /// <para>Mode 1 (Position): Specify the X and Y coordinates relative to the target window's upper left corner. The X coordinate must precede the Y coordinate and there must be at least one space or tab between them. For example: X55 Y33. If there is a control at the specified coordinates, it will be sent the click-event at those exact coordinates. If there is no control, the target window itself will be sent the event (which might have no effect depending on the nature of the window). Note: In this mode, the X and Y option letters of the Options parameter are ignored.</para>
+        /// <para>Mode 2 (ClassNN or Text): Specify either ClassNN (the classname and instance number of the control) or the name/text of the control, both of which can be determined via Window Spy. When using name/text, the matching behavior is determined by SetTitleMatchMode.</para>
+        /// <para>By default, mode 2 takes precedence over mode 1. For example, in the unlikely event that there is a control whose text or ClassNN has the format "Xnnn Ynnn", it would be acted upon by Mode 2. To override this and use mode 1 unconditionally, specify the word Pos in Options as in the following example: ControlClick, x255 y152, WinTitle,,,, Pos</para>
+        /// <para>To operate upon a control's HWND (window handle), leave this parameter blank and specify ahk_id %ControlHwnd% for the WinTitle parameter (this also works on hidden controls even when DetectHiddenWindows is Off) . The HWND of a control is typically retrieved via ControlGet Hwnd, MouseGetPos, or DllCall.</para></param>
+        /// <param name="WinTitle">The title or partial title of the target window (the matching behavior is determined by SetTitleMatchMode). If this and the other 3 window parameters are omitted, the Last Found Window will be used. If this is the letter A and the other 3 window parameters are omitted, the active window will be used. To use a window class, specify ahk_class ExactClassName (shown by Window Spy). To use a process identifier (PID), specify ahk_pid %VarContainingPID%. To use a window group, specify ahk_group GroupName. To use a window's unique ID number, specify ahk_id %VarContainingID%. The search can be narrowed by specifying multiple criteria. For example: My File.txt ahk_class Notepad</param>
+        /// <param name="WinText">If present, this parameter must be a substring from a single text element of the target window (as revealed by the included Window Spy utility). Hidden text elements are detected if DetectHiddenText is ON.</param>
+        /// <param name="WhichButton">
+        /// <para>The button to click: LEFT, RIGHT, MIDDLE (or just the first letter of each of these). If omitted or blank, the LEFT button will be used.</para>
+        /// <para>WheelUp (or WU) and WheelDown (or WD) are also supported on Windows NT/2000/XP or later. In this case, ClickCount is the number of notches to turn the wheel.</para>
+        /// <para>X1 (XButton1, the 4th mouse button) and X2 (XButton2, the 5th mouse button) are also supported on Windows 2000/XP or later.</para>
+        /// </param>
+        /// <param name="ClickCount">The number of clicks to send. If omitted or blank, 1 click is sent.</param>
+        /// <param name="Options">
+        /// <para>A series of zero or more of the following option letters. For example: d x50 y25</para>
+        /// <para>NA: Avoids activating the window, which might also improve reliability in cases where the user is physically moving the mouse during the ControlClick. However, this mode might not work properly for all types of windows and controls.</para>
+        /// <para>D: Press the mouse button down but do not release it (i.e. generate a down-event). If both the D and U options are absent, a complete click (down and up) will be sent.</para>
+        /// <para>U: Release the mouse button (i.e. generate an up-event). This option should not be present if the D option is already present (and vice versa).</para>
+        /// <para>Pos: Specify the word Pos anywhere in Options to unconditionally use the X/Y positioning mode as described in the Control-or-Pos parameter above. </para>
+        /// <para>Xn: Specify for n the X position to click at, relative to the control's upper left corner. If unspecified, the click will occur at the horizontal-center of the control.</para>
+        /// <para>Yn: Specify for n the Y position to click at, relative to the control's upper left corner. If unspecified, the click will occur at the vertical-center of the control.</para>
+        /// <para>Use decimal (not hexadecimal) numbers for the X and Y options.</para>
+        /// </param>
+        /// <param name="ExcludeTitle">Windows whose titles include this value will not be considered.</param>
+        /// <param name="ExcludeText">Windows whose text include this value will not be considered.</param>
+        public static void ControlClick(string Target, string WinTitle, string WinText, string WhichButton, string ClickCount, string Options, string ExcludeTitle, string ExcludeText)
+        {
+
+        }
+
+        /// <summary>
         /// Sets input focus to a given control on a window.
         /// </summary>
         /// <param name="Control">

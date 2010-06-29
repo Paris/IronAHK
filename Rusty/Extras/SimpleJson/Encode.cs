@@ -22,9 +22,8 @@ namespace IronAHK.Rusty
                 return Null;
 
             var json = new StringBuilder();
-            Type type = node.GetType();
 
-            if (type == typeof(Dictionary<string, object>))
+            if (node is Dictionary<string, object>)
             {
                 var pairs = (Dictionary<string, object>)node;
                 json.Append(ObjectOpen);
@@ -44,7 +43,7 @@ namespace IronAHK.Rusty
                 }
                 json.Append(ObjectClose);
             }
-            else if (type == typeof(object[]))
+            else if (node is object[])
             {
                 var list = (object[])node;
                 json.Append(ArrayOpen);
@@ -58,14 +57,14 @@ namespace IronAHK.Rusty
                 }
                 json.Append(ArrayClose);
             }
-            else if (type == typeof(bool))
+            else if (node is bool)
                 json.Append((bool)node ? True : False);
-            else if (type == typeof(byte) || type == typeof(sbyte) || type == typeof(short) || type == typeof(ushort) || type == typeof(int) || type == typeof(uint) || type == typeof(long) || type == typeof(ulong) || type == typeof(float) || type == typeof(double) || type == typeof(decimal))
+            else if (node is byte || node is sbyte || node is short || node is ushort || node is int || node is uint || node is long || node is ulong || node is float || node is double || node is decimal)
                 json.Append(node.ToString());
             else
             {
                 json.Append(StringBoundary);
-                if (type == typeof(string))
+                if (node is string)
                     json.Append((string)node);
                 else
                     json.Append(node.ToString());

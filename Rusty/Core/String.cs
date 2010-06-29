@@ -1,10 +1,12 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Windows.Forms;
 
 namespace IronAHK.Rusty
 {
@@ -148,28 +150,21 @@ namespace IronAHK.Rusty
         /// <param name="needle">The substring to search for.</param>
         /// <param name="caseSensitive"><c>true</c> to use a case sensitive comparison, <c>false</c> otherwise.</param>
         /// <param name="index">The one-based starting character position.
-        /// If this is -1 the search will happen in reverse, i.e. right to left.</param>
+        /// Specify zero or leave blank to search in reverse, i.e. right to left.</param>
         /// <returns>The one-based index of the position of <paramref name="needle"/> in <paramref name="input"/>.
         /// A value of zero indicates no match.</returns>
-        public static int InStr(string input, string needle, bool caseSensitive, int index)
+        public static int InStr(string input, string needle, bool caseSensitive = false, int index = 1)
         {
-            bool reverse = index == -1;
+            var compare = caseSensitive ? StringComparison.Ordinal : A_StringComparison;
+            const int offset = 1;
 
-            if (reverse || index == 0)
-                index = 1;
+            if (index == 0)
+                return offset + input.LastIndexOf(needle, compare);
 
-            if (index >= input.Length || index < 1)
+            if (index < 0 || index > input.Length)
                 return 0;
 
-            int z;
-            index--;
-
-            if (caseSensitive)
-                z = reverse ? input.LastIndexOf(needle, index, StringComparison.CurrentCulture) : input.IndexOf(needle, index, StringComparison.CurrentCulture);
-            else
-                z = reverse ? input.LastIndexOf(needle, index) : input.IndexOf(needle, index);
-
-            return z + 1;
+            return offset + input.IndexOf(needle, index - 1, compare);
         }
 
         /// <summary>
@@ -507,7 +502,7 @@ namespace IronAHK.Rusty
                 return;
             }
 
-            var compare = _StringCaseSense ?? StringComparison.OrdinalIgnoreCase;
+            var compare = _StringComparison ?? StringComparison.OrdinalIgnoreCase;
 
             if (all && compare == StringComparison.Ordinal)
                 output = input.Replace(search, replace);
@@ -577,28 +572,155 @@ namespace IronAHK.Rusty
         /// <summary>
         /// Retrieves one or more characters from the specified position in a string.
         /// </summary>
-        /// <param name="input">The string to operate on.</param>
+        /// <param name="input">The string to use.</param>
         /// <param name="index">The one-based starting character position.
         /// If this is less than one it is considered an offset from the end of the string.</param>
         /// <param name="length">The maximum number of characters to retrieve.
-        /// Using a value of zero will return the entire leading part of the string.
+        /// Leave this parameter blank to return the entire leading part of the string.
         /// Specify a negative value to omit that many characters from the end of the string.</param>
         /// <returns>The new substring.</returns>
-        public static string SubStr(string input, int index, int length)
+        public static string SubStr(string input, int index, int length = int.MaxValue)
         {
-            if (string.IsNullOrEmpty(input))
+            if (string.IsNullOrEmpty(input) || length == 0)
                 return string.Empty;
 
-            if (index < 0)
-                index = Math.Min(0, input.Length - 1 - index);
+            if (index < 1)
+                index += input.Length;
 
-            if (length == 0)
-                return input.Substring(index);
+            index--;
+
+            if (index < 0 || index >= input.Length)
+                return string.Empty;
+
+            int d = input.Length - index;
 
             if (length < 0)
-                length += input.Length - 1 - index;
+                length += d;
 
+            length = Math.Min(length, d);
             return input.Substring(index, length);
+        }
+
+        /// <summary>
+        /// Performs miscellaneous math functions, bitwise operations, and tasks such as ASCII to Unicode conversion.
+        /// This function is obsolete, please use the related newer syntax.
+        /// <seealso cref="Asc"/>
+        /// <seealso cref="Chr"/>
+        /// <seealso cref="Mod"/>
+        /// <seealso cref="Exp"/>
+        /// <seealso cref="Sqrt"/>
+        /// <seealso cref="Log"/>
+        /// <seealso cref="Ln"/>
+        /// <seealso cref="Round"/>
+        /// <seealso cref="Ceil"/>
+        /// <seealso cref="Floor"/>
+        /// <seealso cref="Abs"/>
+        /// <seealso cref="Sin"/>
+        /// <seealso cref="Cos"/>
+        /// <seealso cref="Tan"/>
+        /// <seealso cref="ASin"/>
+        /// <seealso cref="ACos"/>
+        /// <seealso cref="ATan"/>
+        /// <seealso cref="Floor"/>
+        /// <seealso cref="Floor"/>
+        /// </summary>
+        [Obsolete, Conditional("LEGACY")]
+        public static void Transform(ref string OutputVar, string Cmd, string Value1, string Value2)
+        {
+            OutputVar = string.Empty;
+            switch (Cmd.Trim().ToLowerInvariant())
+            {
+                case Keyword_Unicode:
+                    if (Value1 == null)
+                        OutputVar = Clipboard.GetText();
+                    else OutputVar = Value1;
+                    break;
+                case Keyword_Asc:
+                    OutputVar = char.GetNumericValue(Value1, 0).ToString();
+                    break;
+                case Keyword_Chr:
+                    OutputVar = char.ConvertFromUtf32(int.Parse(Value1));
+                    break;
+                case Keyword_Deref:
+                    // TODO: dereference transform
+                    break;
+                case "html":
+                    OutputVar = Value1
+                        .Replace("\"", "&quot;")
+                        .Replace("&", "&amp;")
+                        .Replace("<", "&lt;")
+                        .Replace(">", "&gt;")
+                        .Replace("\n", "<br/>\n");
+                    break;
+                case Keyword_Mod:
+                    OutputVar = (double.Parse(Value1) % double.Parse(Value2)).ToString();
+                    break;
+                case Keyword_Pow:
+                    OutputVar = Math.Pow(double.Parse(Value1), double.Parse(Value2)).ToString();
+                    break;
+                case Keyword_Exp:
+                    OutputVar = Math.Pow(double.Parse(Value1), Math.E).ToString();
+                    break;
+                case Keyword_Sqrt:
+                    OutputVar = Math.Sqrt(double.Parse(Value1)).ToString();
+                    break;
+                case Keyword_Log:
+                    OutputVar = Math.Log10(double.Parse(Value1)).ToString();
+                    break;
+                case Keyword_Ln:
+                    OutputVar = Math.Log(double.Parse(Value1), Math.E).ToString();
+                    break;
+                case Keyword_Round:
+                    int p = int.Parse(Value2);
+                    OutputVar = Math.Round(double.Parse(Value1), p == 0 ? 1 : p).ToString();
+                    break;
+                case Keyword_Ceil:
+                    OutputVar = Math.Ceiling(double.Parse(Value1)).ToString();
+                    break;
+                case Keyword_Floor:
+                    OutputVar = Math.Floor(double.Parse(Value1)).ToString();
+                    break;
+                case Keyword_Abs:
+                    double d = double.Parse(Value1);
+                    OutputVar = (d < 0 ? d * -1 : d).ToString();
+                    break;
+                case Keyword_Sin:
+                    OutputVar = Math.Sin(double.Parse(Value1)).ToString();
+                    break;
+                case Keyword_Cos:
+                    OutputVar = Math.Cos(double.Parse(Value1)).ToString();
+                    break;
+                case Keyword_Tan:
+                    OutputVar = Math.Tan(double.Parse(Value1)).ToString();
+                    break;
+                case Keyword_Asin:
+                    OutputVar = Math.Asin(double.Parse(Value1)).ToString();
+                    break;
+                case Keyword_Acos:
+                    OutputVar = Math.Acos(double.Parse(Value1)).ToString();
+                    break;
+                case Keyword_Atan:
+                    OutputVar = Math.Atan(double.Parse(Value1)).ToString();
+                    break;
+                case Keyword_BitNot:
+                    OutputVar = (~int.Parse(Value1)).ToString();
+                    break;
+                case Keyword_BitAnd:
+                    OutputVar = (int.Parse(Value1) & int.Parse(Value2)).ToString();
+                    break;
+                case Keyword_BitOr:
+                    OutputVar = (int.Parse(Value1) | int.Parse(Value2)).ToString();
+                    break;
+                case Keyword_BitXor:
+                    OutputVar = (int.Parse(Value1) ^ int.Parse(Value2)).ToString();
+                    break;
+                case Keyword_BitShiftLeft:
+                    OutputVar = (int.Parse(Value1) << int.Parse(Value2)).ToString();
+                    break;
+                case Keyword_BitShiftRight:
+                    OutputVar = (int.Parse(Value1) >> int.Parse(Value2)).ToString();
+                    break;
+            }
         }
     }
 }

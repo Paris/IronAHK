@@ -12,10 +12,10 @@ namespace IronAHK.Rusty
         /// <summary>
         /// Ejects/retracts the tray in a CD or DVD drive, or sets a drive's volume label.
         /// </summary>
-        /// <param name="Command"></param>
-        /// <param name="Drive">The drive letter followed by a colon and an optional backslash (might also work on UNCs and mapped drives), e.g. C: or D:\</param>
-        /// <param name="Value"></param>
-        public static void Drive(string Command, string Drive, string Value)
+        /// <param name="command"></param>
+        /// <param name="drive">The drive letter.</param>
+        /// <param name="value"></param>
+        public static void Drive(string command, string drive = "", string value = "")
         {
 
         }
@@ -23,55 +23,55 @@ namespace IronAHK.Rusty
         /// <summary>
         /// Retrieves various types of information about the computer's drive(s).
         /// </summary>
-        /// <param name="OutputVar">The name of the variable in which to store the result of <paramref name="Cmd"/>.</param>
-        /// <param name="Cmd"></param>
-        /// <param name="Value"></param>
-        public static void DriveGet(out string OutputVar, string Cmd, string Value)
+        /// <param name="result">The name of the variable in which to store the result.</param>
+        /// <param name="command"></param>
+        /// <param name="value"></param>
+        public static void DriveGet(out string result, string command, string value = "")
         {
-            OutputVar = null;
+            result = null;
         }
 
         /// <summary>
-        /// Retrieves the free disk space of a drive, in Megabytes.
+        /// Retrieves the free disk space of a drive, in megabytes.
         /// </summary>
-        /// <param name="OutputVar">The variable in which to store the result, which is rounded down to the nearest whole number.</param>
-        /// <param name="Path">Path of drive to receive information from. Since NTFS supports mounted volumes and directory junctions, different amounts of free space might be available in different folders of the same "drive" in some cases.</param>
-        public static void DriveSpaceFree(out double OutputVar, string Path)
+        /// <param name="result">The variable in which to store the result.</param>
+        /// <param name="path">Path of drive to receive information from.</param>
+        public static void DriveSpaceFree(out double result, string path)
         {
-            OutputVar = Math.Floor((double)(new DriveInfo(Path)).TotalFreeSpace / 1024 / 1024);
+            result = Math.Floor((double)(new DriveInfo(path)).TotalFreeSpace / 1024 / 1024);
         }
         
         /// <summary>
         /// Writes text to the end of a file, creating it first if necessary.
         /// </summary>
-        /// <param name="Text">The text to append to the file.</param>
-        /// <param name="Filename">The name of the file to be appended.
+        /// <param name="text">The text to append to <paramref name="file"/>.</param>
+        /// <param name="file">The name of the file to be appended.
         /// <list type="bullet">
-        /// <item><description>Binary mode: to append in binary mode rather than text mode, prepend an asterisk to the <paramref name="Filename"/>.</description></item>
-        /// <item><description>Standard output (stdout): specifying an asterisk (*) for <paramref name="Filename"/> causes <paramref name="Text"/> to be written to the console.</description></item>
+        /// <item><term>Binary mode</term>: <description>to append in binary mode rather than text mode, prepend an asterisk.</description></item>
+        /// <item><term>Standard output (stdout)</term>: <description>specifying an asterisk (*) causes <paramref name="text"/> to be written to the console.</description></item>
         /// </list>
         /// </param>
-        public static void FileAppend(string Text, string Filename)
+        public static void FileAppend(string text, string file)
         {
             try
             {
-                if (Filename == "*")
-                    Console.Write(Text);
+                if (file == "*")
+                    Console.Write(text);
                 else
                 {
-                    if (Filename.Length > 0 && Filename[0] == '*')
+                    if (file.Length > 0 && file[0] == '*')
                     {
-                        Filename = Filename.Substring(1);
-                        var writer = new BinaryWriter(File.Open(Filename, FileMode.OpenOrCreate));
-                        writer.Write(Text);
+                        file = file.Substring(1);
+                        var writer = new BinaryWriter(File.Open(file, FileMode.OpenOrCreate));
+                        writer.Write(text);
                     }
                     else
-                        File.AppendAllText(Filename, Text);
+                        File.AppendAllText(file, text);
                 }
 
                 ErrorLevel = 0;
             }
-            catch (Exception)
+            catch (IOException)
             {
                 ErrorLevel = 1;
             }
@@ -80,167 +80,144 @@ namespace IronAHK.Rusty
         /// <summary>
         /// Copies one or more files.
         /// </summary>
-        /// <param name="Source">The name of a single file or folder, or a wildcard pattern such as C:\Temp\*.tmp. SourcePattern is assumed to be in %A_WorkingDir% if an absolute path isn't specified.</param>
-        /// <param name="Dest">The name or pattern of the destination, which is assumed to be in %A_WorkingDir% if an absolute path isn't specified. To perform a simple copy -- retaining the existing file name(s) -- specify only the folder name as shown in these functionally identical examples:
-        /// <example>
-        /// FileCopy, C:\*.txt, C:\My Folder
-        /// FileCopy, C:\*.txt, C:\My Folder\*.*
-        /// </example>
-        /// </param>
-        /// <param name="Flag">
-        /// 0 = (default) do not overwrite existing files
-        /// 1 = overwrite existing files
-        /// </param>
-        public static void FileCopy(string Source, string Dest, int Flag)
-        {
-            try
-            {
-                File.Copy(Source, Dest, Flag != 0);
-                ErrorLevel = 0;
-            }
-            catch (Exception) { ErrorLevel = 1; }
-        }
-
-        /// <summary>
-        /// Copies a folder along with all its sub-folders and files (similar to <code>xcopy</code>).
-        /// </summary>
-        /// <param name="Source">Name of the source directory (with no trailing backslash), which is assumed to be in %A_WorkingDir% if an absolute path isn't specified. For example: <code>C:\My Folder</code></param>
-        /// <param name="Dest">Name of the destination dir (with no trailing baskslash), which is assumed to be in %A_WorkingDir% if an absolute path isn't specified. For example: <code>C:\Copy of My Folder</code></param>
-        /// <param name="Flag">
-        /// 0 (default): Do not overwrite existing files. The operation will fail and have no effect if Dest already exists as a file or directory.
-        /// 1: Overwrite existing files. However, any files or subfolders inside Dest that do not have a counterpart in Source will not be deleted.
-        /// </param>
-        public static void FileCopyDir(string Source, string Dest, int Flag)
-        {
-            String[] Files;
-
-            if (Dest[Dest.Length - 1] != Path.DirectorySeparatorChar)
-                Dest += Path.DirectorySeparatorChar;
-            if (!Directory.Exists(Dest)) Directory.CreateDirectory(Dest);
-            Files = Directory.GetFileSystemEntries(Source);
-            foreach (var Element in Files)
-            {
-                // Sub directories
-
-                if (Directory.Exists(Element))
-                    FileCopyDir(Element, Dest + Path.GetFileName(Element), Flag);
-                // Files in directory
-
-                else
-                {
-                    try
-                    {
-                        File.Copy(Element, Dest + Path.GetFileName(Element), Flag == 1);
-                    }
-                    catch (Exception) { };
-                }
-            }
-        }
-
-        /// <summary>
-        /// Creates a directory/folder.
-        /// </summary>
-        /// <param name="Path">Name of the directory to create, which is assumed to be in %A_WorkingDir% if an absolute path isn't specified.</param>
-        public static void FileCreateDir(string Path)
-        {
-            try
-            {
-                Directory.CreateDirectory(Path);
-                ErrorLevel = 0;
-            }
-            catch (Exception) { ErrorLevel = 1; }
-        }
-
-        /// <summary>
-        /// Creates a shortcut (.lnk) file.
-        /// </summary>
-        /// <param name="Target">Name of the file that the shortcut refers to, which should include an absolute path unless the file is integrated with the system (e.g. Notepad.exe). The file does not have to exist at the time the shortcut is created; in other words, shortcuts to invalid targets can be created.</param>
-        /// <param name="LinkFile">Name of the shortcut file to be created, which is assumed to be in %A_WorkingDir% if an absolute path isn't specified. Be sure to include the .lnk extension. If the file already exists, it will be overwritten.</param>
-        /// <param name="WorkingDir">Directory that will become Target's current working directory when the shortcut is launched. If blank or omitted, the shortcut will have a blank "Start in" field and the system will provide a default working directory when the shortcut is launched.</param>
-        /// <param name="Args">Parameters that will be passed to Target when it is launched. Separate parameters with spaces. If a parameter contains spaces, enclose it in double quotes.</param>
-        /// <param name="Description">Comments that describe the shortcut (used by the OS to display a tooltip, etc.)</param>
-        /// <param name="IconFile">The full path and name of the icon to be displayed for LinkFile. It must either be an ico file or the very first icon of an EXE or DLL.</param>
-        /// <param name="ShortcutKey">
-        /// <para>A single letter, number, or the name of a single key from the key list (mouse buttons and other non-standard keys might not be supported). Do not include modifier symbols. Currently, all shortcut keys are created as CTRL+ALT shortcuts. For example, if the letter B is specified for this parameter, the shortcut key will be CTRL-ALT-B.</para>
-        /// <para>For Windows 9x: A reboot might be required to get the shortcut key into effect. Alternatively, you can open the properties dialog for the shortcut and recreate the shortcut key to get it into effect immediately.</para>
-        /// </param>
-        /// <param name="IconNumber">To use an icon in IconFile other than the first, specify that number here (can be an expression). For example, 2 is the second icon.</param>
-        /// <param name="RunState">
-        /// <para>To have Target launched minimized or maximized, specify one of the following digits:</para>
-        /// <list type="">
-        /// <item>1 - Normal (this is the default)</item>
-        /// <item>3 - Maximized</item>
-        /// <item>7 - Minimized</item>
+        /// <param name="source">The name of a single file or folder, or a wildcard pattern.</param>
+        /// <param name="destination">The name or pattern of the destination.</param>
+        /// <param name="flag">
+        /// <list type="bullet">
+        /// <item><term>0</term>: <description>(default) do not overwrite existing files</description></item>
+        /// <item><term>1</term>: <description>overwrite existing files</description></item>
         /// </list>
         /// </param>
-        public static void FileCreateShortcut(string Target, string LinkFile, string WorkingDir, string Args, string Description, string IconFile, string ShortcutKey, int IconNumber, int RunState)
+        public static void FileCopy(string source, string destination, int flag = 0)
         {
+            try
+            {
+                File.Copy(source, destination, flag != 0);
+                ErrorLevel = 0;
+            }
+            catch (IOException)
+            {
+                ErrorLevel = 1;
+            }
+        }
 
+        /// <summary>
+        /// Copies a folder along with all its sub-folders and files.
+        /// </summary>
+        /// <param name="source">Path of the source directory.</param>
+        /// <param name="destination">Path of the destination directory.</param>
+        /// <param name="flag">
+        /// <list type="bullet">
+        /// <item><term>0</term>: <description>(default) do not overwrite existing files</description></item>
+        /// <item><term>1</term>: <description>overwrite existing files</description></item>
+        /// </list>
+        /// </param>
+        public static void FileCopyDir(string source, string destination, int flag = 0)
+        {
+            var overwrite = (flag & 1) == 1;
+
+            try
+            {
+                destination = Path.GetFullPath(destination);
+
+                if (Directory.Exists(destination))
+                {
+                    if (overwrite)
+                        return;
+                }
+                else
+                    Directory.CreateDirectory(destination);
+
+                // TODO: directory copy
+            }
+            catch (IOException)
+            {
+                ErrorLevel = 1;
+            }
+        }
+
+        /// <summary>
+        /// Creates a directory.
+        /// </summary>
+        /// <param name="path">Path of the directory to create.</param>
+        public static void FileCreateDir(string path)
+        {
+            try
+            {
+                Directory.CreateDirectory(path);
+                ErrorLevel = Directory.Exists(path) ? 0 : 1;
+            }
+            catch (IOException)
+            {
+                ErrorLevel = 1;
+            }
+        }
+
+        /// <summary>
+        /// Creates a shortcut to a file.
+        /// </summary>
+        /// <param name="target">Path to the shortcut file.</param>
+        /// <param name="link">The file referenced by the shortcut.</param>
+        /// <param name="workingDir">The working directory.</param>
+        /// <param name="args">Arguments to start <paramref name="link"/> with.</param>
+        /// <param name="description">A summary of the shortcut.</param>
+        /// <param name="icon"></param>
+        /// <param name="shortcutKey">A hotkey activator.</param>
+        /// <param name="iconNumber"></param>
+        /// <param name="runState"></param>
+        public static void FileCreateShortcut(string target, string link, string workingDir = "", string args = "", string description = "", string icon = "", string shortcutKey = "", int iconNumber = 0, int runState = 1)
+        {
+            throw new NotImplementedException();
         }
 
         /// <summary>
         /// Deletes one or more files.
         /// </summary>
-        /// <param name="FilePattern">
-        /// <para>The name of a single file or a wildcard pattern such as C:\Temp\*.tmp. FilePattern is assumed to be in %A_WorkingDir% if an absolute path isn't specified.</para>
-        /// <para>To remove an entire folder, along with all its sub-folders and files, use FileRemoveDir.</para>
-        /// </param>
-        public static void FileDelete(string FilePattern)
+        /// <param name="pattern">The name of a file or a wildcard pattern.</param>
+        public static void FileDelete(string pattern)
         {
             try
             {
-                File.Delete(FilePattern);
+                foreach (var file in Glob(pattern))
+                    File.Delete(file);
                 ErrorLevel = 0;
             }
-            catch (Exception) { ErrorLevel = 1; }
+            catch (IOException)
+            {
+                ErrorLevel = 1;
+            }
         }
 
         /// <summary>
-        /// Returns a blank value (empty string) if FilePattern does not exist (FilePattern is assumed to be in A_WorkingDir if an absolute path isn't specified). Otherwise, it returns the attribute string (a subset of "RASHNDOCT") of the first matching file or folder. If the file has no attributes (rare), "X" is returned. FilePattern may be the exact name of a file or folder, or it may contain wildcards (* or ?). Since an empty string is seen as "false", the function's return value can always be used as a quasi-boolean value. For example, the statement if FileExist("C:\My File.txt") would be true if the file exists and false otherwise. Similarly, the statement if InStr(FileExist("C:\My Folder"), "D") would be true only if the file exists and is a directory. Corresponding commands: IfExist and FileGetAttrib.
+        /// Returns the attributes of a file if it exists.
         /// </summary>
-        /// <param name="FilePattern"></param>
-        /// <returns></returns>
-        public static string FileExist(string FilePattern)
+        /// <param name="pattern">The name of a file or wildcard pattern.</param>
+        /// <returns>A blank string if no files or folders are found, otheriwse the attributes of the first match.</returns>
+        public static string FileExist(string pattern)
         {
-            try { return FromFileAttribs(File.GetAttributes(FilePattern)); }
-            catch (Exception) { return string.Empty; }
-        }
-
-        /// <summary>
-        /// Reports whether a file or folder is read-only, hidden, etc.
-        /// </summary>
-        /// <param name="OutputVar">The name of the variable in which to store the retrieved text.</param>
-        /// <param name="Filename">The name of the target file, which is assumed to be in %A_WorkingDir% if an absolute path isn't specified. If omitted, the current file of the innermost enclosing File-Loop will be used instead.</param>
-        public static void FileGetAttrib(out string OutputVar, string Filename)
-        {
-            OutputVar = string.Empty;
             try
             {
-                OutputVar = FromFileAttribs(File.GetAttributes(Filename));
-                ErrorLevel = 0;
+                var files = Glob(pattern);
+                return files.Length > 0 ? FromFileAttribs(File.GetAttributes(files[0])) : string.Empty;
             }
-            catch (Exception) { ErrorLevel = 1; }
+            catch (IOException)
+            {
+                return string.Empty;
+            }
         }
 
         /// <summary>
-        /// Retrieves information about a shortcut (.lnk) file, such as its target file.
+        /// Retrieves information about a shortcut file.
         /// </summary>
-        /// <param name="LinkFile">Name of the shortcut file to be analyzed, which is assumed to be in %A_WorkingDir% if an absolute path isn't specified. Be sure to include the .lnk extension.</param>
-        /// <param name="OutTarget">Name of the variable in which to store the shortcut's target (not including any arguments it might have). For example: C:\WINDOWS\system32\notepad.exe</param>
-        /// <param name="OutDir">Name of the variable in which to store the shortcut's working directory. For example: C:\My Documents. If environment variables such as %WinDir% are present in the string, one way to resolve them is via StringReplace. For example: StringReplace, OutDir, OutDir, `%WinDir`%, %A_WinDir%</param>
-        /// <param name="OutArgs">Name of the variable in which to store the shortcut's parameters (blank if none).</param>
-        /// <param name="OutDescription">Name of the variable in which to store the shortcut's comments (blank if none).</param>
-        /// <param name="OutIcon">Name of the variable in which to store the filename of the shortcut's icon (blank if none).</param>
-        /// <param name="OutIconNum">Name of the variable in which to store the shortcut's icon number within the icon file (blank if none). This value is most often 1, which means the first icon. </param>
-        /// <param name="OutRunState">
-        /// <para>Name of the variable in which to store the shortcut's initial launch state, which is one of the following digits:</para>
-        /// <list type="">
-        /// <item>1: Normal</item>
-        /// <item>3: Maximized</item>
-        /// <item>7: Minimized</item>
-        /// </list>
-        /// </param>
-        public static void FileGetShortcut(string LinkFile, string OutTarget, string OutDir, string OutArgs, string OutDescription, string OutIcon, string OutIconNum, string OutRunState)
+        /// <param name="link"></param>
+        /// <param name="target"></param>
+        /// <param name="workingDir"></param>
+        /// <param name="args"></param>
+        /// <param name="description"></param>
+        /// <param name="icon"></param>
+        /// <param name="iconNumber"></param>
+        /// <param name="runState"></param>
+        public static void FileGetShortcut(string link, out string target, out string workingDir, out string args, out string description, out string icon, out string iconNumber, out string runState)
         {
             throw new NotImplementedException();
         }
@@ -248,50 +225,49 @@ namespace IronAHK.Rusty
         /// <summary>
         /// Retrieves the size of a file.
         /// </summary>
-        /// <param name="OutputVar">The name of the variable in which to store the retrieved size (rounded down to the nearest whole number).</param>
-        /// <param name="Filename">The name of the target file, which is assumed to be in %A_WorkingDir% if an absolute path isn't specified. If omitted, the current file of the innermost enclosing File-Loop will be used instead.</param>
-        /// <param name="Units">
+        /// <param name="result">The name of the variable in which to store the retrieved size.</param>
+        /// <param name="file">The name of the target file.</param>
+        /// <param name="units">
         /// <para>If present, this parameter causes the result to be returned in units other than bytes:</para>
-        /// <list type="">
-        /// <item>K = kilobytes</item>
-        /// <item>M = megabytes</item>
+        /// <list type="bullet">
+        /// <item><term>K</term>: <description>kilobytes</description></item>
+        /// <item><term>M</term>: <description>megabytes</description></item>
+        /// <item><term>G</term>: <description>gigabytes</description></item>
         /// </list>
         /// </param>
-        public static void FileGetSize(out long OutputVar, string Filename, string Units)
+        public static void FileGetSize(out long result, string file, string units = "")
         {
             try
             {
-                long size = (new FileInfo(Filename)).Length;
+                long size = (new FileInfo(file)).Length;
+                const int scale = 1024;
 
-                if (Units.Length != 0)
+                if (!string.IsNullOrEmpty(units))
                 {
-                    switch (Units[0])
+                    switch (units[0])
                     {
                         case 'k':
                         case 'K':
-                            size /= 1024;
+                            size /= scale;
                             break;
 
                         case 'm':
                         case 'M':
-                            size /= 1024 * 1024;
+                            size /= scale * scale;
                             break;
 
                         case 'g':
                         case 'G':
-                            size /= 1024 * 1024 * 1024;
+                            size /= scale * scale * scale;
                             break;
-
-                        default:
-                            throw new ArgumentOutOfRangeException();
                     }
                 }
 
-                OutputVar = size;
+                result = size;
             }
             catch (Exception)
             {
-                OutputVar = 0;
+                result = 0;
                 ErrorLevel = 1;
             }
         }
@@ -299,85 +275,83 @@ namespace IronAHK.Rusty
         /// <summary>
         /// Retrieves the datetime stamp of a file or folder.
         /// </summary>
-        /// <param name="OutputVar">The name of the variable in which to store the retrieved date-time in format YYYYMMDDHH24MISS. The time is your own local time, not UTC/GMT.</param>
-        /// <param name="Filename">The name of the target file or folder, which is assumed to be in %A_WorkingDir% if an absolute path isn't specified. If omitted, the current file of the innermost enclosing File-Loop will be used instead.</param>
-        /// <param name="WhichTime">
+        /// <param name="result">The name of the variable in which to store the retrieved date-time in format YYYYMMDDHH24MISS in local time.</param>
+        /// <param name="file">The name of the target file or folder.</param>
+        /// <param name="time">
         /// <para>Which timestamp to retrieve:</para>
-        /// <list type="">
-        /// <item>M = Modification time (this is the default if the parameter is omitted)</item>
-        /// <item>C = Creation time</item>
-        /// <item>A = Last access time </item>
+        /// <list type="bullet">
+        /// <item><term>M</term>: <description>(default) modification time</description></item>
+        /// <item><term>C</term>: <description>reation time</description></item>
+        /// <item><term>A</term>: <description>last access time</description></item>
         /// </list>
         /// </param>
-        public static void FileGetTime(out string OutputVar, string Filename, string WhichTime)
+        public static void FileGetTime(out string result, string file, string time = "M")
         {
-            var file = new FileInfo(Filename);
-            var time = new DateTime();
+            if (!File.Exists(file))
+            {
+                result = string.Empty;
+                ErrorLevel = 1;
+                return;
+            }
 
-            switch (WhichTime[0])
+            var info = new FileInfo(file);
+            var date = new DateTime();
+
+            switch (time[0])
             {
                 case 'm':
                 case 'M':
-                    time = file.LastWriteTime;
+                    date = info.LastWriteTime;
                     break;
 
                 case 'c':
                 case 'C':
-                    time = file.CreationTime;
+                    date = info.CreationTime;
                     break;
 
                 case 'a':
                 case 'A':
-                    time = file.LastAccessTime;
+                    date = info.LastAccessTime;
                     break;
             }
 
-            OutputVar = FromTime(time).ToString();
+            result = FromTime(date).ToString();
         }
 
         /// <summary>
-        /// Retrieves the version of a file.
+        /// Retrieves the version information of a file.
         /// </summary>
-        /// <param name="OutputVar">The name of the variable in which to store the version number/string.</param>
-        /// <param name="Filename">The name of the target file, which is assumed to be in %A_WorkingDir% if an absolute path isn't specified. If omitted, the current file of the innermost enclosing File-Loop will be used instead.</param>
-        /// <remarks>Most non-executable files (and even some EXEs) won't have a version, and thus the <paramref name="OutputVar"/> will be blank in these cases.</remarks>
-        public static void FileGetVersion(out string OutputVar, string Filename)
+        /// <param name="result">The name of the variable in which to store the version number or string.</param>
+        /// <param name="file">The name of the target file.</param>
+        public static void FileGetVersion(out string result, string file)
         {
-            OutputVar = string.Empty;
+            result = string.Empty;
             try
             {
-                FileVersionInfo info = FileVersionInfo.GetVersionInfo(Filename);
-                OutputVar = info.FileVersion;
+                var info = FileVersionInfo.GetVersionInfo(file);
+                result = info.FileVersion;
                 ErrorLevel = 0;
             }
-            catch (Exception) { ErrorLevel = 1; }
+            catch (Exception)
+            {
+                ErrorLevel = 1;
+            }
         }
-
-
 
         /// <summary>
         /// Moves or renames one or more files.
         /// </summary>
-        /// <param name="Source">The name of a single file or a wildcard pattern such as C:\Temp\*.tmp. SourcePattern is assumed to be in %A_WorkingDir% if an absolute path isn't specified.</param>
-        /// <param name="Dest">The name or pattern of the destination, which is assumed to be in %A_WorkingDir% if an absolute path isn't specified. To perform a simple move -- retaining the existing file name(s) -- specify only the folder name as shown in these functionally identical examples:
-        /// <code>FileMove, C:\*.txt, C:\My Folder</code>
-        /// <code>FileMove, C:\*.txt, C:\My Folder\*.*</code>
-        /// </param>
-        /// <param name="Flag">
-        /// <para>(optional) this flag determines whether to overwrite files if they already exist:</para>
-        /// <list type="">
-        /// <item>0 = (default) do not overwrite existing files</item>
-        /// <item>1 = overwrite existing files</item>
+        /// <param name="source">The name of a single file or a wildcard pattern.</param>
+        /// <param name="destination">The name or pattern of the destination.</param>
+        /// <param name="flag">
+        /// <list type="bullet">
+        /// <item><term>0</term>: <description>(default) do not overwrite existing files</description></item>
+        /// <item><term>1</term>: <description>overwrite existing files</description></item>
         /// </list>
         /// </param>
-        public static void FileMove(string Source, string Dest, string Flag)
+        public static void FileMove(string source, string destination, int flag = 0)
         {
-            try
-            {
-                File.Move(Source, Dest);
-                ErrorLevel = 0;
-            }
-            catch (Exception) { ErrorLevel = 1; }
+            // TODO: FileMove
         }
 
         /// <summary>

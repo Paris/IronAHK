@@ -8,46 +8,58 @@ namespace IronAHK.Rusty
 {
     partial class Core
     {
-        // TODO: organise PInvoke.cs
-
         /// <summary>
-        /// Calls a function inside a DLL, such as a standard Windows API function.
+        /// Calls an unmanaged function in a DLL.
         /// </summary>
-        /// <param name="Function">
-        /// <para>The DLL or EXE file name followed by a backslash and the name of the function. For example: "MyDLL\MyFunction" (the file extension ".dll" is the default when omitted). If an absolute path isn't specified, DllFile is assumed to be in the system's PATH or A_WorkingDir.</para>
-        /// <para>DllFile may be omitted when calling a function that resides in User32.dll, Kernel32.dll, ComCtl32.dll, or Gdi32.dll. For example, "User32\IsWindowVisible" produces the same result as "IsWindowVisible". For these standard DLLs, the letter "A" suffix that appears on some API functions may also be omitted. For example, "MessageBox" is the same as "MessageBoxA".</para>
-        /// <para>Performance can be dramatically improved when making repeated calls to a DLL by loading it beforehand.</para>
-        /// <para>This parameter may also consist solely of an an integer, which is interpreted as the address of the function to call. Sources of such addresses include COM and RegisterCallback().</para>
+        /// <param name="function">
+        /// <para>The path to the function, e.g. <c>C:\path\to\my.dll</c>. The ".dll" file extension can be omitted.</para>
+        /// <para>If an absolute path is not specified on Windows the function will search the following system libraries (in order):
+        /// User32.dll, Kernel32.dll, ComCtl32.dll, or Gdi32.dll.</para>
         /// </param>
-        /// <param name="Parameters">
-        /// <para>Each of these pairs represents a single parameter to be passed to the function. The number of pairs is unlimited. For Type, see the types table below. For Arg, specify the value to be passed to the function.</para>
-        /// <para>The word Cdecl is normally omitted because most functions use the standard calling convention rather than the "C" calling convention (functions such as wsprintf that accept a varying number of arguments are one exception to this). If you omit Cdecl but the call yields ErrorLevel An -- where n is the total size of the arguments you passed -- Cdecl might be required.</para>
-        /// <para>If present, the word Cdecl should be listed before the return type (if any). Separate each word from the next with a space or tab. For example: "Cdecl Str"</para>
-        /// <para>ReturnType: If the function returns a 32-bit signed integer (Int), BOOL, or nothing at all, ReturnType may be omitted. Otherwise, specify one of the argument types from the types table below. The asterisk suffix is also supported.</para>
-        /// </param>
-        /// <returns>DllCall returns the actual value returned by the function. If the function is of a type that does not return a value, the result is an undefined integer. If the function cannot be called due to an error, the return value is blank (an empty string).</returns>
-        public static object DllCall(object Function, params object[] Parameters)
+        /// <param name="parameters">The type and argument list.</param>
+        /// <returns>The value returned by the function.</returns>
+        /// <remarks>
+        /// <para><see cref="ErrorLevel"/> will be set to one of the following:</para>
+        /// <list type="bullet">
+        /// <item><term>0</term>: <description>success</description></item>
+        /// <item><term>-3</term>: <description>file could not be accessed</description></item>
+        /// <item><term>-4</term>: <description>function could not be found</description></item>
+        /// </list>
+        /// <para>The following types can be used:</para>
+        /// <list type="bullet">
+        /// <item><term><c>str</c></term>: <description>a string</description></item>
+        /// <item><term><c>int64</c></term>: <description>a 64-bit integer</description></item>
+        /// <item><term><c>int</c></term>: <description>a 32-bit integer</description></item>
+        /// <item><term><c>short</c></term>: <description>a 16-bit integer</description></item>
+        /// <item><term><c>char</c></term>: <description>an 8-bit integer</description></item>
+        /// <item><term><c>float</c></term>: <description>a 32-bit floating point number</description></item>
+        /// <item><term><c>double</c></term>: <description>a 64-bit floating point number</description></item>
+        /// <item><term><c>*</c> or <c>P</c> suffix</term>: <description>pass the specified type by address</description></item>
+        /// <item><term><c>U</c> prefix</term>: <description>use unsigned values for numeric types</description></item>
+        /// </list>
+        /// </remarks>
+        public static object DllCall(object function, params object[] parameters)
         {
             ErrorLevel = 0;
 
             #region Parameters
 
-            var types = new Type[Parameters.Length / 2];
+            var types = new Type[parameters.Length / 2];
             var args = new object[types.Length];
             var returns = typeof(int);
             bool cdecl = false;
 
-            for (int i = 0; i < Parameters.Length; i++)
+            for (int i = 0; i < args.Length; i++)
             {
                 Type type = null;
-                string name = ((string)Parameters[i]).ToLowerInvariant().Trim();
+                string name = ((string)args[i]).ToLowerInvariant().Trim();
                 const string Cdecl = "cdecl";
 
                 if (name.StartsWith(Cdecl))
                 {
                     name = name.Substring(Cdecl.Length).Trim();
 
-                    if (i + 1 == Parameters.Length)
+                    if (i + 1 == args.Length)
                     {
                         cdecl = true;
                         goto returntype;
@@ -91,11 +103,11 @@ namespace IronAHK.Rusty
 
                 i++;
 
-                if (i < Parameters.Length)
+                if (i < args.Length)
                 {
                     int n = i / 2;
                     types[n] = type;
-                    args[n] = Convert.ChangeType(Parameters[i], type);
+                    args[n] = Convert.ChangeType(args[i], type);
                     continue;
                 }
 
@@ -108,9 +120,9 @@ namespace IronAHK.Rusty
             #region Method
 
             #region DLL
-            if (Function is string)
+            if (function is string)
             {
-                string path = (string)Function, name;
+                string path = (string)function, name;
 
                 int z = path.LastIndexOf(Path.DirectorySeparatorChar);
 
@@ -202,9 +214,9 @@ namespace IronAHK.Rusty
             }
             #endregion
             #region Address
-            else if (Function is decimal || Function is int || Function is float)
+            else if (function is decimal || function is int || function is float)
             {
-                var address = (int)Function;
+                var address = (int)function;
 
                 if (address < 0)
                 {
@@ -241,7 +253,7 @@ namespace IronAHK.Rusty
         /// <summary>
         /// Find a function in the local scope.
         /// </summary>
-        /// <param name="name">The name of the function to look for.</param>
+        /// <param name="name">The name of the function.</param>
         /// <returns>A delegate (function pointer).</returns>
         public static GenericFunction FunctionReference(string name)
         {
@@ -254,60 +266,64 @@ namespace IronAHK.Rusty
         }
 
         /// <summary>
-        /// Returns the binary number stored at the specified address+offset. For VarOrAddress, passing MyVar is equivalent to passing &amp;MyVar. However, omitting the "&amp;" performs better and ensures that the target address is valid (invalid addresses return ""). By contrast, anything other than a naked variable passed to VarOrAddress is treated as a raw address; consequently, specifying MyVar+0 forces the number in MyVar to be used instead of the address of MyVar itself. For Type, specify UInt, Int, Int64, Short, UShort, Char, UChar, Double, or Float (though unlike DllCall, these must be enclosed in quotes when used as literal strings); for details see DllCall Types.
+        /// Returns a binary number stored at the specified address in memory.
         /// </summary>
-        /// <param name="VarOrAddress"></param>
-        /// <param name="Offset"></param>
-        /// <param name="Type"></param>
-        public static long NumGet(long VarOrAddress, int Offset, string Type)
+        /// <param name="address">The address in memory.</param>
+        /// <param name="offset">The offset from <paramref name="address"/>.</param>
+        /// <param name="type">Any type outlined in <see cref="DllCall"/>.</param>
+        /// <returns>The value stored at the address.</returns>
+        public static long NumGet(long address, int offset = 0, string type = "UInt")
         {
-            var adr = new IntPtr(VarOrAddress);
-            char mode = Type.Length > 1 ? Type.ToLowerInvariant()[1] : '\0';
+            var adr = new IntPtr(address);
+            char mode = type.Length > 1 ? type.ToLowerInvariant()[1] : '\0';
 
             switch (mode)
             {
-                case 's': return Marshal.ReadInt16(adr, Offset); // short
-                case 'c': return Marshal.ReadByte(adr, Offset); // char
+                case 's': return Marshal.ReadInt16(adr, offset); // short
+                case 'c': return Marshal.ReadByte(adr, offset); // char
                 default: // double, int, int64
-                    if (Type.Contains("6"))
-                        return Marshal.ReadInt64(adr, Offset);
-                    else return Marshal.ReadInt32(adr, Offset);
+                    if (type.Contains("6"))
+                        return Marshal.ReadInt64(adr, offset);
+                    else return Marshal.ReadInt32(adr, offset);
             }
         }
 
         /// <summary>
-        /// Stores Number in binary format at the specified address+offset and returns the address to the right of the item just written. For VarOrAddress, passing MyVar is equivalent to passing &amp;MyVar. However, omitting the "&amp;" performs better and ensures that the target address is valid (invalid addresses return ""). By contrast, anything other than a naked variable passed to VarOrAddress is treated as a raw address; consequently, specifying MyVar+0 forces the number in MyVar to be used instead of the address of MyVar itself. For Type, specify UInt, Int, Int64, Short, UShort, Char, UChar, Double, or Float (though unlike DllCall, these must be enclosed in quotes when used as literal strings); for details see DllCall Types. If an integer is too large to fit in the specified Type, its most significant bytes are ignored; e.g. NumPut(257, var, 0, "Char") would store the number 1.
+        /// Stores a number in binary format at the specified address in memory.
         /// </summary>
-        /// <param name="Number"></param>
-        /// <param name="VarOrAddress"></param>
-        /// <param name="Offset"></param>
-        /// <param name="Type"></param>
-        public static void NumPut(int Number, long VarOrAddress, int Offset, string Type)
+        /// <param name="number">The number to store.</param>
+        /// <param name="address">The address in memory.</param>
+        /// <param name="offset">The offset from <paramref name="address"/>.</param>
+        /// <param name="type">Any type outlined in <see cref="DllCall"/>.</param>
+        /// <returns>The address of the first byte written.</returns>
+        public static long NumPut(int number, long address, int offset = 0, string type = "UInt")
         {
-            var adr = new IntPtr(VarOrAddress);
-            char mode = Type.Length > 1 ? Type.ToLowerInvariant()[1] : '\0';
+            var adr = new IntPtr(address);
+            char mode = type.Length > 1 ? type.ToLowerInvariant()[1] : '\0';
 
             switch (mode)
             {
-                case 's': Marshal.WriteInt16(adr, Offset, (char)Number); break; // short
-                case 'c': Marshal.WriteByte(adr, Offset, (byte)Number); break; // char
+                case 's': Marshal.WriteInt16(adr, offset, (char)number); break; // short
+                case 'c': Marshal.WriteByte(adr, offset, (byte)number); break; // char
                 default: // double, int, int64
-                    if (Type.Contains("6"))
-                        Marshal.WriteInt64(adr, Offset, Number);
-                    else Marshal.WriteInt32(adr, Offset, Number);
+                    if (type.Contains("6"))
+                        Marshal.WriteInt64(adr, offset, number);
+                    else Marshal.WriteInt32(adr, offset, number);
                     break;
             }
+
+            return adr.ToInt64() + offset;
         }
 
         /// <summary>
         /// Converts a local function to a native function pointer.
         /// </summary>
-        /// <param name="FunctionName">The name of the function.</param>
-        /// <param name="Ignored">Unused legacy parameters.</param>
+        /// <param name="function">The name of the function.</param>
+        /// <param name="args">Unused legacy parameters.</param>
         /// <returns>An integer address to the function callable by unmanaged code.</returns>
-        public static long RegisterCallback(string FunctionName, object[] Ignored)
+        public static long RegisterCallback(string function, object[] args)
         {
-            var method = FindLocalMethod(FunctionName);
+            var method = FindLocalMethod(function);
 
             if (method == null)
                 return 0;
@@ -324,30 +340,27 @@ namespace IronAHK.Rusty
         }
 
         /// <summary>
-        /// Enlarges a variable's holding capacity or frees its memory. Normally, this is necessary only for unusual circumstances such as DllCall.
+        /// Enlarges a variable's holding capacity. Usually only necessary for <see cref="DllCall"/>.
         /// </summary>
-        /// <param name="Var">The name of the variable (not in quotes). For example: VarSetCapacity(MyVar, 1000). This can also be a dynamic variable such as Array%i% or a function's ByRef parameter.</param>
-        /// <param name="RequestedCapacity">
-        /// <para>If omitted, the variable's current capacity will be returned and its contents will not be altered. Otherwise, anything currently in the variable is lost (the variable becomes blank).</para>
-        /// <para>Specify for RequestedCapacity the length of string that the variable should be able to hold after the adjustment. This length does not include the internal zero terminator. For example, specifying 1 would allow the variable to hold up to one character in addition to its internal terminator. Note: the variable will auto-expand if the script assigns it a larger value later.</para>
-        /// <para>Since this function is often called simply to ensure the variable has a certain minimum capacity, for performance reasons, it shrinks the variable only when RequestedCapacity is 0. In other words, if the variable's capacity is already greater than RequestedCapacity, it will not be reduced (but the variable will still made blank for consistency).</para>
-        /// <para>Therefore, to explicitly shrink a variable, first free its memory with VarSetCapacity(Var, 0) and then use VarSetCapacity(Var, NewCapacity) -- or simply let it auto-expand from zero as needed.</para>
-        /// <para>For performance reasons, freeing a variable whose previous capacity was between 1 and 63 might have no effect because its memory is of a permanent type. In this case, the current capacity will be returned rather than 0.</para>
-        /// <para>For performance reasons, the memory of a variable whose capacity is under 4096 is not freed by storing an empty string in it (e.g. Var := ""). However, VarSetCapacity(Var, 0) does free it.</para>
-        /// <para>Specify -1 for RequestedCapacity to update the variable's internally-stored length to the length of its current contents. This is useful in cases where the variable has been altered indirectly, such as by passing its address via DllCall(). In this mode, VarSetCapacity() returns the length rather than the capacity.</para>
-        /// </param>
-        /// <param name="FillByte">This parameter is normally omitted, in which case the memory of the target variable is not initialized (instead, the variable is simply made blank as described above). Otherwise, specify a number between 0 and 255. Each byte in the target variable's memory area (its current capacity) is set to that number. Zero is by far the most common value, which is useful in cases where the variable will hold raw binary data such as a DllCall structure.</param>
-        /// <returns>The length of string that Var can now hold, which will be greater or equal to RequestedCapacity. If VarName is not a valid variable name (such as a literal string or number), 0 is returned. If the system has insufficient memory to make the change (very rare), an error dialog will be displayed and the current thread will exit.</returns>
-        public static int VarSetCapacity(out byte[] Var, int RequestedCapacity, int FillByte)
+        /// <param name="variable">The variable to change.</param>
+        /// <param name="capacity">Specify zero to return the current capacity.
+        /// Otherwise <paramref name="variable"/> will be recreated as a byte array with this total length.</param>
+        /// <param name="pad">Specify a value between 0 and 255 to initalise each index with this number.</param>
+        /// <returns>The total capacity of <paramref name="variable"/>.</returns>
+        public static int VarSetCapacity(ref object variable, int capacity = 0, int pad = -1)
         {
-            Var = new byte[RequestedCapacity];
+            if (capacity == 0)
+                return Marshal.SizeOf(variable);
 
-            var fill = (byte)FillByte;
-            if (fill != 0)
-                for (int i = 0; i < Var.Length; i++)
-                    Var[i] = fill;
+            var bytes = new byte[capacity];
 
-            return Var.Length;
+            var fill = (byte)pad;
+            if (pad > -1 && pad < 256)
+                for (int i = 0; i < bytes.Length; i++)
+                    bytes[i] = fill;
+
+            variable = bytes;
+            return bytes.Length;
         }
     }
 }
