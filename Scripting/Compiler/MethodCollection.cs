@@ -1,12 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Reflection.Emit;
 
 namespace IronAHK.Scripting
 {
-    class MethodCollection : List<MethodInfo>
+    partial class MethodCollection : List<MethodInfo>
     {
-        public MethodInfo BestMatch(string name, int length)
+        public MethodInfo BestMatch(string name, int length, out MethodBuilder actual)
         {
             MethodInfo result = null;
             var last = int.MaxValue;
@@ -20,7 +21,10 @@ namespace IronAHK.Scripting
                 var param = writer.GetParameters().Length;
 
                 if (param == length) // perfect match when parameter count is the same
+                {
+                    actual = GrabMethod(writer);
                     return writer;
+                }
                 else if (param > length && param < last) // otherwise find a method with the next highest number of parameters
                 {
                     result = writer;
@@ -29,7 +33,8 @@ namespace IronAHK.Scripting
                 else if (result == null) // return the first method with excess parameters as a last resort 
                     result = writer;
             }
-
+            
+            actual = GrabMethod(result);
             return result;
         }
     }

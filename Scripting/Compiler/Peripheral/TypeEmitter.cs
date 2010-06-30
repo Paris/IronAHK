@@ -11,6 +11,7 @@ namespace IronAHK.Scripting
         void EmitType(ModuleBuilder Parent, CodeTypeDeclaration Decl)
         {
             TypeBuilder Type = Parent.DefineType(Decl.Name, TypeAttributes.Public, typeof(Script));
+            Methods.Target = Type;
 
             // Allow for late binding
             var LocalMethods = new Dictionary<string, MethodWriter>();

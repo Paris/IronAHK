@@ -36,8 +36,9 @@ namespace IronAHK.Scripting
             }
             
             // Then the methods provided by rusty
+            MethodBuilder actual = null;
             if(target == null)
-                target = Lookup.BestMatch(invoke.Method.MethodName, invoke.Parameters.Count);
+                target = Lookup.BestMatch(invoke.Method.MethodName, invoke.Parameters.Count, out actual);
             
             // Lastly, the native methods
             if(target == null && invoke.Method.TargetObject != null)
@@ -143,7 +144,9 @@ namespace IronAHK.Scripting
             }
             #endregion
             
-            Generator.Emit(OpCodes.Call, target);
+            if(actual == null)
+                Generator.Emit(OpCodes.Call, target);
+            else Generator.Emit(OpCodes.Call, actual);
             
             #region Save back the variables
             // Save the variables passed to reference back in Rusty's variable handling

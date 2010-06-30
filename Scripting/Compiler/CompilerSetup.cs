@@ -54,9 +54,7 @@ namespace IronAHK.Scripting
         void MineTypes(Assembly Asm)
         {
             foreach(var T in Asm.GetTypes())
-            {
                 MineMethods(T);
-            }
         }
 
         void MineMethods(Type Typ)
@@ -65,6 +63,7 @@ namespace IronAHK.Scripting
                 return;
 
             Debug("Adding type " + Typ.Name);
+            Methods.Sources.Add(Typ);
 
             foreach(var Method in Typ.GetMethods())
             {
