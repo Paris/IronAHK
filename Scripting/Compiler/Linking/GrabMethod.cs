@@ -10,6 +10,8 @@ namespace IronAHK.Scripting
         static OpCode [] one_byte_opcodes;
         static OpCode [] two_bytes_opcodes;
         
+        const string Prefix = ".builtin_";
+        
         public List<Type> Sources;
         public TypeBuilder Target;
         public ModuleBuilder Module;
@@ -53,7 +55,7 @@ namespace IronAHK.Scripting
             if(MethodsDone.ContainsKey(Original)) 
                 return MethodsDone[Original];
             
-            MethodBuilder Builder = Target.DefineMethod(".builtin_"+Original.Name, Original.Attributes, 
+            MethodBuilder Builder = Target.DefineMethod(Prefix+Original.Name, Original.Attributes, 
                 Original.ReturnType, ParameterTypes(Original));
             ILGenerator Gen = Builder.GetILGenerator();
             
@@ -276,7 +278,7 @@ namespace IronAHK.Scripting
             if(FieldsDone.ContainsKey(Field))
                return FieldsDone[Field];
             
-            FieldBuilder CopiedField = Target.DefineField(".builtin_"+Field.Name, Field.FieldType, Field.Attributes); 
+            FieldBuilder CopiedField = Target.DefineField(Prefix+Field.Name, Field.FieldType, Field.Attributes); 
             FieldsDone.Add(Field, CopiedField);
             
             return CopiedField;
