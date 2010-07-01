@@ -103,15 +103,16 @@ namespace IronAHK.Scripting
                     break;
                 }
                     
+                // Argument is a field reference
                 case OperandType.InlineField:
                 {
                     int Token = BitHelper.ReadInteger(Bytes, ref i);
                     FieldInfo Field = Origin.ResolveField(Token);
-                    
                     Gen.Emit(Code, Field);
                     break;
                 }
                     
+                // Argument is a type reference
                 case OperandType.InlineType:
                 {
                     int Token = BitHelper.ReadInteger(Bytes, ref i);
@@ -120,6 +121,7 @@ namespace IronAHK.Scripting
                     break;
                 }
                     
+                // Argument is an inline string
                 case OperandType.InlineString:
                 {
                     int Token = BitHelper.ReadInteger(Bytes, ref i);
@@ -127,14 +129,8 @@ namespace IronAHK.Scripting
                     Gen.Emit(Code, Copy);
                     break;
                 }
-                    
-                case OperandType.InlineSig:
-                {
-                    int Token = BitHelper.ReadInteger(Bytes, ref i);
-                    byte[] Sig = Module.ResolveSignature(Token);
-                    break;
-                }
-                    
+                 
+                // Argument is a metadata token
                 case OperandType.InlineTok:
                 {
                     int Token = BitHelper.ReadInteger(Bytes, ref i);
@@ -151,6 +147,7 @@ namespace IronAHK.Scripting
                     break;
                 }
                     
+                // Argument is a byte
                 case OperandType.ShortInlineBrTarget:
                 case OperandType.ShortInlineI:
                 case OperandType.ShortInlineVar:
@@ -158,36 +155,39 @@ namespace IronAHK.Scripting
                     Gen.Emit(Code, Bytes[++i]);
                     break;
                 }
-                    
+                
+                // Argument is a short
                 case OperandType.InlineVar:
                 {
                     Gen.Emit(Code, BitHelper.ReadShort(Bytes, ref i));
                     break;
                 }
                     
+                // Argument is a 32-bit integer
                 case OperandType.InlineSwitch:
                 case OperandType.InlineBrTarget:
                 case OperandType.InlineI:
-                case OperandType.ShortInlineR: // This is actualy a float, but we don't care
+                case OperandType.ShortInlineR: // This is actually a float, but we don't care
                 {
                     Gen.Emit(Code, BitHelper.ReadInteger(Bytes, ref i));
                     break;
                 }
                     
+                // Argument is a 64-bit integer
                 case OperandType.InlineI8:
                 {
                     Gen.Emit(Code, BitHelper.ReadLong(Bytes, ref i));
                     break;
                 }
                     
+                // Argument is a 32-bit float
                 case OperandType.InlineR:
                 {
                     Gen.Emit(Code, BitHelper.ReadDouble(Bytes, ref i));
                     break;
                 }     
-                    
-                // TODO: OperandType.InlineTok, OperandType.InlineSig
                 
+                // If ever we run across OpCodes.Calli this'll probably happen
                 default:
                     throw new InvalidOperationException("The method copier ran across an unknown opcode.");
             }
@@ -203,44 +203,6 @@ namespace IronAHK.Scripting
             
             return Ret;
         }
-
-        static class BitHelper
-        {
-            public static int ReadInteger(byte[] Bytes, ref int i)
-            {
-                int Ret = BitConverter.ToInt32(Bytes, ++i);
-                i += 3;
-                return Ret;
-            }
-            
-            public static long ReadLong(byte[] Bytes, ref int i)
-            {
-                long Ret = BitConverter.ToInt64(Bytes, ++i);
-                i += 7;
-                return Ret;
-            }
-            
-            public static float ReadFloat(byte[] Bytes, ref int i)
-            {
-                float Ret = BitConverter.ToSingle(Bytes, ++i);
-                i += 3;
-                return Ret;
-            }
-            
-            public static double ReadDouble(byte[] Bytes, ref int i)
-            {
-                double Ret = BitConverter.ToDouble(Bytes, ++i);
-                i += 7;
-                return Ret;
-            }
-            
-            public static short ReadShort(byte[] Bytes, ref int i)
-            {
-                short Ret = BitConverter.ToInt16(Bytes, ++i);
-                i++;
-                return Ret;
-            }
-        }        
     }
 }
 
