@@ -14,7 +14,8 @@ namespace IronAHK.Scripting
         public TypeBuilder Target;
         public ModuleBuilder Module;
         
-        Dictionary<MethodBase, MethodBuilder> Done;
+        Dictionary<MethodBase, MethodBuilder> MethodsDone;
+        Dictionary<FieldInfo, FieldBuilder> FieldsDone;
 
         static MethodCollection ()
         {
@@ -40,19 +41,23 @@ namespace IronAHK.Scripting
         public MethodCollection()
         {
             Sources = new List<Type>();
-            Done = new Dictionary<MethodBase, MethodBuilder>();
+            
+            MethodsDone = new Dictionary<MethodBase, MethodBuilder>();
+            FieldsDone = new Dictionary<FieldInfo, FieldBuilder>();
         }
         
         public MethodBuilder GrabMethod(MethodInfo Original)
         {
             if(Original == null) return null;
             
-            if(Done.ContainsKey(Original)) 
-                return Done[Original];
+            if(MethodsDone.ContainsKey(Original)) 
+                return MethodsDone[Original];
             
-            MethodBuilder Builder = Target.DefineMethod("builtin_"+Original.Name, Original.Attributes, 
+            MethodBuilder Builder = Target.DefineMethod(".builtin_"+Original.Name, Original.Attributes, 
                 Original.ReturnType, ParameterTypes(Original));
             ILGenerator Gen = Builder.GetILGenerator();
+            
+            MethodsDone.Add(Original, Builder);
             
             MethodBody Body = Original.GetMethodBody();
 
@@ -69,7 +74,6 @@ namespace IronAHK.Scripting
                 CopyOpcode(Bytes, ref i, Gen, Original.Module);
             }
             
-            Done.Add(Original, Builder);
             return Builder; 
         }
         
@@ -122,7 +126,7 @@ namespace IronAHK.Scripting
         // Initialise the variables. TODO: Obey InitLocals
         void CopyLocals(ILGenerator Gen, MethodBody Body)
         {
-            foreach(LocalVariableInfo Info in Body.LocalVariables)
+            foreach(LocalVariableInfo Info in Body.LocalVariables) 
                 Gen.DeclareLocal(Info.LocalType, Info.IsPinned);
         }
         
@@ -156,7 +160,16 @@ namespace IronAHK.Scripting
                     MethodBase Base = Origin.ResolveMethod(Token);
                     
                     if(Base is MethodInfo)
-                        Gen.Emit(Code, Base as MethodInfo);
+                    {
+                        MethodInfo Info = Base as MethodInfo;
+                        
+                        // If the method we're copying calls another method from 
+                        // the list of sources, we need to copy that as well
+                        if(Sources.Contains(Info.DeclaringType))
+                            Info = GrabMethod(Info);
+                        
+                        Gen.Emit(Code, Info);
+                    }
                     else if(Base is ConstructorInfo)
                         Gen.Emit(Code, Base as ConstructorInfo);
                     else throw new InvalidOperationException("Inline method is neither method nor constructor.");
@@ -169,6 +182,10 @@ namespace IronAHK.Scripting
                 {
                     int Token = BitHelper.ReadInteger(Bytes, ref i);
                     FieldInfo Field = Origin.ResolveField(Token);
+                    
+                    if(Sources.Contains(Field.DeclaringType))
+                        Field = GrabField(Field);
+                    
                     Gen.Emit(Code, Field);
                     break;
                 }
@@ -252,6 +269,17 @@ namespace IronAHK.Scripting
                 default:
                     throw new InvalidOperationException("The method copier ran across an unknown opcode.");
             }
+        }
+        
+        public FieldInfo GrabField(FieldInfo Field)
+        {
+            if(FieldsDone.ContainsKey(Field))
+               return FieldsDone[Field];
+            
+            FieldBuilder CopiedField = Target.DefineField(".builtin_"+Field.Name, Field.FieldType, Field.Attributes); 
+            FieldsDone.Add(Field, CopiedField);
+            
+            return CopiedField;
         }
         
         static Type[] ParameterTypes(MethodInfo Original)
