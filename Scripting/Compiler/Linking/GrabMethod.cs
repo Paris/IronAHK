@@ -58,15 +58,68 @@ namespace IronAHK.Scripting
 
             CopyLocals(Gen, Body);
             
+            var ExceptionTrinkets = new List<int>();
+            MineExTrinkets(Body, ExceptionTrinkets);
+            
             byte[] Bytes = Original.GetMethodBody().GetILAsByteArray();
             
             for(int i = 0; i < Bytes.Length; i++)
+            {
+                CopyTryCatch(Gen, i, Body, ExceptionTrinkets);
                 CopyOpcode(Bytes, ref i, Gen, Original.Module);
+            }
             
             Done.Add(Original, Builder);
             return Builder; 
         }
         
+        // Build a cache of points where we need to look for exception trinkets
+        // An exception trinket is an object denoting the offsets of try, catch and finally blocks
+        void MineExTrinkets(MethodBody Body, List<int> ExceptionTrinkets)
+        {
+            foreach(ExceptionHandlingClause Clause in Body.ExceptionHandlingClauses)
+            {
+                // Only handle catch and finally. TODO: fault and filter
+                if(Clause.Flags != ExceptionHandlingClauseOptions.Clause &&
+                   Clause.Flags != ExceptionHandlingClauseOptions.Finally) 
+                    continue;
+                
+                ExceptionTrinkets.Add(Clause.TryOffset);
+                ExceptionTrinkets.Add(Clause.HandlerOffset);
+                ExceptionTrinkets.Add(Clause.HandlerOffset+Clause.HandlerLength);
+            }
+        }
+        
+        void CopyTryCatch(ILGenerator Gen, int i, MethodBody Body, List<int> ExceptionTrinkets)
+        {
+            // Quick check to see if we want to walk through the list
+            if(!ExceptionTrinkets.Contains(i)) return;
+            
+            foreach(ExceptionHandlingClause Clause in Body.ExceptionHandlingClauses)
+            {
+                if(Clause.Flags != ExceptionHandlingClauseOptions.Clause &&
+                   Clause.Flags != ExceptionHandlingClauseOptions.Finally) 
+                    continue;
+                
+                // Look for an ending of an exception block first!
+                if(Clause.HandlerOffset+Clause.HandlerLength == i)
+                    Gen.EndExceptionBlock();
+                
+                // If this marks the beginning of a try block, emit that
+                if(Clause.TryOffset == i)
+                    Gen.BeginExceptionBlock();
+                
+                // Also check for the beginning of a catch block
+                if(Clause.HandlerOffset == i && Clause.Flags == ExceptionHandlingClauseOptions.Clause)
+                    Gen.BeginCatchBlock(Clause.CatchType);
+                
+                // Lastly, check for a finally block
+                if(Clause.HandlerOffset == i && Clause.Flags == ExceptionHandlingClauseOptions.Finally)
+                    Gen.BeginFinallyBlock();
+            }
+        }
+        
+        // Initialise the variables. TODO: Obey InitLocals
         void CopyLocals(ILGenerator Gen, MethodBody Body)
         {
             foreach(LocalVariableInfo Info in Body.LocalVariables)
@@ -78,7 +131,15 @@ namespace IronAHK.Scripting
             OpCode Code;
             if(Bytes[i] == 0xFE) Code = two_bytes_opcodes[Bytes[++i]];
             else Code = one_byte_opcodes[Bytes[i]];
-                
+            
+            // These are emitted by exception handling copier
+            if(Code == OpCodes.Leave) 
+            {
+                i += 4;
+                return; 
+            }
+            else if(Code == OpCodes.Endfinally) return; 
+            
             switch(Code.OperandType)
             {
                 // If no argument, then re-emit the opcode
