@@ -11,12 +11,14 @@ namespace IronAHK.Scripting
         static OpCode [] two_bytes_opcodes;
         
         internal const string Prefix = ".builtin_";
+        internal const string StatConPrefix = Prefix+"_pseudostatic_";
         
         public List<Type> Sources;
         public TypeBuilder Target;
         public ModuleBuilder Module;
         
         Dictionary<MethodBase, MethodBuilder> MethodsDone;
+        Dictionary<ConstructorInfo, ConstructorBuilder> ConstructorsDone;
         Dictionary<FieldInfo, FieldBuilder> FieldsDone;
         Dictionary<Type, TypeBuilder> TypesDone;
 
@@ -46,6 +48,7 @@ namespace IronAHK.Scripting
             Sources = new List<Type>();
             
             MethodsDone = new Dictionary<MethodBase, MethodBuilder>();
+            ConstructorsDone = new Dictionary<ConstructorInfo, ConstructorBuilder>();
             FieldsDone = new Dictionary<FieldInfo, FieldBuilder>();
             TypesDone = new Dictionary<Type, TypeBuilder>();
         }
@@ -73,22 +76,41 @@ namespace IronAHK.Scripting
             
             MethodsDone.Add(Original, Builder);
             
-            MethodBody Body = Original.GetMethodBody();
-
+            CopyMethodBody(Original.GetMethodBody(), Gen, Original.Module);
+            
+            return Builder; 
+        }
+        
+        ConstructorInfo GrabConstructor(ConstructorInfo Original, TypeBuilder On)
+        {
+            if(ConstructorsDone.ContainsKey(Original))
+                return ConstructorsDone[Original];
+            
+            ConstructorBuilder Builder = On.DefineConstructor(Original.Attributes, 
+                Original.CallingConvention, ParameterTypes(Original));
+            ILGenerator Gen = Builder.GetILGenerator();
+            
+            ConstructorsDone.Add(Original, Builder);
+            
+            CopyMethodBody(Original.GetMethodBody(), Gen, Original.Module);
+            
+            return Builder;
+        }
+        
+        void CopyMethodBody(MethodBody Body, ILGenerator Gen, Module Origin)
+        {
             CopyLocals(Gen, Body);
             
             var ExceptionTrinkets = new List<int>();
             MineExTrinkets(Body, ExceptionTrinkets);
             
-            byte[] Bytes = Original.GetMethodBody().GetILAsByteArray();
+            byte[] Bytes = Body.GetILAsByteArray();
             
             for(int i = 0; i < Bytes.Length; i++)
             {
                 CopyTryCatch(Gen, i, Body, ExceptionTrinkets);
-                CopyOpcode(Bytes, ref i, Gen, Original.Module);
+                CopyOpcode(Bytes, ref i, Gen, Origin);
             }
-            
-            return Builder; 
         }
         
         // Build a cache of points where we need to look for exception trinkets
@@ -343,6 +365,11 @@ namespace IronAHK.Scripting
                     case MemberTypes.Field:
                         GrabField(Member as FieldInfo, Ret);
                         break;
+                        
+                    case MemberTypes.Constructor:
+                        Console.WriteLine("Grabbing constructor");
+                        GrabConstructor(Member as ConstructorInfo, Ret);
+                        break;
                 }
             }
             
@@ -351,7 +378,7 @@ namespace IronAHK.Scripting
             return Ret;
         }
         
-        static Type[] ParameterTypes(MethodInfo Original)
+        static Type[] ParameterTypes(MethodBase Original)
         {
             ParameterInfo[] Params = Original.GetParameters();
             Type[] Ret = new Type[Params.Length];
