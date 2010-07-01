@@ -10,7 +10,7 @@ namespace IronAHK.Scripting
         static OpCode [] one_byte_opcodes;
         static OpCode [] two_bytes_opcodes;
         
-        const string Prefix = ".builtin_";
+        internal const string Prefix = ".builtin_";
         
         public List<Type> Sources;
         public TypeBuilder Target;
@@ -18,6 +18,7 @@ namespace IronAHK.Scripting
         
         Dictionary<MethodBase, MethodBuilder> MethodsDone;
         Dictionary<FieldInfo, FieldBuilder> FieldsDone;
+        Dictionary<Type, TypeBuilder> TypesDone;
 
         static MethodCollection ()
         {
@@ -46,17 +47,28 @@ namespace IronAHK.Scripting
             
             MethodsDone = new Dictionary<MethodBase, MethodBuilder>();
             FieldsDone = new Dictionary<FieldInfo, FieldBuilder>();
+            TypesDone = new Dictionary<Type, TypeBuilder>();
         }
         
         public MethodBuilder GrabMethod(MethodInfo Original)
+        {
+            return GrabMethod(Original, Target);
+        }
+        
+        MethodBuilder GrabMethod(MethodInfo Original, TypeBuilder On)
         {
             if(Original == null) return null;
             
             if(MethodsDone.ContainsKey(Original)) 
                 return MethodsDone[Original];
             
-            MethodBuilder Builder = Target.DefineMethod(Prefix+Original.Name, Original.Attributes, 
-                Original.ReturnType, ParameterTypes(Original));
+            Type ReturnType;
+            if(Sources.Contains(Original.ReturnType.DeclaringType))
+                ReturnType = GrabType(Original.ReturnType, false);
+            else ReturnType = Original.ReturnType;
+            
+            MethodBuilder Builder = On.DefineMethod(Prefix+Original.Name, Original.Attributes, 
+                ReturnType, ParameterTypes(Original));
             ILGenerator Gen = Builder.GetILGenerator();
             
             MethodsDone.Add(Original, Builder);
@@ -217,11 +229,25 @@ namespace IronAHK.Scripting
                     MemberInfo Info = Origin.ResolveMember(Token);
                     
                     if(Info.MemberType == MemberTypes.Field)
-                        Gen.Emit(OpCodes.Ldtoken, Info as FieldInfo);
+                    {
+                        if(Sources.Contains(Info.DeclaringType))
+                            Gen.Emit(OpCodes.Ldtoken, GrabField(Info as FieldInfo));
+                        else Gen.Emit(OpCodes.Ldtoken, Info as FieldInfo);
+                    }
                     else if(Info.MemberType == MemberTypes.Method)
-                        Gen.Emit(OpCodes.Ldtoken, Info as MethodInfo);
+                    {
+                        if(Sources.Contains(Info.DeclaringType))
+                            Gen.Emit(OpCodes.Ldtoken, GrabMethod(Info as MethodInfo));
+                        else Gen.Emit(OpCodes.Ldtoken, Info as MethodInfo);
+                    }
                     else if(Info.MemberType == MemberTypes.TypeInfo)
-                        Gen.Emit(OpCodes.Ldtoken, Info as Type);
+                    {
+                        if(Sources.Contains(Info.DeclaringType))
+                            Gen.Emit(OpCodes.Ldtoken, GrabType(Info as Type, true));
+                        else if(Sources.Contains(Info as Type))
+                            Gen.Emit(OpCodes.Ldtoken, Target);
+                        else Gen.Emit(OpCodes.Ldtoken, Info as Type);
+                    }
                     else throw new InvalidOperationException("Inline token is neither field, nor method, nor type");
                     
                     break;
@@ -275,13 +301,54 @@ namespace IronAHK.Scripting
         
         public FieldInfo GrabField(FieldInfo Field)
         {
+            return GrabField(Field, Target);
+        }
+        
+        FieldInfo GrabField(FieldInfo Field, TypeBuilder On)
+        {
             if(FieldsDone.ContainsKey(Field))
                return FieldsDone[Field];
             
-            FieldBuilder CopiedField = Target.DefineField(Prefix+Field.Name, Field.FieldType, Field.Attributes); 
+            Type FieldType;
+            if(Sources.Contains(Field.FieldType))
+                FieldType = GrabType(Field.FieldType, true);
+            else FieldType = Field.FieldType;
+            
+            FieldBuilder CopiedField = On.DefineField(Prefix+Field.Name, FieldType, Field.Attributes); 
             FieldsDone.Add(Field, CopiedField);
             
             return CopiedField;
+        }
+        
+        public Type GrabType(Type Copy, bool CopyParent)
+        {
+            if(TypesDone.ContainsKey(Copy))
+                return TypesDone[Copy];
+            
+            TypeBuilder Ret = Target.DefineNestedType(Prefix+Copy.Name, Copy.Attributes, 
+                CopyParent ? Copy.BaseType : null, Copy.GetInterfaces());
+            TypesDone.Add(Copy, Ret);
+            
+            // Walk through methods and fields, and copy them
+            foreach(MemberInfo Member in Copy.GetMembers())
+            {
+                if(Member.DeclaringType != Copy) continue;
+                
+                switch(Member.MemberType)
+                {
+                    case MemberTypes.Method:
+                        GrabMethod(Member as MethodInfo, Ret);
+                        break;
+                        
+                    case MemberTypes.Field:
+                        GrabField(Member as FieldInfo, Ret);
+                        break;
+                }
+            }
+            
+            Ret.CreateType();
+            
+            return Ret;
         }
         
         static Type[] ParameterTypes(MethodInfo Original)
