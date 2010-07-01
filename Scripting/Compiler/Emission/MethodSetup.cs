@@ -52,11 +52,11 @@ namespace IronAHK.Scripting
             
             Generator = Method.GetILGenerator();
 
-            ForceString = typeof(Script).GetMethod("ForceString");
-            ForceDecimal = typeof(Script).GetMethod("ForceDecimal");
-            ForceLong = typeof(Script).GetMethod("ForceLong");
-            ForceInt = typeof(Script).GetMethod("ForceInt");
-            ForceBool = typeof(Script).GetMethod("ForceBool");
+            ForceString = Lookup.GrabMethod(typeof(Script).GetMethod("ForceString"));
+            ForceDecimal = Lookup.GrabMethod(typeof(Script).GetMethod("ForceDecimal"));
+            ForceLong = Lookup.GrabMethod(typeof(Script).GetMethod("ForceLong"));
+            ForceInt = Lookup.GrabMethod(typeof(Script).GetMethod("ForceInt"));
+            ForceBool = Lookup.GrabMethod(typeof(Script).GetMethod("ForceBool"));
             
             Locals = new Dictionary<string, LocalBuilder>();
             Labels = new Dictionary<string, LabelMetadata>();
@@ -64,12 +64,15 @@ namespace IronAHK.Scripting
             if(IsEntryPoint)
                 GenerateEntryPointHeader();
             
-            // "Item" is the property for this-indexers
-            SetVariable = typeof(Script.Variables).GetProperty("Item").GetSetMethod();
-            GetVariable = typeof(Script.Variables).GetProperty("Item").GetGetMethod();
+            Lookup.Sources.Add(typeof(Script.Variables));
+            Type Variables = Lookup.GrabType(typeof(Script.Variables), false);
             
-            VarsProperty = Generator.DeclareLocal(typeof(Script.Variables));
-            Generator.Emit(OpCodes.Call, typeof(Script).GetProperty(Parser.VarProperty).GetGetMethod());
+            // "Item" is the property for this-indexers
+            SetVariable = Variables.GetMethod(MethodCollection.Prefix+"set_Item");
+            GetVariable = Variables.GetMethod(MethodCollection.Prefix+"set_Item");
+            
+            VarsProperty = Generator.DeclareLocal(Variables);
+            Generator.Emit(OpCodes.Call, Lookup.GrabMethod(typeof(Script).GetMethod("get_Vars")));
             Generator.Emit(OpCodes.Stloc, VarsProperty);            
         }
 
