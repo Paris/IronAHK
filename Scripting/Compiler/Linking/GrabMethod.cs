@@ -53,6 +53,37 @@ namespace IronAHK.Scripting
             TypesDone = new Dictionary<Type, TypeBuilder>();
         }
         
+        public void SimulateStaticConstructors(ILGenerator On)
+        {
+            foreach(Type Source in Sources)
+            {
+                ConstructorInfo Const = FindStaticConstructor(Source);
+                
+                if(Const == null) continue;
+                
+                On.Emit(OpCodes.Call, CopyStaticConstructor(Const));
+            }
+        }
+        
+        ConstructorInfo FindStaticConstructor(Type From)
+        {
+            // We need to specify NonPublic and Static to get the .cctor (static constructor)
+            foreach(ConstructorInfo Info in From.GetConstructors(BindingFlags.NonPublic | BindingFlags.Static))
+                return Info;
+            
+            return null;
+        }
+        
+        MethodInfo CopyStaticConstructor(ConstructorInfo Info)
+        {
+            MethodBuilder Pseudo = Target.DefineMethod(StatConPrefix+Info.DeclaringType, 
+                MethodAttributes.Static, typeof(void), Type.EmptyTypes);
+            
+            CopyMethodBody(Info.GetMethodBody(), Pseudo.GetILGenerator(), Info.Module);
+            
+            return Pseudo;
+        }        
+        
         public MethodBuilder GrabMethod(MethodInfo Original)
         {
             return GrabMethod(Original, Target);
@@ -67,7 +98,7 @@ namespace IronAHK.Scripting
             
             Type ReturnType;
             if(Sources.Contains(Original.ReturnType.DeclaringType))
-                ReturnType = GrabType(Original.ReturnType, false);
+                ReturnType = GrabType(Original.ReturnType, true);
             else ReturnType = Original.ReturnType;
             
             MethodBuilder Builder = On.DefineMethod(Prefix+Original.Name, Original.Attributes, 
@@ -207,7 +238,14 @@ namespace IronAHK.Scripting
                         Gen.Emit(Code, Info);
                     }
                     else if(Base is ConstructorInfo)
-                        Gen.Emit(Code, Base as ConstructorInfo);
+                    {
+                        if(Sources.Contains(Base.DeclaringType))
+                        {
+                            Gen.Emit(Code, GrabConstructor(Base as ConstructorInfo, 
+                                GrabType(Base.DeclaringType, true) as TypeBuilder));
+                        }
+                        else Gen.Emit(Code, Base as ConstructorInfo);
+                    }
                     else throw new InvalidOperationException("Inline method is neither method nor constructor.");
                     
                     break;
@@ -219,7 +257,9 @@ namespace IronAHK.Scripting
                     int Token = BitHelper.ReadInteger(Bytes, ref i);
                     FieldInfo Field = Origin.ResolveField(Token);
                     
-                    if(Sources.Contains(Field.DeclaringType))
+                    if(Sources.Contains(Field.DeclaringType.DeclaringType))
+                        Field = GrabField(Field, GrabType(Field.DeclaringType, true) as TypeBuilder);
+                    else if(Sources.Contains(Field.DeclaringType))
                         Field = GrabField(Field);
                     
                     Gen.Emit(Code, Field);
@@ -253,22 +293,22 @@ namespace IronAHK.Scripting
                     if(Info.MemberType == MemberTypes.Field)
                     {
                         if(Sources.Contains(Info.DeclaringType))
-                            Gen.Emit(OpCodes.Ldtoken, GrabField(Info as FieldInfo));
-                        else Gen.Emit(OpCodes.Ldtoken, Info as FieldInfo);
+                            Gen.Emit(Code, GrabField(Info as FieldInfo));
+                        else Gen.Emit(Code, Info as FieldInfo);
                     }
                     else if(Info.MemberType == MemberTypes.Method)
                     {
                         if(Sources.Contains(Info.DeclaringType))
-                            Gen.Emit(OpCodes.Ldtoken, GrabMethod(Info as MethodInfo));
-                        else Gen.Emit(OpCodes.Ldtoken, Info as MethodInfo);
+                            Gen.Emit(Code, GrabMethod(Info as MethodInfo));
+                        else Gen.Emit(Code, Info as MethodInfo);
                     }
                     else if(Info.MemberType == MemberTypes.TypeInfo)
                     {
                         if(Sources.Contains(Info.DeclaringType))
-                            Gen.Emit(OpCodes.Ldtoken, GrabType(Info as Type, true));
+                            Gen.Emit(Code, GrabType(Info as Type, true));
                         else if(Sources.Contains(Info as Type))
-                            Gen.Emit(OpCodes.Ldtoken, Target);
-                        else Gen.Emit(OpCodes.Ldtoken, Info as Type);
+                            Gen.Emit(Code, Target);
+                        else Gen.Emit(Code, Info as Type);
                     }
                     else throw new InvalidOperationException("Inline token is neither field, nor method, nor type");
                     
@@ -367,7 +407,6 @@ namespace IronAHK.Scripting
                         break;
                         
                     case MemberTypes.Constructor:
-                        Console.WriteLine("Grabbing constructor");
                         GrabConstructor(Member as ConstructorInfo, Ret);
                         break;
                 }
@@ -378,13 +417,17 @@ namespace IronAHK.Scripting
             return Ret;
         }
         
-        static Type[] ParameterTypes(MethodBase Original)
+        Type[] ParameterTypes(MethodBase Original)
         {
             ParameterInfo[] Params = Original.GetParameters();
             Type[] Ret = new Type[Params.Length];
             
             for(int i = 0; i < Params.Length; i++)
-                Ret[i] = Params[i].ParameterType;
+            {
+                if(Sources.Contains(Params[i].ParameterType.DeclaringType))
+                    Ret[i] = GrabType(Params[i].ParameterType, true);
+                else Ret[i] = Params[i].ParameterType;
+            }
             
             return Ret;
         }
