@@ -140,7 +140,7 @@ namespace IronAHK.Scripting
             for(int i = 0; i < Bytes.Length; i++)
             {
                 CopyTryCatch(Gen, i, Body, ExceptionTrinkets);
-                CopyOpcode(Bytes, ref i, Gen, Origin);
+                CopyOpcode(Bytes, ref i, Gen, Origin, ExceptionTrinkets);
             }
         }
         
@@ -197,19 +197,20 @@ namespace IronAHK.Scripting
                 Gen.DeclareLocal(Info.LocalType, Info.IsPinned);
         }
         
-        void CopyOpcode(byte[] Bytes, ref int i, ILGenerator Gen, Module Origin)
+        void CopyOpcode(byte[] Bytes, ref int i, ILGenerator Gen, Module Origin, List<int> ExceptionTrinkets)
         {
             OpCode Code;
             if(Bytes[i] == 0xFE) Code = two_bytes_opcodes[Bytes[++i]];
             else Code = one_byte_opcodes[Bytes[i]];
             
-            // These are emitted by exception handling copier
-            if(Code == OpCodes.Leave) 
+            // These are emitted by exception handling copier if an exception 
+            // block is imminent. If not, copy them as usual.
+            if(Code == OpCodes.Leave && ExceptionTrinkets.Contains(i + 5)) 
             {
                 i += 4;
-                return; 
+                return;
             }
-            else if(Code == OpCodes.Endfinally) return; 
+            else if(Code == OpCodes.Endfinally && ExceptionTrinkets.Contains(i+1)) return; 
             
             switch(Code.OperandType)
             {
