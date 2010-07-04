@@ -84,21 +84,24 @@ namespace IronAHK.Scripting
             return Pseudo;
         }        
         
-        public MethodBuilder GrabMethod(MethodInfo Original)
+        public MethodInfo GrabMethod(MethodInfo Original)
         {
             return GrabMethod(Original, Target);
         }
         
-        MethodBuilder GrabMethod(MethodInfo Original, TypeBuilder On)
+        MethodInfo GrabMethod(MethodInfo Original, TypeBuilder On)
         {
             if(Original == null) return null;
+            
+            if(!Sources.Contains(Original.DeclaringType))
+                return Original;
             
             if(MethodsDone.ContainsKey(Original)) 
                 return MethodsDone[Original];
             
             Type ReturnType;
             if(Sources.Contains(Original.ReturnType.DeclaringType))
-                ReturnType = GrabType(Original.ReturnType, true);
+                ReturnType = GrabType(Original.ReturnType);
             else ReturnType = Original.ReturnType;
             
             MethodBuilder Builder = On.DefineMethod(Prefix+Original.Name, Original.Attributes, 
@@ -241,10 +244,7 @@ namespace IronAHK.Scripting
                     else if(Base is ConstructorInfo)
                     {
                         if(Sources.Contains(Base.DeclaringType))
-                        {
-                            Gen.Emit(Code, GrabConstructor(Base as ConstructorInfo, 
-                                GrabType(Base.DeclaringType, true) as TypeBuilder));
-                        }
+                            Gen.Emit(Code, GrabConstructor(Base as ConstructorInfo, GrabType(Base.DeclaringType) as TypeBuilder));
                         else Gen.Emit(Code, Base as ConstructorInfo);
                     }
                     else throw new InvalidOperationException("Inline method is neither method nor constructor.");
@@ -259,7 +259,7 @@ namespace IronAHK.Scripting
                     FieldInfo Field = Origin.ResolveField(Token);
                     
                     if(Sources.Contains(Field.DeclaringType.DeclaringType))
-                        Field = GrabField(Field, GrabType(Field.DeclaringType, true) as TypeBuilder);
+                        Field = GrabField(Field, GrabType(Field.DeclaringType) as TypeBuilder);
                     else if(Sources.Contains(Field.DeclaringType))
                         Field = GrabField(Field);
                     
@@ -292,25 +292,11 @@ namespace IronAHK.Scripting
                     MemberInfo Info = Origin.ResolveMember(Token);
                     
                     if(Info.MemberType == MemberTypes.Field)
-                    {
-                        if(Sources.Contains(Info.DeclaringType))
-                            Gen.Emit(Code, GrabField(Info as FieldInfo));
-                        else Gen.Emit(Code, Info as FieldInfo);
-                    }
+                        Gen.Emit(Code, GrabField(Info as FieldInfo));
                     else if(Info.MemberType == MemberTypes.Method)
-                    {
-                        if(Sources.Contains(Info.DeclaringType))
-                            Gen.Emit(Code, GrabMethod(Info as MethodInfo));
-                        else Gen.Emit(Code, Info as MethodInfo);
-                    }
+                        Gen.Emit(Code, GrabMethod(Info as MethodInfo));
                     else if(Info.MemberType == MemberTypes.TypeInfo)
-                    {
-                        if(Sources.Contains(Info.DeclaringType))
-                            Gen.Emit(Code, GrabType(Info as Type, true));
-                        else if(Sources.Contains(Info as Type))
-                            Gen.Emit(Code, Target);
-                        else Gen.Emit(Code, Info as Type);
-                    }
+                        Gen.Emit(Code, GrabType(Info as Type));
                     else throw new InvalidOperationException("Inline token is neither field, nor method, nor type");
                     
                     break;
@@ -369,27 +355,50 @@ namespace IronAHK.Scripting
         
         FieldInfo GrabField(FieldInfo Field, TypeBuilder On)
         {
+            if(!Sources.Contains(Field.DeclaringType))
+                return Field;
+            
             if(FieldsDone.ContainsKey(Field))
                return FieldsDone[Field];
             
-            Type FieldType;
-            if(Sources.Contains(Field.FieldType))
-                FieldType = GrabType(Field.FieldType, true);
-            else FieldType = Field.FieldType;
-            
-            FieldBuilder CopiedField = On.DefineField(Prefix+Field.Name, FieldType, Field.Attributes); 
+            FieldBuilder CopiedField = On.DefineField(Prefix+Field.Name, GrabType(Field.FieldType), Field.Attributes); 
             FieldsDone.Add(Field, CopiedField);
             
             return CopiedField;
         }
         
-        public Type GrabType(Type Copy, bool CopyParent)
+        Type ReplaceGenericArguments(Type Orig)
+        {
+            if(Orig.IsGenericType)
+            {
+                Type[] Replace = Orig.GetGenericArguments();
+                Type Ret = Orig.GetGenericTypeDefinition();
+                
+                for(int i = 0; i < Replace.Length; i++)
+                    Replace[i] = GrabType(Replace[i]);
+                
+                return Ret.MakeGenericType(Replace);
+            }
+            else return Orig;
+        }
+        
+        Type GrabType(Type Copy)
+        {
+            return GrabType(Copy, false);
+        }
+        
+        public Type GrabType(Type Copy, bool AvoidSelf)
         {
             if(TypesDone.ContainsKey(Copy))
                 return TypesDone[Copy];
             
-            TypeBuilder Ret = Target.DefineNestedType(Prefix+Copy.Name, Copy.Attributes, 
-                CopyParent ? Copy.BaseType : null, Copy.GetInterfaces());
+            if(!AvoidSelf && Sources.Contains(Copy))
+               return Target;
+            
+            if(!Sources.Contains(Copy.DeclaringType)) 
+                return ReplaceGenericArguments(Copy);
+            
+            TypeBuilder Ret = Target.DefineNestedType(Prefix+Copy.Name, Copy.Attributes, Copy.BaseType, Copy.GetInterfaces());
             TypesDone.Add(Copy, Ret);
             
             // Walk through methods and fields, and copy them
@@ -426,7 +435,7 @@ namespace IronAHK.Scripting
             for(int i = 0; i < Params.Length; i++)
             {
                 if(Sources.Contains(Params[i].ParameterType.DeclaringType))
-                    Ret[i] = GrabType(Params[i].ParameterType, true);
+                    Ret[i] = GrabType(Params[i].ParameterType);
                 else Ret[i] = Params[i].ParameterType;
             }
             
