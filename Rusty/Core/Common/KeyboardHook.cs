@@ -625,10 +625,14 @@ namespace IronAHK.Rusty
                                            int n = length + 1;
                                            history.Remove(history.Length - n, n);
                                            Backspace(length);
+                            
+                                           if((hotstring.EnabledOptions & HotstringDefinition.Options.AutoTrigger) != HotstringDefinition.Options.AutoTrigger)
+                                               Backspace(1);
                                        }
 
                                        hotstring.Proc(new object[] { });
-
+                        
+                        
                                        if ((hotstring.EnabledOptions & HotstringDefinition.Options.OmitEnding) == HotstringDefinition.Options.OmitEnding)
                                        {
                                            if ((hotstring.EnabledOptions & HotstringDefinition.Options.Backspace) == HotstringDefinition.Options.Backspace &&
