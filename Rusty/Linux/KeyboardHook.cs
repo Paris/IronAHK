@@ -130,7 +130,16 @@ namespace IronAHK.Rusty
                     
                     if(string.IsNullOrEmpty(Lookup.Trim())) return System.Windows.Forms.Keys.None;
                     
-                    return (System.Windows.Forms.Keys) Enum.Parse(typeof(System.Windows.Forms.Keys), Lookup);
+                    try 
+                    {
+                        return (System.Windows.Forms.Keys) Enum.Parse(typeof(System.Windows.Forms.Keys), Lookup);
+                    }
+                    catch(ArgumentException)
+                    {
+                        // TODO
+                        Console.Error.WriteLine("Warning, could not look up key: "+Lookup);
+                        return System.Windows.Forms.Keys.None;
+                    }
                 }
                 else return System.Windows.Forms.Keys.None;
             }
