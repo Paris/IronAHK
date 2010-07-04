@@ -7,7 +7,6 @@ namespace IronAHK.Rusty
 {
     class InputDialog : Form
     {
-        private Container components;
         private Button btnCancel;
         private Button btnOK;
         private Label label1;
@@ -41,18 +40,6 @@ namespace IronAHK.Rusty
         {
             InitializeComponent();
             StartPosition = FormStartPosition.CenterParent;
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                if (components != null)
-                {
-                    components.Dispose();
-                }
-            }
-            base.Dispose(disposing);
         }
 
         private void InitializeComponent()
