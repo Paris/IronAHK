@@ -89,6 +89,7 @@
     <Compile Include="Script\Call.cs" />
     <Compile Include="Script\Conversion.cs" />
     <Compile Include="Script\Application.cs" />
+    <Compile Include="Script\Menu.cs" />
     <Compile Include="Script\Variables.cs" />
     <Compile Include="Script\Objects.cs" />
     <Compile Include="Script\Labels.cs" />
@@ -148,6 +149,7 @@
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ProjectExtensions>
@@ -177,5 +179,10 @@
       <ProductName>Windows Installer 3.1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="..\IronAHK\Site\favicon.ico">
+      <Link>Script\favicon.ico</Link>
+    </EmbeddedResource>
   </ItemGroup>
 </Project>
