@@ -7,7 +7,7 @@ namespace IronAHK.Scripting
 {
     partial class MethodCollection : List<MethodInfo>
     {
-        public MethodInfo BestMatch(string name, int length, out MethodBuilder actual)
+        public MethodInfo BestMatch(string name, int length, out MethodInfo actual)
         {
             MethodInfo result = null;
             var last = int.MaxValue;

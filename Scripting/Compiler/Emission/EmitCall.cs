@@ -36,7 +36,7 @@ namespace IronAHK.Scripting
             }
             
             // Then the methods provided by rusty
-            MethodBuilder actual = null;
+            MethodInfo actual = null;
             if(target == null)
                 target = Lookup.BestMatch(invoke.Method.MethodName, invoke.Parameters.Count, out actual);
             
