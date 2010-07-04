@@ -114,6 +114,7 @@ namespace IronAHK.Rusty
                 Cache.Add('^', new CachedKey(Keys.Circumflex, true));
                 Cache.Add('&', new CachedKey(Keys.Ampersand, true));
                 Cache.Add('*', new CachedKey(Keys.Asterisk, true));
+                Cache.Add(' ', new CachedKey(Keys.SpaceBar, false));
                 
                 #endregion
             }
