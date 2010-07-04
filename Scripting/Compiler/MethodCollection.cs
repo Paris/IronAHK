@@ -5,8 +5,15 @@ using System.Reflection.Emit;
 
 namespace IronAHK.Scripting
 {
-    partial class MethodCollection : List<MethodInfo>
+    class MethodCollection : List<MethodInfo>
     {
+        public ILMirror Mirror;
+        
+        public MethodCollection()
+        {
+            Mirror = new ILMirror();
+        }
+        
         public MethodInfo BestMatch(string name, int length, out MethodInfo actual)
         {
             MethodInfo result = null;
@@ -22,7 +29,7 @@ namespace IronAHK.Scripting
 
                 if (param == length) // perfect match when parameter count is the same
                 {
-                    actual = GrabMethod(writer);
+                    actual = Mirror.GrabMethod(writer);
                     return writer;
                 }
                 else if (param > length && param < last) // otherwise find a method with the next highest number of parameters
@@ -34,7 +41,7 @@ namespace IronAHK.Scripting
                     result = writer;
             }
             
-            actual = GrabMethod(result);
+            actual = Mirror.GrabMethod(result);
             return result;
         }
     }

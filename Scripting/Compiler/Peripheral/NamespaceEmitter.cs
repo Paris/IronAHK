@@ -8,7 +8,7 @@ namespace IronAHK.Scripting
         void EmitNamespace(AssemblyBuilder Parent, CodeNamespace Namespace)
         {
             ModuleBuilder Module = Parent.DefineDynamicModule(Namespace.Name, AName.Name);
-            Methods.Module = Module;
+            Methods.Mirror.Module = Module;
             
             foreach(CodeTypeDeclaration Type in Namespace.Types)
             {

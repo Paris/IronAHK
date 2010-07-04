@@ -52,35 +52,37 @@ namespace IronAHK.Scripting
             
             Generator = Method.GetILGenerator();
 
-            ForceString = Lookup.GrabMethod(typeof(Script).GetMethod("ForceString"));
-            ForceDecimal = Lookup.GrabMethod(typeof(Script).GetMethod("ForceDecimal"));
-            ForceLong = Lookup.GrabMethod(typeof(Script).GetMethod("ForceLong"));
-            ForceInt = Lookup.GrabMethod(typeof(Script).GetMethod("ForceInt"));
-            ForceBool = Lookup.GrabMethod(typeof(Script).GetMethod("ForceBool"));
+            ForceString = Lookup.Mirror.GrabMethod(typeof(Script).GetMethod("ForceString"));
+            ForceDecimal = Lookup.Mirror.GrabMethod(typeof(Script).GetMethod("ForceDecimal"));
+            ForceLong = Lookup.Mirror.GrabMethod(typeof(Script).GetMethod("ForceLong"));
+            ForceInt = Lookup.Mirror.GrabMethod(typeof(Script).GetMethod("ForceInt"));
+            ForceBool = Lookup.Mirror.GrabMethod(typeof(Script).GetMethod("ForceBool"));
             
             Locals = new Dictionary<string, LocalBuilder>();
             Labels = new Dictionary<string, LabelMetadata>();
             
-            if(IsEntryPoint)
-                GenerateEntryPointHeader();
+            Lookup.Mirror.Sources.Add(typeof(Script.Variables));
+            Type Variables = Lookup.Mirror.GrabType(typeof(Script.Variables), true, false);
             
-            Lookup.Sources.Add(typeof(Script.Variables));
-            Type Variables = Lookup.GrabType(typeof(Script.Variables), false);
+            if(IsEntryPoint)
+                GenerateEntryPointHeader(Generator);
             
             // "Item" is the property for this-indexers
-            SetVariable = Variables.GetMethod(MethodCollection.Prefix+"set_Item");
-            GetVariable = Variables.GetMethod(MethodCollection.Prefix+"set_Item");
+            SetVariable = Lookup.Mirror.GrabMethod(typeof(Script.Variables).GetMethod("set_Item"));
+            GetVariable = Lookup.Mirror.GrabMethod(typeof(Script.Variables).GetMethod("get_Item"));
             
             VarsProperty = Generator.DeclareLocal(Variables);
-            Generator.Emit(OpCodes.Call, Lookup.GrabMethod(typeof(Script).GetMethod("get_Vars")));
+            Generator.Emit(OpCodes.Call, Lookup.Mirror.GrabMethod(typeof(Script).GetMethod("get_Vars")));
             Generator.Emit(OpCodes.Stloc, VarsProperty);            
         }
 
-        void GenerateEntryPointHeader()
+        void GenerateEntryPointHeader(ILGenerator Generator)
         {
             ConstructorInfo StatThreadConstructor = typeof(STAThreadAttribute).GetConstructor(Type.EmptyTypes);
             var Attribute = new CustomAttributeBuilder(StatThreadConstructor, new object[] {});
             Method.SetCustomAttribute(Attribute);
+            
+            Lookup.Mirror.SimulateStaticConstructors(Generator);
         }
 
         [Conditional("DEBUG")]
