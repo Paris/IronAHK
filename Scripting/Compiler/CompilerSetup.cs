@@ -63,7 +63,7 @@ namespace IronAHK.Scripting
                 return;
 
             Debug("Adding type " + Typ.Name);
-            Methods.Sources.Add(Typ);
+            Methods.Mirror.Sources.Add(Typ);
 
             foreach(var Method in Typ.GetMethods())
             {

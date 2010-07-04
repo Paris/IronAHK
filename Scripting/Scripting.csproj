@@ -137,9 +137,16 @@
     <Compile Include="Compiler\Emission\EmitLabel.cs" />
     <Compile Include="Compiler\Metadata\LabelMetadata.cs" />
     <Compile Include="Compiler\Metadata\LoopMetadata.cs" />
-    <Compile Include="Compiler\Linking\BestMatch.cs" />
-    <Compile Include="Compiler\Linking\GrabMethod.cs" />
-    <Compile Include="Compiler\Linking\BitHelper.cs" />
+    <Compile Include="Compiler\MethodCollection.cs" />
+    <Compile Include="Compiler\Bundling\BitHelper.cs" />
+    <Compile Include="Compiler\Bundling\ILMirror.cs" />
+    <Compile Include="Compiler\Bundling\CopyStaticConstr.cs" />
+    <Compile Include="Compiler\Bundling\GrabMethod.cs" />
+    <Compile Include="Compiler\Bundling\GrabConstructor.cs" />
+    <Compile Include="Compiler\Bundling\CopyBody.cs" />
+    <Compile Include="Compiler\Bundling\GrabField.cs" />
+    <Compile Include="Compiler\Bundling\GrabType.cs" />
+    <Compile Include="Compiler\Bundling\CopyExceptions.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Rusty\Rusty.csproj">
@@ -180,6 +187,6 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Compiler\Linking\" />
+    <Folder Include="Compiler\Bundling\" />
   </ItemGroup>
 </Project>

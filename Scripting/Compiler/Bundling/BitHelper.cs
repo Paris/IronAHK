@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace IronAHK.Scripting
 {
-    partial class MethodCollection : List<MethodInfo>
+    partial class ILMirror
     {
         static class BitHelper
         {
