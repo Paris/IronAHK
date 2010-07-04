@@ -41,6 +41,9 @@ namespace IronAHK.Scripting
                 container.Attributes = MemberAttributes.Private;
                 space.Types.Add(container);
 
+                if (!NoTrayIcon)
+                    prepend.Add(new CodeExpressionStatement((CodeMethodInvokeExpression)InternalMethods.CreateTrayMenu));
+
                 for (int i = 0; i < prepend.Count; i++)
                 {
                     if (prepend[i] is CodeMethodReturnStatement)

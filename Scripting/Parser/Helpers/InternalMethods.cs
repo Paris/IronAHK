@@ -139,6 +139,11 @@ namespace IronAHK.Scripting
 
             #region Misc
 
+            public static MethodReference CreateTrayMenu
+            {
+                get { return new MethodReference(typeof(Script), "CreateTrayMenu"); }
+            }
+
             public static MethodReference Run
             {
                 get { return new MethodReference(typeof(Script), "Run"); }
