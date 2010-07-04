@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Windows.Forms;
 
 namespace IronAHK.Rusty
 {
@@ -7,12 +8,12 @@ namespace IronAHK.Rusty
         // TODO: organise ListView.cs
 
         /// <summary>
-        /// Adds a new row to the bottom of the list. The parameters Field1 and beyond are the columns of the new row, which can be text or numeric (including numeric expression results). To make any field blank, specify "" or the equivalent. If there are too few fields to fill all the columns, the columns at the end are left blank. If there are too many fields, the fields at the end are completely ignored.
+        /// 
         /// </summary>
-        /// <param name="Options"></param>
-        /// <param name="FieldN"></param>
+        /// <param name="options"></param>
+        /// <param name="fields"></param>
         /// <returns></returns>
-        public static int LV_Add(string Options, string[] FieldN)
+        public static int LV_Add(string options, string[] fields)
         {
             var list = DefaultListView;
 
@@ -23,91 +24,188 @@ namespace IronAHK.Rusty
         }
 
         /// <summary>
-        /// If the parameter is omitted, all rows in the ListView are deleted. Otherwise, only the specified RowNumber is deleted. It returns 1 upon success and 0 upon failure.
+        /// Removes one or all ListView rows.
         /// </summary>
-        /// <param name="RowNumber"></param>
-        /// <returns></returns>
-        public static bool LV_Delete(int RowNumber)
+        /// <param name="row">The row number to remove. Leave blank to remove every row.</param>
+        /// <returns><c>true</c> if one or more rows were deleted, <c>false</c> otherwise.</returns>
+        public static bool LV_Delete(int row = -1)
         {
             var list = DefaultListView;
 
             if (list == null)
                 return false;
 
-            throw new NotImplementedException(); // TODO: LV_Delete
+            if (row == -1)
+            {
+                foreach (ListViewItem item in list.Items)
+                    item.Remove();
+
+                return true;
+            }
+
+            row--;
+
+            if (row > 0 && row < list.Items.Count)
+            {
+                list.Items.RemoveAt(row);
+                return true;
+            }
+
+            return false;
         }
 
         /// <summary>
-        /// Deletes the specified column and all of the contents beneath it. It returns 1 upon success and 0 upon failure. Once a column is deleted, the column numbers of any that lie to its right are reduced by 1. Consequently, calling LV_DeleteCol(2) twice would delete the second and third columns. On operating systems older than Windows XP, attempting to delete the original first column might might fail and return 0.
+        /// Deletes a ListView column.
         /// </summary>
-        /// <param name="ColumnNumber"></param>
-        /// <returns></returns>
-        public static bool LV_DeleteCol(int ColumnNumber)
+        /// <param name="column">The column index to remove.</param>
+        /// <returns><c>true</c> if the specified column was removed, <c>false</c> otherwise.</returns>
+        public static bool LV_DeleteCol(int column)
         {
             var list = DefaultListView;
 
             if (list == null)
                 return false;
 
-            throw new NotImplementedException(); // TODO: LV_DeleteCol
+            column--;
+
+            if (column > 0 && column < list.Columns.Count)
+            {
+                list.Columns.RemoveAt(column);
+                return true;
+            }
+
+            return false;
         }
 
         /// <summary>
-        /// When the parameter is omitted, the function returns the total number of rows in the control. When the parameter is "S" or "Selected", the count includes only the selected/highlighted rows. When the parameter is "Col" or "Column", the function returns the number of columns in the control. This function is always instantaneous because the control keeps track of these counts.
+        /// Returns the number of columns or rows in a ListView.
         /// </summary>
-        /// <param name="Type"></param>
-        /// <returns></returns>
-        public static int LV_GetCount(string Type)
+        /// <param name="type">
+        /// <list type="bullet">
+        /// <item><term>(blank)</term>: <description>all rows</description></item>
+        /// <item><term>Selected</term>: <description>selected rows</description></item>
+        /// <item><term>Column</term>: <description>columns</description></item>
+        /// </list>
+        /// </param>
+        /// <returns>The number of columns or rows as specified by <paramref name="type"/>.</returns>
+        public static int LV_GetCount(string type = "")
         {
             var list = DefaultListView;
 
             if (list == null)
                 return 0;
 
-            throw new NotImplementedException(); // TODO: LV_GetCount
+            if (string.IsNullOrEmpty(type))
+                return list.Items.Count;
+
+            type = type.ToLowerInvariant();
+
+            if (type == Keyword_Column || type.Length == 1 && type[0] == Keyword_Column[0] || type.Length == 3 && Keyword_Column.StartsWith(type))
+                return list.Columns.Count;
+
+            if (type == Keyword_Selected || type.Length == 1 && type[0] == Keyword_Selected[0])
+            {
+                var selected = 0;
+
+                foreach (ListViewItem item in list.Items)
+                    if (item.Selected)
+                        selected++;
+
+                return selected;
+            }
+
+            return 0;
         }
 
         /// <summary>
-        /// Returns the row number of the next selected, checked, or focused row. If none is found, zero is returned. If StartingRowNumber is omitted or less than 1, the search begins at the top of the list. Otherwise, the search begins at the row after StartingRowNumber. If the second parameter is omitted, the function searches for the next selected/highlighted row. Otherwise, specify "C" or "Checked" to find the next checked row; or "F" or "Focused" to find the focused row (there is never more than one focused row in the entire list, and sometimes there is none at all).
+        /// Returns the row number of the next selected, checked, or focused row.
         /// </summary>
-        /// <param name="StartingRowNumber"></param>
-        /// <param name="Mode"></param>
-        /// <returns></returns>
-        public static int LV_GetNext(int StartingRowNumber, string Mode)
+        /// <param name="index">The starting index. Leave blank to search from the first row.</param>
+        /// <param name="type">
+        /// <list type="bullet">
+        /// <item><term>(blank)</term>: <description>a selected row</description></item>
+        /// <item><term>Checked</term>: <description>a checked row</description></item>
+        /// <item><term>Focused</term>: <description>a focused row</description></item>
+        /// </list>
+        /// </param>
+        /// <returns>The next row number matching the specified criteria.</returns>
+        public static int LV_GetNext(int index, string type = "")
         {
             var list = DefaultListView;
 
             if (list == null)
                 return 0;
 
-            throw new NotImplementedException(); // TODO: LV_GetNext
+            type = type.ToLowerInvariant();
+
+            for (int i = Math.Max(0, index); i < list.Items.Count; i++)
+            {
+                var item = list.Items[i];
+
+                if (string.IsNullOrEmpty(type))
+                    if (item.Selected)
+                        return i;
+
+                if (type == Keyword_Checked || type.Length == 1 && type[0] == Keyword_Checked[0])
+                    if (item.Checked)
+                        return i;
+
+                if (type == Keyword_Focused || type.Length == 1 && type[0] == Keyword_Focused[0])
+                    if (item.Focused)
+                        return i;
+            }
+
+            return 0;
         }
 
         /// <summary>
-        /// Retrieves the text at the specified RowNumber and ColumnNumber and stores it in OutputVar. If ColumnNumber is omitted, it defaults to 1 (the text in the first column). If RowNumber is 0, the column header text is retrieved. If the text is longer than 8191, only the first 8191 characters are retrieved. The function returns 1 upon success and 0 upon failure. Upon failure, OutputVar is also made blank.
+        /// Retrieves the text at the specified <paramref name="row"/> and <paramref name="column"/>.
         /// </summary>
-        /// <param name="OutputVar"></param>
-        /// <param name="RowNumber"></param>
-        /// <param name="ColumnNumber"></param>
-        /// <returns></returns>
-        public static bool LV_GetText(out string OutputVar, int RowNumber, int ColumnNumber)
+        /// <param name="result">The variable in which to store the retrieved text.</param>
+        /// <param name="row">The row index. Leave blank to return the <paramref name="column"/> header.</param>
+        /// <param name="column">The column index.</param>
+        /// <returns><c>true</c> if the specified <paramref name="row"/> and <paramref name="column"/> was found, <c>false</c> otherwise.</returns>
+        public static bool LV_GetText(out string result, int row = 1, int column = 1)
         {
             var list = DefaultListView;
-            OutputVar = null;
+            result = string.Empty;
 
             if (list == null)
                 return false;
 
-            throw new NotImplementedException(); // TODO: LV_GetText
+            row--;
+            column--;
+
+            if (row == 0)
+            {
+                if (column > 0 && column < list.Columns.Count)
+                {
+                    result = list.Columns[column].Text;
+                    return true;
+                }
+            }
+
+            if (row > 0 && row < list.Items.Count)
+            {
+                var item = list.Items[row];
+
+                if (column > 0 && column < item.SubItems.Count)
+                {
+                    result = item.SubItems[column].Text;
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         /// <summary>
-        /// Behaves identically to LV_Add() except for its different first parameter, which specifies the row number for the newly inserted row. Any rows at or beneath RowNumber are shifted downward to make room for the new row. If RowNumber is greater than the number of rows in the list (even as high as 2147483647), the new row is added to the end of the list. For Options, see row options.
+        /// 
         /// </summary>
-        /// <param name="RowNumber"></param>
-        /// <param name="Options"></param>
-        /// <param name="ColN"></param>
-        public static void LV_Insert(int RowNumber, string Options, string[] ColN)
+        /// <param name="row"></param>
+        /// <param name="options"></param>
+        /// <param name="columns"></param>
+        public static void LV_Insert(int row, string options, string[] columns)
         {
             var list = DefaultListView;
 
@@ -118,13 +216,13 @@ namespace IronAHK.Rusty
         }
 
         /// <summary>
-        /// Creates a new column, inserting it as the specified ColumnNumber (shifting any other columns to the right to make room). The first column is 1 (not 0). If ColumnNumber is larger than the number of columns currently in the control, the new column is added to the end of the list. The newly inserted column starts off with empty contents beneath it unless it is the first column, in which case it inherits the old first column's contents and the old first column acquires blank contents. The new column's attributes -- such as whether or not it uses integer sorting -- always start off at their defaults unless changed via Options. This function returns the new column's position number (or 0 upon failure). The maximum number of columns in a ListView is 200.
+        /// 
         /// </summary>
-        /// <param name="ColumnNumber"></param>
-        /// <param name="Options"></param>
-        /// <param name="ColumnTitle"></param>
+        /// <param name="column"></param>
+        /// <param name="options"></param>
+        /// <param name="title"></param>
         /// <returns></returns>
-        public static int LV_InsertCol(int ColumnNumber, string Options, string ColumnTitle)
+        public static int LV_InsertCol(int column, string options, string title)
         {
             var list = DefaultListView;
 
@@ -135,12 +233,12 @@ namespace IronAHK.Rusty
         }
 
         /// <summary>
-        /// Modifies the attributes and/or text of a row, and returns 1 upon success and 0 upon failure. If RowNumber is 0, all rows in the control are modified (in this case the function returns 1 on complete success and 0 if any part of the operation failed). When only the first two parameters are present, only the row's attributes and not its text are changed. Similarly, if there are too few parameters to cover all the columns, the columns at the end are not changed. The ColN option may be used to update specific columns without affecting the others. For other options, see row options.
+        /// 
         /// </summary>
-        /// <param name="RowNumber"></param>
-        /// <param name="Options"></param>
-        /// <param name="NewCol"></param>
-        public static void LV_Modify(int RowNumber, string Options, string[] NewCol)
+        /// <param name="row"></param>
+        /// <param name="options"></param>
+        /// <param name="column"></param>
+        public static void LV_Modify(int row, string options, string[] column)
         {
             var list = DefaultListView;
 
@@ -151,13 +249,13 @@ namespace IronAHK.Rusty
         }
 
         /// <summary>
-        /// Modifies the attributes and/or text of the specified column and its header. The first column is number 1 (not 0). If all parameters are omitted, the width of every column is adjusted to fit the contents of the rows. If only the first parameter is present, only the specified column is auto-sized. Auto-sizing has no effect when not in Report (Details) view. This function returns 1 upon success and 0 upon failure.
+        /// 
         /// </summary>
-        /// <param name="ColumnNumber"></param>
-        /// <param name="Options"></param>
-        /// <param name="ColumnTitle"></param>
+        /// <param name="column"></param>
+        /// <param name="options"></param>
+        /// <param name="title"></param>
         /// <returns></returns>
-        public static int LV_ModifyCol(int ColumnNumber, string Options, string ColumnTitle)
+        public static int LV_ModifyCol(int column, string options, string title)
         {
             var list = DefaultListView;
 
@@ -168,16 +266,35 @@ namespace IronAHK.Rusty
         }
 
         /// <summary>
-        /// <para>This function is normally called prior to adding any rows to the ListView. It sets the ImageList whose icons will be displayed by the ListView's rows (and optionally, its columns). ImageListID is the number returned from a previous call to IL_Create(). If the second parameter is omitted, the type of icons in the ImageList is detected automatically as large or small. Otherwise, specify 0 for large icons, 1 for small icons, and 2 for state icons (state icons are not yet directly supported, but they could be used via SendMessage).</para>
-        /// <para>A ListView may have up to two ImageLists: small-icon and/or large-icon. This is useful when the script allows the user to switch to and from the large-icon view. To add more than one ImageList to a ListView, call LV_SetImageList() a second time, specifying the ImageListID of the second list. A ListView with both a large-icon and small-icon ImageList should ensure that both lists contain the icons in the same order. This is because the same ID number is used to reference both the large and small versions of a particular icon.</para>
-        /// <para>Although it is traditional for all viewing modes except Icon and Tile to show small icons, this can be overridden by passing a large-icon list to LV_SetImageList and specifying 1 (small-icon) for the second parameter. This also increases the height of each row in the ListView to fit the large icon.</para>
-        /// <para>If successful, LV_SetImageList() returns the ImageListID that was previously associated with the ListView (or 0 if none). Any such detached ImageList should normally be destroyed via IL_Destroy(ImageListID).</para>
+        /// Sets the ImageList whose icons will be displayed by the rows of the ListView.
         /// </summary>
-        /// <param name="ImageListID"></param>
-        /// <param name="Mode"></param>
-        public static void LV_SetImageList(int ImageListID, string Mode)
+        /// <param name="id">The ImageList ID. See <see cref="IL_Create"/>.</param>
+        /// <param name="type">
+        /// The type of image list:
+        /// <list type="bullet">
+        /// <item><term>0 (default)</term>: <description>large</description></item>
+        /// <item><term>1</term>: <description>small</description></item>
+        /// <item><term>2</term>: <description>state</description></item>
+        /// </list>
+        /// </param>
+        public static void LV_SetImageList(long id, int type = 0)
         {
-            throw new NotImplementedException(); // TODO: LV_SetImageList
+            var list = DefaultListView;
+
+            if (list == null)
+                return;
+
+            if (!imageLists.ContainsKey(id))
+                return;
+
+            var img = imageLists[id];
+
+            switch (type)
+            {
+                case 0: list.LargeImageList = img; break;
+                case 1: list.SmallImageList = img; break;
+                case 2: list.StateImageList = img; break;
+            }
         }
     }
 }

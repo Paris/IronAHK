@@ -333,6 +333,7 @@ namespace IronAHK.Rusty
         const string Keyword_FormatDecimal = "d";
         const string Keyword_IniSectionOpen = "[";
         const char Keyword_IniKeyAssign = '=';
+        const string Keyword_Focused = "focused";
 
         const char Keyword_ModifierWin = '#';
         const char Keyword_ModifierAlt = '!';
