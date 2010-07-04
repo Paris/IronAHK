@@ -1214,6 +1214,7 @@ namespace IronAHK.Rusty
 
             float dw = control.Font.SizeInPoints * 15;
             float w = 0;
+            int r = 0;
 
             if (control is ComboBox || control is ListBox || control is HotkeyBox || control is TextBox)
                 w = dw;
@@ -1230,7 +1231,22 @@ namespace IronAHK.Rusty
             else if (control is TabPage)
                 w = 2 * dw + 3 * control.Parent.Margin.Left;
 
-            control.Size = new Size(Math.Max((int)w, control.PreferredSize.Width), control.PreferredSize.Height);
+            if (control is ComboBox)
+                r = 2;
+            else if (control is ListBox)
+                r = 3;
+            else if (control is ListView || control is TreeView)
+                r = 5;
+            else if (control is GroupBox)
+                r = 2;
+            else if (control is TextBox)
+                r = ((TextBox)control).Multiline ? 3 : 1;
+            else if (control is DateTimePicker || control is HotkeyBox)
+                r = 1;
+            else if (control is TabPage)
+                r = 10;
+            
+            control.Size = new Size(Math.Max((int)w, control.PreferredSize.Width), ++r > 2 ? (int)(r * control.Parent.Font.Height) : control.PreferredSize.Height);
 
             #endregion
 
