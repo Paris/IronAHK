@@ -68,9 +68,6 @@ namespace IronAHK.Rusty
         #region Guis
 
         [ThreadStatic]
-        static int eventinfo;
-
-        [ThreadStatic]
         static Form dialogOwner;
 
         static Dictionary<long, ImageList> imageLists;

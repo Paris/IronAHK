@@ -172,17 +172,12 @@ namespace IronAHK.Rusty
         }
 
         /// <summary>
-        /// <para>Contains additional information about the following events:</para>
-        /// <list type="">
-        /// <item>The OnClipboardChange label</item>
-        /// <item>Mouse wheel hotkeys (WheelDown/Up)</item>
-        /// <item>RegisterCallback()</item>
-        /// <item>GUI events, namely GuiContextMenu, GuiDropFiles, ListBox, ListView, TreeView, and StatusBar. If there is no additional information for an event, A_EventInfo contains 0.</item>
-        /// </list>
+        /// Contains event information from various commands.
         /// </summary>
         public static int A_EventInfo
         {
-            get { return eventinfo; }
+            get;
+            set;
         }
 
         /// <summary>
@@ -240,6 +235,9 @@ namespace IronAHK.Rusty
             }
         }
 
+        /// <summary>
+        /// See <see cref="A_FormatFloat"/>.
+        /// </summary>
         [Obsolete]
         public static string A_FormatFloatFast
         {
@@ -270,6 +268,9 @@ namespace IronAHK.Rusty
             }
         }
 
+        /// <summary>
+        /// See <see cref="A_FormatInteger"/>.
+        /// </summary>
         [Obsolete]
         public static string A_FormatIntegerFast
         {
