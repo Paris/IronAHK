@@ -195,7 +195,7 @@ namespace IronAHK.Scripting
 
         CodeArrayIndexerExpression InternalVariable
         {
-            get { return VarRef("\0" + ScopeVar); }
+            get { return VarRef(string.Concat(Scope, ScopeVar + "\0", InternalID)); }
         }
 
         #endregion
