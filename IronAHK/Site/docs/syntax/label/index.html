@@ -1,1 +1,40 @@
-﻿
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Labels</title>
+<link href="../../primary.css" rel="stylesheet" type="text/css" />
+<link href="../../api.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="../../main.js" defer="defer"></script>
+</head>
+<body>
+<h1>Labels</h1>
+<div id="page">
+  <p>A label identifies a point in a script which can be called or <a href="../commands/islabel/">referenced</a>. They are generally discouraged becuase they make scripts less readable and harder to maintain.</p>
+  <p>Labels take the form of any <a href="../variable/#form">valid identifier</a> followed by a colon (<code>:</code>) own its own line. <a href="../../overview/hotkeys/">Hotkey</a> and <a href="../../overview/hotkeys/#hotstring">hotstring</a> definitions are also labels.</p>
+  <p>&nbsp;</p>
+  <h3 class="command">goto label</h3>
+  <p>Jumps to the specified label.</p>
+  <p>&nbsp;</p>
+  <h3 class="command">gosub label</h3>
+  <p>Jumps to the specified label and continues execution until <a href="../flow/#return">Return</a> is encountered.</p>
+  <p>&nbsp;</p>
+  <h2>Examples</h2>
+  <pre class="code">
+gosub MyLabel 
+MsgBox, The 'MyLabel' label has returned (it is finished).
+return
+
+MyLabel:
+MsgBox, The 'MyLabel' label is now running.
+return</pre>
+  <pre class="code">
+goto info
+MsgBox, This will never be shown.
+
+info:
+MsgBox, The 'info' label is now running.
+return</pre>
+</div>
+</body>
+</html>
