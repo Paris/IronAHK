@@ -20,7 +20,7 @@ namespace IronAHK.Scripting
                return Target;
             
             if(!Force && !Sources.Contains(Copy.DeclaringType)) 
-                return ReplaceGenericArguments(Copy);
+                return TypeReplaceGenerics(Copy);
             
             TypeBuilder Ret = On.DefineNestedType(string.Format("{0}{1}_{2}", Prefix, Copy.Assembly.GetName().Name, Copy.Name), 
                                                       Copy.Attributes, Copy.BaseType, Copy.GetInterfaces());
@@ -57,19 +57,22 @@ namespace IronAHK.Scripting
             return GrabType(Copy, Target, AvoidSelf, Force);
         }
         
-        Type ReplaceGenericArguments(Type Orig)
+        Type TypeReplaceGenerics(Type Orig)
         {
             if(Orig.IsGenericType)
             {
-                Type[] Replace = Orig.GetGenericArguments();
-                Type Ret = Orig.GetGenericTypeDefinition();
-                
-                for(int i = 0; i < Replace.Length; i++)
-                    Replace[i] = GrabType(Replace[i]);
-                
-                return Ret.MakeGenericType(Replace);
+                Type[] Replace = ReplaceGenericArguments(Orig.GetGenericArguments());
+                return Orig.GetGenericTypeDefinition().MakeGenericType(Replace);
             }
             else return Orig;
+        }
+        
+        Type[] ReplaceGenericArguments(Type[] Replace)
+        {
+            for(int i = 0; i < Replace.Length; i++)
+                Replace[i] = GrabType(Replace[i]);
+            
+            return Replace;
         }
         
         Type[] ParameterTypes(MethodBase Original)

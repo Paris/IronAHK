@@ -16,7 +16,7 @@ namespace IronAHK.Scripting
             if(Original == null) return null;
             
             if(!Sources.Contains(Original.DeclaringType))
-                return Original;
+                return MethodReplaceGenerics(Original);
             
             if(MethodsDone.ContainsKey(Original)) 
                 return MethodsDone[Original];
@@ -35,6 +35,16 @@ namespace IronAHK.Scripting
             CopyMethodBody(Original.GetMethodBody(), Gen, Original.Module);
             
             return Builder; 
+        }
+        
+        MethodInfo MethodReplaceGenerics(MethodInfo Original)
+        {
+            if(Original.IsGenericMethod)
+            {
+                Type[] Replace = ReplaceGenericArguments(Original.GetGenericArguments());
+                return Original.GetGenericMethodDefinition().MakeGenericMethod(Replace);
+            }
+            else return Original;
         }
     }
 }

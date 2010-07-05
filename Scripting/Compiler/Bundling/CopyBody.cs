@@ -61,22 +61,9 @@ namespace IronAHK.Scripting
                     MethodBase Base = Origin.ResolveMethod(Token);
                     
                     if(Base is MethodInfo)
-                    {
-                        MethodInfo Info = Base as MethodInfo;
-                        
-                        // If the method we're copying calls another method from 
-                        // the list of sources, we need to copy that as well
-                        if(Sources.Contains(Info.DeclaringType))
-                            Info = GrabMethod(Info);
-                        
-                        Gen.Emit(Code, Info);
-                    }
+                        Gen.Emit(Code, GrabMethod(Base as MethodInfo));
                     else if(Base is ConstructorInfo)
-                    {
-                        if(Sources.Contains(Base.DeclaringType))
-                            Gen.Emit(Code, GrabConstructor(Base as ConstructorInfo, GrabType(Base.DeclaringType) as TypeBuilder));
-                        else Gen.Emit(Code, Base as ConstructorInfo);
-                    }
+                        Gen.Emit(Code, GrabConstructor(Base as ConstructorInfo));
                     else throw new InvalidOperationException("Inline method is neither method nor constructor.");
                     
                     break;
