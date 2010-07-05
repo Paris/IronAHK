@@ -1,1 +1,77 @@
-﻿
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Variables</title>
+<link href="../../primary.css" rel="stylesheet" type="text/css" />
+<link href="../../api.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="../../main.js" defer="defer"></script>
+</head>
+<body>
+<h1>Variables</h1>
+<div id="page">
+  <p>A variable is an identifier which refers to data that can be modified. </p>
+  <h3 id="form">Form</h3>
+  <p>A valid identifier can be any alphanumeric  string between 1 and 64 characters in length. It must not be one of the <a href="../expression/#keywords">reserved keywords</a> or contain symbols.</p>
+  <h2 id="type">Types</h2>
+  <p>Every variable has an underlying type which describes the nature of the data it stores. The following table lists the primitive types commonly used: </p>
+  <table id="primitive">
+    <tr>
+      <th scope="col">Type</th>
+      <th scope="col"><acronym title="Common Language Runtime">CLR</acronym> Type</th>
+      <th scope="col">Description</th>
+      <th scope="col">Example</th>
+    </tr>
+    <tr>
+      <td>String</td>
+      <td>System.String</td>
+      <td>Set of Unicode characters.</td>
+      <td><code>txt := &quot;Hello World&quot;</code></td>
+    </tr>
+    <tr>
+      <td>Numeric</td>
+      <td>System.Double</td>
+      <td>Floating point number.</td>
+      <td><code>pi := 3.14</code></td>
+    </tr>
+    <tr>
+      <td>Boolean</td>
+      <td>System.Boolean</td>
+      <td>True or false.</td>
+      <td><code>error := false</code></td>
+    </tr>
+    <tr>
+      <td><a href="#array">Array</a></td>
+      <td>System.Object[]</td>
+      <td>List of values.</td>
+      <td><code>primes := [ 1, 3, 5, 7, 11 ]</code></td>
+    </tr>
+    <tr>
+      <td><a href="#object">Object</a></td>
+      <td>System.Dictionary</td>
+      <td>Associative array.</td>
+      <td><code>result := { success : true, code : 200 }</code></td>
+    </tr>
+    <tr>
+      <td><a href="../function/">Function</a></td>
+      <td>System.Delegate</td>
+      <td>Function.</td>
+      <td><code>f := { hash : crc32 }, result := f.hash(&quot;test&quot;)</code></td>
+    </tr>
+  </table>
+  <p>In certain cases a variable may be  any other CLR type. However unlike the CLR, all value types are automatically boxed.</p>
+  <h3 id="array">Arrays</h3>
+  <p>An array stores multiple values (called elements) which can be of different types all within a single variable. Each element has a numeric index starting from zero.<br />
+    Square brackets <code>[ ]</code> are used to create arrays, refer to specific elements and extend arrays:</p>
+  <pre class="code">primes := <kbd>[</kbd> 1<kbd>,</kbd> 3<kbd>,</kbd> 5<kbd>,</kbd> 7 <kbd>]</kbd> <em>; create an array with a few initial values</em><br />MsgBox(&quot;Third prime number: &quot; primes<kbd>[2]</kbd>) <em>; the second index is the third element, since indexes start at zero</em><br /><br />primes<kbd>[]</kbd> := 11 <em>; extend the array by one element and store this new value</em></pre>
+  <h3 id="object">Objects</h3>
+  <p>An object is similar to an array but elements have a key name rather than a numeric index. They can also be called associative arrays, or variables within variables.</p>
+  <p>The syntax is identical to <a href="http://www.json.org/">JSON</a>:</p>
+  <pre class="code">book := <kbd>{</kbd> author <kbd>:</kbd> &quot;Charles Darwin&quot;<kbd>,</kbd> price : 11.90 <kbd>}</kbd> <em>; create an object</em><br />MsgBox(&quot;Author: &quot; book<kbd>.</kbd>author) <em>; reference an element</em><br />book<kbd>[&quot;</kbd>price<kbd>&quot;]</kbd> += 1.10 <em>; same as book.price</em><br />book<kbd>.</kbd>title := &quot;The Origin of Species&quot; <em>; create a new element named title</em></pre>
+  <h2 id="scope">Scope</h2>
+  <p>With the exception of <a href="../function/#local">local variables</a> in functions, all variables are global - their contents may be read or altered by any part of the script.</p>
+  <p id="declare">Variables do not need to be declared, they are automatically created whenever they are referenced.</p>
+  <p id="delete">To delete a variable or array element set its value to <a href="../expression/#null"><code>null</code></a>.</p>
+</div>
+</body>
+</html>
