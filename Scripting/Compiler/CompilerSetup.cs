@@ -85,6 +85,7 @@ namespace IronAHK.Scripting
 
         public void Save()
         {
+            Methods.Mirror.Complete();
             ABuilder.Save(AName.Name);
         }
     }
