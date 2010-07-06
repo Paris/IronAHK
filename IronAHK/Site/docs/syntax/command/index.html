@@ -1,1 +1,24 @@
-﻿
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Commands</title>
+<link href="../../primary.css" rel="stylesheet" type="text/css" />
+<link href="../../api.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="../../main.js" defer="defer"></script>
+</head>
+<body>
+<h1>Commands</h1>
+<div id="page">
+  <p>The command syntax  is used to invoke functions in a more straightforward way.</p>
+  <h3 class="command"><acronym title="The command name">Cmd</acronym> <acronym title="Parameters">param1, paramN</acronym></h3>
+  <p id="expr">Every parameter is a string. To use an expression parameter start with a <code>%</code> and a  space, e.g. <code>FileAppend test, <kbd>% </kbd>resources[&quot;log&quot;]</code></p>
+  <p id="comma">The command name may optionally be followed by a single comma which is ignored.</p>
+  <h2 id="assignment">Assignments</h2>
+  <p>To assign a string value to a <a href="../variable/">variable</a> use the equals (<code>=</code>) operator: <code>txt <kbd>=</kbd> Hello World</code></p>
+  <p>Other variables can be referenced in command parameters and assignments by enclosing the inner variable name in <code>%</code> symbols:</p>
+  <pre class="code">place <kbd>=</kbd> World<br />txt <kbd>=</kbd> Hello <kbd>%</kbd>place<kbd>%</kbd><br />MsgBox <kbd>%</kbd>txt<kbd>%</kbd></pre>
+  <p>Note this only applies to variables, not <a href="../variable/#array">arrays</a> or <a href="../variable/#object">object</a> elements.</p>
+</div>
+</body>
+</html>
