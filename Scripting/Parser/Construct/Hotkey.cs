@@ -76,6 +76,7 @@ namespace IronAHK.Scripting
             }
 
             prepend.Add(invoke);
+            persistent = true;
 
             return new CodeMethodReturnStatement();
         }
