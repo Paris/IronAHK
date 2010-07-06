@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace IronAHK.Scripting
 {
-    partial class ILMirror : List<MethodInfo>
+    partial class ILMirror 
     {
         static OpCode [] one_byte_opcodes;
         static OpCode [] two_bytes_opcodes;
@@ -15,12 +15,23 @@ namespace IronAHK.Scripting
         
         public List<Type> Sources;
         public TypeBuilder Target;
-        public ModuleBuilder Module;
+        
+        public ModuleBuilder Module {
+            get { return mModule; }
+            set {
+                mModule = value;
+                ImplementationDetails = value.DefineType("<CopiedImplementationDetails>");
+            }
+        }
+        
+        ModuleBuilder mModule;
+        TypeBuilder ImplementationDetails;
         
         Dictionary<MethodBase, MethodBuilder> MethodsDone;
         Dictionary<ConstructorInfo, ConstructorBuilder> ConstructorsDone;
         Dictionary<FieldInfo, FieldBuilder> FieldsDone;
         Dictionary<Type, TypeBuilder> TypesDone;
+        Dictionary<FieldInfo, FieldInfo> BackingFields;
 
         static ILMirror ()
         {
@@ -51,6 +62,12 @@ namespace IronAHK.Scripting
             ConstructorsDone = new Dictionary<ConstructorInfo, ConstructorBuilder>();
             FieldsDone = new Dictionary<FieldInfo, FieldBuilder>();
             TypesDone = new Dictionary<Type, TypeBuilder>();
+            BackingFields = new Dictionary<FieldInfo, FieldInfo>();
+        }
+        
+        public void Complete()
+        {
+            ImplementationDetails.CreateType();
         }
     }
 }

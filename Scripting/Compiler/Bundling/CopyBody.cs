@@ -109,7 +109,10 @@ namespace IronAHK.Scripting
                     MemberInfo Info = Origin.ResolveMember(Token);
                     
                     if(Info.MemberType == MemberTypes.Field)
-                        Gen.Emit(Code, GrabField(Info as FieldInfo));
+                    {
+                        if(Code != OpCodes.Ldtoken || !TryReplaceBackingField(Bytes, i, Gen, Origin))
+                            Gen.Emit(Code, GrabField(Info as FieldInfo));
+                    }
                     else if(Info.MemberType == MemberTypes.Method)
                         Gen.Emit(Code, GrabMethod(Info as MethodInfo));
                     else if(Info.MemberType == MemberTypes.TypeInfo)
@@ -163,7 +166,27 @@ namespace IronAHK.Scripting
                 default:
                     throw new InvalidOperationException("The method copier ran across an unknown opcode.");
             }
-        }        
+        }    
+        
+        bool TryReplaceBackingField(byte[] Bytes, int i, ILGenerator Gen, Module Origin)
+        {
+            // With a bit of clairvoyance we try to determine if we're dealing with
+            // a specific type of array initializer that the C#-compiler uses.
+            if(Bytes[i+1] != (byte) OpCodes.Call.Value)
+                return false;
+            
+            if(Bytes[i+6] != (byte) OpCodes.Stsfld.Value)
+                return false;
+            
+            i += 6;
+            int Token = BitHelper.ReadInteger(Bytes, ref i);
+            FieldInfo Info = Origin.ResolveField(Token);
+            
+            FieldInfo Ours = GrabField(Info);
+            Gen.Emit(OpCodes.Ldtoken, BackingFields[Ours]);
+            
+            return true;
+        }
     }
 }
 
