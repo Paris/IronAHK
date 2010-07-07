@@ -11,6 +11,11 @@ namespace IronAHK.Scripting
             return GrabType(Copy, false, false);
         }
         
+        Type GrabType(Type Copy, TypeBuilder On, bool AvoidSelf)
+        {
+            return GrabType(Copy, On, AvoidSelf, false);
+        }
+        
         Type GrabType(Type Copy, TypeBuilder On, bool AvoidSelf, bool Force)
         {
             if(TypesDone.ContainsKey(Copy))
@@ -34,7 +39,7 @@ namespace IronAHK.Scripting
                 switch(Member.MemberType)
                 {
                     case MemberTypes.Method:
-                        GrabMethod(Member as MethodInfo, Ret);
+                        GrabMethod(Member as MethodInfo, Ret, true);
                         break;
                         
                     case MemberTypes.Field:
@@ -42,10 +47,11 @@ namespace IronAHK.Scripting
                         break;
                         
                     case MemberTypes.Constructor:
-                        GrabConstructor(Member as ConstructorInfo, Ret);
+                        GrabConstructor(Member as ConstructorInfo, Ret, true);
                         break;
                 }
             }
+            
             
             Ret.CreateType();
             
