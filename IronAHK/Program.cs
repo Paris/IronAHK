@@ -243,6 +243,8 @@ namespace IronAHK
                     if (e is TargetInvocationException)
                         e = e.InnerException;
 
+#pragma warning disable 162
+
                     if (debug)
                     {
                         Console.WriteLine();
@@ -252,6 +254,8 @@ namespace IronAHK
                     }
                     else
                         return Message("Could not execute: " + e.Message, ExitInvalidFunction);
+
+#pragma warning restore
                 }
             }
 

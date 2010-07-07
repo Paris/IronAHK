@@ -625,8 +625,9 @@ namespace IronAHK.Rusty
                                            int n = length + 1;
                                            history.Remove(history.Length - n, n);
                                            Backspace(length);
-                            
-                                           if((hotstring.EnabledOptions & HotstringDefinition.Options.AutoTrigger) != HotstringDefinition.Options.AutoTrigger)
+
+                                           // UNDONE: hook on Windows captures triggering key and blocks it, but X11 allows it through and needs an extra backspace
+                                           if (!auto && Environment.OSVersion.Platform != PlatformID.Win32NT)
                                                Backspace(1);
                                        }
 
