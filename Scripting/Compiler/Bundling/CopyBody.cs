@@ -117,7 +117,7 @@ namespace IronAHK.Scripting
                     }
                     else if(Info.MemberType == MemberTypes.Method)
                         Gen.Emit(Code, GrabMethod(Info as MethodInfo));
-                    else if(Info.MemberType == MemberTypes.TypeInfo)
+                    else if(Info.MemberType == MemberTypes.TypeInfo || Info.MemberType == MemberTypes.NestedType)
                         Gen.Emit(Code, GrabType(Info as Type));
                     else throw new InvalidOperationException("Inline token is neither field, nor method, nor type");
                     
@@ -156,7 +156,7 @@ namespace IronAHK.Scripting
                 // Argument is a 32-bit integer
                 case OperandType.InlineBrTarget:
                 case OperandType.InlineI:
-                case OperandType.ShortInlineR: // This is actually a float, but we don't care
+                case OperandType.ShortInlineR: // This is actually a 32-bit float, but we don't care
                 {
                     Gen.Emit(Code, BitHelper.ReadInteger(Bytes, ref i));
                     break;
@@ -169,7 +169,7 @@ namespace IronAHK.Scripting
                     break;
                 }
                     
-                // Argument is a 32-bit float
+                // Argument is a 64-bit float
                 case OperandType.InlineR:
                 {
                     Gen.Emit(Code, BitHelper.ReadDouble(Bytes, ref i));
