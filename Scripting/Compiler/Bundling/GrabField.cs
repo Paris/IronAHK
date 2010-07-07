@@ -29,6 +29,9 @@ namespace IronAHK.Scripting
             FieldBuilder CopiedField = On.DefineField(Prefix+Field.Name, GrabType(Field.FieldType), Field.Attributes); 
             FieldsDone.Add(Field, CopiedField);
             
+            if(Field.IsLiteral && Field.DeclaringType.IsEnum)
+                CopiedField.SetConstant(Field.GetRawConstantValue());
+            
             // Fields like these mostly have a backing field that comes with them in the
             // <PrivateImplementationDetails> class of the assembly. This backing field
             // refers to a bit of data in the .sdata section, which is serialized in a 

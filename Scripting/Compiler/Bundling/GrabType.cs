@@ -38,7 +38,7 @@ namespace IronAHK.Scripting
                         break;
                         
                     case MemberTypes.Field:
-                        GrabField(Member as FieldInfo, Target, Force);
+                        GrabField(Member as FieldInfo, Ret, true);
                         break;
                         
                     case MemberTypes.Constructor:
