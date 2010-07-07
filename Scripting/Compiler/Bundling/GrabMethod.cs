@@ -13,9 +13,14 @@ namespace IronAHK.Scripting
         
         MethodInfo GrabMethod(MethodInfo Original, TypeBuilder On)
         {
+            return GrabMethod(Original, On, false);
+        }
+        
+        MethodInfo GrabMethod(MethodInfo Original, TypeBuilder On, bool Force)
+        {
             if(Original == null) return null;
             
-            if(!Sources.Contains(Original.DeclaringType))
+            if(!Force && !Sources.Contains(Original.DeclaringType))
                 return MethodReplaceGenerics(Original);
             
             if(MethodsDone.ContainsKey(Original)) 
@@ -28,11 +33,12 @@ namespace IronAHK.Scripting
             
             MethodBuilder Builder = On.DefineMethod(Prefix+Original.Name, Original.Attributes, 
                 ReturnType, ParameterTypes(Original));
-            ILGenerator Gen = Builder.GetILGenerator();
             
             MethodsDone.Add(Original, Builder);
             
-            CopyMethodBody(Original.GetMethodBody(), Gen, Original.Module);
+            Builder.SetImplementationFlags(Original.GetMethodImplementationFlags());
+            
+            CopyMethodBody(Original.GetMethodBody(), Builder.GetILGenerator(), Original.Module);
             
             return Builder; 
         }

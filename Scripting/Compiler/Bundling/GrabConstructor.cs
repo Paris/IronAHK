@@ -8,24 +8,25 @@ namespace IronAHK.Scripting
     {
         ConstructorInfo GrabConstructor(ConstructorInfo Original)
         {
-            return GrabConstructor(Original, Target);
+            return GrabConstructor(Original, Target, false);
         }
         
-        ConstructorInfo GrabConstructor(ConstructorInfo Original, TypeBuilder On)
+        ConstructorInfo GrabConstructor(ConstructorInfo Original, TypeBuilder On, bool Force)
         {
             if(ConstructorsDone.ContainsKey(Original))
                 return ConstructorsDone[Original];
             
-            if(!Sources.Contains(Original.DeclaringType))
+            if(!Force && !Sources.Contains(Original.DeclaringType))
                 return ConstructorReplaceGenerics(Original);
             
             ConstructorBuilder Builder = On.DefineConstructor(Original.Attributes, 
                 Original.CallingConvention, ParameterTypes(Original));
-            ILGenerator Gen = Builder.GetILGenerator();
+            
+            Builder.SetImplementationFlags(Original.GetMethodImplementationFlags());
             
             ConstructorsDone.Add(Original, Builder);
             
-            CopyMethodBody(Original.GetMethodBody(), Gen, Original.Module);
+            CopyMethodBody(Original.GetMethodBody(), Builder.GetILGenerator(), Original.Module);
             
             return Builder;
         }
