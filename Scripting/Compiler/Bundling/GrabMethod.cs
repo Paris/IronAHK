@@ -36,8 +36,14 @@ namespace IronAHK.Scripting
             
             MethodsDone.Add(Original, Builder);
             
-            Builder.SetImplementationFlags(Original.GetMethodImplementationFlags());
+            MethodImplAttributes Attr = Original.GetMethodImplementationFlags();
+            Builder.SetImplementationFlags(Attr);
             
+            if((Attr & MethodImplAttributes.Runtime) == MethodImplAttributes.Runtime &&
+               (Attr & MethodImplAttributes.Managed) == MethodImplAttributes.Managed)
+                return Builder;
+            
+            Console.WriteLine("Copying "+Original.Name);
             CopyMethodBody(Original.GetMethodBody(), Builder.GetILGenerator(), Original.Module);
             
             return Builder; 
