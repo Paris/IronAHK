@@ -85,6 +85,13 @@
     <None Include="Site\clean.php" />
     <None Include="Site\docs\commands\.gitignore" />
     <None Include="Site\download\.htaccess" />
+    <Content Include="Site\docs\syntax\command\index.html" />
+    <Content Include="Site\docs\syntax\directive\index.html" />
+    <Content Include="Site\docs\syntax\expression\index.html" />
+    <Content Include="Site\docs\syntax\flow\index.html" />
+    <Content Include="Site\docs\syntax\function\index.html" />
+    <Content Include="Site\docs\syntax\label\index.html" />
+    <Content Include="Site\docs\syntax\variable\index.html" />
     <Content Include="Site\download\nightly\blank.txt" />
   </ItemGroup>
   <ItemGroup>

@@ -57,7 +57,6 @@ namespace IronAHK.Rusty
             InitKeyboardHook();
 
             bool? enabled = true;
-            bool error = false;
 
             foreach (var option in ParseOptions(Options))
             {
@@ -66,7 +65,7 @@ namespace IronAHK.Rusty
                     case Keyword_On: enabled = true; break;
                     case Keyword_Off: enabled = false; break;
                     case Keyword_Toggle: enabled = null; break;
-                    case Keyword_UseErrorLevel: error = true; break;
+                    case Keyword_UseErrorLevel: break;
 
                     default:
                         switch (option[0])

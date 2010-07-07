@@ -7,7 +7,6 @@ namespace IronAHK.Rusty
 {
     class SplashDialog : Form
     {
-        private Container components;
         private PictureBox mPictureBox;
         private Label mSubText;
         private Label mMainText;
@@ -40,18 +39,6 @@ namespace IronAHK.Rusty
         {
             InitializeComponent();
             StartPosition = FormStartPosition.CenterScreen;
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                if (components != null)
-                {
-                    components.Dispose();
-                }
-            }
-            base.Dispose(disposing);
         }
 
         private void InitializeComponent()

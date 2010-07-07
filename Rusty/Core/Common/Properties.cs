@@ -68,9 +68,6 @@ namespace IronAHK.Rusty
         #region Guis
 
         [ThreadStatic]
-        static int eventinfo;
-
-        [ThreadStatic]
         static Form dialogOwner;
 
         static Dictionary<long, ImageList> imageLists;
@@ -120,7 +117,7 @@ namespace IronAHK.Rusty
                 TreeView tv = null;
 
                 foreach (var control in gui.Controls)
-                    if (control.GetType() == typeof(TreeView))
+                    if (control is TreeView)
                         tv = (TreeView)control;
 
                 return tv;
@@ -146,7 +143,7 @@ namespace IronAHK.Rusty
                 ListView lv = null;
 
                 foreach (var control in gui.Controls)
-                    if (control.GetType() == typeof(ListView))
+                    if (control is ListView)
                         lv = (ListView)control;
 
                 return lv;
