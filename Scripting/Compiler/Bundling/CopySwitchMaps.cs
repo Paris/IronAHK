@@ -12,7 +12,7 @@ namespace IronAHK.Scripting
         {
             for(int i = 0; i < Bytes.Length; i++)
             {
-                if(Bytes[i] != (byte) OpCodes.Switch.Value) continue;
+                OpCode Code = GetOpcode(Bytes, ref i);
                 
                 int Start = i;
                 int Count = (int) BitHelper.ReadUnsignedInteger(Bytes, ref i);
