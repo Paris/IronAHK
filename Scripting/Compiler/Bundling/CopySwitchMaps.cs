@@ -14,6 +14,12 @@ namespace IronAHK.Scripting
             {
                 OpCode Code = GetOpcode(Bytes, ref i);
                 
+                if(Code != OpCodes.Switch) 
+                {
+                    i += CodeArgumentSize(Code);
+                    continue;
+                }                
+                
                 int Start = i;
                 int Count = (int) BitHelper.ReadUnsignedInteger(Bytes, ref i);
                 
@@ -47,6 +53,48 @@ namespace IronAHK.Scripting
             Gen.MarkLabel(LateLabels[i]);
             LateLabels.Remove(i);
         }
+        
+        int CodeArgumentSize(OpCode Code)
+        {
+            switch(Code.OperandType)
+            {
+                case OperandType.InlineNone:
+                    return 0;
+                    
+                // All tokens are 32-bit integers
+                case OperandType.InlineMethod:
+                case OperandType.InlineField:
+                case OperandType.InlineType:
+                case OperandType.InlineString:
+                case OperandType.InlineTok:
+                case OperandType.InlineBrTarget:
+                case OperandType.InlineI:
+                case OperandType.ShortInlineR: 
+                    return 4;
+                    
+                // Variable length
+                case OperandType.InlineSwitch:
+                    throw new ArgumentException("InlineSwitch has variable argument length", "Code");
+                    
+                // Argument is a byte
+                case OperandType.ShortInlineBrTarget:
+                case OperandType.ShortInlineI:
+                case OperandType.ShortInlineVar:
+                    return 1;
+                
+                // Argument is a short
+                case OperandType.InlineVar:
+                    return 2;
+                    
+                // Argument is a 64-bit integer
+                case OperandType.InlineI8:
+                case OperandType.InlineR:
+                    return 8;
+                
+                default:
+                    throw new InvalidOperationException("Could not determine argument size for opcode "+Code);
+            }
+        }        
     }
 }
     
