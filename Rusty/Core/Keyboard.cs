@@ -93,16 +93,11 @@ namespace IronAHK.Rusty
             HotkeyDefinition key;
 
             try { key = HotkeyDefinition.Parse(KeyName); }
-#if !DEBUG
-            catch (Exception)
+            catch (ArgumentException)
             {
                 ErrorLevel = 2;
-                if (!error)
-                    throw new ArgumentException();
                 return;
             }
-#endif
-            finally { }
 
             string id = KeyName;
             key.Name = id;
