@@ -8,6 +8,13 @@ namespace IronAHK.Scripting
     {
         static class BitHelper
         {
+            public static uint ReadUnsignedInteger(byte[] Bytes, ref int i)
+            {
+                uint Ret = BitConverter.ToUInt32(Bytes, ++i);
+                i += 3;
+                return Ret;
+            }
+            
             public static int ReadInteger(byte[] Bytes, ref int i)
             {
                 int Ret = BitConverter.ToInt32(Bytes, ++i);

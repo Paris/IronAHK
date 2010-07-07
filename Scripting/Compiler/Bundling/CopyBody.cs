@@ -11,15 +11,19 @@ namespace IronAHK.Scripting
         {
             CopyLocals(Gen, Body);
             
-            var ExceptionTrinkets = new List<int>();
-            MineExTrinkets(Body, ExceptionTrinkets);
-            
             byte[] Bytes = Body.GetILAsByteArray();
+            var ExceptionTrinkets = new List<int>();
+            var LateLabels = new Dictionary<int, Label>();
+            var SwitchMaps = new Dictionary<int, Label[]>();
+            
+            MineExTrinkets(Body, ExceptionTrinkets);
+            MineSwitchMaps(Bytes, Gen, SwitchMaps, LateLabels);
             
             for(int i = 0; i < Bytes.Length; i++)
             {
                 CopyTryCatch(Gen, i, Body, ExceptionTrinkets);
-                CopyOpcode(Bytes, ref i, Gen, Origin, ExceptionTrinkets);
+                CopyLabels(Gen, i, LateLabels);
+                CopyOpcode(Bytes, ref i, Gen, Origin, ExceptionTrinkets, SwitchMaps);
             }
         }
         
@@ -30,7 +34,7 @@ namespace IronAHK.Scripting
                 Gen.DeclareLocal(Info.LocalType, Info.IsPinned);
         }
         
-        void CopyOpcode(byte[] Bytes, ref int i, ILGenerator Gen, Module Origin, List<int> ExceptionTrinkets)
+        void CopyOpcode(byte[] Bytes, ref int i, ILGenerator Gen, Module Origin, List<int> ExceptionTrinkets, Dictionary<int, Label[]> SwitchMaps)
         {
             OpCode Code;
             if(Bytes[i] == 0xFE) Code = two_bytes_opcodes[Bytes[++i]];
@@ -122,6 +126,19 @@ namespace IronAHK.Scripting
                     break;
                 }
                     
+                // Argument is a switch map
+                case OperandType.InlineSwitch:
+                {
+                    if(!SwitchMaps.ContainsKey(i))
+                        throw new Exception("No switchmap found for RVA "+i.ToString("X"));
+                        
+                    Label[] Labels = SwitchMaps[i];
+                    i += 4 + Labels.Length*4;
+                    Gen.Emit(Code, Labels);
+                    
+                    break;
+                }
+                    
                 // Argument is a byte
                 case OperandType.ShortInlineBrTarget:
                 case OperandType.ShortInlineI:
@@ -139,7 +156,6 @@ namespace IronAHK.Scripting
                 }
                     
                 // Argument is a 32-bit integer
-                case OperandType.InlineSwitch:
                 case OperandType.InlineBrTarget:
                 case OperandType.InlineI:
                 case OperandType.ShortInlineR: // This is actually a float, but we don't care
