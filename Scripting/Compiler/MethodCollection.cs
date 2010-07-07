@@ -14,7 +14,7 @@ namespace IronAHK.Scripting
             Mirror = new ILMirror();
         }
         
-        public MethodInfo BestMatch(string name, int length, out MethodInfo actual)
+        public MethodInfo BestMatch(string name, int length)
         {
             MethodInfo result = null;
             var last = int.MaxValue;
@@ -29,7 +29,6 @@ namespace IronAHK.Scripting
 
                 if (param == length) // perfect match when parameter count is the same
                 {
-                    actual = Mirror.GrabMethod(writer);
                     return writer;
                 }
                 else if (param > length && param < last) // otherwise find a method with the next highest number of parameters
@@ -41,7 +40,6 @@ namespace IronAHK.Scripting
                     result = writer;
             }
             
-            actual = Mirror.GrabMethod(result);
             return result;
         }
     }
