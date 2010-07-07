@@ -69,6 +69,12 @@ namespace IronAHK.Scripting
         {
             ImplementationDetails.CreateType();
         }
+        
+        OpCode GetOpcode(byte[] Bytes, ref int i)
+        {
+            if(Bytes[i] == 0xFE) return two_bytes_opcodes[Bytes[++i]];
+            else return one_byte_opcodes[Bytes[i]];
+        }
     }
 }
 

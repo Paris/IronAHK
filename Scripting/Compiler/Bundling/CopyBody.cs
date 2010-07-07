@@ -36,9 +36,7 @@ namespace IronAHK.Scripting
         
         void CopyOpcode(byte[] Bytes, ref int i, ILGenerator Gen, Module Origin, List<int> ExceptionTrinkets, Dictionary<int, Label[]> SwitchMaps)
         {
-            OpCode Code;
-            if(Bytes[i] == 0xFE) Code = two_bytes_opcodes[Bytes[++i]];
-            else Code = one_byte_opcodes[Bytes[i]];
+            OpCode Code = GetOpcode(Bytes, ref i);
             
             // These are emitted by exception handling copier if an exception 
             // block is imminent. If not, copy them as usual.
