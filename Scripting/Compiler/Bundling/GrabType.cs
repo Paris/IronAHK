@@ -31,29 +31,6 @@ namespace IronAHK.Scripting
                                                       Copy.Attributes, Copy.BaseType, Copy.GetInterfaces());
             TypesDone.Add(Copy, Ret);
             
-            // Walk through methods and fields, and copy them
-            foreach(MemberInfo Member in Copy.GetMembers())
-            {
-                if(Member.DeclaringType != Copy && !Force) continue;
-                
-                switch(Member.MemberType)
-                {
-                    case MemberTypes.Method:
-                        GrabMethod(Member as MethodInfo, Ret, true);
-                        break;
-                        
-                    case MemberTypes.Field:
-                        GrabField(Member as FieldInfo, Ret, true);
-                        break;
-                        
-                    case MemberTypes.Constructor:
-                        GrabConstructor(Member as ConstructorInfo, Ret, true);
-                        break;
-                }
-            }
-            
-            
-            Ret.CreateType();
             
             return Ret;            
         }

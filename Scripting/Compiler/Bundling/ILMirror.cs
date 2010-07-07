@@ -68,6 +68,9 @@ namespace IronAHK.Scripting
         public void Complete()
         {
             ImplementationDetails.CreateType();
+            
+            foreach(TypeBuilder T in TypesDone.Values)
+                T.CreateType();
         }
         
         OpCode GetOpcode(byte[] Bytes, ref int i)
