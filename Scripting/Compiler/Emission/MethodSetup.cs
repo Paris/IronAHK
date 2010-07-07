@@ -22,6 +22,7 @@ namespace IronAHK.Scripting
         LocalBuilder VarsProperty;
 
         MethodCollection Lookup;
+        ILMirror Mirror;
 
         public bool IsEntryPoint;
         public MethodBuilder Method;
@@ -36,12 +37,13 @@ namespace IronAHK.Scripting
         Dictionary<string, LocalBuilder> Locals;
         Dictionary<string, LabelMetadata> Labels;
 
-        public MethodWriter(TypeBuilder Parent, CodeMemberMethod Member, MethodCollection Lookup)
+        public MethodWriter(TypeBuilder Parent, CodeMemberMethod Member, MethodCollection Lookup, ILMirror Mirror)
         {
             Loops = new Stack<LoopMetadata>();
 
             this.Member = Member;
             this.Lookup = Lookup;
+            this.Mirror = Mirror;
 
             if(Member is CodeEntryPointMethod)
             {
@@ -52,27 +54,27 @@ namespace IronAHK.Scripting
             
             Generator = Method.GetILGenerator();
 
-            ForceString = Lookup.Mirror.GrabMethod(typeof(Script).GetMethod("ForceString"));
-            ForceDecimal = Lookup.Mirror.GrabMethod(typeof(Script).GetMethod("ForceDecimal"));
-            ForceLong = Lookup.Mirror.GrabMethod(typeof(Script).GetMethod("ForceLong"));
-            ForceInt = Lookup.Mirror.GrabMethod(typeof(Script).GetMethod("ForceInt"));
-            ForceBool = Lookup.Mirror.GrabMethod(typeof(Script).GetMethod("ForceBool"));
+            ForceString = Mirror.GrabMethod(typeof(Script).GetMethod("ForceString"));
+            ForceDecimal = Mirror.GrabMethod(typeof(Script).GetMethod("ForceDecimal"));
+            ForceLong = Mirror.GrabMethod(typeof(Script).GetMethod("ForceLong"));
+            ForceInt = Mirror.GrabMethod(typeof(Script).GetMethod("ForceInt"));
+            ForceBool = Mirror.GrabMethod(typeof(Script).GetMethod("ForceBool"));
             
             Locals = new Dictionary<string, LocalBuilder>();
             Labels = new Dictionary<string, LabelMetadata>();
             
-            Lookup.Mirror.Sources.Add(typeof(Script.Variables));
-            Type Variables = Lookup.Mirror.GrabType(typeof(Script.Variables), true, false);
+            Mirror.Sources.Add(typeof(Script.Variables));
+            Type Variables = Mirror.GrabType(typeof(Script.Variables), true, false);
             
             if(IsEntryPoint)
                 GenerateEntryPointHeader(Generator);
             
             // "Item" is the property for this-indexers
-            SetVariable = Lookup.Mirror.GrabMethod(typeof(Script.Variables).GetMethod("set_Item"));
-            GetVariable = Lookup.Mirror.GrabMethod(typeof(Script.Variables).GetMethod("get_Item"));
+            SetVariable = Mirror.GrabMethod(typeof(Script.Variables).GetMethod("set_Item"));
+            GetVariable = Mirror.GrabMethod(typeof(Script.Variables).GetMethod("get_Item"));
             
             VarsProperty = Generator.DeclareLocal(Variables);
-            Generator.Emit(OpCodes.Call, Lookup.Mirror.GrabMethod(typeof(Script).GetMethod("get_Vars")));
+            Generator.Emit(OpCodes.Call, Mirror.GrabMethod(typeof(Script).GetMethod("get_Vars")));
             Generator.Emit(OpCodes.Stloc, VarsProperty);            
         }
 
@@ -82,7 +84,7 @@ namespace IronAHK.Scripting
             var Attribute = new CustomAttributeBuilder(StatThreadConstructor, new object[] {});
             Method.SetCustomAttribute(Attribute);
             
-            Lookup.Mirror.SimulateStaticConstructors(Generator);
+            Mirror.SimulateStaticConstructors(Generator);
         }
 
         [Conditional("DEBUG")]

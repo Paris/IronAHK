@@ -16,10 +16,12 @@ namespace IronAHK.Scripting
         Assembly LinkingTo;
         MethodBuilder EntryPoint;
         MethodCollection Methods;
+        ILMirror Mirror;
 
         public Compiler()
         {
             Methods = new MethodCollection();
+            Mirror = new ILMirror();
         }
         
         public void LinkTo(string file)
@@ -63,7 +65,7 @@ namespace IronAHK.Scripting
                 return;
 
             Debug("Adding type " + Typ.Name);
-            Methods.Mirror.Sources.Add(Typ);
+            Mirror.Sources.Add(Typ);
 
             foreach(var Method in Typ.GetMethods())
             {
@@ -85,7 +87,7 @@ namespace IronAHK.Scripting
 
         public void Save()
         {
-            Methods.Mirror.Complete();
+            Mirror.Complete();
             ABuilder.Save(AName.Name);
         }
     }
