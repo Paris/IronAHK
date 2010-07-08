@@ -76,13 +76,7 @@ namespace IronAHK.Scripting
                 {
                     int Token = BitHelper.ReadInteger(Bytes, ref i);
                     FieldInfo Field = Origin.ResolveField(Token);
-                    
-                    if(Sources.Contains(Field.DeclaringType.DeclaringType))
-                        Field = GrabField(Field, GrabType(Field.DeclaringType) as TypeBuilder);
-                    else if(Sources.Contains(Field.DeclaringType))
-                        Field = GrabField(Field);
-                    
-                    Gen.Emit(Code, Field);
+                    Gen.Emit(Code, GrabField(Field));
                     break;
                 }
                     

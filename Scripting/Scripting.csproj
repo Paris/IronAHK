@@ -140,7 +140,6 @@
     <Compile Include="Compiler\MethodCollection.cs" />
     <Compile Include="Compiler\Bundling\BitHelper.cs" />
     <Compile Include="Compiler\Bundling\ILMirror.cs" />
-    <Compile Include="Compiler\Bundling\CopyStaticConstr.cs" />
     <Compile Include="Compiler\Bundling\GrabMethod.cs" />
     <Compile Include="Compiler\Bundling\GrabConstructor.cs" />
     <Compile Include="Compiler\Bundling\CopyBody.cs" />
