@@ -10,10 +10,7 @@ namespace IronAHK.Scripting
         static OpCode [] one_byte_opcodes;
         static OpCode [] two_bytes_opcodes;
         
-        internal const string Prefix = ".builtin_";
-        internal const string StatConPrefix = Prefix+"pseudostatic_";
-        
-        public List<Type> Sources;
+        public List<Module> Sources;
         public TypeBuilder Target;
         
         public ModuleBuilder Module {
@@ -56,7 +53,7 @@ namespace IronAHK.Scripting
         
         public ILMirror()
         {
-            Sources = new List<Type>();
+            Sources = new List<Module>();
             
             MethodsDone = new Dictionary<MethodBase, MethodBuilder>();
             ConstructorsDone = new Dictionary<ConstructorInfo, ConstructorBuilder>();

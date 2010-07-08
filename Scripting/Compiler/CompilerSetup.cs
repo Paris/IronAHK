@@ -22,6 +22,9 @@ namespace IronAHK.Scripting
         {
             Methods = new MethodCollection();
             Mirror = new ILMirror();
+            
+            Mirror.Sources.Add(typeof(Rusty.Core).Module);
+            Mirror.Sources.Add(typeof(Script).Module);
         }
         
         public void LinkTo(string file)
@@ -65,7 +68,6 @@ namespace IronAHK.Scripting
                 return;
 
             Debug("Adding type " + Typ.Name);
-            Mirror.Sources.Add(Typ);
 
             foreach(var Method in Typ.GetMethods())
             {

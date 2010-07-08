@@ -8,30 +8,28 @@ namespace IronAHK.Scripting
     {
         public MethodInfo GrabMethod(MethodInfo Original)
         {
-            return GrabMethod(Original, Target);
+            if(Sources.Contains(Original.Module))
+               return GrabMethod(Original, GrabType(Original.DeclaringType) as TypeBuilder);
+            
+            return GrabMethod(Original, null);
         }
         
         MethodInfo GrabMethod(MethodInfo Original, TypeBuilder On)
         {
-            return GrabMethod(Original, On, false);
-        }
-        
-        MethodInfo GrabMethod(MethodInfo Original, TypeBuilder On, bool Force)
-        {
             if(Original == null) return null;
             
-            if(!Force && !Sources.Contains(Original.DeclaringType))
+            if(!Sources.Contains(Original.Module))
                 return MethodReplaceGenerics(Original);
             
             if(MethodsDone.ContainsKey(Original)) 
                 return MethodsDone[Original];
             
             Type ReturnType;
-            if(Sources.Contains(Original.ReturnType.DeclaringType))
+            if(Sources.Contains(Original.ReturnType.Module))
                 ReturnType = GrabType(Original.ReturnType);
             else ReturnType = Original.ReturnType;
             
-            MethodBuilder Builder = On.DefineMethod(Prefix+Original.Name, Original.Attributes, 
+            MethodBuilder Builder = On.DefineMethod(Original.Name, Original.Attributes, 
                 ReturnType, ParameterTypes(Original));
             
             MethodsDone.Add(Original, Builder);
@@ -43,7 +41,6 @@ namespace IronAHK.Scripting
                (Attr & MethodImplAttributes.Managed) == MethodImplAttributes.Managed)
                 return Builder;
             
-            Console.WriteLine("Copying "+Original.Name);
             CopyMethodBody(Original.GetMethodBody(), Builder.GetILGenerator(), Original.Module);
             
             return Builder; 

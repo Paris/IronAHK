@@ -63,8 +63,7 @@ namespace IronAHK.Scripting
             Locals = new Dictionary<string, LocalBuilder>();
             Labels = new Dictionary<string, LabelMetadata>();
             
-            Mirror.Sources.Add(typeof(Script.Variables));
-            Type Variables = Mirror.GrabType(typeof(Script.Variables), true, false);
+            Type Variables = Mirror.GrabType(typeof(Script.Variables));
             
             if(IsEntryPoint)
                 GenerateEntryPointHeader(Generator);
@@ -83,8 +82,6 @@ namespace IronAHK.Scripting
             ConstructorInfo StatThreadConstructor = typeof(STAThreadAttribute).GetConstructor(Type.EmptyTypes);
             var Attribute = new CustomAttributeBuilder(StatThreadConstructor, new object[] {});
             Method.SetCustomAttribute(Attribute);
-            
-            Mirror.SimulateStaticConstructors(Generator);
         }
 
         [Conditional("DEBUG")]

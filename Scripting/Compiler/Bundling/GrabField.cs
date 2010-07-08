@@ -10,23 +10,21 @@ namespace IronAHK.Scripting
         
         public FieldInfo GrabField(FieldInfo Field)
         {
+            if(Sources.Contains(Field.Module))
+                return GrabField(Field, GrabType(Field.DeclaringType) as TypeBuilder);
+            
             return GrabField(Field, Target);
         }
         
         FieldInfo GrabField(FieldInfo Field, TypeBuilder On)
         {
-            return GrabField(Field, On, false);
-        }
-        
-        FieldInfo GrabField(FieldInfo Field, TypeBuilder On, bool Force)
-        {
             if(FieldsDone.ContainsKey(Field))
                return FieldsDone[Field];
             
-            if(!Force && !Sources.Contains(Field.DeclaringType))
+            if(!Sources.Contains(Field.Module))
                 return Field;
             
-            FieldBuilder CopiedField = On.DefineField(Prefix+Field.Name, GrabType(Field.FieldType), Field.Attributes); 
+            FieldBuilder CopiedField = On.DefineField(Field.Name, GrabType(Field.FieldType), Field.Attributes); 
             FieldsDone.Add(Field, CopiedField);
             
             if(Field.IsLiteral && Field.DeclaringType.IsEnum)
@@ -45,7 +43,7 @@ namespace IronAHK.Scripting
                 if(ValType.IsArray)
                 {
                     byte[] Raw = RawSerialize((Array) Val, ValType.GetElementType());
-                    FieldBuilder Backing = ImplementationDetails.DefineInitializedData(Prefix+Field.Name, Raw, Field.Attributes);
+                    FieldBuilder Backing = ImplementationDetails.DefineInitializedData(Field.Name, Raw, Field.Attributes);
                     
                     // This is used later on when we recognize the initilization pattern (see TryReplaceBackingField)
                     BackingFields.Add(CopiedField, Backing);

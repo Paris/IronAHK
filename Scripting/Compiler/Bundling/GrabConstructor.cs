@@ -8,15 +8,18 @@ namespace IronAHK.Scripting
     {
         ConstructorInfo GrabConstructor(ConstructorInfo Original)
         {
-            return GrabConstructor(Original, Target, false);
+            if(Sources.Contains(Original.Module))
+                return GrabConstructor(Original, GrabType(Original.DeclaringType) as TypeBuilder);
+            
+            return GrabConstructor(Original, Target);
         }
         
-        ConstructorInfo GrabConstructor(ConstructorInfo Original, TypeBuilder On, bool Force)
+        ConstructorInfo GrabConstructor(ConstructorInfo Original, TypeBuilder On)
         {
             if(ConstructorsDone.ContainsKey(Original))
                 return ConstructorsDone[Original];
             
-            if(!Force && !Sources.Contains(Original.DeclaringType))
+            if(!Sources.Contains(Original.Module))
                 return ConstructorReplaceGenerics(Original);
             
             ConstructorBuilder Builder = On.DefineConstructor(Original.Attributes, 

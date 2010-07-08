@@ -6,38 +6,32 @@ namespace IronAHK.Scripting
 {
     partial class ILMirror
     {
-        Type GrabType(Type Copy)
+        public Type GrabType(Type Copy)
         {
-            return GrabType(Copy, false, false);
+            if(Copy == null) return null;
+            
+            if(Sources.Contains(Copy.Module))
+                return GrabType(Copy, GrabType(Copy.DeclaringType) as TypeBuilder);
+            
+            return GrabType(Copy, null);
         }
         
-        Type GrabType(Type Copy, TypeBuilder On, bool AvoidSelf)
-        {
-            return GrabType(Copy, On, AvoidSelf, false);
-        }
-        
-        Type GrabType(Type Copy, TypeBuilder On, bool AvoidSelf, bool Force)
+        Type GrabType(Type Copy, TypeBuilder On)
         {
             if(TypesDone.ContainsKey(Copy))
                 return TypesDone[Copy];
             
-            if(!AvoidSelf && Sources.Contains(Copy))
-               return Target;
-            
-            if(!Force && !Sources.Contains(Copy.DeclaringType)) 
+            if(!Sources.Contains(Copy.Module)) 
                 return TypeReplaceGenerics(Copy);
             
-            TypeBuilder Ret = On.DefineNestedType(string.Format("{0}{1}_{2}", Prefix, Copy.Assembly.GetName().Name, Copy.Name), 
-                                                      Copy.Attributes, Copy.BaseType, Copy.GetInterfaces());
+            TypeBuilder Ret;
+            
+            if(On == null)
+                Ret = Module.DefineType(Copy.Name, Copy.Attributes, GrabType(Copy.BaseType), Copy.GetInterfaces());
+            else Ret = On.DefineNestedType(Copy.Name, Copy.Attributes, GrabType(Copy.BaseType), Copy.GetInterfaces());
             TypesDone.Add(Copy, Ret);
             
-            
             return Ret;            
-        }
-        
-        public Type GrabType(Type Copy, bool AvoidSelf, bool Force)
-        {
-            return GrabType(Copy, Target, AvoidSelf, Force);
         }
         
         Type TypeReplaceGenerics(Type Orig)
@@ -65,7 +59,7 @@ namespace IronAHK.Scripting
             
             for(int i = 0; i < Params.Length; i++)
             {
-                if(Sources.Contains(Params[i].ParameterType.DeclaringType))
+                if(Sources.Contains(Params[i].ParameterType.Module))
                     Ret[i] = GrabType(Params[i].ParameterType);
                 else Ret[i] = Params[i].ParameterType;
             }
