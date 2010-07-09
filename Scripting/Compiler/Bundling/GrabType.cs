@@ -23,6 +23,11 @@ namespace IronAHK.Scripting
             
             TypesDone.Add(Copy, Ret);
             
+            // We need to copy over the static constructor explicitly, because it is never called in the IL
+            ConstructorInfo StaticConstr = FindStaticConstructor(Copy);
+            if(StaticConstr != null)
+                GrabConstructor(StaticConstr);
+                 
             return Ret;            
         }
         

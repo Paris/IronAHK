@@ -44,6 +44,17 @@ namespace IronAHK.Scripting
             }
             else return Orig;
         }
+        
+        ConstructorInfo FindStaticConstructor(Type Origin)
+        {
+            foreach(ConstructorInfo Info in Origin.GetConstructors(BindingFlags.NonPublic | BindingFlags.Static))
+            {
+                if(Info.GetParameters().Length == 0)
+                    return Info;
+            }
+            
+            return null;
+        }
     }
 }
 
