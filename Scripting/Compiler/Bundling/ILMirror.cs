@@ -69,10 +69,21 @@ namespace IronAHK.Scripting
                 T.CreateType();
         }
         
-        OpCode GetOpcode(byte[] Bytes, ref int i)
+        static OpCode GetOpcode(byte[] Bytes, ref int i)
         {
             if(Bytes[i] == 0xFE) return two_bytes_opcodes[Bytes[++i]];
             else return one_byte_opcodes[Bytes[i]];
+        }
+        
+        static T FindCustomAttribute<T>(MemberInfo Info) where T : Attribute
+        {
+            foreach(object Attr in Info.GetCustomAttributes(false))
+            {
+                if(Attr is T)
+                    return Attr as T;
+            }
+            
+            return null;
         }
     }
 }

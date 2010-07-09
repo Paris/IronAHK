@@ -43,7 +43,7 @@ namespace IronAHK.Scripting
         {
             TypeBuilder On = GrabType(Original.DeclaringType) as TypeBuilder;
             
-            DllImportAttribute Attr = FindDllImportAttribute(Original);
+            DllImportAttribute Attr = FindCustomAttribute<DllImportAttribute>(Original);
             if(Attr == null)
                 throw new InvalidOperationException("P/Invoke method without a DllImportAttribute");
             
@@ -53,17 +53,6 @@ namespace IronAHK.Scripting
             MethodsDone.Add(Original, PInvoke);
             
             return PInvoke;
-        }
-        
-        DllImportAttribute FindDllImportAttribute(MethodInfo Original)
-        {
-            foreach(object Attr in Original.GetCustomAttributes(false))
-            {
-                if(Attr is DllImportAttribute)
-                    return Attr as DllImportAttribute;
-            }
-            
-            return null;
         }
         
         MethodInfo MethodReplaceGenerics(MethodInfo Original)

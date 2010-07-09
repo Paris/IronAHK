@@ -1,6 +1,7 @@
 using System;
 using System.Reflection;
 using System.Reflection.Emit;
+using System.Runtime.InteropServices;
 
 namespace IronAHK.Scripting
 {
@@ -26,6 +27,10 @@ namespace IronAHK.Scripting
             if(Field.IsLiteral && Field.DeclaringType.IsEnum)
                 CopiedField.SetConstant(Field.GetRawConstantValue());
             
+            FieldOffsetAttribute Attr = FindCustomAttribute<FieldOffsetAttribute>(Field);
+            if(Attr != null)
+                CopiedField.SetOffset(Attr.Value);
+            
             // Fields like these mostly have a backing field that comes with them in the
             // <PrivateImplementationDetails> class of the assembly. This backing field
             // refers to a bit of data in the .sdata section, which is serialized in a 
@@ -48,7 +53,7 @@ namespace IronAHK.Scripting
             
             return CopiedField;
         }
-                                                            
+        
         static byte[] RawSerialize(Array Orig, Type ValType)
         {
             if(ValType == typeof(char))
