@@ -41,7 +41,7 @@ namespace IronAHK.Scripting
         void CopyLocals(ILGenerator Gen, MethodBody Body)
         {
             foreach(LocalVariableInfo Info in Body.LocalVariables) 
-                Gen.DeclareLocal(Info.LocalType, Info.IsPinned);
+                Gen.DeclareLocal(GrabType(Info.LocalType), Info.IsPinned);
         }
         
         void CopyOpcode(byte[] Bytes, ref int i, ILGenerator Gen, Module Origin, List<int> ExceptionTrinkets, Dictionary<int, Label[]> SwitchMaps)
@@ -95,7 +95,7 @@ namespace IronAHK.Scripting
                 {
                     int Token = BitHelper.ReadInteger(Bytes, ref i);
                     Type Ref = Origin.ResolveType(Token);
-                    Gen.Emit(Code, Ref);
+                    Gen.Emit(Code, GrabType(Ref));
                     break;
                 }
                     

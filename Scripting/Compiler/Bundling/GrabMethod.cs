@@ -68,12 +68,24 @@ namespace IronAHK.Scripting
         
         MethodInfo MethodReplaceGenerics(MethodInfo Original)
         {
+            if(Original.DeclaringType.IsGenericType)
+            {
+                Type NewDeclaring = GrabType(Original.DeclaringType);
+                MethodInfo Ret = NewDeclaring.GetMethod(Original.Name, ParameterTypes(Original));
+                
+                if(NewDeclaring != Original.DeclaringType)
+                    return MethodReplaceGenerics(Ret);
+                
+                return Ret;
+            }
+            
             if(Original.IsGenericMethod)
             {
                 Type[] Replace = ReplaceGenericArguments(Original.GetGenericArguments());
-                return Original.GetGenericMethodDefinition().MakeGenericMethod(Replace);
+                return Original.GetGenericMethodDefinition().MakeGenericMethod(Replace);;
             }
-            else return Original;
+            
+            return Original;
         }
     }
 }
