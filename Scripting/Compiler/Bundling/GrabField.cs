@@ -10,19 +10,15 @@ namespace IronAHK.Scripting
         
         public FieldInfo GrabField(FieldInfo Field)
         {
-            if(Sources.Contains(Field.Module))
-                return GrabField(Field, GrabType(Field.DeclaringType) as TypeBuilder);
+            if(Field == null) return null;
             
-            return GrabField(Field, Target);
-        }
-        
-        FieldInfo GrabField(FieldInfo Field, TypeBuilder On)
-        {
             if(FieldsDone.ContainsKey(Field))
                return FieldsDone[Field];
             
             if(!Sources.Contains(Field.Module))
                 return Field;
+            
+            TypeBuilder On = GrabType(Field.DeclaringType) as TypeBuilder;
             
             FieldBuilder CopiedField = On.DefineField(Field.Name, GrabType(Field.FieldType), Field.Attributes); 
             FieldsDone.Add(Field, CopiedField);

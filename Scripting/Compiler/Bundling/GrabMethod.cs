@@ -8,21 +8,15 @@ namespace IronAHK.Scripting
     {
         public MethodInfo GrabMethod(MethodInfo Original)
         {
-            if(Sources.Contains(Original.Module))
-               return GrabMethod(Original, GrabType(Original.DeclaringType) as TypeBuilder);
-            
-            return GrabMethod(Original, null);
-        }
-        
-        MethodInfo GrabMethod(MethodInfo Original, TypeBuilder On)
-        {
             if(Original == null) return null;
+            
+            if(MethodsDone.ContainsKey(Original)) 
+                return MethodsDone[Original];
             
             if(!Sources.Contains(Original.Module))
                 return MethodReplaceGenerics(Original);
             
-            if(MethodsDone.ContainsKey(Original)) 
-                return MethodsDone[Original];
+            TypeBuilder On = GrabType(Original.DeclaringType) as TypeBuilder;
             
             Type ReturnType;
             if(Sources.Contains(Original.ReturnType.Module))

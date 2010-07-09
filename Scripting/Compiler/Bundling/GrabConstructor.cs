@@ -6,21 +6,17 @@ namespace IronAHK.Scripting
 {
     partial class ILMirror
     {
-        ConstructorInfo GrabConstructor(ConstructorInfo Original)
+        public ConstructorInfo GrabConstructor(ConstructorInfo Original)
         {
-            if(Sources.Contains(Original.Module))
-                return GrabConstructor(Original, GrabType(Original.DeclaringType) as TypeBuilder);
+            if(Original == null) return null;
             
-            return GrabConstructor(Original, Target);
-        }
-        
-        ConstructorInfo GrabConstructor(ConstructorInfo Original, TypeBuilder On)
-        {
             if(ConstructorsDone.ContainsKey(Original))
                 return ConstructorsDone[Original];
             
             if(!Sources.Contains(Original.Module))
                 return ConstructorReplaceGenerics(Original);
+            
+            TypeBuilder On = GrabType(Original.DeclaringType) as TypeBuilder;
             
             ConstructorBuilder Builder = On.DefineConstructor(Original.Attributes, 
                 Original.CallingConvention, ParameterTypes(Original));
