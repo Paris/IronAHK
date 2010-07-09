@@ -9,6 +9,9 @@ namespace IronAHK.Scripting
     {
         void CopyMethodBody(MethodBase Base, ILGenerator Gen)
         {
+            if(Base.IsAbstract)
+                return;
+            
             MethodImplAttributes Attr = Base.GetMethodImplementationFlags();
             if((Attr & MethodImplAttributes.Runtime) == MethodImplAttributes.Runtime &&
                (Attr & MethodImplAttributes.Managed) == MethodImplAttributes.Managed)
