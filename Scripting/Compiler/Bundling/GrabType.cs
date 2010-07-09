@@ -44,8 +44,8 @@ namespace IronAHK.Scripting
             //   on an assertion).
             // - If we are copying over a class with an abstract parent, we need to copy over all methods
             //   to prevent a TypeLoadException at runtime (non-abstract types containing methods without
-            //   a body cause this).
-            if(Copy.BaseType.IsAbstract || Copy.BaseType == typeof(MulticastDelegate))
+            //   a body cause this)
+            if(Copy.IsExplicitLayout || Copy.BaseType.IsAbstract || Copy.BaseType == typeof(MulticastDelegate))
             {
                 foreach(MethodInfo Method in Copy.GetMethods())
                 {
@@ -57,6 +57,12 @@ namespace IronAHK.Scripting
                 {
                     if(Method.DeclaringType != Copy) continue;
                     GrabMethod(Method);
+                }
+                
+                foreach(FieldInfo Field in Copy.GetFields(BindingFlags.Instance | BindingFlags.NonPublic))
+                {
+                    if(Field.DeclaringType != Copy) continue;
+                    GrabField(Field);
                 }
             }
             
