@@ -16,6 +16,12 @@ namespace IronAHK.Scripting
             if(!Sources.Contains(Copy.Module)) 
                 return TypeReplaceGenerics(Copy);
             
+            if(Copy.IsByRef)
+                return GrabType(Copy.GetElementType()).MakeByRefType();
+            
+            if(Copy.IsArray)
+                return GrabType(Copy.GetElementType()).MakeArrayType();
+            
             TypeBuilder Ret, On = GrabType(Copy.DeclaringType) as TypeBuilder;
             
             if(On == null) Ret = Module.DefineType(Copy.Name, Copy.Attributes, GrabType(Copy.BaseType), Copy.GetInterfaces());
