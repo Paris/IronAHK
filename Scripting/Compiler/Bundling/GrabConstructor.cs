@@ -21,16 +21,11 @@ namespace IronAHK.Scripting
             ConstructorBuilder Builder = On.DefineConstructor(Original.Attributes, 
                 Original.CallingConvention, ParameterTypes(Original));
             
-            MethodImplAttributes Attr = Original.GetMethodImplementationFlags();
-            Builder.SetImplementationFlags(Attr);
+            Builder.SetImplementationFlags(Original.GetMethodImplementationFlags());
             
             ConstructorsDone.Add(Original, Builder);
             
-            if((Attr & MethodImplAttributes.Runtime) == MethodImplAttributes.Runtime &&
-               (Attr & MethodImplAttributes.Managed) == MethodImplAttributes.Managed)
-                return Builder;
-            
-            CopyMethodBody(Original.GetMethodBody(), Builder.GetILGenerator(), Original.Module);
+            CopyMethodBody(Original, Builder.GetILGenerator());
             
             return Builder;
         }

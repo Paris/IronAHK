@@ -7,8 +7,15 @@ namespace IronAHK.Scripting
 {
     partial class ILMirror
     {
-        void CopyMethodBody(MethodBody Body, ILGenerator Gen, Module Origin)
+        void CopyMethodBody(MethodBase Base, ILGenerator Gen)
         {
+            MethodImplAttributes Attr = Base.GetMethodImplementationFlags();
+            if((Attr & MethodImplAttributes.Runtime) == MethodImplAttributes.Runtime &&
+               (Attr & MethodImplAttributes.Managed) == MethodImplAttributes.Managed)
+                return;
+            
+            MethodBody Body = Base.GetMethodBody();
+            
             CopyLocals(Gen, Body);
             
             byte[] Bytes = Body.GetILAsByteArray();
@@ -23,7 +30,7 @@ namespace IronAHK.Scripting
             {
                 CopyTryCatch(Gen, i, Body, ExceptionTrinkets);
                 CopyLabels(Gen, i, LateLabels);
-                CopyOpcode(Bytes, ref i, Gen, Origin, ExceptionTrinkets, SwitchMaps);
+                CopyOpcode(Bytes, ref i, Gen, Base.Module, ExceptionTrinkets, SwitchMaps);
             }
         }
         
