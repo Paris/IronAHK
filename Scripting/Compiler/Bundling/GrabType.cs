@@ -27,6 +27,11 @@ namespace IronAHK.Scripting
             ConstructorInfo StaticConstr = FindStaticConstructor(Copy);
             if(StaticConstr != null)
                 GrabConstructor(StaticConstr);
+            
+            // Enum fields need to be copied over, too, since the IL relies on 
+            // their numerical values rather than their field references
+            if(Copy.BaseType == typeof(Enum))
+                GrabField(Copy.GetField("value__"));
                  
             return Ret;            
         }
