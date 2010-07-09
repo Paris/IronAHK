@@ -32,6 +32,12 @@ namespace IronAHK.Scripting
             // their numerical values rather than their field references
             if(Copy.BaseType == typeof(Enum))
                 GrabField(Copy.GetField("value__"));
+            
+            if(Copy.BaseType == typeof(MulticastDelegate))
+            {
+                foreach(MethodInfo Method in Copy.GetMethods())
+                    GrabMethod(Method);
+            }
                  
             return Ret;            
         }

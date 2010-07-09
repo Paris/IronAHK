@@ -7,16 +7,33 @@ namespace IronAHK.Scripting
 {
     partial class ILMirror
     {
-        void CopyMethodBody(MethodBase Base, ILGenerator Gen)
+        bool HasBody(MethodBase Base)
         {
             if(Base.IsAbstract)
-                return;
+                return false;
             
             MethodImplAttributes Attr = Base.GetMethodImplementationFlags();
             if((Attr & MethodImplAttributes.Runtime) == MethodImplAttributes.Runtime &&
                (Attr & MethodImplAttributes.Managed) == MethodImplAttributes.Managed)
-                return;
+                return false;
             
+            return true;
+        }
+        
+        void CopyMethodBody(MethodBase Base, MethodBuilder Builder)
+        {
+            if(HasBody(Base))
+                CopyMethodBody(Base, Builder.GetILGenerator());
+        }
+        
+        void CopyMethodBody(MethodBase Base, ConstructorBuilder Builder)
+        {
+            if(HasBody(Base))
+                CopyMethodBody(Base, Builder.GetILGenerator());
+        }
+        
+        void CopyMethodBody(MethodBase Base, ILGenerator Gen)
+        {
             MethodBody Body = Base.GetMethodBody();
             
             CopyLocals(Gen, Body);

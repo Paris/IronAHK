@@ -25,7 +25,7 @@ namespace IronAHK.Scripting
             
             ConstructorsDone.Add(Original, Builder);
             
-            CopyMethodBody(Original, Builder.GetILGenerator());
+            CopyMethodBody(Original, Builder);
             
             return Builder;
         }

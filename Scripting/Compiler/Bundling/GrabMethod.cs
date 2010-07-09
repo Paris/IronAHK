@@ -34,7 +34,7 @@ namespace IronAHK.Scripting
             
             Builder.SetImplementationFlags(Original.GetMethodImplementationFlags());
             
-            CopyMethodBody(Original, Builder.GetILGenerator());
+            CopyMethodBody(Original, Builder);
             
             return Builder; 
         }
