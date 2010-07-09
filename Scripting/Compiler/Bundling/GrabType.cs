@@ -10,25 +10,17 @@ namespace IronAHK.Scripting
         {
             if(Copy == null) return null;
             
-            if(Sources.Contains(Copy.Module))
-                return GrabType(Copy, GrabType(Copy.DeclaringType) as TypeBuilder);
-            
-            return GrabType(Copy, null);
-        }
-        
-        Type GrabType(Type Copy, TypeBuilder On)
-        {
             if(TypesDone.ContainsKey(Copy))
                 return TypesDone[Copy];
             
             if(!Sources.Contains(Copy.Module)) 
                 return TypeReplaceGenerics(Copy);
             
-            TypeBuilder Ret;
+            TypeBuilder Ret, On = GrabType(Copy.DeclaringType) as TypeBuilder;
             
-            if(On == null)
-                Ret = Module.DefineType(Copy.Name, Copy.Attributes, GrabType(Copy.BaseType), Copy.GetInterfaces());
+            if(On == null) Ret = Module.DefineType(Copy.Name, Copy.Attributes, GrabType(Copy.BaseType), Copy.GetInterfaces());
             else Ret = On.DefineNestedType(Copy.Name, Copy.Attributes, GrabType(Copy.BaseType), Copy.GetInterfaces());
+            
             TypesDone.Add(Copy, Ret);
             
             return Ret;            

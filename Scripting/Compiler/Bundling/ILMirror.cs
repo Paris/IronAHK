@@ -11,7 +11,6 @@ namespace IronAHK.Scripting
         static OpCode [] two_bytes_opcodes;
         
         public List<Module> Sources;
-        public TypeBuilder Target;
         
         public ModuleBuilder Module {
             get { return mModule; }
