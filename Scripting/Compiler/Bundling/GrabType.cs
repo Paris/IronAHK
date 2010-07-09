@@ -33,12 +33,27 @@ namespace IronAHK.Scripting
             if(Copy.BaseType == typeof(Enum))
                 GrabField(Copy.GetField("value__"));
             
-            if(Copy.BaseType == typeof(MulticastDelegate))
+            // - If we are copying over a delegate, we need to guarantee that all members are copied over,
+            //   if not we'll cause a runtime error somewhere along the pipeline (for example: mono fails
+            //   on an assertion).
+            // - If we are copying over a class with an abstract parent, we need to copy over all methods
+            //   to prevent a TypeLoadException at runtime (non-abstract types containing methods without
+            //   a body cause this).
+            if(Copy.BaseType.IsAbstract || Copy.BaseType == typeof(MulticastDelegate))
             {
                 foreach(MethodInfo Method in Copy.GetMethods())
+                {
+                    if(Method.DeclaringType != Copy) continue;
                     GrabMethod(Method);
+                }
+                
+                foreach(MethodInfo Method in Copy.GetMethods(BindingFlags.NonPublic | BindingFlags.Instance))
+                {
+                    if(Method.DeclaringType != Copy) continue;
+                    GrabMethod(Method);
+                }
             }
-                 
+            
             return Ret;            
         }
         
