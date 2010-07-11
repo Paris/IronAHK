@@ -20,7 +20,39 @@ namespace IronAHK.Rusty
             if (list == null)
                 return 0;
 
-            throw new NotImplementedException(); // TODO: LV_Add
+            var item = new ListViewItem();
+            item.SubItems.AddRange(fields);
+            var vis = false;
+
+            foreach (var opt in ParseOptions(options.ToLowerInvariant()))
+            {
+                var on = opt[0] != '-';
+                var mode = opt.Substring(!on || opt[0] == '+' ? 1 : 0);
+
+                switch (mode)
+                {
+                    case Keyword_Checked: item.Checked = on; break;
+                    case Keyword_Focus: item.Focused = on; break;
+                    case Keyword_Select: item.Selected = on; break;
+                    case Keyword_Vis: vis = on; break;
+
+                    default:
+                        {
+                            int n;
+
+                            if (mode.StartsWith(Keyword_Icon) && int.TryParse(mode.Substring(Keyword_Icon.Length), out n))
+                                item.ImageIndex = n;
+                        }
+                        break;
+                }
+            }
+
+            list.Items.Add(item);
+
+            if (vis)
+                item.EnsureVisible();
+
+            return item.Index;
         }
 
         /// <summary>
