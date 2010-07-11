@@ -54,6 +54,35 @@ namespace IronAHK.Scripting
             return CopiedField;
         }
         
+        // Copying the get_ and set_ methods is not enough to register as a property.
+        public PropertyInfo GrabProperty(PropertyInfo Orig)
+        {
+            if(Orig == null)
+                return null;
+            
+            if(PropertiesDone.ContainsKey(Orig))
+                return PropertiesDone[Orig];
+            
+            if(!Sources.Contains(Orig.Module))
+                return Orig;
+            
+            TypeBuilder On = GrabType(Orig.DeclaringType) as TypeBuilder;
+            
+            Type PropertyType = GrabType(Orig.PropertyType);
+            
+            if(PropertiesDone.ContainsKey(Orig))
+                return PropertiesDone[Orig];
+            
+            PropertyBuilder Builder = On.DefineProperty(Orig.Name, Orig.Attributes, PropertyType, null);
+            
+            PropertiesDone.Add(Orig, Builder);
+            
+            Builder.SetSetMethod(GrabMethod(Orig.GetSetMethod()) as MethodBuilder);
+            Builder.SetGetMethod(GrabMethod(Orig.GetGetMethod()) as MethodBuilder);
+            
+            return Builder;
+        }
+        
         static byte[] RawSerialize(Array Orig, Type ValType)
         {
             if(ValType == typeof(char))

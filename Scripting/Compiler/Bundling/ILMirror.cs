@@ -28,7 +28,8 @@ namespace IronAHK.Scripting
         Dictionary<FieldInfo, FieldBuilder> FieldsDone;
         Dictionary<Type, TypeBuilder> TypesDone;
         Dictionary<FieldInfo, FieldInfo> BackingFields;
-
+        Dictionary<PropertyInfo, PropertyBuilder> PropertiesDone;
+        
         static ILMirror ()
         {
             // Courtesy of Jb Evain, http://github.com/jbevain/mono.reflection
@@ -58,6 +59,8 @@ namespace IronAHK.Scripting
             ConstructorsDone = new Dictionary<ConstructorInfo, ConstructorBuilder>();
             FieldsDone = new Dictionary<FieldInfo, FieldBuilder>();
             TypesDone = new Dictionary<Type, TypeBuilder>();
+            PropertiesDone = new Dictionary<PropertyInfo, PropertyBuilder>();
+            
             BackingFields = new Dictionary<FieldInfo, FieldInfo>();
         }
         
