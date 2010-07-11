@@ -11,10 +11,14 @@ namespace IronAHK.Scripting
         void EmitNamespace(AssemblyBuilder Parent, CodeNamespace Namespace)
         {
             ModuleBuilder Module = Parent.DefineDynamicModule(Namespace.Name, AName.Name);
-            Mirror.Module = Module;
             
-            if(!CopiedProperties)
-                CopyProperties();
+            if(Mirror != null)
+            {
+                Mirror.Module = Module;
+                
+                if(!CopiedProperties)
+                    CopyProperties();
+            }
             
             foreach(CodeTypeDeclaration Type in Namespace.Types)
             {

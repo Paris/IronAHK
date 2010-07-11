@@ -54,26 +54,41 @@ namespace IronAHK.Scripting
             
             Generator = Method.GetILGenerator();
 
-            ForceString = Mirror.GrabMethod(typeof(Script).GetMethod("ForceString"));
-            ForceDecimal = Mirror.GrabMethod(typeof(Script).GetMethod("ForceDecimal"));
-            ForceLong = Mirror.GrabMethod(typeof(Script).GetMethod("ForceLong"));
-            ForceInt = Mirror.GrabMethod(typeof(Script).GetMethod("ForceInt"));
-            ForceBool = Mirror.GrabMethod(typeof(Script).GetMethod("ForceBool"));
+            ForceString = typeof(Script).GetMethod("ForceString");
+            ForceDecimal = typeof(Script).GetMethod("ForceDecimal");
+            ForceLong = typeof(Script).GetMethod("ForceLong");
+            ForceInt = typeof(Script).GetMethod("ForceInt");
+            ForceBool = typeof(Script).GetMethod("ForceBool");
             
             Locals = new Dictionary<string, LocalBuilder>();
             Labels = new Dictionary<string, LabelMetadata>();
             
-            Type Variables = Mirror.GrabType(typeof(Script.Variables));
+            Type Variables = typeof(Script.Variables);
             
             if(IsEntryPoint)
                 GenerateEntryPointHeader(Generator);
             
             // "Item" is the property for this-indexers
-            SetVariable = Mirror.GrabMethod(typeof(Script.Variables).GetMethod("set_Item"));
-            GetVariable = Mirror.GrabMethod(typeof(Script.Variables).GetMethod("get_Item"));
+            SetVariable = typeof(Script.Variables).GetMethod("set_Item");
+            GetVariable = typeof(Script.Variables).GetMethod("get_Item");
+            
+            MethodInfo GetVars = typeof(Script).GetMethod("get_Vars");
+            
+            if(Mirror != null)
+            {
+                ForceString = Mirror.GrabMethod(ForceString);
+                ForceDecimal = Mirror.GrabMethod(ForceDecimal);
+                ForceString = Mirror.GrabMethod(ForceLong);
+                ForceInt = Mirror.GrabMethod(ForceInt);
+                ForceBool = Mirror.GrabMethod(ForceBool);
+                SetVariable = Mirror.GrabMethod(SetVariable);
+                GetVariable = Mirror.GrabMethod(GetVariable);
+                Variables = Mirror.GrabType(Variables);
+                GetVars = Mirror.GrabMethod(GetVars);
+            }
             
             VarsProperty = Generator.DeclareLocal(Variables);
-            Generator.Emit(OpCodes.Call, Mirror.GrabMethod(typeof(Script).GetMethod("get_Vars")));
+            Generator.Emit(OpCodes.Call, GetVars);
             Generator.Emit(OpCodes.Stloc, VarsProperty);            
         }
 

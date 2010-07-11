@@ -21,10 +21,7 @@ namespace IronAHK.Scripting
         public Compiler()
         {
             Methods = new MethodCollection();
-            Mirror = new ILMirror();
             
-            Mirror.Sources.Add(typeof(Rusty.Core).Module);
-            Mirror.Sources.Add(typeof(Script).Module);
         }
         
         public void LinkTo(string file)
@@ -49,6 +46,13 @@ namespace IronAHK.Scripting
             AName = new AssemblyName(name);
             ABuilder = AppDomain.CurrentDomain.DefineDynamicAssembly(AName, AssemblyBuilderAccess.RunAndSave, dir);
 
+            if((Options as IACompilerParameters).Merge)
+            {
+                Mirror = new ILMirror();
+                Mirror.Sources.Add(typeof(Rusty.Core).Module);
+                Mirror.Sources.Add(typeof(Script).Module);
+            }
+            
             foreach (var type in new[] { typeof(Core), typeof(Script) })
                 MineMethods(type);
 
@@ -89,7 +93,9 @@ namespace IronAHK.Scripting
 
         public void Save()
         {
-            Mirror.Complete();
+            if(Mirror != null)
+                Mirror.Complete();
+            
             ABuilder.Save(AName.Name);
         }
     }
