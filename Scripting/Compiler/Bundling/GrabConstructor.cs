@@ -23,6 +23,9 @@ namespace IronAHK.Scripting
             
             Builder.SetImplementationFlags(Original.GetMethodImplementationFlags());
             
+            if(ConstructorsDone.ContainsKey(Original))
+                return ConstructorsDone[Original];
+            
             ConstructorsDone.Add(Original, Builder);
             
             CopyMethodBody(Original, Builder);
