@@ -8,6 +8,11 @@ namespace IronAHK.Scripting
     {
         public Type GrabType(Type Copy)
         {
+            return GrabType(Copy, null);
+        }
+        
+        protected Type GrabType(Type Copy, TypeBuilder On)
+        {
             if(Copy == null) return null;
             
             if(TypesDone.ContainsKey(Copy))
@@ -22,8 +27,10 @@ namespace IronAHK.Scripting
             if(Copy.IsArray)
                 return GrabType(Copy.GetElementType()).MakeArrayType();
             
-            TypeBuilder Ret, On = GrabType(Copy.DeclaringType) as TypeBuilder;
+            if(On == null)
+                On = GrabType(Copy.DeclaringType) as TypeBuilder;
             
+            TypeBuilder Ret;
             if(On == null) Ret = Module.DefineType(Copy.Name, Copy.Attributes, GrabType(Copy.BaseType), Copy.GetInterfaces());
             else Ret = On.DefineNestedType(Copy.Name, Copy.Attributes, GrabType(Copy.BaseType), Copy.GetInterfaces());
             
@@ -32,12 +39,12 @@ namespace IronAHK.Scripting
             // We need to copy over the static constructor explicitly, because it is never called in the IL
             ConstructorInfo StaticConstr = FindStaticConstructor(Copy);
             if(StaticConstr != null)
-                GrabConstructor(StaticConstr);
+                GrabConstructor(StaticConstr, Ret);
             
             // Enum fields need to be copied over, too, since the IL relies on 
             // their numerical values rather than their field references
             if(Copy.BaseType == typeof(Enum))
-                GrabField(Copy.GetField("value__"));
+                GrabField(Copy.GetField("value__"), Ret);
             
             // - If we are copying over a delegate, we need to guarantee that all members are copied over,
             //   if not we'll cause a runtime error somewhere along the pipeline (for example: mono fails
@@ -50,26 +57,26 @@ namespace IronAHK.Scripting
                 foreach(MethodInfo Method in Copy.GetMethods())
                 {
                     if(Method.DeclaringType != Copy) continue;
-                    GrabMethod(Method);
+                    GrabMethod(Method, Ret);
                 }
                 
                 foreach(MethodInfo Method in Copy.GetMethods(BindingFlags.NonPublic | BindingFlags.Instance))
                 {
                     if(Method.DeclaringType != Copy) continue;
-                    GrabMethod(Method);
+                    GrabMethod(Method, Ret);
                 }
                 
                 foreach(FieldInfo Field in Copy.GetFields(BindingFlags.Instance | BindingFlags.NonPublic))
                 {
                     if(Field.DeclaringType != Copy) continue;
-                    GrabField(Field);
+                    GrabField(Field, Ret);
                 }
                 
-                // Delegates have a native-code static constructor that is needed, too
+                // Delegates have a native-code constructor that is needed, too
                 if(Copy.BaseType == typeof(MulticastDelegate))
                 {
                     ConstructorInfo NativeCtor = Copy.GetConstructor(new Type[] { typeof(object), typeof(IntPtr) });
-                    GrabConstructor(NativeCtor);
+                    GrabConstructor(NativeCtor, Ret);
                 }
             }
             
