@@ -4,3 +4,6 @@ RewriteEngine on
 
 ErrorDocument 403 "Error 403 - Forbidden
 ErrorDocument 404 "Error 404 - Not Found
+
+RewriteCond %{HTTP_HOST} ^(?!www\.)(.+)$
+RewriteRule ^(.*)$ http://www.%1/$1 [r=301,l]
