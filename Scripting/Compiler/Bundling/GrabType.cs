@@ -64,6 +64,13 @@ namespace IronAHK.Scripting
                     if(Field.DeclaringType != Copy) continue;
                     GrabField(Field);
                 }
+                
+                // Delegates have a native-code static constructor that is needed, too
+                if(Copy.BaseType == typeof(MulticastDelegate))
+                {
+                    ConstructorInfo NativeCtor = Copy.GetConstructor(new Type[] { typeof(object), typeof(IntPtr) });
+                    GrabConstructor(NativeCtor);
+                }
             }
             
             return Ret;            
