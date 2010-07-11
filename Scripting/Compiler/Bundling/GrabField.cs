@@ -58,6 +58,8 @@ namespace IronAHK.Scripting
         {
             if(ValType == typeof(char))
                 return RawSerialize<char>(Orig, sizeof(char), BitConverter.GetBytes);
+            else if(ValType == typeof(uint))
+                return RawSerialize<uint>(Orig, sizeof(uint), BitConverter.GetBytes);
             else throw new InvalidOperationException("Can not serialize array of type "+ValType);
         }
         
