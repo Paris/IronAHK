@@ -48,7 +48,9 @@ namespace IronAHK.Scripting
                 throw new InvalidOperationException("P/Invoke method without a DllImportAttribute");
             
             MethodBuilder PInvoke = On.DefinePInvokeMethod(Original.Name, Attr.Value, Original.Attributes, Original.CallingConvention, 
-                Original.ReturnType, ParameterTypes(Original), Attr.CallingConvention, Attr.CharSet);
+                GrabType(Original.ReturnType), ParameterTypes(Original), Attr.CallingConvention, Attr.CharSet);
+            
+            PInvoke.SetImplementationFlags(Original.GetMethodImplementationFlags());
             
             MethodsDone.Add(Original, PInvoke);
             
