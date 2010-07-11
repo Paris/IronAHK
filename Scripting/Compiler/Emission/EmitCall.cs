@@ -21,7 +21,9 @@ namespace IronAHK.Scripting
             if (invoke.Method.TargetObject != null)
             {
                 target = GetMethodInfo(invoke.Method);
-                actual = Mirror.GrabMethod(target);
+                
+                if(Mirror != null)
+                    actual = Mirror.GrabMethod(target);
             }
 
             // Case insensitive method search in local scope
@@ -43,14 +45,18 @@ namespace IronAHK.Scripting
             if(target == null)
             {
                 target = Lookup.BestMatch(invoke.Method.MethodName, invoke.Parameters.Count);
-                actual = Mirror.GrabMethod(target);
+                
+                if(Mirror != null)
+                    actual = Mirror.GrabMethod(target);
             }
             
             // Lastly, the native methods
             if(target == null && invoke.Method.TargetObject != null)
             {
                 target = GetMethodInfo(invoke.Method);
-                actual = Mirror.GrabMethod(target);
+                
+                if(Mirror != null)
+                    actual = Mirror.GrabMethod(target);
             }
             
             if(target == null)

@@ -52,6 +52,7 @@ namespace IronAHK
             string script = null;
             string exe = null;
             gui = Environment.OSVersion.Platform == PlatformID.Unix || Environment.OSVersion.Platform == PlatformID.MacOSX ? false : true;
+            bool merge = false;
 
             for (int i = 0; i < args.Length; i++)
             {
@@ -91,6 +92,10 @@ namespace IronAHK
                     {
                         case "GUI":
                             gui = true;
+                            break;
+                            
+                        case "MERGE":
+                            merge = true;
                             break;
 
                         case "OUT":
@@ -187,7 +192,8 @@ namespace IronAHK
 
             var ahk = new IACodeProvider();
             self = Path.GetDirectoryName(Path.GetFullPath(self));
-            var options = new CompilerParameters();
+            var options = new IACompilerParameters();
+            options.Merge = merge;
             bool reflect = exe == null;
 
             if (!reflect)
