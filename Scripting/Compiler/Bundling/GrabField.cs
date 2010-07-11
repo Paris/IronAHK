@@ -11,6 +11,11 @@ namespace IronAHK.Scripting
         
         public FieldInfo GrabField(FieldInfo Field)
         {
+            return GrabField(Field, null);
+        }
+        
+        protected FieldInfo GrabField(FieldInfo Field, TypeBuilder On)
+        {
             if(Field == null) return null;
             
             if(FieldsDone.ContainsKey(Field))
@@ -19,7 +24,8 @@ namespace IronAHK.Scripting
             if(!Sources.Contains(Field.Module))
                 return Field;
             
-            TypeBuilder On = GrabType(Field.DeclaringType) as TypeBuilder;
+            if(On == null)
+                On = GrabType(Field.DeclaringType) as TypeBuilder;
             
             FieldBuilder CopiedField = On.DefineField(Field.Name, GrabType(Field.FieldType), Field.Attributes); 
             FieldsDone.Add(Field, CopiedField);
@@ -54,8 +60,13 @@ namespace IronAHK.Scripting
             return CopiedField;
         }
         
-        // Copying the get_ and set_ methods is not enough to register as a property.
         public PropertyInfo GrabProperty(PropertyInfo Orig)
+        {
+            return GrabProperty(Orig, null);
+        }
+        
+        // Copying the get_ and set_ methods is not enough to register as a property.
+        protected PropertyInfo GrabProperty(PropertyInfo Orig, TypeBuilder On)
         {
             if(Orig == null)
                 return null;
@@ -66,7 +77,8 @@ namespace IronAHK.Scripting
             if(!Sources.Contains(Orig.Module))
                 return Orig;
             
-            TypeBuilder On = GrabType(Orig.DeclaringType) as TypeBuilder;
+            if(On == null)
+                On = GrabType(Orig.DeclaringType) as TypeBuilder;
             
             Type PropertyType = GrabType(Orig.PropertyType);
             

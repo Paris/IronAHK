@@ -11,6 +11,11 @@ namespace IronAHK.Scripting
     {
         public MethodInfo GrabMethod(MethodInfo Original)
         {
+            return GrabMethod(Original, null);
+        }
+        
+        protected MethodInfo GrabMethod(MethodInfo Original, TypeBuilder On)
+        {
             if(Original == null) return null;
             
             if(MethodsDone.ContainsKey(Original)) 
@@ -19,10 +24,11 @@ namespace IronAHK.Scripting
             if(!Sources.Contains(Original.Module))
                 return MethodReplaceGenerics(Original);
             
-            if((Original.Attributes & MethodAttributes.PinvokeImpl) == MethodAttributes.PinvokeImpl)
-                return GrabPInvokeImpl(Original);
+            if(On == null)
+                On = GrabType(Original.DeclaringType) as TypeBuilder;
             
-            TypeBuilder On = GrabType(Original.DeclaringType) as TypeBuilder;
+            if((Original.Attributes & MethodAttributes.PinvokeImpl) == MethodAttributes.PinvokeImpl)
+                return GrabPInvokeImpl(Original, On);
             
             Type ReturnType = GrabType(Original.ReturnType);
             Type[] Parameters = ParameterTypes(Original);
@@ -50,9 +56,15 @@ namespace IronAHK.Scripting
             return Builder; 
         }
         
-        MethodInfo GrabPInvokeImpl(MethodInfo Original)
+        public MethodInfo GrabPInvokeImpl(MethodInfo Original)
         {
-            TypeBuilder On = GrabType(Original.DeclaringType) as TypeBuilder;
+            return GrabPInvokeImpl(Original, null);
+        }
+        
+        protected MethodInfo GrabPInvokeImpl(MethodInfo Original, TypeBuilder On)
+        {
+            if(On == null)
+                On = GrabType(Original.DeclaringType) as TypeBuilder;
             
             DllImportAttribute Attr = FindCustomAttribute<DllImportAttribute>(Original);
             if(Attr == null)
