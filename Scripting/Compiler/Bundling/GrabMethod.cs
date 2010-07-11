@@ -2,6 +2,8 @@ using System;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Runtime.InteropServices;
+using System.Collections.Generic;
+using System.Text;
 
 namespace IronAHK.Scripting
 {
@@ -22,15 +24,24 @@ namespace IronAHK.Scripting
             
             TypeBuilder On = GrabType(Original.DeclaringType) as TypeBuilder;
             
-            Type ReturnType;
-            if(Sources.Contains(Original.ReturnType.Module))
-                ReturnType = GrabType(Original.ReturnType);
-            else ReturnType = Original.ReturnType;
+            Type ReturnType = GrabType(Original.ReturnType);
+            Type[] Parameters = ParameterTypes(Original);
             
-            MethodBuilder Builder = On.DefineMethod(Original.Name, Original.Attributes, 
-                ReturnType, ParameterTypes(Original));
+            if(MethodsDone.ContainsKey(Original))
+                return MethodsDone[Original];
+            
+            MethodBuilder Builder = On.DefineMethod(Original.Name, Original.Attributes, ReturnType, Parameters);
             
             MethodsDone.Add(Original, Builder);
+            
+            // Explicit interface implementations require specifying which method is being overridden.
+            if(Original.IsFinal && Original.Name.Contains("."))
+            {
+                MethodInfo Overriding = FindBaseMethod(Original, Original.DeclaringType);
+                
+                if(Overriding != null)
+                    On.DefineMethodOverride(Builder, Overriding);
+            }
             
             Builder.SetImplementationFlags(Original.GetMethodImplementationFlags());
             
@@ -47,8 +58,14 @@ namespace IronAHK.Scripting
             if(Attr == null)
                 throw new InvalidOperationException("P/Invoke method without a DllImportAttribute");
             
+            Type ReturnType = GrabType(Original.ReturnType);
+            Type[] Parameters = ParameterTypes(Original);
+            
+            if(MethodsDone.ContainsKey(Original))
+                return MethodsDone[Original];
+            
             MethodBuilder PInvoke = On.DefinePInvokeMethod(Original.Name, Attr.Value, Original.Attributes, Original.CallingConvention, 
-                GrabType(Original.ReturnType), ParameterTypes(Original), Attr.CallingConvention, Attr.CharSet);
+                ReturnType, Parameters, Attr.CallingConvention, Attr.CharSet);
             
             PInvoke.SetImplementationFlags(Original.GetMethodImplementationFlags());
             
@@ -78,6 +95,21 @@ namespace IronAHK.Scripting
             
             return Original;
         }
+        
+        MethodInfo FindBaseMethod(MethodInfo Original, Type Source)
+        {
+            foreach(Type T in Source.GetInterfaces())
+            {
+                InterfaceMapping Mapping = Source.GetInterfaceMap(T);
+                
+                for(int i = 0; i < Mapping.TargetMethods.Length; i++)
+                {
+                    if(Mapping.TargetMethods[i] == Original)
+                        return Mapping.InterfaceMethods[i];
+                }
+            }
+                    
+            return null;
+        }
     }
 }
-
