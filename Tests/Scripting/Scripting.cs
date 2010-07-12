@@ -40,7 +40,7 @@ namespace IronAHK.Tests
         string RunScript(string source, bool execute)
         {
             var provider = new IACodeProvider();
-            var options = new CompilerParameters { GenerateExecutable = false, GenerateInMemory = true, };
+            var options = new IACompilerParameters { GenerateExecutable = false, GenerateInMemory = true, Merge = false };
             options.ReferencedAssemblies.Add(typeof(Core).Namespace + ".dll");
             var results = provider.CompileAssemblyFromFile(options, source);
 
