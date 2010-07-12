@@ -58,10 +58,18 @@ namespace IronAHK.Scripting
             if(StaticConstr != null)
                 GrabConstructor(StaticConstr, Ret);
             
-            // Enum fields need to be copied over, too, since the IL relies on 
-            // their numerical values rather than their field references
-            if(Copy.BaseType == typeof(Enum))
+            // Enum fields need to be copied over on .NET to avoid a TypeLoadException
+            // Interestingly, enum types without fields are perfectly fine with mono.
+            if(Copy.IsEnum)
+            {
                 GrabField(Copy.GetField("value__"), Ret);
+                
+                foreach(FieldInfo Field in Copy.GetFields(BindingFlags.Public | BindingFlags.Static))
+                {
+                    if(Field.DeclaringType != Copy) continue;
+                    GrabField(Field);
+                }
+            }
             
             // - If we are copying over a delegate, we need to guarantee that all members are copied over,
             //   if not we'll cause a runtime error somewhere along the pipeline (for example: mono fails
