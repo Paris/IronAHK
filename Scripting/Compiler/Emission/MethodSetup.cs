@@ -78,7 +78,7 @@ namespace IronAHK.Scripting
             {
                 ForceString = Mirror.GrabMethod(ForceString);
                 ForceDecimal = Mirror.GrabMethod(ForceDecimal);
-                ForceString = Mirror.GrabMethod(ForceLong);
+                ForceLong = Mirror.GrabMethod(ForceLong);
                 ForceInt = Mirror.GrabMethod(ForceInt);
                 ForceBool = Mirror.GrabMethod(ForceBool);
                 SetVariable = Mirror.GrabMethod(SetVariable);
