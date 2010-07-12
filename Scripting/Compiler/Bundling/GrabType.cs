@@ -87,18 +87,29 @@ namespace IronAHK.Scripting
         {
             if(Orig.IsGenericType)
             {
-                Type[] Replace = ReplaceGenericArguments(Orig.GetGenericArguments());
+                Type[] Replace = Orig.GetGenericArguments();
+                if(!ReplaceGenericArguments(Replace))
+                    return Orig;
+                
                 return Orig.GetGenericTypeDefinition().MakeGenericType(Replace);
             }
             else return Orig;
         }
         
-        Type[] ReplaceGenericArguments(Type[] Replace)
+        bool ReplaceGenericArguments(Type[] Replace)
         {
+            bool Replaced = false;
             for(int i = 0; i < Replace.Length; i++)
-                Replace[i] = GrabType(Replace[i]);
+            {
+                Type New = GrabType(Replace[i]);
+                if(New != Replace[i])
+                {
+                    Replace[i] = New;
+                    Replaced = true;
+                }
+            }
             
-            return Replace;
+            return Replaced;
         }
         
         Type[] ParameterTypes(MethodBase Original)
