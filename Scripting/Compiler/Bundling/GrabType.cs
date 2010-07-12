@@ -1,6 +1,7 @@
 using System;
 using System.Reflection;
 using System.Reflection.Emit;
+using System.Collections.Generic;
 
 namespace IronAHK.Scripting
 {
@@ -30,9 +31,25 @@ namespace IronAHK.Scripting
             if(On == null)
                 On = GrabType(Copy.DeclaringType) as TypeBuilder;
             
+            var OurInterfaces = new List<Type>();
+            Type[] Interfaces;
+            
+            if(!Copy.IsEnum)
+            {
+                // To not specify an interface implementation if one of the parent types
+                // already implements one of the interfaces returned by GetInterfaces.
+                foreach(Type T in Copy.GetInterfaces())
+                {
+                    if(!T.IsAssignableFrom(Copy.BaseType))
+                        OurInterfaces.Add(T);
+                }
+                Interfaces = OurInterfaces.ToArray();
+            }
+            else Interfaces = null;
+            
             TypeBuilder Ret;
-            if(On == null) Ret = Module.DefineType(Copy.Name, Copy.Attributes, GrabType(Copy.BaseType), Copy.GetInterfaces());
-            else Ret = On.DefineNestedType(Copy.Name, Copy.Attributes, GrabType(Copy.BaseType), Copy.GetInterfaces());
+            if(On == null) Ret = Module.DefineType(Copy.Name, Copy.Attributes, GrabType(Copy.BaseType), Interfaces);
+            else Ret = On.DefineNestedType(Copy.Name, Copy.Attributes, GrabType(Copy.BaseType), Interfaces);
             
             TypesDone.Add(Copy, Ret);
             
@@ -52,7 +69,7 @@ namespace IronAHK.Scripting
             // - If we are copying over a class with an abstract parent, we need to copy over all methods
             //   to prevent a TypeLoadException at runtime (non-abstract types containing methods without
             //   a body cause this)
-            if(Copy.IsExplicitLayout || Copy.BaseType.IsAbstract || Copy.BaseType == typeof(MulticastDelegate) || Copy.GetInterfaces().Length > 0)
+            if(Copy.IsExplicitLayout || Copy.BaseType.IsAbstract || Copy.BaseType == typeof(MulticastDelegate) || OurInterfaces.Count > 0)
             {
                 foreach(MethodInfo Method in Copy.GetMethods())
                 {
