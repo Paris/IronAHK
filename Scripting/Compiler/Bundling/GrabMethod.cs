@@ -91,17 +91,18 @@ namespace IronAHK.Scripting
             if(Original.DeclaringType.IsGenericType)
             {
                 Type NewDeclaring = GrabType(Original.DeclaringType);
-                MethodInfo Ret = NewDeclaring.GetMethod(Original.Name, ParameterTypes(Original));
                 
                 if(NewDeclaring != Original.DeclaringType)
+                {
+                    MethodInfo Ret = TypeBuilder.GetMethod(NewDeclaring, FindMatchingGenericMethod(Original) as MethodInfo);
                     return MethodReplaceGenerics(Ret);
-                
-                return Ret;
+                }
             }
             
             if(Original.IsGenericMethod)
             {
                 Type[] Replace = Original.GetGenericArguments();
+                
                 if(!ReplaceGenericArguments(Replace))
                     return Original;
                 
@@ -125,6 +126,52 @@ namespace IronAHK.Scripting
             }
                     
             return null;
+        }
+        
+        MethodBase FindMatchingGenericMethod(MethodBase Orig)
+        {
+            Type Generic = Orig.DeclaringType.GetGenericTypeDefinition();
+            ParameterInfo[] OrigParams = Orig.GetParameters();
+            
+            if(Orig.IsConstructor)
+            {
+                foreach(ConstructorInfo Info in Generic.GetConstructors())
+                {
+                    if(GenericMethodIsEquivalent(Orig, Info, OrigParams))
+                        return Info;
+                }
+            }
+            else
+            {
+                foreach(MethodInfo Info in Generic.GetMethods())
+                {
+                    if(GenericMethodIsEquivalent(Orig, Info, OrigParams))
+                        return Info;
+                }
+            }
+            
+            throw new Exception("Could not find matching method");
+        }
+        
+        static bool GenericMethodIsEquivalent(MethodBase Orig, MethodBase GenericCousin, ParameterInfo[] OrigParams)
+        {
+            if(Orig.Name != GenericCousin.Name) return false;
+            
+            if(Orig.Attributes != GenericCousin.Attributes) return false;
+            
+            ParameterInfo[] Params = Orig.GetParameters();
+            if(Params.Length != OrigParams.Length) return false;
+            
+            int i;
+            for(i = 0; i < Params.Length; i++)
+            {
+                // TODO: Check if original parameter type matches original generic argument
+                if(Params[i].ParameterType != OrigParams[i].ParameterType &&
+                   !Params[i].ParameterType.IsGenericParameter)
+                    return false;
+            }
+            
+            return true;
         }
     }
 }
