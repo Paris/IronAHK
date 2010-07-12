@@ -101,8 +101,11 @@ namespace IronAHK.Scripting
             
             if(Original.IsGenericMethod)
             {
-                Type[] Replace = ReplaceGenericArguments(Original.GetGenericArguments());
-                return Original.GetGenericMethodDefinition().MakeGenericMethod(Replace);;
+                Type[] Replace = Original.GetGenericArguments();
+                if(!ReplaceGenericArguments(Replace))
+                    return Original;
+                
+                return Original.GetGenericMethodDefinition().MakeGenericMethod(Replace);
             }
             
             return Original;
