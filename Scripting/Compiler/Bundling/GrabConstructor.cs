@@ -48,7 +48,7 @@ namespace IronAHK.Scripting
                 if(NewDeclarator == Orig.DeclaringType)
                     return Orig;
                 
-                ConstructorInfo Generic = FindMatchingGenericConstructor(Orig);
+                ConstructorInfo Generic = FindMatchingGenericMethod(Orig) as ConstructorInfo;
                 return TypeBuilder.GetConstructor(NewDeclarator, Generic);
             }
             else return Orig;
@@ -63,33 +63,6 @@ namespace IronAHK.Scripting
             }
             
             return null;
-        }
-        
-        ConstructorInfo FindMatchingGenericConstructor(ConstructorInfo Orig)
-        {
-            Type Generic = Orig.DeclaringType.GetGenericTypeDefinition();
-            ParameterInfo[] OrigParams = Orig.GetParameters();
-            
-            foreach(ConstructorInfo Info in Generic.GetConstructors())
-            {
-                if(Info.Attributes != Orig.Attributes) continue;
-                
-                ParameterInfo[] Params = Orig.GetParameters();
-                if(Params.Length != OrigParams.Length) continue;
-                
-                int i;
-                for(i = 0; i < Params.Length; i++)
-                {
-                    if(Params[i].ParameterType != OrigParams[i].ParameterType &&
-                       !Params[i].ParameterType.IsGenericParameter)
-                        break;
-                }
-                
-                if(i == Params.Length)
-                    return Info;
-            }
-            
-            throw new Exception("Could not find matching constructor");
         }
     }
 }
