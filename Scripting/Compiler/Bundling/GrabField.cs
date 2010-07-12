@@ -89,8 +89,13 @@ namespace IronAHK.Scripting
             
             PropertiesDone.Add(Orig, Builder);
             
-            Builder.SetSetMethod(GrabMethod(Orig.GetSetMethod()) as MethodBuilder);
-            Builder.SetGetMethod(GrabMethod(Orig.GetGetMethod()) as MethodBuilder);
+            MethodInfo SetMethod = Orig.GetSetMethod(), GetMethod = Orig.GetGetMethod();
+            
+            if(SetMethod != null)
+                Builder.SetSetMethod(GrabMethod(SetMethod) as MethodBuilder);
+            
+            if(GetMethod != null)
+                Builder.SetGetMethod(GrabMethod(GetMethod) as MethodBuilder);
             
             return Builder;
         }
