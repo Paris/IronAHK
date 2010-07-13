@@ -105,6 +105,9 @@ namespace IronAHK.Scripting
                 }
             }
             
+            if(Copy.IsEnum)
+                Ret.CreateType();
+            
             return Ret;            
         }
         
