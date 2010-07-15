@@ -146,8 +146,8 @@
     <Compile Include="Compiler\Bundling\GrabField.cs" />
     <Compile Include="Compiler\Bundling\GrabType.cs" />
     <Compile Include="Compiler\Bundling\CopyExceptions.cs" />
-    <Compile Include="Compiler\Bundling\CopySwitchMaps.cs" />
     <Compile Include="Compiler\IACompilerParameters.cs" />
+    <Compile Include="Compiler\Bundling\CopyLabels.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Rusty\Rusty.csproj">
