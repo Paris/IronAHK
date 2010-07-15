@@ -40,18 +40,34 @@ namespace IronAHK.Scripting
             
             byte[] Bytes = Body.GetILAsByteArray();
             var ExceptionTrinkets = new List<int>();
-            var LateLabels = new Dictionary<int, Label>();
-            var SwitchMaps = new Dictionary<int, Label[]>();
+            var LabelTargets = new Dictionary<int, Label>();
+            var LabelOrigins = new Dictionary<int, Label[]>();
             
             MineExTrinkets(Body, ExceptionTrinkets);
-            MineSwitchMaps(Bytes, Gen, SwitchMaps, LateLabels);
+            
+            // There's a reason we mine these labels. First of all, we need to get the switchmaps. Because
+            // there is no way to bang a number of bytes in the IL, we mine the targets of a switch operation
+            // and save them to be marked when we walk through the method again to copy the opcodes. Secondly, 
+            // the microsoft C# compiler sometimes uses the leave.s opcode instead of the leave opcode at the
+            // end of a try block. This is all fine, but System.Reflection.Emit forces a leave opcode on the
+            // IL when we call BeginCatchBlock() and friends, offering no way to use the leave.s opcode instead.
+            // The simple result is that we are left with putting the leave instruction with its 4-byte 
+            // argument in the IL against our will. This screws over all branch targets with an offset of +3
+            // bytes. Consequently, we have to mine *all* branch targets and re-mark them to prevent segfaults
+            // and the like in the runtime. This overhead could all have been avoided, had SRE given us just 
+            // a tiny bit more of control over the IL that was to be emitted.
+            MineLabels(Bytes, Gen, LabelOrigins, LabelTargets);
             
             for(int i = 0; i < Bytes.Length; i++)
             {
                 CopyTryCatch(Gen, i, Body, ExceptionTrinkets);
-                CopyLabels(Gen, i, LateLabels);
-                CopyOpcode(Bytes, ref i, Gen, Base.Module, ExceptionTrinkets, SwitchMaps);
+                CopyLabels(Gen, i, LabelTargets);
+                CopyOpcode(Bytes, ref i, Gen, Base.Module, ExceptionTrinkets, LabelOrigins);
             }
+            
+            // If we do not throw this exception, SRE will do it, but with much less debugging information.
+            foreach(int i in LabelTargets.Keys)
+                throw new Exception("Unmarked label destined for RVA "+i.ToString("X"));
         }
         
         // Initialise the variables. TODO: Obey InitLocals
@@ -61,7 +77,7 @@ namespace IronAHK.Scripting
                 Gen.DeclareLocal(GrabType(Info.LocalType), Info.IsPinned);
         }
         
-        void CopyOpcode(byte[] Bytes, ref int i, ILGenerator Gen, Module Origin, List<int> ExceptionTrinkets, Dictionary<int, Label[]> SwitchMaps)
+        void CopyOpcode(byte[] Bytes, ref int i, ILGenerator Gen, Module Origin, List<int> ExceptionTrinkets, Dictionary<int, Label[]> LabelOrigins)
         {
             OpCode Code = GetOpcode(Bytes, ref i);
             
@@ -70,6 +86,12 @@ namespace IronAHK.Scripting
             if(Code == OpCodes.Leave && ExceptionTrinkets.Contains(i + 5)) 
             {
                 i += 4;
+                return;
+            }
+            else if(Code == OpCodes.Leave_S && ExceptionTrinkets.Contains(i + 2))
+            {
+                // This is a rather tricky one. See the comment preceding the call to MineLabels above.
+                i++;
                 return;
             }
             else if(Code == OpCodes.Endfinally && ExceptionTrinkets.Contains(i+1)) return; 
@@ -148,18 +170,29 @@ namespace IronAHK.Scripting
                 // Argument is a switch map
                 case OperandType.InlineSwitch:
                 {
-                    if(!SwitchMaps.ContainsKey(i))
+                    if(!LabelOrigins.ContainsKey(i))
                         throw new Exception("No switchmap found for RVA "+i.ToString("X"));
                         
-                    Label[] Labels = SwitchMaps[i];
+                    Label[] Labels = LabelOrigins[i];
                     i += 4 + Labels.Length*4;
                     Gen.Emit(Code, Labels);
                     
                     break;
                 }
                     
-                // Argument is a byte
+                // Argument is a single-byte branch target
                 case OperandType.ShortInlineBrTarget:
+                {
+                    if(!LabelOrigins.ContainsKey(i))
+                        throw new Exception("No label origin found for RVA "+i.ToString("X"));
+                    
+                    Gen.Emit(Code, LabelOrigins[i][0]);
+                    i++;
+                    
+                    break;
+                }
+                    
+                // Argument is a byte
                 case OperandType.ShortInlineI:
                 case OperandType.ShortInlineVar:
                 {
@@ -174,8 +207,18 @@ namespace IronAHK.Scripting
                     break;
                 }
                     
-                // Argument is a 32-bit integer
                 case OperandType.InlineBrTarget:
+                {
+                    if(!LabelOrigins.ContainsKey(i))
+                        throw new Exception("No label origin found for RVA "+i.ToString("X"));
+                    
+                    Gen.Emit(Code, LabelOrigins[i][0]);
+                    i += 4;
+                    
+                    break;
+                }
+                    
+                // Argument is a 32-bit integer
                 case OperandType.InlineI:
                 case OperandType.ShortInlineR: // This is actually a 32-bit float, but we don't care
                 {
