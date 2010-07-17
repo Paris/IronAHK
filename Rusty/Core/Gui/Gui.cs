@@ -603,7 +603,9 @@ namespace IronAHK.Rusty
                         int select;
                         bool clear;
                         ddl.Items.AddRange(GuiParseList(ddl, out select, out clear));
-                        ddl.SelectedIndex = select;
+
+                        if (select > -1 && select < ddl.Items.Count)
+                            ddl.SelectedIndex = select;
 
                         foreach (var opt in ParseOptions(opts))
                         {
@@ -644,7 +646,9 @@ namespace IronAHK.Rusty
                         int select;
                         bool clear;
                         combo.Items.AddRange(GuiParseList(combo, out select, out clear));
-                        combo.SelectedIndex = select;
+
+                        if (select > -1 && select < combo.Items.Count)
+                            combo.SelectedIndex = select;
 
                         foreach (var opt in ParseOptions(opts))
                         {
@@ -673,7 +677,9 @@ namespace IronAHK.Rusty
                         int select;
                         bool clear;
                         listbox.Items.AddRange(GuiParseList(listbox, out select, out clear));
-                        listbox.SelectedIndex = select;
+
+                        if (select > -1 && select < listbox.Items.Count)
+                            listbox.SelectedIndex = select;
 
                         bool multi = false, read = false;
 
