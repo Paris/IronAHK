@@ -1096,7 +1096,7 @@ namespace IronAHK.Rusty
         /// </summary>
         public static string A_Temp
         {
-            get { return Path.GetTempPath(); }
+            get { return Path.GetTempPath().TrimEnd(Path.DirectorySeparatorChar); }
         }
 
         /// <summary>
