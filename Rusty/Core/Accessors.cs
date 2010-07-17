@@ -164,6 +164,14 @@ namespace IronAHK.Rusty
         }
 
         /// <summary>
+        /// The native directory seperator string, i.e. "/" on Unix, "\" on Windows.
+        /// </summary>
+        public static string A_DirSeperator
+        {
+            get { return Path.DirectorySeparatorChar.ToString(); }
+        }
+
+        /// <summary>
         /// The ending character that was pressed by the user to trigger the most recent non-auto-replace hotstring. If no ending character was required (due to the * option), this variable will be blank.
         /// </summary>
         public static string A_EndChar
