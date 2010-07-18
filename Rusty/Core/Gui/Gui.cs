@@ -201,7 +201,7 @@ namespace IronAHK.Rusty
                     break;
 
                 case Keyword_Font:
-                    guis[id].Font = ParseFont(Param3, Param2);
+                    GuiAssociatedInfo(guis[id]).Font = ParseFont(GuiAssociatedInfo(guis[id]).Font, Param2, Param3);
                     break;
 
                 case Keyword_Color:
@@ -1176,6 +1176,7 @@ namespace IronAHK.Rusty
                 name += Keyword_GuiPrefix;
 
             var win = new Form { Name = name, Tag = new GuiInfo { Delimiter = '|' }, KeyPreview = true };
+            GuiAssociatedInfo(win).Font = win.Font;
 
             win.SuspendLayout();
 
@@ -1210,6 +1211,8 @@ namespace IronAHK.Rusty
 
             if (first)
                 control.Location = new Point(control.Parent.Margin.Left, control.Parent.Margin.Top);
+
+            control.Font = GuiAssociatedInfo(control).Font;
 
             #region Default sizing
 
