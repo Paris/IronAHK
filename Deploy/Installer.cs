@@ -45,7 +45,7 @@ namespace IronAHK.Setup
                 File.Delete(output);
 
             wix.StartInfo.FileName = "light";
-            wix.StartInfo.Arguments = string.Format("-nologo -sw2738 -ext WixUIExtension.dll \"{0}\" -out \"{1}\"", proj, output);
+            wix.StartInfo.Arguments = string.Format("-nologo -sw2738 -ext WixUIExtension -ext WiXNetFxExtension \"{0}\" -out \"{1}\"", proj, output);
             wix.Start();
             wix.WaitForExit();
             File.Delete(proj);
@@ -89,6 +89,12 @@ namespace IronAHK.Setup
                 Guid, name, version, author, upgrade);
 
             writer.WriteLine("    <Package InstallerVersion='200' Compressed='yes' Languages='1033' InstallScope='perMachine' Platform='x{0}' />", x64 ? "64" : "86");
+
+            writer.WriteLine("<PropertyRef Id='NETFRAMEWORK20'/>");
+            writer.WriteLine("<Condition Message='This application requires .NET Framework 2.0. Please install the .NET Framework then run this installer again.'>");
+            writer.WriteLine("<![CDATA[Installed OR NETFRAMEWORK20]]>");
+            writer.WriteLine("</Condition>");
+
             writer.WriteLine("    <Media Id='1' Cabinet='{0}.cab' EmbedCab='yes' />", name);
             writer.WriteLine("    <Directory Id='TARGETDIR' Name='SourceDir'>");
             writer.WriteLine("      <Directory Id='ProgramFiles{0}Folder' Name='ProgramFiles{0}Folder'>", x64 ? "64" : string.Empty);
