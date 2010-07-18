@@ -138,7 +138,9 @@ namespace IronAHK.Setup
             writer.WriteLine("</Directory>");
 
             writer.WriteLine("<Directory Id='ProgramMenuFolder' Name='ProgramMenuFolder'>");
-            writer.WriteLine("<Component Id='{0}' Guid='{1}' />", IdL, Guid);
+            writer.WriteLine("<Component Id='{0}' Guid='{1}'>", IdL, Guid);
+            writer.WriteLine("<CreateFolder />");
+            writer.WriteLine("</Component>");
             writer.WriteLine("</Directory>");
             writer.WriteLine("</Directory>");
 
