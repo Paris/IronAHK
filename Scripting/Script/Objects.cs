@@ -27,10 +27,14 @@ namespace IronAHK.Scripting
                 return null;
 
             var table = (IDictionary)item;
-            string lookup = ((string)key).ToLowerInvariant();
+            string lookup = ((string)key);
 
             if (table.Contains(lookup))
                 return table[lookup];
+
+            foreach (string check in table.Keys)
+                if (lookup.Equals(check, StringComparison.OrdinalIgnoreCase))
+                    return table[check];
 
             return null;
         }
