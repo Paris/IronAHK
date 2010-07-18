@@ -109,13 +109,13 @@ namespace IronAHK.Setup
 
             string exe = Id;
             writer.WriteLine("<Component Id='{0}' Guid='{1}'>", IdL, Guid);
-            writer.WriteLine("<File Id='{0}' Source='{1}'>", exe, main);
-            writer.WriteLine("<Shortcut Id='{0}' WorkingDirectory='ProgramMenuFolder' Directory='ProgramMenuFolder' Name='{1}.lnk' />", Id, name);
+            writer.WriteLine("<File Id='{0}' Source='{1}' KeyPath='yes'>", exe, main);
+            writer.WriteLine("<Shortcut Id='{0}Script' WorkingDirectory='ProgramMenuFolder' Directory='ProgramMenuFolder' Name='{0}' Advertise='yes' />", name);
             writer.WriteLine("</File>");
-            writer.WriteLine("<ProgId Id='{0}' Advertise='no' Description='{1} Script'>", Id, name);
+            writer.WriteLine("<ProgId Id='{0}' Advertise='yes' Description='{1} Script'>", Id, name);
             writer.WriteLine("<Extension Id='{0}' ContentType='text/plain'>", extension);
-            writer.WriteLine("<Verb TargetFile='{0}' Id='Open' Command='Open' Argument='&quot;%1&quot; %*' />", exe);
-            writer.WriteLine("<Verb TargetFile='{0}' Id='Compile' Command='Compile' Argument='/out ! &quot;%1&quot; %*' />", exe); 
+            writer.WriteLine("<Verb Id='Open' Command='Open' Argument='&quot;%1&quot; %*' />", exe);
+            writer.WriteLine("<Verb Id='Compile' Command='Compile' Argument='/out ! &quot;%1&quot; %*' />", exe); 
             writer.WriteLine("</Extension>");
             writer.WriteLine("</ProgId>");
             writer.WriteLine("</Component>");
