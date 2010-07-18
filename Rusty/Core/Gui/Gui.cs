@@ -111,7 +111,7 @@ namespace IronAHK.Rusty
                         {
                             guis[id].Size = guis[id].PreferredSize;
 
-                            var status = ((GuiInfo)guis[id].Tag).StatusBar;
+                            var status = GuiAssociatedInfo(guis[id]).StatusBar;
                             int d = status == null ? 0 : status.Height;
 
                             if (d > 0)
@@ -314,7 +314,7 @@ namespace IronAHK.Rusty
                                     {
                                         arg = mode.Substring(Keyword_Delimiter.Length);
                                         if (arg.Length > 0)
-                                            ((GuiInfo)guis[id].Tag).Delimiter = arg[0];
+                                            GuiAssociatedInfo(guis[id]).Delimiter = arg[0];
                                     }
                                     else if (mode.StartsWith(Keyword_Label))
                                     {
@@ -1104,7 +1104,7 @@ namespace IronAHK.Rusty
                 #region StatusBar
                 case Keyword_StatusBar:
                     {
-                        var info = (GuiInfo)parent.Tag;
+                        var info = GuiAssociatedInfo(parent);
 
                         if (info.StatusBar != null)
                         {
@@ -1145,7 +1145,7 @@ namespace IronAHK.Rusty
             if (string.IsNullOrEmpty(control.Text))
                 return new string[] { };
 
-            var split = ((GuiInfo)control.Parent.Tag).Delimiter;
+            var split = GuiAssociatedInfo(control).Delimiter;
 
             clear = control.Text.IndexOf(split) == 0;
             string text = control.Text.Substring(clear ? 1 : 0);
@@ -1407,9 +1407,27 @@ namespace IronAHK.Rusty
             }
 
             if (sec)
-                ((GuiInfo)control.Parent.Tag).Section = control.Location;
+                GuiAssociatedInfo(control).Section = control.Location;
 
             return string.Join(Keyword_Spaces[1].ToString(), excess).Trim();
+        }
+
+        static GuiInfo GuiAssociatedInfo(Control ctrl)
+        {
+            while (ctrl != null)
+            {
+                if (ctrl is Form)
+                {
+                    var form = ((Form)ctrl);
+
+                    if (form.Tag != null && form.Tag is GuiInfo)
+                        return ((GuiInfo)form.Tag);
+                }
+
+                ctrl = ctrl.Parent;
+            }
+
+            return null;
         }
 
         static void GuiControlMove(string mode, Control control)
@@ -1434,7 +1452,7 @@ namespace IronAHK.Rusty
                             case 's':
                             case 'S':
                                 {
-                                    var sec = ((GuiInfo)control.Parent.Tag).Section;
+                                    var sec = GuiAssociatedInfo(control).Section;
                                     var last = sec.IsEmpty ? new Point(control.Parent.Margin.Left, control.Parent.Margin.Top) : sec;
                                     p = alt ? last.Y : last.X;
                                 }
