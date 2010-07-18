@@ -1620,6 +1620,16 @@ namespace IronAHK.Rusty
             if (ctrl == null)
                 return;
 
+            if (!ctrl.Created)
+            {
+                var vis = ctrl.Parent.Visible;
+
+                ctrl.Parent.Show();
+
+                if (!vis)
+                    ctrl.Parent.Hide();
+            }
+
             ctrl.Invoke((SimpleDelegate)delegate { GuiControlAsync(ctrl, Command, Param3); });
         }
 
