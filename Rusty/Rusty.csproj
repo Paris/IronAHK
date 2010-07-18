@@ -74,6 +74,7 @@
     <Compile Include="Core\Common\Options.cs" />
     <Compile Include="Core\Common\Reflection.cs" />
     <Compile Include="Core\Common\Initialisers.cs" />
+    <Compile Include="Core\Network.cs" />
     <Compile Include="Core\Crypt.cs" />
     <Compile Include="Core\Core.cs" />
     <Compile Include="Core\Disk.cs" />
