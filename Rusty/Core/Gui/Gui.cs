@@ -1349,7 +1349,14 @@ namespace IronAHK.Rusty
                                 if (int.TryParse(arg, out n))
                                 {
                                     if (control.Parent != null && control.Parent.Font != null)
-                                        control.Size = new Size(control.Size.Width, (int)(n * control.Parent.Font.GetHeight()));
+                                    {
+                                        var h = (int)(n * control.Parent.Font.GetHeight());
+
+                                        if (control is GroupBox)
+                                            h += control.ClientSize.Height;
+
+                                        control.Size = new Size(control.Size.Width, h);
+                                    }
                                 }
                                 else
                                     append = true;
