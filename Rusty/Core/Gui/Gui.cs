@@ -425,21 +425,16 @@ namespace IronAHK.Rusty
                 case Keyword_UpDown:
                     {
                         var updown = (NumericUpDown)(control ?? new NumericUpDown());
+                        var last = GuiLastControl(parent, 1);
 
-                        if (parent.Controls.Count != 0)
+                        if (last != null && last is TextBox)
                         {
-                            int n = parent.Controls.Count - 1;
-                            var last = parent.Controls[n];
-
-                            if (last is TextBox)
-                            {
-                                updown.Location = last.Location;
-                                updown.Size = last.Size;
-                                updown.Font = last.Font;
-                                updown.ForeColor = last.ForeColor;
-                                parent.Controls.RemoveAt(n);
-                                options = string.Concat(last.Tag as string ?? string.Empty, " ", options);
-                            }
+                            updown.Location = last.Location;
+                            updown.Size = last.Size;
+                            updown.Font = last.Font;
+                            updown.ForeColor = last.ForeColor;
+                            last.Parent.Controls.Remove(last);
+                            options = string.Concat(last.Tag as string ?? string.Empty, " ", options);
                         }
 
                         parent.Controls.Add(updown);
@@ -1387,7 +1382,7 @@ namespace IronAHK.Rusty
 
             if (!first)
             {
-                var last = control.Parent.Controls[control.Parent.Controls.Count - 2];
+                var last = GuiLastControl(control.Parent);
 
                 if (last is MonthCalendar && !last.Parent.Visible) // strange bug
                 {
@@ -1404,12 +1399,41 @@ namespace IronAHK.Rusty
                     control.Location = new Point(control.Location.X, loc.Y);
                 else if (!dx)
                     control.Location = new Point(loc.X, control.Location.Y);
+
+                if (last.Parent is GroupBox)
+                    last = last.Parent;
+
+                var within = control.Location.X > last.Location.X && control.Location.X < last.Location.X + last.Size.Width &&
+                    control.Location.Y > last.Location.Y && control.Location.Y < last.Location.Y + last.Size.Height;
+
+                if (last is GroupBox && within)
+                {
+                    control.Parent.Controls.Remove(control);
+                    control.Location = new Point(control.Location.X - last.Location.X, control.Location.Y - last.Location.Y);
+                    ((GroupBox)last).Controls.Add(control);
+                }
             }
 
             if (sec)
                 GuiAssociatedInfo(control).Section = control.Location;
 
             return string.Join(Keyword_Spaces[1].ToString(), excess).Trim();
+        }
+
+        static Control GuiLastControl(Control ctrl, int offset = 2)
+        {
+            var list = ctrl.Controls;
+            int n = list.Count - offset;
+
+            if (n < 0)
+                return null;
+
+            var last = list[n];
+            
+            if (last is GroupBox)
+                return last.Controls.Count == 0 ? last : GuiLastControl(last, 1);
+
+            return last;
         }
 
         static GuiInfo GuiAssociatedInfo(Control ctrl)
@@ -1466,24 +1490,19 @@ namespace IronAHK.Rusty
                             case 'p':
                             case 'P':
                                 {
-                                    int n = control.Parent.Controls.Count - 2;
-
-                                    if (n < 0)
+                                    var last = GuiLastControl(control.Parent);
+                                    if (last == null)
                                         return;
-
-                                    var s = control.Parent.Controls[n].Location;
+                                    var s = last.Location;
                                     p = alt ? s.Y : s.X;
                                 }
                                 break;
 
                             case '+':
                                 {
-                                    int n = control.Parent.Controls.Count - 2;
-
-                                    if (n < 0)
+                                    var s = GuiLastControl(control.Parent);
+                                    if (s == null)
                                         return;
-
-                                    var s = control.Parent.Controls[n];
                                     p = alt ? s.Location.Y + s.Size.Height : s.Location.X + s.Size.Width;
                                 }
                                 break;
@@ -1523,12 +1542,10 @@ namespace IronAHK.Rusty
 
                         if (offset)
                         {
-                            int n = control.Parent.Controls.Count - 2;
-
-                            if (n < 0)
+                            var last = GuiLastControl(control.Parent);
+                            if (last == null)
                                 return;
-
-                            var s = control.Parent.Controls[n].Size;
+                            var s = last.Size;
                             d += alt ? s.Height : s.Width;
                         }
 
