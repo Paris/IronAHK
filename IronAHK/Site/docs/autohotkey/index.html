@@ -28,7 +28,11 @@
   <p id="each">An each-loop can be used to enumerate objects and arrays with variables <code>A_LoopKey</code> and <code>A_LoopField</code>. Strings can be accessed this way by every character.</p>
   <p id="delegates">Function names can be used as variables to refer to their pointers (delegates). Any object can be invoked as a late-bound function.</p>
   <h2>Commands</h2>
-  <p>A new set of <a href="../commands/#crypt">cryptographic functions</a> for encryption, decryption, calculating hashes and generating secure random numbers.</p>
+  <h3>New Functions</h3>
+  <ul>
+    <li><a href="../commands/#crypt">Cryptography</a>:  encryption, decryption, calculating hashes and generating secure random numbers.</li>
+    <li><a href="../commands/#network">Network</a>: resolve host name to IP address (including reverse lookup) and send an email.</li>
+  </ul>
   <h2 id="security">Security</h2>
   <p>When scripts are <a href="../overview/compiling/">compiled</a> the source code is not attached to the  binary file so it cannot be decompiled. This is unlike AutoHotkey which stores a full copy of the script with the compiled .exe which can be extracted and decrypted or read from process memory when it is executed. </p>
   <h2 id="portability">Portability</h2>
