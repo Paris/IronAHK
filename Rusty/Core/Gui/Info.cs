@@ -9,6 +9,8 @@ namespace IronAHK.Rusty
         {
             public char Delimiter { get; set; }
 
+            public Font Font { get; set; }
+
             public Point Section { get; set; }
 
             public StatusBar StatusBar { get; set; }
