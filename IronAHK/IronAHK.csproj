@@ -85,6 +85,12 @@
     <None Include="Site\clean.php" />
     <None Include="Site\docs\commands\.gitignore" />
     <None Include="Site\download\.htaccess" />
+    <Content Include="..\.gitattributes">
+      <Link>.gitattributes</Link>
+    </Content>
+    <Content Include="..\.gitignore">
+      <Link>.gitignore</Link>
+    </Content>
     <Content Include="Site\docs\syntax\command\index.html" />
     <Content Include="Site\docs\syntax\directive\index.html" />
     <Content Include="Site\docs\syntax\expression\index.html" />

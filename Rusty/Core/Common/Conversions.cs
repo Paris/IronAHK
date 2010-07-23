@@ -34,10 +34,11 @@ namespace IronAHK.Rusty
             return Color.FromArgb(argb[3], argb[0], argb[1], argb[2]);
         }
 
-        static Font ParseFont(string family, string styles)
+        static Font ParseFont(Font standard, string styles, string family = null)
         {
-            int size = 1;
-            var display = FontStyle.Regular;
+            family = string.IsNullOrEmpty(family) ? standard.FontFamily.Name : family;
+            var size = standard.Size;
+            var display = standard.Style;
             string[] options = ParseOptions(styles);
 
             for (int i = 0; i < options.Length ; i++)
