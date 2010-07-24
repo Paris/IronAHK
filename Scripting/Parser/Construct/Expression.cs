@@ -294,7 +294,6 @@ namespace IronAHK.Scripting
                     #region Multiple statements
                     else if (part.Length == 1 && part[0] == Multicast)
                     {
-#pragma warning disable 0162
                         if (!LaxExpressions)
                             throw new ParseException("Nested multipart expression not allowed.");
 
@@ -313,7 +312,6 @@ namespace IronAHK.Scripting
 
                         parts.Add(Script.Operator.Add);
                         parts.Add(invoke);
-#pragma warning restore 0162
                     }
                     #endregion
                     #region Binary operators
@@ -773,12 +771,10 @@ namespace IronAHK.Scripting
                                 invoke.Method = (CodeMethodReferenceExpression)InternalMethods.Operate;
                                 invoke.Parameters.Add(OperatorAsFieldReference(op));
 
-#pragma warning disable 0162
                                 if (LaxExpressions && parts[i] is Script.Operator && (Script.Operator)parts[i] == Script.Operator.Concat && parts[x] as CodeBinaryOperatorType? == CodeBinaryOperatorType.Assign)
                                     invoke.Parameters.Add(new CodePrimitiveExpression(string.Empty));
                                 else
                                     invoke.Parameters.Add(WrappedComplexVar(parts[x]));
-#pragma warning restore 0162
 
                                 invoke.Parameters.Add(WrappedComplexVar(parts[y]));
                                 parts[x] = invoke;

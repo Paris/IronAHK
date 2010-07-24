@@ -250,7 +250,6 @@ namespace IronAHK
                     error.WriteLine(e.StackTrace);
 
 #pragma warning disable 162
-
                     if (debug)
                     {
                         Console.WriteLine();
@@ -258,7 +257,6 @@ namespace IronAHK
                     }
                     else
                         exit = Message("Could not execute: " + e.Message, ExitInvalidFunction);
-
 #pragma warning restore
 
                     var trace = Environment.GetEnvironmentVariable(name.ToUpperInvariant() + "_TRACE");
