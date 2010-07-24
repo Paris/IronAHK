@@ -1686,26 +1686,27 @@ namespace IronAHK.Rusty
         /// <summary>
         /// Retrieves various types of information about a control in a GUI window.
         /// </summary>
-        /// <param name="OutputVar"></param>
-        /// <param name="Command"></param>
-        /// <param name="ControlID"></param>
-        /// <param name="Param4"></param>
-        public static void GuiControlGet(out object OutputVar, string Command, string ControlID, string Param4)
+        /// <param name="result"></param>
+        /// <param name="command"></param>
+        /// <param name="control"></param>
+        /// <param name="option"></param>
+        public static void GuiControlGet(out object result, string command, string control, string option)
         {
-            OutputVar = string.Empty;
+            result = string.Empty;
+            var id = GuiId(ref command);
+            var gui = guis.ContainsKey(id) ? guis[id] : DefaultGui;
+            var ctrl = GuiFindControl(control, gui);
+            command = command.ToLowerInvariant();
 
-            var ctrl = GuiFindControl(ControlID);
 
             if (ctrl == null)
                 return;
 
-            Command = Command.ToLowerInvariant();
-
-            switch (Command)
+            switch (command)
             {
                 case Keyword_Text:
                 case "":
-                    OutputVar = ctrl.Text;
+                    result = ctrl.Text;
                     break;
 
                 case Keyword_Pos:
@@ -1715,7 +1716,7 @@ namespace IronAHK.Rusty
                         loc.Add("y", ctrl.Location.Y);
                         loc.Add("w", ctrl.Size.Width);
                         loc.Add("h", ctrl.Size.Height);
-                        OutputVar = loc;
+                        result = loc;
                     }
                     break;
 
@@ -1725,15 +1726,15 @@ namespace IronAHK.Rusty
                     break;
 
                 case Keyword_Enabled:
-                    OutputVar = ctrl.Enabled ? 1 : 0;
+                    result = ctrl.Enabled ? 1 : 0;
                     break;
 
                 case Keyword_Visible:
-                    OutputVar = ctrl.Visible ? 1 : 0;
+                    result = ctrl.Visible ? 1 : 0;
                     break;
 
                 case Keyword_Hwnd:
-                    OutputVar = ctrl.Handle.ToInt64().ToString();
+                    result = ctrl.Handle.ToInt64().ToString();
                     break;
             }
         }
