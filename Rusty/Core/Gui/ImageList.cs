@@ -14,12 +14,8 @@ namespace IronAHK.Rusty
         {
             InitGui();
 
-            ImageList il = null;
-
-            if (imageLists.ContainsKey(id))
-                il = imageLists[id];
-            else
-                imageLists.Add(id, il = new ImageList());
+            if (!imageLists.ContainsKey(id))
+                imageLists.Add(id, new ImageList());
 
             var icon = GetIcon(file, index);
             imageLists[id].Images.Add(icon);
