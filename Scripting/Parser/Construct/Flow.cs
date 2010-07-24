@@ -296,10 +296,8 @@ namespace IronAHK.Scripting
             code = code.Trim(Spaces);
             if (code.Length == 0)
                 return new CodePrimitiveExpression(false);
-#pragma warning disable 0162
             if (LaxExpressions && IsLegacyIf(code))
                 return ParseLegacyIf(code);
-#pragma warning restore 0162
             else if (expr || IsExpressionIf(code))
             {
                 int l = code.Length - 1;
@@ -317,7 +315,6 @@ namespace IronAHK.Scripting
                 iftest.Parameters.Add(result);
                 return iftest;
             }
-#pragma warning disable 0162
             else if (LegacyIf)
             {
                 code = StripCommentSingle(code);
@@ -333,7 +330,6 @@ namespace IronAHK.Scripting
             }
             else
                 throw new ParseException("Invalid arguments for if statement");
-#pragma warning restore 0162
         }
 
         CodeExpression ParseInequality(string code)
