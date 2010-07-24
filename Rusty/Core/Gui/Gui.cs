@@ -1733,6 +1733,7 @@ namespace IronAHK.Rusty
                     break;
 
                 case Keyword_Hwnd:
+                    OutputVar = ctrl.Handle.ToInt64().ToString();
                     break;
             }
         }
