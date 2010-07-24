@@ -48,7 +48,7 @@ namespace IronAHK
 
             var asm = Assembly.GetExecutingAssembly();
             string self = asm.Location;
-
+            var name = typeof(Program).Namespace;
             string script = null;
             string exe = null;
             gui = Environment.OSVersion.Platform == PlatformID.Unix || Environment.OSVersion.Platform == PlatformID.MacOSX ? false : true;
@@ -129,7 +129,7 @@ namespace IronAHK
                         case "VERSION":
                         case "V":
                             string vers = string.Format("{0} {1}",
-                                typeof(Program).Namespace, Assembly.GetExecutingAssembly().GetName().Version);
+                                name, Assembly.GetExecutingAssembly().GetName().Version);
                             return Message(vers, ExitSuccess);
 
                         case "HELP":
@@ -189,6 +189,7 @@ namespace IronAHK
             self = Path.GetDirectoryName(Path.GetFullPath(self));
             var options = new CompilerParameters();
             bool reflect = exe == null;
+            var exit = ExitSuccess;
 
             if (!reflect)
             {
@@ -243,19 +244,36 @@ namespace IronAHK
                     if (e is TargetInvocationException)
                         e = e.InnerException;
 
+                    var error = new StringWriter();
+                    error.WriteLine("{0}: {1}", e.GetType().Name, e.Message);
+                    error.WriteLine();
+                    error.WriteLine(e.StackTrace);
+
 #pragma warning disable 162
 
                     if (debug)
                     {
                         Console.WriteLine();
-                        Console.WriteLine("{0}: {1}", e.GetType().Name, e.Message);
-                        Console.WriteLine();
-                        Console.WriteLine(e.StackTrace);
+                        Console.Write(error.ToString());
                     }
                     else
-                        return Message("Could not execute: " + e.Message, ExitInvalidFunction);
+                        exit = Message("Could not execute: " + e.Message, ExitInvalidFunction);
 
 #pragma warning restore
+
+                    var trace = Environment.GetEnvironmentVariable(name.ToUpperInvariant() + "_TRACE");
+
+                    try
+                    {
+                        if (!string.IsNullOrEmpty(trace) && Directory.Exists(Path.GetDirectoryName(trace)))
+                        {
+                            if (File.Exists(trace))
+                                File.Delete(trace);
+
+                            File.WriteAllText(trace, error.ToString());
+                        }
+                    }
+                    catch { }
                 }
             }
 
@@ -263,7 +281,7 @@ namespace IronAHK
 
             Cleanup();
 
-            return ExitSuccess;
+            return exit;
         }
 
         static int Message(string text, int exit)
