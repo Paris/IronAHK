@@ -1650,6 +1650,24 @@ namespace IronAHK.Rusty
             }
         }
 
+        static Control GuiControlGetFocused(Control parent)
+        {
+            foreach (Control child in parent.Controls)
+            {
+                if (child.Focused)
+                    return child;
+                else if (child.Controls.Count != 0)
+                {
+                    var item = GuiControlGetFocused(child);
+
+                    if (item != null)
+                        return item;
+                }
+            }
+
+            return null;
+        }
+
         #endregion
 
         /// <summary>
@@ -1698,6 +1716,19 @@ namespace IronAHK.Rusty
             var ctrl = GuiFindControl(control, gui);
             command = command.ToLowerInvariant();
 
+            switch (command)
+            {
+                case Keyword_Focus:
+                case Keyword_Focus + "v":
+                    var focued = GuiControlGetFocused(gui);
+
+                    if (Environment.OSVersion.Platform == PlatformID.Win32NT && command == Keyword_Focus)
+                        result = Windows.GetClassName(focued.Handle);
+                    else
+                        result = focued.Name;
+
+                    return;
+            }
 
             if (ctrl == null)
                 return;
@@ -1718,11 +1749,6 @@ namespace IronAHK.Rusty
                         loc.Add("h", ctrl.Size.Height);
                         result = loc;
                     }
-                    break;
-
-                case Keyword_Focus:
-                case Keyword_Focus + "V":
-                    // UNDONE: get focued Gui control
                     break;
 
                 case Keyword_Enabled:
