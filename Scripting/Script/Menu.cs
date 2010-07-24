@@ -17,8 +17,12 @@ namespace IronAHK.Scripting
             menu.ContextMenu.MenuItems.Add(new MenuItem("&Exit", delegate { Environment.Exit(0); }));
 
             var favicon = Assembly.GetExecutingAssembly().GetManifestResourceStream(typeof(Script).FullName + ".favicon.ico");
-            menu.Icon = new Icon(favicon);
-            menu.Visible = true;
+
+            if (favicon != null)
+            {
+                menu.Icon = new Icon(favicon);
+                menu.Visible = true;
+            }
         }
     }
 }
