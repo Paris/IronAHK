@@ -123,8 +123,9 @@ namespace IronAHK.Rusty
 
         public static string GetClassName(IntPtr hwnd)
         {
-            var sb = new StringBuilder(1024);
-            return GetClassName(hwnd, sb, sb.Capacity).ToString();
+            var buf = new StringBuilder(1024);
+            GetClassName(hwnd, buf, buf.Capacity);
+            return buf.ToString();
         }
 
         public static void DestroyWindow(IntPtr hWnd)
