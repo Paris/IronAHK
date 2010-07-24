@@ -26,7 +26,7 @@ namespace IronAHK
         [STAThread]
         static int Main(string[] args)
         {
-            //args = new string[] { string.Format("..{0}..{0}..{0}Tests{0}Scripting{0}Code{0}isolated.ahk", Path.DirectorySeparatorChar) };
+            //args = new string[] { string.Format("..{0}..{0}..{0}Tests{0}Code{0}isolated.ahk", Path.DirectorySeparatorChar) };
             Start(ref args);
 
             #region Constants
