@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Globalization;
 using System.IO;
 using System.Net;
@@ -169,6 +169,14 @@ namespace IronAHK.Rusty
         public static string A_DirSeperator
         {
             get { return Path.DirectorySeparatorChar.ToString(); }
+        }
+
+        /// <summary>
+        /// Represents the natural logarithmic base, specified by the constant, e.
+        /// </summary>
+        public static double A_E
+        {
+            get { return Math.E; }
         }
 
         /// <summary>
@@ -905,6 +913,14 @@ namespace IronAHK.Rusty
         public static string A_OSVersion
         {
             get { return Environment.OSVersion.VersionString; }
+        }
+
+        /// <summary>
+        /// Represents the ratio of the circumference of a circle to its diameter, specified by the constant, π.
+        /// </summary>
+        public static double A_PI
+        {
+            get { return Math.PI; }
         }
 
         /// <summary>
