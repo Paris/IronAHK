@@ -1410,13 +1410,15 @@ namespace IronAHK.Rusty
                 else if (!dx)
                     control.Location = new Point(loc.X, control.Location.Y);
 
-                if (last.Parent is GroupBox)
+                var child = !(last.Parent is Form) && last.Parent.Controls.Count != 0;
+
+                if (child)
                     last = last.Parent;
 
                 var within = control.Location.X > last.Location.X && control.Location.X < last.Location.X + last.Size.Width &&
                     control.Location.Y > last.Location.Y && control.Location.Y < last.Location.Y + last.Size.Height;
 
-                if (last is GroupBox && within)
+                if (child && within)
                 {
                     control.Parent.Controls.Remove(control);
                     control.Location = new Point(control.Location.X - last.Location.X, control.Location.Y - last.Location.Y);
