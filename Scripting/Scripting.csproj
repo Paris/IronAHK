@@ -64,6 +64,7 @@
   <ItemGroup>
     <Compile Include="Compiler\CompilerSetup.cs" />
     <Compile Include="Compiler\Compiler.cs" />
+    <Compile Include="Compiler\Peripheral\AttributeEmitter.cs" />
     <Compile Include="Generator\Emission\Operators.cs" />
     <Compile Include="Generator\Emission\Flow.cs" />
     <Compile Include="Generator\Emission\Members.cs" />

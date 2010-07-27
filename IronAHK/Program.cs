@@ -190,7 +190,7 @@ namespace IronAHK
             var options = new CompilerParameters();
             bool reflect = exe == null;
             var exit = ExitSuccess;
-
+            
             if (!reflect)
             {
                 if (File.Exists(exe))
