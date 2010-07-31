@@ -71,6 +71,7 @@
     <Compile Include="Core\Common\Conversions.cs" />
     <Compile Include="Core\Common\Gui.cs" />
     <Compile Include="Core\Common\Crypt.cs" />
+    <Compile Include="Core\Common\OptionParser.cs" />
     <Compile Include="Core\Common\Options.cs" />
     <Compile Include="Core\Common\Reflection.cs" />
     <Compile Include="Core\Common\Initialisers.cs" />
@@ -117,6 +118,7 @@
     <Compile Include="Core\String.cs" />
     <Compile Include="Core\Window.cs" />
     <Compile Include="Extras\CRC32.cs" />
+    <Compile Include="Extras\ImageSearcher\ImageSearcher.cs" />
     <Compile Include="Extras\SimpleJson\SimpleJSON.cs" />
     <Compile Include="Core\Common\KeyboardHook.cs" />
     <Compile Include="Linux\Linux.cs" />
