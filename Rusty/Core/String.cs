@@ -215,21 +215,23 @@ namespace IronAHK.Rusty
         /// <param name="input">The input string.</param>
         /// <param name="needle">The pattern to search for, which is a regular expression.</param>
         /// <param name="replace">The string to replace <paramref name="needle"/>.</param>
-        /// <param name="output">The variable to store the result.</param>
+        /// <param name="count">The variable to store the number of replacements that occurred.</param>
         /// <param name="limit">The maximum number of replacements to perform.
         /// If this is below one all matches will be replaced.</param>
         /// <param name="index">The one-based starting character position.
         /// If this is less than one it is considered an offset from the end of the string.</param>
         /// <returns>The new string.</returns>
-        public static string RegExReplace(string input, string needle, string replace, out int output, int limit, int index)
+        public static string RegExReplace(string input, string needle, string replace, out int count, int limit = -1, int index = 1)
         {
             Regex exp;
-            bool reverse = index < 1;
 
-            try { exp = ParseRegEx(needle, reverse); }
+            try
+            {
+                exp = ParseRegEx(needle, index < 1);
+            }
             catch (ArgumentException)
             {
-                output = 0;
+                count = 0;
                 ErrorLevel = 2;
                 return null;
             }
@@ -237,18 +239,22 @@ namespace IronAHK.Rusty
             if (limit < 1)
                 limit = int.MaxValue;
 
-            if (index < 0)
-            {
-                int l = input.Length - 1;
-                input = input.Substring(0, Math.Min(l, l + index));
-                index = 0;
-            }
+            if (index < 1)
+                index = input.Length + index - 1;
 
-            index = Math.Min(0, index - 1);
-            int total = exp.Matches(input, index).Count;
-            output = Math.Min(limit, total);
-            string replaced = exp.Replace(input, replace, limit, index);
-            return replaced;
+            index = Math.Min(Math.Max(0, index), input.Length);
+
+            var n = 0;
+
+            MatchEvaluator match = delegate(Match hit)
+            {
+                n++;
+                return replace;
+            };
+
+            count = n;
+            var result = exp.Replace(input, match, limit, index);
+            return result;
         }
 
         /// <summary>
