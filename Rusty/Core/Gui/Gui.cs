@@ -383,7 +383,7 @@ namespace IronAHK.Rusty
                         var edit = (TextBox)(control ?? new TextBox());
                         parent.Controls.Add(edit);
                         control = edit;
-                        edit.Text = content;
+                        edit.Text = NormaliseEol(content);
                         edit.Tag = options;
                         opts = GuiApplyStyles(edit, options);
 
@@ -1600,6 +1600,8 @@ namespace IronAHK.Rusty
             {
                 case Keyword_Text:
                 case "":
+                    if (ctrl is TextBox)
+                        arg = NormaliseEol(arg);
                     ctrl.Text = arg;
                     break;
 
