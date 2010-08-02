@@ -1,6 +1,7 @@
 using System;
 using System.Drawing;
 using System.Reflection;
+using System.IO;
 using System.Windows.Forms;
 
 namespace IronAHK.Rusty
@@ -181,10 +182,15 @@ namespace IronAHK.Rusty
         /// <param name="Text">The text to show in the prompt.</param>
         public static void MsgBox(string Text)
         {
+            var title = Environment.GetEnvironmentVariable("SCRIPT") ?? string.Empty;
+
+            if (!string.IsNullOrEmpty(title) && File.Exists(title))
+                title = Path.GetFileName(title);
+
             if (dialogOwner != null)
-                MessageBox.Show(dialogOwner, Text);
+                MessageBox.Show(dialogOwner, Text, title);
             else
-                MessageBox.Show(Text);
+                MessageBox.Show(Text, title);
         }
 
         /// <summary>
@@ -245,6 +251,14 @@ namespace IronAHK.Rusty
             }
 
             bool help = (Options & 0xf000) == 16384;
+
+            if (string.IsNullOrEmpty(Title))
+            {
+                var script = Environment.GetEnvironmentVariable("SCRIPT");
+
+                if (!string.IsNullOrEmpty(script) && File.Exists(script))
+                    Title = Path.GetFileName(script);
+            }
 
             var result = DialogResult.None;
 

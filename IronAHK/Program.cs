@@ -237,6 +237,7 @@ namespace IronAHK
                 {
                     if (results.CompiledAssembly == null)
                         throw new Exception(ErrorCompilationFailed);
+                    Environment.SetEnvironmentVariable("SCRIPT", script);
                     results.CompiledAssembly.EntryPoint.Invoke(null, null);
                 }
                 catch (Exception e)
