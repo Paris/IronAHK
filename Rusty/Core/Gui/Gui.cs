@@ -1357,6 +1357,9 @@ namespace IronAHK.Rusty
 
                                         control.Size = new Size(control.Size.Width, h);
                                     }
+
+                                    if (control is TextBox)
+                                        ((TextBox)control).Multiline = true;
                                 }
                                 else
                                     append = true;
@@ -1570,6 +1573,8 @@ namespace IronAHK.Rusty
 
                 case 'h':
                 case 'H':
+                    if (control is TextBox)
+                        ((TextBox)control).Multiline = true;
                     alt = true;
                     goto case 'w';
             }
