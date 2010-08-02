@@ -371,7 +371,7 @@ namespace IronAHK.Rusty
             return options;
         }
 
-        static Regex ParseRegEx(string exp, bool reverse)
+        static Regex ParseRegEx(string exp, bool reverse = false)
         {
             var mod = new Regex("^[imsxADJUXPS`nra]\\)");
             var res = mod.Match(exp);
