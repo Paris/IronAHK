@@ -1398,7 +1398,9 @@ namespace IronAHK.Rusty
 
             if (!first)
             {
+                var preceeding = control.Parent.Controls[control.Parent.Controls.Count - 2];
                 var last = GuiLastControl(control.Parent);
+                var shift = false;
 
                 if (last is MonthCalendar && !last.Parent.Visible) // strange bug
                 {
@@ -1406,6 +1408,7 @@ namespace IronAHK.Rusty
                     last.Parent.Hide();
                 }
 
+            move:
                 var loc = new Point(last.Location.X + last.Size.Width + last.Margin.Right + control.Margin.Left,
                     last.Location.Y + last.Size.Height + last.Margin.Bottom + control.Margin.Top);
 
@@ -1416,19 +1419,32 @@ namespace IronAHK.Rusty
                 else if (!dx)
                     control.Location = new Point(loc.X, control.Location.Y);
 
-                var child = !(last.Parent is Form) && last.Parent.Controls.Count != 0;
+                if (shift)
+                    goto next;
 
-                if (child)
+                var within = control.Location.X > preceeding.Location.X && control.Location.X < preceeding.Location.X + preceeding.Size.Width &&
+                    control.Location.Y > preceeding.Location.Y && control.Location.Y < preceeding.Location.Y + preceeding.Size.Height;
+
+                if (!within)
+                {
+                    last = preceeding;
+                    shift = true;
+                    goto move;
+                }
+
+            next:
+                var next = !(last is GroupBox) && !(last.Parent is Form);
+
+                if (next)
                     last = last.Parent;
 
-                var within = control.Location.X > last.Location.X && control.Location.X < last.Location.X + last.Size.Width &&
-                    control.Location.Y > last.Location.Y && control.Location.Y < last.Location.Y + last.Size.Height;
-
-                if (child && within)
+                if (last is GroupBox && !shift)
                 {
                     control.Parent.Controls.Remove(control);
-                    control.Location = new Point(control.Location.X - last.Location.X, control.Location.Y - last.Location.Y);
-                    ((GroupBox)last).Controls.Add(control);
+                    last.Controls.Add(control);
+
+                    if (!next)
+                        control.Location = new Point(control.Location.X - control.Parent.Location.X, control.Location.Y - control.Parent.Location.Y);
                 }
             }
 
