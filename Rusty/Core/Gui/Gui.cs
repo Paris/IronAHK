@@ -1502,7 +1502,21 @@ namespace IronAHK.Rusty
 
                             case 'm':
                             case 'M':
-                                p = alt ? control.Parent.Margin.Top : control.Parent.Margin.Left;
+                                {
+                                    p = alt ? control.Parent.Margin.Top : control.Parent.Margin.Left;
+                                    
+                                    var n = control.Parent.Controls.Count - 2;
+
+                                    if (n < 0)
+                                        break;
+                                    
+                                    var last = control.Parent.Controls[n];
+
+                                    if (alt)
+                                        control.Location = new Point(last.Location.X + last.Width, control.Location.Y);
+                                    else
+                                        control.Location = new Point(control.Location.X, last.Location.Y + last.Height);
+                                }
                                 break;
 
                             case 'p':
