@@ -1555,7 +1555,9 @@ namespace IronAHK.Rusty
                         offset = mode[1] == 'p' || mode[1] == 'P';
                         arg = mode.Substring(offset ? 2 : 1);
 
-                        if (!int.TryParse(arg, out d))
+                        if (arg.Length == 0)
+                            d = 0;
+                        else if (!int.TryParse(arg, out d))
                             return;
 
                         if (offset)
