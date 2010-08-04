@@ -1274,12 +1274,15 @@ namespace IronAHK.Rusty
                 switch (mode)
                 {
                     case Keyword_Left:
+                        SafeSetProperty(control, "TextAlign", ContentAlignment.MiddleLeft);
                         break;
 
                     case Keyword_Center:
+                        SafeSetProperty(control, "TextAlign", ContentAlignment.MiddleCenter);
                         break;
 
                     case Keyword_Right:
+                        SafeSetProperty(control, "TextAlign", ContentAlignment.MiddleRight);
                         break;
 
                     case Keyword_AltSubmit:
