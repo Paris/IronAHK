@@ -32,7 +32,7 @@ namespace IronAHK.Rusty
         /// <para>*TransN: This option makes it easier to find a match by specifying one color within the image that will match any color on the screen. It is most commonly used to find PNG, GIF, and TIF files that have some transparent areas (however, icons do not need this option because their transparency is automatically supported). For GIF files, *TransWhite might be most likely to work. For PNG and TIF files, *TransBlack might be best. Otherwise, specify for N some other color name or RGB value (see the color chart for guidance, or use PixelGetColor in its RGB mode). Examples: *TransBlack, *TransFFFFAA, *Trans0xFFFFAA</para>
         /// <para>*wn and *hn: Width and height to which to scale the image (this width and height also determines which icon to load from a multi-icon .ICO file). If both these options are omitted, icons loaded from ICO, DLL, or EXE files are scaled to the system's default small-icon size, which is usually 16 by 16 (you can force the actual/internal size to be used by specifying *w0 *h0). Images that are not icons are loaded at their actual size. To shrink or enlarge the image while preserving its aspect ratio, specify -1 for one of the dimensions and a positive number for the other. For example, specifying *w200 *h-1 would make the image 200 pixels wide and cause its height to be set automatically.</para>
         /// </param>
-        public static void ImageSearch(out string OutputVarX, out string OutputVarY, string X1, string Y1, string X2, string Y2, string OptionsImageFile)
+        public static void ImageSearch(out int? OutputVarX, out int? OutputVarY, string X1, string Y1, string X2, string Y2, string OptionsImageFile)
         {
             #region Definitions
 
@@ -81,7 +81,7 @@ namespace IronAHK.Rusty
                 Variation = Variation
             };
 
-            Point? ImagePos = null;
+            Point? ImagePos;
             try {
                 ImagePos = SearchImg.SearchImage(NeedleImage);
             } catch {
@@ -89,8 +89,8 @@ namespace IronAHK.Rusty
                 return;
             }
             if(ImagePos.HasValue) {
-                OutputVarX = ImagePos.Value.X.ToString();
-                OutputVarY = ImagePos.Value.Y.ToString();
+                OutputVarX = ImagePos.Value.X;
+                OutputVarY = ImagePos.Value.Y;
                 ErrorLevel = 0;
             }else
                 ErrorLevel = 1;
