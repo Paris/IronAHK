@@ -45,8 +45,12 @@ namespace IronAHK.Scripting
                 case Address:
                 case Less:
                 case Greater:
-                case Multiply:
                     return !(IsHotstringLabel(code) || IsHotkeyLabel(code));
+
+                case Multiply:
+                    if (1 < code.Length && code[1] == MultiComA)
+                        return false;
+                    goto case Not;
 
                 case Add:
                 case Subtract:
