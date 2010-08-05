@@ -1255,6 +1255,8 @@ namespace IronAHK.Rusty
 
             #endregion
 
+            #region Options
+
             string[] opts = ParseOptions(styles), excess = new string[opts.Length];
 
             for (int i = 0; i < opts.Length; i++)
@@ -1397,6 +1399,10 @@ namespace IronAHK.Rusty
                     excess[i] = opts[i];
             }
 
+            #endregion
+
+            #region Secondary controls
+
             if (!first)
             {
                 var preceeding = control.Parent.Controls[control.Parent.Controls.Count - 2];
@@ -1448,6 +1454,8 @@ namespace IronAHK.Rusty
                         control.Location = new Point(control.Location.X - control.Parent.Location.X, control.Location.Y - control.Parent.Location.Y);
                 }
             }
+
+            #endregion
 
             if (sec)
                 GuiAssociatedInfo(control).Section = control.Location;
