@@ -383,7 +383,7 @@ namespace IronAHK.Rusty
                         var edit = (TextBox)(control ?? new TextBox());
                         parent.Controls.Add(edit);
                         control = edit;
-                        edit.Text = content;
+                        edit.Text = NormaliseEol(content);
                         edit.Tag = options;
                         opts = GuiApplyStyles(edit, options);
 
@@ -1357,6 +1357,9 @@ namespace IronAHK.Rusty
 
                                         control.Size = new Size(control.Size.Width, h);
                                     }
+
+                                    if (control is TextBox)
+                                        ((TextBox)control).Multiline = true;
                                 }
                                 else
                                     append = true;
@@ -1570,6 +1573,8 @@ namespace IronAHK.Rusty
 
                 case 'h':
                 case 'H':
+                    if (control is TextBox)
+                        ((TextBox)control).Multiline = true;
                     alt = true;
                     goto case 'w';
             }
@@ -1600,6 +1605,8 @@ namespace IronAHK.Rusty
             {
                 case Keyword_Text:
                 case "":
+                    if (ctrl is TextBox)
+                        arg = NormaliseEol(arg);
                     ctrl.Text = arg;
                     break;
 

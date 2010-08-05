@@ -82,6 +82,12 @@ namespace IronAHK.Scripting
                 case "a_scriptdir":
                     return new CodePrimitiveExpression(Path.GetDirectoryName(Path.GetFullPath(fileName)));
 
+                case "a_scriptfullpath":
+                    return new CodePrimitiveExpression(Path.GetFullPath(fileName));
+
+                case "a_scriptname":
+                    return new CodePrimitiveExpression(Path.GetFileName(Path.GetFullPath(fileName)));
+
                 case "a_thisfunc":
                     return new CodePrimitiveExpression(Scope);
 
