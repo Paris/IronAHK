@@ -201,7 +201,8 @@ namespace IronAHK.Rusty
                     break;
 
                 case Keyword_Font:
-                    GuiAssociatedInfo(guis[id]).Font = ParseFont(GuiAssociatedInfo(guis[id]).Font, Param2, Param3);
+                    GuiAssociatedInfo(guis[id]).Font = string.IsNullOrEmpty(Param2) && string.IsNullOrEmpty(Param3) ?
+                        guis[id].Font : ParseFont(GuiAssociatedInfo(guis[id]).Font, Param2, Param3);
                     break;
 
                 case Keyword_Color:
