@@ -2,12 +2,16 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Drawing;
+using System.IO;
 
 namespace IronAHK.Rusty
 {
 
     /// <summary>
     /// Provides easy to use image comparisation and search Algorythms
+    /// 
+    /// ToDo: Add Multi Threading
+    /// 
     /// </summary>
     public class SearchableImage
     {
@@ -16,10 +20,16 @@ namespace IronAHK.Rusty
 
         private int mVariation = 0; // 0-255
         private Bitmap mSourceImage = null;
+        private Bitmap mNeedleImage = null;
+
         #endregion
 
         #region Constructors
 
+        /// <summary>
+        /// Creates a new instance of a Searchable Image
+        /// </summary>
+        /// <param name="uSourceImage">Image to search withhin</param>
         public SearchableImage(Bitmap uSourceImage) {
             this.mSourceImage = uSourceImage;
         }
@@ -27,6 +37,21 @@ namespace IronAHK.Rusty
         #endregion
 
         #region Public Propertys
+
+        public Bitmap SourceImage {
+            get { return mSourceImage; }
+            set { mSourceImage = value; }
+        }
+
+
+        public Bitmap NeedleImage {
+            get {
+                return mNeedleImage;
+            }
+            set {
+                mNeedleImage = value;
+            }
+        }
 
         /// <summary>Variation of matcher (0 = exact match, 255 = every color matches)
         /// 
@@ -52,15 +77,14 @@ namespace IronAHK.Rusty
         /// 2. if found --> lookup required size for performance optimisation
         /// 3. if step 2. passed --> begin pixel per pixel comparisation, with (Variation)
         /// 
-        /// Further optimisations may include hash comparisation
         /// </summary>
         /// <returns>If nothing is found [Point?]=null is returned, otherwise upperleft corner of found position.</returns>
-        public Point? SearchImage(Bitmap NeedleImage) {
-
-            // Point? ImageLocation = null;
-
-            if(mSourceImage == null || NeedleImage == null)
+        public Point? SearchImage(Bitmap uNeedleImage) {
+            Point SourceLocation;
+            if(mSourceImage == null || uNeedleImage == null)
                 throw new InvalidOperationException();
+
+            this.NeedleImage = uNeedleImage;
 
             var Unit = GraphicsUnit.Pixel;
             //Is the needle image conatined (physical size) in the source image?
@@ -70,8 +94,9 @@ namespace IronAHK.Rusty
 
                 for(int row = 0; row <= MaxMovement.Height; row++)
                     for(int col = 0; col <= MaxMovement.Width; col++) {
-                        if(CompareImage(NeedleImage, new Point(col, row)))
-                            return new Point(col, row);
+                        SourceLocation = new Point(col, row);
+                            if(CompareImage(SourceLocation))
+                                return SourceLocation;
                     }
             }
             return null;
@@ -96,13 +121,16 @@ namespace IronAHK.Rusty
             return null;
         }
 
+        #endregion
+
+        #region Private Methods
 
         /// <summary>Searches the Needle Image withhin the Source Image at given Point. Variation and other Parameters are taken into account.
         /// 
         /// </summary>
         /// <param name="NeedleImageLocation"></param>
         /// <returns></returns>
-        public bool CompareImage(Bitmap NeedleImage, Point NeedleImageLocation) {
+        private bool CompareImage(Point NeedleImageLocation) {
             Color NeedlePix;
             Color SourcePix;
 
@@ -117,22 +145,13 @@ namespace IronAHK.Rusty
                 for(int col = 0; col < NeedleImage.Size.Width; col++) {
                     NeedlePix = NeedleImage.GetPixel(col, row);
                     SourcePix = mSourceImage.GetPixel(col + NeedleImageLocation.X, row + NeedleImageLocation.Y);
-
                     if(!CompareWithMask(SourcePix, CreateComparerMask(NeedlePix.ToArgb()))) {
-                        //they don't match
-                        return false;
+                        return false; //they don't match
                     }
                 }
             return true;
         }
 
-        public Bitmap ToBitmap() {
-            return mSourceImage;
-        }
-
-        #endregion
-
-        #region Private Methods
 
         /// <summary>Create a Comarer Mask with given Variation
         /// 
