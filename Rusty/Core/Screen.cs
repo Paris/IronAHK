@@ -24,7 +24,7 @@ namespace IronAHK.Rusty
         /// <param name="Y1">See <paramref name="X1"/>.</param>
         /// <param name="X2">The X and Y coordinates of the lower right corner of the rectangle to search, which can be expressions. Coordinates are relative to the active window unless CoordMode was used to change that.</param>
         /// <param name="Y2">See <paramref name="X2"/>.</param>
-        /// <param name="ImageFile">
+        /// <param name="OptionsImageFile">
         /// <para>The file name of an image, which is assumed to be in %A_WorkingDir% if an absolute path isn't specified. All operating systems support GIF, JPG, BMP, ICO, CUR, and ANI images (BMP images must be 16-bit or higher). Other sources of icons include the following types of files: EXE, DLL, CPL, SCR, and other types that contain icon resources. On Windows XP or later, additional image formats such as PNG, TIF, Exif, WMF, and EMF are supported. Operating systems older than XP can be given support by copying Microsoft's free GDI+ DLL into the AutoHotkey.exe folder (but in the case of a compiled script, copy the DLL into the script's folder). To download the DLL, search for the following phrase at www.microsoft.com: gdi redistributable</para>
         /// <para>Options: Zero or more of the following strings may be also be present immediately before the name of the file. Separate each option from the next with a single space or tab. For example: *2 *w100 *h-1 C:\Main Logo.bmp</para>
         /// <para>*IconN: To use an icon group other than the first one in the file, specify *Icon followed immediately by the number of the group. For example, *Icon2 would load the default icon from the second icon group.</para>
@@ -63,7 +63,7 @@ namespace IronAHK.Rusty
                 StartPoint = new Point(int.Parse(X1), int.Parse(Y1));
                 BoundSize = new Size(int.Parse(X2) - StartPoint.X, int.Parse(Y2) - StartPoint.Y);
                 NeedleImage = (Bitmap)Bitmap.FromFile(SearchImagePath);
-            } catch(FormatException e) {
+            } catch(FormatException) {
                 ErrorLevel = 2;
                 return;
             }
