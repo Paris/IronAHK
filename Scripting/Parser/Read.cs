@@ -243,6 +243,9 @@ namespace IronAHK.Scripting
 
                 code = code.Trim(Spaces);
 
+                if (code.StartsWith(new string(new[] { MultiComB, MultiComA })))
+                    code = code.Substring(2);
+
                 if (code.Length == 0 || IsCommentLine(code))
                     continue;
 
