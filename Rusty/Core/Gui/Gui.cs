@@ -1479,22 +1479,9 @@ namespace IronAHK.Rusty
             return last;
         }
 
-        static GuiInfo GuiAssociatedInfo(Control ctrl)
+        static GuiInfo GuiAssociatedInfo(Control control)
         {
-            while (ctrl != null)
-            {
-                if (ctrl is Form)
-                {
-                    var form = ((Form)ctrl);
-
-                    if (form.Tag != null && form.Tag is GuiInfo)
-                        return ((GuiInfo)form.Tag);
-                }
-
-                ctrl = ctrl.Parent;
-            }
-
-            return null;
+            return control.FindForm().Tag as GuiInfo;
         }
 
         static void GuiControlMove(string mode, Control control)
