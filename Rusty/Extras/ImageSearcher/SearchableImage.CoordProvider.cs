@@ -40,10 +40,10 @@ namespace IronAHK.Rusty
                 return null;
 
             mCurrent.X++;
-            if(mCurrent.X >= mMaxMovement.Width) {
+            if(mCurrent.X > mMaxMovement.Width) {
                 mCurrent.X = 0;
                 mCurrent.Y++;
-                if(mCurrent.Y >= mMaxMovement.Height) {
+                if(mCurrent.Y > mMaxMovement.Height) {
                     mDone = true;
                     return null;
                 }

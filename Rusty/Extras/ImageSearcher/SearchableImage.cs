@@ -9,7 +9,11 @@ namespace IronAHK.Rusty
 {
 
     /// <summary>
-    /// Provides easy to use multi threaded image comparisation and search Algorythms
+    /// Creation:       02.08.2010 - IsNull
+    /// Last Changes:   06.08.2010 - IsNull
+    /// -----------------------------------
+    /// 
+    /// Provides easy to use multi threaded image comparisation and search Algorythms.
     /// 
     /// ToDo:
     /// 
@@ -24,9 +28,9 @@ namespace IronAHK.Rusty
 
         private int mVariation = 0; // 0-255
         private ImageData mSourceImageData = null;
-
         private ImageData mNeedleImageData = null;
-        private int[,] NeedlePixelMask = null;
+
+        private PixelMask NeedlePixelMask;
         private CoordProvider Provider;
         private Point? FoundLocation = null;
 
@@ -81,6 +85,7 @@ namespace IronAHK.Rusty
                 throw new InvalidOperationException();
 
             mNeedleImageData = new ImageData(uNeedleImage);
+            mNeedleImageData.CreatePixelMaskTable(this.Variation);
 
             //Is the needle image conatined (physical size) in the source image?
             var SourceRect = new Rectangle(new Point(0, 0), mSourceImageData.Size);
@@ -109,9 +114,9 @@ namespace IronAHK.Rusty
         /// </summary>
         /// <param name="ColorId"></param>
         /// <returns>If nothing is found [Point?]=null is returned, otherwise upperleft corner of found position.</returns>
-        public Point? SearchPixel(int ColorId) {
+        public Point? SearchPixel(Color ColorId) {
 
-            NeedlePixelMask = CreateComparerMask(ColorId);
+            NeedlePixelMask = new PixelMask(ColorId, Variation);
 
             ResetEvents = new ManualResetEvent[ThreadCount];
             Provider = new CoordProvider(mSourceImageData.Size, new Size(1,1));
@@ -130,7 +135,7 @@ namespace IronAHK.Rusty
 
         private void SearchPixelWorker(object StateInfo) {
             Point? Location;
-            Color pix;
+            Color pix = new Color();
             int index = (int)StateInfo;
             var locker = new object();
 
@@ -140,7 +145,7 @@ namespace IronAHK.Rusty
             while((Location = Provider.Next()) != null && !FoundLocation.HasValue) {
 
                 pix = mSourceImageData.Pixel[Location.Value.X, Location.Value.Y];
-                if(CompareWithMask(pix, NeedlePixelMask)) {
+                if(NeedlePixelMask.Compare(pix)) {
                     lock(locker) {
                         if(!FoundLocation.HasValue)
                             FoundLocation = Location.Value;
@@ -173,60 +178,19 @@ namespace IronAHK.Rusty
         /// <param name="NeedleImageLocation"></param>
         /// <returns></returns>
         private bool CompareImage(Point NeedleImageLocation) {
-            Color NeedlePix;
             Color SourcePix;
-
-            /* This Code is obsolete as this is checked before
-             * 
-                // Check if the Needleimage at given Position fits into SourceImage
-                var SourceBox = new Rectangle(new Point(0, 0), mSourceImageData.Size);
-                var NeedleBox = new Rectangle(NeedleImageLocation, mNeedleImageData.Size);
-                if(!SourceBox.Contains(NeedleBox))
-                return false;
-             * */
 
             //If so, perform a comarisation for each pixel from needle:
             for(int row = 0; row < mNeedleImageData.Size.Height; row++)
                 for(int col = 0; col < mNeedleImageData.Size.Width; col++) {
-                    NeedlePix = mNeedleImageData.Pixel[col, row];
                     SourcePix = mSourceImageData.Pixel[col + NeedleImageLocation.X, row + NeedleImageLocation.Y];
-                    if(!CompareWithMask(SourcePix, CreateComparerMask(NeedlePix.ToArgb()))) {
+                    if(!mNeedleImageData.MaskedPixel[col, row].Compare(SourcePix)) {
                         return false; //they don't match
                     }
+
                 }
             return true;
         }
-
-
-
-
-        /// <summary>Create a Comarer Mask with given Variation
-        /// 
-        /// </summary>
-        /// <param name="ColorID">Source Color</param>
-        /// <returns></returns>
-        private int[,] CreateComparerMask(int ColorID) {
-            var c = new int[3, 2];
-
-            for(int i = 0; i < 3; i++) {
-                int t = ColorID >> (2 - i) * 8 & 0xff;
-                c[i, 0] = t - this.Variation; c[i, 1] = t + this.Variation;
-            }
-            return c;
-        }
-
-        /// <summary>Compares given Color with Comparer Mask
-        /// 
-        /// </summary>
-        /// <param name="GivenColor"></param>
-        /// <param name="c"></param>
-        /// <returns></returns>
-        private bool CompareWithMask(Color GivenColor, int[,] c) {
-            return (GivenColor.R >= c[0, 0] && GivenColor.R <= c[0, 1] &&
-                         GivenColor.G >= c[1, 0] && GivenColor.G <= c[1, 1] &&
-                         GivenColor.B >= c[2, 0] && GivenColor.B <= c[2, 1]);
-        }
-
         #endregion
 
         #region Class ImageData
@@ -235,6 +199,7 @@ namespace IronAHK.Rusty
         {
             public readonly Size Size;
             public readonly Color[,] Pixel;
+            public PixelMask[,] MaskedPixel;
 
             public ImageData(Bitmap bmp) {
                 Size = bmp.Size;
@@ -250,8 +215,66 @@ namespace IronAHK.Rusty
                     }
                 return colors;
             }
+
+            /// <summary>Creates a PixelMask table from the given Pixel Data.
+            /// 
+            /// </summary>
+            /// <param name="Variation"></param>
+            public void CreatePixelMaskTable(int Variation){
+
+                MaskedPixel = new PixelMask[Size.Width, Size.Height];
+
+                 for(int row = 0; row < Size.Height; row++)
+                    for(int col = 0; col < Size.Width; col++) {
+                        MaskedPixel[col, row] = new PixelMask(Pixel[col, row], Variation);
+                    }
+            }
+
         }
 
         #endregion
+
+        #region Struct  PixelMask
+
+        private struct PixelMask
+        {
+            private bool FullTransparent;
+            private bool ExactMatch;
+            private Color ColorLower;
+            private Color ColorHigher;
+
+
+            public PixelMask(Color Color, int Variation) {
+
+                FullTransparent = (Color.A == 0x00);
+                ExactMatch = (Variation == 0);
+
+                if(ExactMatch) {
+                    ColorLower = Color;
+                    ColorHigher = new Color();
+                } else {
+                    ColorLower = Color.FromArgb(Color.A, Color.R - Variation, Color.B - Variation, Color.G - Variation);
+                    ColorHigher = Color.FromArgb(Color.A, Color.R + Variation, Color.B + Variation, Color.G + Variation);
+                }
+            }
+
+            public bool Compare(Color SourceColor) {
+
+                if(this.FullTransparent)
+                    return true; //Full Transparent matches every pixel
+
+                if(ExactMatch) {
+                    //ToDo: we may compare only RGB without A chanel, as this doesn't care here and may give false results
+                    return (ColorLower.ToArgb() == SourceColor.ToArgb());
+                } else {
+                    return (SourceColor.R >= ColorLower.R && SourceColor.R <= ColorHigher.R &&
+                            SourceColor.G >= ColorLower.G && SourceColor.G <= ColorHigher.G &&
+                            SourceColor.B >= ColorLower.B && SourceColor.B <= ColorHigher.B);
+                }
+            }
+        }
+
+        #endregion
+
     }
 }
