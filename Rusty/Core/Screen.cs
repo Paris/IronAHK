@@ -170,12 +170,18 @@ namespace IronAHK.Rusty
         /// <para>This parameter may contain the word Fast, RGB, or both (if both are present, separate them with a space; that is, Fast RGB).</para>
         /// <para>Fast: Uses a faster searching method that in most cases dramatically reduces the amount of CPU time used by the search. Although color depths as low as 8-bit (256-color) are supported, the fast mode performs much better in 24-bit or 32-bit color. If the screen's color depth is 16-bit or lower, the Variation parameter might behave slightly differently in fast mode than it does in slow mode. Finally, the fast mode searches the screen row by row (top down) instead of column by column. Therefore, it might find a different pixel than that of the slow mode if there is more than one matching pixel.</para>
         /// <para>RGB: Causes ColorID to be interpreted as an RGB value instead of BGR. In other words, the red and blue components are swapped.</para>
+        /// <para>ARGB: Causes ColorID to be interpreted as an ARGB value instead of BGR. In other words, the red and blue components are swapped and also alpha chanel is recognized.</para>
         /// </param>
         public static void PixelSearch(out int? OutputVarX, out int? OutputVarY, int X1, int Y1, int X2, int Y2, int ColorID, int Variation, string Fast_RGB)
         {
             OutputVarX = null;
             OutputVarY = null;
+            ColorFactory.ColorType Type;
+            Color NeedlePixel;
             SearchableImage SearchableImage;
+            bool FastMode; // Not Implemented yet!
+
+            CoordProvider Provider = new CoordProvider(new Size(4, 4), new Size(1, 1));
 
             try {
                 var region = new Rectangle(X1, Y1, X2 - X1, Y2 - Y1);
@@ -184,8 +190,19 @@ namespace IronAHK.Rusty
                 {
                     Variation = Variation
                 };
+               
+                Fast_RGB = Fast_RGB.ToLowerInvariant();
 
-                var pnt = SearchableImage.SearchPixel(ColorID);
+                if(Fast_RGB.Contains("argb")) {
+                    Type = ColorFactory.ColorType.ARGB;
+                } else if(Fast_RGB.Contains("rgb")) {
+                    Type = ColorFactory.ColorType.RGB;
+                } else {
+                    Type = ColorFactory.ColorType.BGR;
+                }
+                NeedlePixel = ColorFactory.ColorFrom(ColorID, Type);
+
+                var pnt = SearchableImage.SearchPixel(NeedlePixel);
 
                 if(pnt.HasValue) {
                     OutputVarX = pnt.Value.X;
@@ -194,12 +211,13 @@ namespace IronAHK.Rusty
                 } else {
                     ErrorLevel = 1;
                 }
-
             } catch {
                 ErrorLevel = 2;
             }
             return;
         }
+
+
 
     }
 }
