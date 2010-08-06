@@ -118,7 +118,9 @@
     <Compile Include="Core\String.cs" />
     <Compile Include="Core\Window.cs" />
     <Compile Include="Extras\CRC32.cs" />
-    <Compile Include="Extras\ImageSearcher\ImageSearcher.cs" />
+    <Compile Include="Extras\ImageSearcher\ColorFactory.cs" />
+    <Compile Include="Extras\ImageSearcher\SearchableImage.CoordProvider.cs" />
+    <Compile Include="Extras\ImageSearcher\SearchableImage.cs" />
     <Compile Include="Extras\SimpleJson\SimpleJSON.cs" />
     <Compile Include="Core\Common\KeyboardHook.cs" />
     <Compile Include="Linux\Linux.cs" />
