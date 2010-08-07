@@ -14,7 +14,17 @@ namespace IronAHK.Scripting
 
             if (parts.Length > 1 && parts[1].Length != 0)
             {
-                foreach (var param in SplitCommandParameters(parts[1]))
+                var split = SplitCommandParameters(parts[1]);
+
+                if (parts[0].Equals(MsgBox, System.StringComparison.OrdinalIgnoreCase) && split.Length > 1)
+                {
+                    int n;
+
+                    if (!int.TryParse(split[0], out n))
+                        split = new[] { parts[1] };
+                }
+
+                foreach (var param in split)
                     invoke.Parameters.Add(ParseCommandParameter(param));
             }
 
