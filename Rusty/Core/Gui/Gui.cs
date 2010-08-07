@@ -1342,10 +1342,12 @@ namespace IronAHK.Rusty
                         {
                             case 'x':
                                 dx = true;
+                                dy = dy || (mode[1] == 'm' || mode[1] == 'M');
                                 goto case 'h';
 
                             case 'y':
                                 dy = true;
+                                dx = dx || (mode[1] == 'm' || mode[1] == 'M');
                                 goto case 'h';
 
                             case 'w':
@@ -1473,15 +1475,20 @@ namespace IronAHK.Rusty
                             case 'M':
                                 {
                                     p = alt ? control.Parent.Margin.Top : control.Parent.Margin.Left;
-                                    var last = GuiAssociatedInfo(control).LastControl;
+                                    var all = control.FindForm().Controls;
 
-                                    if (last != null)
+                                    if (all.Count == 0)
+                                        break;
+
+                                    int x = 0, y = 0;
+
+                                    foreach (Control ctrl in all)
                                     {
-                                        if (alt)
-                                            control.Location = new Point(last.Location.X + last.Width, control.Location.Y);
-                                        else
-                                            control.Location = new Point(control.Location.X, last.Location.Y + last.Height);
+                                        x = Math.Max(x, ctrl.Location.X + ctrl.Width);
+                                        y = Math.Max(y, ctrl.Location.Y + ctrl.Height);
                                     }
+
+                                    control.Location = alt ? new Point(x, control.Location.Y) : new Point(control.Location.X, y);
                                 }
                                 break;
 
