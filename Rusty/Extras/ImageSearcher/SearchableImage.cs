@@ -10,7 +10,7 @@ namespace IronAHK.Rusty
 
     /// <summary>
     /// Creation:       02.08.2010 - IsNull
-    /// Last Changes:   06.08.2010 - IsNull
+    /// Last Changes:   07.08.2010 - IsNull
     /// -----------------------------------
     /// 
     /// Provides easy to use multi threaded image comparisation and search Algorythms.
@@ -36,6 +36,7 @@ namespace IronAHK.Rusty
 
         int ThreadCount = Environment.ProcessorCount;
         ManualResetEvent[] ResetEvents;
+        object Locker = new object();
 
         #endregion
 
@@ -137,7 +138,6 @@ namespace IronAHK.Rusty
             Point? Location;
             Color pix = new Color();
             int index = (int)StateInfo;
-            var locker = new object();
 
             if(Provider == null)
                 throw new ArgumentNullException();
@@ -146,7 +146,7 @@ namespace IronAHK.Rusty
 
                 pix = mSourceImageData.Pixel[Location.Value.X, Location.Value.Y];
                 if(NeedlePixelMask.Compare(pix)) {
-                    lock(locker) {
+                    lock(Locker) {
                         if(!FoundLocation.HasValue)
                             FoundLocation = Location.Value;
                     }
@@ -165,7 +165,10 @@ namespace IronAHK.Rusty
 
             while((Location = Provider.Next()) != null && !FoundLocation.HasValue) {
                 if(CompareImage(Location.Value)) {
-                    FoundLocation = Location.Value;
+                    lock(Locker) {
+                        if(!FoundLocation.HasValue)
+                            FoundLocation = Location.Value;
+                    }
                     break;
                 }
             }
