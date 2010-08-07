@@ -132,7 +132,7 @@ namespace IronAHK.Rusty
                     break;
             }
             var bmp = new Bitmap(1, 1, format);
-            if (/*CoordMode.Pixel*/ true) //if coordmode true using relative coords
+            if(coords.Mouse == CoordModeType.Relative) //if coordmode Relative using relative coords
             {
                 Windows.RECT rect;
                 Windows.GetWindowRect(Windows.GetForegroundWindow(), out rect);
