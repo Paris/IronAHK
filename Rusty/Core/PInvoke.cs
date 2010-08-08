@@ -49,17 +49,17 @@ namespace IronAHK.Rusty
             var returns = typeof(int);
             bool cdecl = false;
 
-            for (int i = 0; i < args.Length; i++)
+            for (int i = 0; i < parameters.Length; i++)
             {
                 Type type = null;
-                string name = ((string)args[i]).ToLowerInvariant().Trim();
+                string name = ((string)parameters[i]).ToLowerInvariant().Trim();
                 const string Cdecl = "cdecl";
 
                 if (name.StartsWith(Cdecl))
                 {
                     name = name.Substring(Cdecl.Length).Trim();
 
-                    if (i + 1 == args.Length)
+                    if (i + 1 == parameters.Length)
                     {
                         cdecl = true;
                         goto returntype;
@@ -103,11 +103,11 @@ namespace IronAHK.Rusty
 
                 i++;
 
-                if (i < args.Length)
+                if (i < parameters.Length)
                 {
                     int n = i / 2;
                     types[n] = type;
-                    args[n] = Convert.ChangeType(args[i], type);
+                    args[n] = Convert.ChangeType(parameters[i], type);
                     continue;
                 }
 
