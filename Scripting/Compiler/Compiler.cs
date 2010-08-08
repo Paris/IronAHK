@@ -11,9 +11,12 @@ namespace IronAHK.Scripting
         public CompilerResults CompileAssemblyFromDomBatch(CompilerParameters options, CodeCompileUnit[] compilationUnits)
         {
             Setup(options);
-                
+
             foreach(var Unit in compilationUnits)
             {
+                foreach (CodeAttributeDeclaration attribute in Unit.AssemblyCustomAttributes)
+                    EmitAttribute(ABuilder, attribute);
+                    
                 EmitNamespace(ABuilder, Unit.Namespaces[0]);
             }
             

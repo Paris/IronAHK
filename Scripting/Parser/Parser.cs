@@ -15,6 +15,7 @@ namespace IronAHK.Scripting
         CodeEntryPointMethod main = new CodeEntryPointMethod();
         Dictionary<string, CodeMemberMethod> methods = new Dictionary<string, CodeMemberMethod>();
         CodeStatementCollection prepend = new CodeStatementCollection();
+        CodeAttributeDeclarationCollection assemblyAttributes = new CodeAttributeDeclarationCollection();
 
         string fileName;
         int line;
@@ -35,6 +36,10 @@ namespace IronAHK.Scripting
 
                 var space = new CodeNamespace(bcl.Namespace + ".Instance");
                 unit.Namespaces.Add(space);
+
+                AddAssemblyAttribute(typeof(CLSCompliantAttribute), true);
+                unit.AssemblyCustomAttributes.AddRange(assemblyAttributes);
+                assemblyAttributes.Clear();
 
                 var container = new CodeTypeDeclaration(className);
                 container.BaseTypes.Add(bcl);

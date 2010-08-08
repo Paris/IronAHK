@@ -51,7 +51,6 @@ namespace IronAHK.Rusty
                 MousePos.X = Convert.ToInt32(Match.Groups[1].Value);
                 MousePos.Y = Convert.ToInt32(Match.Groups[2].Value);
                 ParamLine = RE_Coord.Replace(ParamLine, string.Empty); //remove coord
-                var CurrentCursor = new Cursor(Cursor.Current.Handle);
                 if (coords.Mouse == CoordModeType.Relative)
                 {
                     Windows.RECT rect;

@@ -125,6 +125,8 @@ namespace IronAHK.Scripting
 
         #region Words
 
+        const string MsgBox = "msgbox";
+
         #region Flow
 
         internal const string FlowBreak = "break";

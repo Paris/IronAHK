@@ -51,6 +51,7 @@ namespace IronAHK.Rusty
                     {
                         Control control = null;
                         GuiControlEdit(ref control, guis[id], Param2, Param3, Param4);
+                        GuiAssociatedInfo(control).LastControl = control;
                     }
                     break;
 
@@ -201,7 +202,8 @@ namespace IronAHK.Rusty
                     break;
 
                 case Keyword_Font:
-                    GuiAssociatedInfo(guis[id]).Font = ParseFont(GuiAssociatedInfo(guis[id]).Font, Param2, Param3);
+                    GuiAssociatedInfo(guis[id]).Font = string.IsNullOrEmpty(Param2) && string.IsNullOrEmpty(Param3) ?
+                        guis[id].Font : ParseFont(GuiAssociatedInfo(guis[id]).Font, Param2, Param3);
                     break;
 
                 case Keyword_Color:
@@ -383,7 +385,7 @@ namespace IronAHK.Rusty
                         var edit = (TextBox)(control ?? new TextBox());
                         parent.Controls.Add(edit);
                         control = edit;
-                        edit.Text = content;
+                        edit.Text = NormaliseEol(content);
                         edit.Tag = options;
                         opts = GuiApplyStyles(edit, options);
 
@@ -425,7 +427,7 @@ namespace IronAHK.Rusty
                 case Keyword_UpDown:
                     {
                         var updown = (NumericUpDown)(control ?? new NumericUpDown());
-                        var last = GuiLastControl(parent, 1);
+                        var last = GuiAssociatedInfo(parent).LastControl;
 
                         if (last != null && last is TextBox)
                         {
@@ -434,6 +436,7 @@ namespace IronAHK.Rusty
                             updown.Font = last.Font;
                             updown.ForeColor = last.ForeColor;
                             last.Parent.Controls.Remove(last);
+                            GuiAssociatedInfo(parent).Controls.Pop();
                             options = string.Concat(last.Tag as string ?? string.Empty, " ", options);
                         }
 
@@ -1254,6 +1257,8 @@ namespace IronAHK.Rusty
 
             #endregion
 
+            #region Options
+
             string[] opts = ParseOptions(styles), excess = new string[opts.Length];
 
             for (int i = 0; i < opts.Length; i++)
@@ -1274,12 +1279,15 @@ namespace IronAHK.Rusty
                 switch (mode)
                 {
                     case Keyword_Left:
+                        SafeSetProperty(control, "TextAlign", ContentAlignment.MiddleLeft);
                         break;
 
                     case Keyword_Center:
+                        SafeSetProperty(control, "TextAlign", ContentAlignment.MiddleCenter);
                         break;
 
                     case Keyword_Right:
+                        SafeSetProperty(control, "TextAlign", ContentAlignment.MiddleRight);
                         break;
 
                     case Keyword_AltSubmit:
@@ -1334,10 +1342,12 @@ namespace IronAHK.Rusty
                         {
                             case 'x':
                                 dx = true;
+                                dy = dy || (mode[1] == 'm' || mode[1] == 'M');
                                 goto case 'h';
 
                             case 'y':
                                 dy = true;
+                                dx = dx || (mode[1] == 'm' || mode[1] == 'M');
                                 goto case 'h';
 
                             case 'w':
@@ -1357,6 +1367,9 @@ namespace IronAHK.Rusty
 
                                         control.Size = new Size(control.Size.Width, h);
                                     }
+
+                                    if (control is TextBox)
+                                        ((TextBox)control).Multiline = true;
                                 }
                                 else
                                     append = true;
@@ -1390,9 +1403,13 @@ namespace IronAHK.Rusty
                     excess[i] = opts[i];
             }
 
+            #endregion
+
+            #region Secondary controls
+
             if (!first)
             {
-                var last = GuiLastControl(control.Parent);
+                var last = GuiAssociatedInfo(control).LastControl;
 
                 if (last is MonthCalendar && !last.Parent.Visible) // strange bug
                 {
@@ -1409,59 +1426,21 @@ namespace IronAHK.Rusty
                     control.Location = new Point(control.Location.X, loc.Y);
                 else if (!dx)
                     control.Location = new Point(loc.X, control.Location.Y);
-
-                if (last.Parent is GroupBox)
-                    last = last.Parent;
-
-                var within = control.Location.X > last.Location.X && control.Location.X < last.Location.X + last.Size.Width &&
-                    control.Location.Y > last.Location.Y && control.Location.Y < last.Location.Y + last.Size.Height;
-
-                if (last is GroupBox && within)
-                {
-                    control.Parent.Controls.Remove(control);
-                    control.Location = new Point(control.Location.X - last.Location.X, control.Location.Y - last.Location.Y);
-                    ((GroupBox)last).Controls.Add(control);
-                }
             }
+
+            #endregion
 
             if (sec)
                 GuiAssociatedInfo(control).Section = control.Location;
 
+            control.BringToFront();
+
             return string.Join(Keyword_Spaces[1].ToString(), excess).Trim();
         }
 
-        static Control GuiLastControl(Control ctrl, int offset = 2)
+        static GuiInfo GuiAssociatedInfo(Control control)
         {
-            var list = ctrl.Controls;
-            int n = list.Count - offset;
-
-            if (n < 0)
-                return null;
-
-            var last = list[n];
-            
-            if (last is GroupBox)
-                return last.Controls.Count == 0 ? last : GuiLastControl(last, 1);
-
-            return last;
-        }
-
-        static GuiInfo GuiAssociatedInfo(Control ctrl)
-        {
-            while (ctrl != null)
-            {
-                if (ctrl is Form)
-                {
-                    var form = ((Form)ctrl);
-
-                    if (form.Tag != null && form.Tag is GuiInfo)
-                        return ((GuiInfo)form.Tag);
-                }
-
-                ctrl = ctrl.Parent;
-            }
-
-            return null;
+            return control.FindForm().Tag as GuiInfo;
         }
 
         static void GuiControlMove(string mode, Control control)
@@ -1494,13 +1473,29 @@ namespace IronAHK.Rusty
 
                             case 'm':
                             case 'M':
-                                p = alt ? control.Parent.Margin.Top : control.Parent.Margin.Left;
+                                {
+                                    p = alt ? control.Parent.Margin.Top : control.Parent.Margin.Left;
+                                    var all = control.FindForm().Controls;
+
+                                    if (all.Count == 0)
+                                        break;
+
+                                    int x = 0, y = 0;
+
+                                    foreach (Control ctrl in all)
+                                    {
+                                        x = Math.Max(x, ctrl.Location.X + ctrl.Width);
+                                        y = Math.Max(y, ctrl.Location.Y + ctrl.Height);
+                                    }
+
+                                    control.Location = alt ? new Point(x, control.Location.Y) : new Point(control.Location.X, y);
+                                }
                                 break;
 
                             case 'p':
                             case 'P':
                                 {
-                                    var last = GuiLastControl(control.Parent);
+                                    var last = GuiAssociatedInfo(control).LastControl;
                                     if (last == null)
                                         return;
                                     var s = last.Location;
@@ -1510,7 +1505,7 @@ namespace IronAHK.Rusty
 
                             case '+':
                                 {
-                                    var s = GuiLastControl(control.Parent);
+                                    var s = GuiAssociatedInfo(control).LastControl;
                                     if (s == null)
                                         return;
                                     p = alt ? s.Location.Y + s.Size.Height : s.Location.X + s.Size.Width;
@@ -1547,12 +1542,14 @@ namespace IronAHK.Rusty
                         offset = mode[1] == 'p' || mode[1] == 'P';
                         arg = mode.Substring(offset ? 2 : 1);
 
-                        if (!int.TryParse(arg, out d))
+                        if (arg.Length == 0)
+                            d = 0;
+                        else if (!int.TryParse(arg, out d))
                             return;
 
                         if (offset)
                         {
-                            var last = GuiLastControl(control.Parent);
+                            var last = GuiAssociatedInfo(control).LastControl;
                             if (last == null)
                                 return;
                             var s = last.Size;
@@ -1568,6 +1565,8 @@ namespace IronAHK.Rusty
 
                 case 'h':
                 case 'H':
+                    if (control is TextBox)
+                        ((TextBox)control).Multiline = true;
                     alt = true;
                     goto case 'w';
             }
@@ -1598,6 +1597,8 @@ namespace IronAHK.Rusty
             {
                 case Keyword_Text:
                 case "":
+                    if (ctrl is TextBox)
+                        arg = NormaliseEol(arg);
                     ctrl.Text = arg;
                     break;
 
@@ -1650,6 +1651,24 @@ namespace IronAHK.Rusty
             }
         }
 
+        static Control GuiControlGetFocused(Control parent)
+        {
+            foreach (Control child in parent.Controls)
+            {
+                if (child.Focused)
+                    return child;
+                else if (child.Controls.Count != 0)
+                {
+                    var item = GuiControlGetFocused(child);
+
+                    if (item != null)
+                        return item;
+                }
+            }
+
+            return null;
+        }
+
         #endregion
 
         /// <summary>
@@ -1686,26 +1705,40 @@ namespace IronAHK.Rusty
         /// <summary>
         /// Retrieves various types of information about a control in a GUI window.
         /// </summary>
-        /// <param name="OutputVar"></param>
-        /// <param name="Command"></param>
-        /// <param name="ControlID"></param>
-        /// <param name="Param4"></param>
-        public static void GuiControlGet(out object OutputVar, string Command, string ControlID, string Param4)
+        /// <param name="result"></param>
+        /// <param name="command"></param>
+        /// <param name="control"></param>
+        /// <param name="option"></param>
+        public static void GuiControlGet(out object result, string command, string control, string option)
         {
-            OutputVar = string.Empty;
+            result = string.Empty;
+            var id = GuiId(ref command);
+            var gui = guis.ContainsKey(id) ? guis[id] : DefaultGui;
+            var ctrl = GuiFindControl(control, gui);
+            command = command.ToLowerInvariant();
 
-            var ctrl = GuiFindControl(ControlID);
+            switch (command)
+            {
+                case Keyword_Focus:
+                case Keyword_Focus + "v":
+                    var focued = GuiControlGetFocused(gui);
+
+                    if (Environment.OSVersion.Platform == PlatformID.Win32NT && command == Keyword_Focus)
+                        result = Windows.GetClassName(focued.Handle);
+                    else
+                        result = focued.Name;
+
+                    return;
+            }
 
             if (ctrl == null)
                 return;
 
-            Command = Command.ToLowerInvariant();
-
-            switch (Command)
+            switch (command)
             {
                 case Keyword_Text:
                 case "":
-                    OutputVar = ctrl.Text;
+                    result = ctrl.Text;
                     break;
 
                 case Keyword_Pos:
@@ -1715,24 +1748,20 @@ namespace IronAHK.Rusty
                         loc.Add("y", ctrl.Location.Y);
                         loc.Add("w", ctrl.Size.Width);
                         loc.Add("h", ctrl.Size.Height);
-                        OutputVar = loc;
+                        result = loc;
                     }
                     break;
 
-                case Keyword_Focus:
-                case Keyword_Focus + "V":
-                    // UNDONE: get focued Gui control
-                    break;
-
                 case Keyword_Enabled:
-                    OutputVar = ctrl.Enabled ? 1 : 0;
+                    result = ctrl.Enabled ? 1 : 0;
                     break;
 
                 case Keyword_Visible:
-                    OutputVar = ctrl.Visible ? 1 : 0;
+                    result = ctrl.Visible ? 1 : 0;
                     break;
 
                 case Keyword_Hwnd:
+                    result = ctrl.Handle.ToInt64().ToString();
                     break;
             }
         }
