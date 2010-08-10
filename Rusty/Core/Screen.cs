@@ -176,7 +176,6 @@ namespace IronAHK.Rusty
         {
             OutputVarX = null;
             OutputVarY = null;
-            ColorFactory.ColorType Type;
             Color NeedlePixel;
             SearchableImage SearchableImage;
             bool FastMode; // Not Implemented yet!
@@ -194,13 +193,12 @@ namespace IronAHK.Rusty
                 Fast_RGB = Fast_RGB.ToLowerInvariant();
 
                 if(Fast_RGB.Contains("argb")) {
-                    Type = ColorFactory.ColorType.ARGB;
+                    NeedlePixel = Color.FromArgb(ColorID);
                 } else if(Fast_RGB.Contains("rgb")) {
-                    Type = ColorFactory.ColorType.RGB;
+                    NeedlePixel = Color.FromArgb((int)((ColorID | (0xff << 24)) & 0xffffffff));
                 } else {
-                    Type = ColorFactory.ColorType.BGR;
+                    NeedlePixel = Color.FromArgb(0xff, ColorID & 0xff, (ColorID >> 8) & 0xff, (ColorID >> 16) & 0xff);
                 }
-                NeedlePixel = ColorFactory.ColorFrom(ColorID, Type);
 
                 var pnt = SearchableImage.SearchPixel(NeedlePixel);
 
