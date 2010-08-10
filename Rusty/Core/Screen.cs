@@ -57,7 +57,7 @@ namespace IronAHK.Rusty
 
             #endregion
 
-            var ParsedOptions = OptionParser.ParseOptionStringToDict(RegExOptionParser, ref OptionsImageFile, true);
+            var ParsedOptions = ParseOptionsRegex(ref OptionsImageFile, RegExOptionParser, true);
             var SearchImagePath = OptionsImageFile.Trim();
             try {
                 StartPoint = new Point(int.Parse(X1), int.Parse(Y1));

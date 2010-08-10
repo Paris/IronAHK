@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace IronAHK.Rusty
 {
@@ -114,6 +115,24 @@ namespace IronAHK.Rusty
                 return false;
 
             return options.Trim().Equals(search, StringComparison.OrdinalIgnoreCase);
+        }
+
+        static Dictionary<string, string> ParseOptionsRegex(ref string options, Dictionary<string, Regex> items, bool remove = true)
+        {
+            var results = new Dictionary<string, string>();
+
+            foreach (var item in items)
+            {
+                if (item.Value.IsMatch(options))
+                {
+                    var match = item.Value.Match(options).Groups[1].Captures[0];
+                    results.Add(item.Key, match.Value);
+
+                    if (remove)
+                        options = options.Substring(0, match.Index) + options.Substring(match.Index + match.Length);
+                }
+            }
+            return results;
         }
     }
 }
