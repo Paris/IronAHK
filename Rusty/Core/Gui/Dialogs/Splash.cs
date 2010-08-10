@@ -1,5 +1,3 @@
-using System;
-using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -7,9 +5,8 @@ namespace IronAHK.Rusty
 {
     class SplashDialog : Form
     {
-        private PictureBox mPictureBox;
-        private Label mSubText;
-        private Label mMainText;
+        Label main, sub;
+        PictureBox pic;
 
         public string Title
         {
@@ -17,92 +14,72 @@ namespace IronAHK.Rusty
             set { Text = value; }
         }
 
-        public string SubText
+        public string Subtext
         {
-            get { return mSubText.Text; }
-            set { mSubText.Text = value; }
+            get { return sub.Text; }
+            set
+            {
+                sub.Text = value;
+                sub.Visible = !string.IsNullOrEmpty(sub.Text);
+            }
         }
 
         public string MainText
         {
-            get { return mMainText.Text; }
-            set { mMainText.Text = value; }
+            get { return main.Text; }
+            set
+            {
+                main.Text = value;
+                main.Visible = !string.IsNullOrEmpty(main.Text);
+            }
         }
 
-        public string ImageLocation
+        public string Image
         {
-            get { return mPictureBox.ImageLocation; }
-            set { mPictureBox.ImageLocation = value; }
+            get { return pic.ImageLocation; }
+            set
+            {
+                pic.ImageLocation = value;
+                pic.Load();
+            }
         }
 
         public SplashDialog()
         {
             InitializeComponent();
-            StartPosition = FormStartPosition.CenterScreen;
         }
 
         private void InitializeComponent()
         {
-            mSubText = new Label();
-            mMainText = new Label();
-            mPictureBox = new PictureBox();
-
             SuspendLayout();
-            // 
-            // mMainText
-            // 
-            mMainText.Location = new Point(20, 0);
-            mMainText.Name = "label1";
-            mMainText.Size = new Size(240, 1);
-            mMainText.TabIndex = 1;
-            mMainText.Font = new Font(mMainText.Font.FontFamily, 12, FontStyle.Bold);
-            mMainText.AutoSize = true;
-            mMainText.Anchor = AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Top;
 
+            main = new Label();
+            sub = new Label();
+            pic = new PictureBox();
 
-            // 
-            // Splash
-            // 
-            mPictureBox.Location = new Point(0, 1);
-            mPictureBox.Name = "Progress";
-            mPictureBox.Size = new Size(300, 300);
-            mPictureBox.TabIndex = 3;
-            mPictureBox.Anchor = AnchorStyles.Left | AnchorStyles.Top;
-            mPictureBox.SizeMode = PictureBoxSizeMode.AutoSize;
-            mPictureBox.ClientSizeChanged += mPictureBox_ClientSizeChanged;
-            // 
-            // mSubText
-            // 
-            mSubText.Location = new Point(20, 301);
-            mSubText.Name = "txtMessage";
-            mSubText.Size = new Size(240, 1);
-            mMainText.AutoSize = true;
-            mSubText.TabIndex = 0;
-            mSubText.Anchor = AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Bottom;
+            main.Dock = DockStyle.Top;
+            main.Font = new Font(main.Font, FontStyle.Bold);
+            main.TextAlign = ContentAlignment.MiddleCenter;
 
-            // 
-            // DialogForm
-            // 
-            AutoScaleBaseSize = new Size(300, 350);
-            ClientSize = new Size(300, 350);
+            pic.Dock = DockStyle.Fill;
+            pic.SizeMode = PictureBoxSizeMode.AutoSize;
 
-            Controls.Add(mSubText);
-            Controls.Add(mMainText);
-            Controls.Add(mPictureBox);
+            sub.Dock = DockStyle.Bottom;
+            sub.TextAlign = ContentAlignment.MiddleCenter;
+
+            Controls.Add(sub);
+            Controls.Add(main);
+            Controls.Add(pic);
+
+            StartPosition = FormStartPosition.CenterScreen;
             FormBorderStyle = FormBorderStyle.FixedDialog;
             MaximizeBox = false;
             MinimizeBox = false;
             ControlBox = true;
-            Name = "ProgressDialog";
-            Text = "Progress";
             AutoSize = true;
+            ShowInTaskbar = false;
+
             ResumeLayout(true);
-
-        }
-
-        private void mPictureBox_ClientSizeChanged(object sender, EventArgs e)
-        {
-            Location = new Point((Screen.PrimaryScreen.Bounds.Width - Size.Width) / 2, (Screen.PrimaryScreen.Bounds.Height - Size.Height) / 2);
         }
     }
 }
