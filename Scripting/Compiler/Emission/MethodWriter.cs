@@ -126,7 +126,11 @@ namespace IronAHK.Scripting
             else if(T == typeof(string))
             {
                 Debug("Pushing primitive string : \""+(Value as string)+"\"");
-                Generator.Emit(OpCodes.Ldstr, Value as string);
+
+                if (((string)Value).Length == 0)
+                    Generator.Emit(OpCodes.Ldsfld, typeof(string).GetField("Empty"));
+                else
+                    Generator.Emit(OpCodes.Ldstr, Value as string);
             }
             else if(T == typeof(int))
             {
