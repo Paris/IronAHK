@@ -417,6 +417,8 @@ namespace IronAHK.Rusty
                 get { return priorTime; }
             }
 
+            public bool Block { get; set; }
+
             #endregion
 
             #region Constructor/destructor
@@ -503,6 +505,9 @@ namespace IronAHK.Rusty
 
             protected bool KeyReceived(Keys key, string typed, bool down)
             {
+                if (Block)
+                    return true;
+
                 bool block = false;
 
                 if (suspended)
