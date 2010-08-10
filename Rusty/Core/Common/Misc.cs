@@ -23,6 +23,11 @@ namespace IronAHK.Rusty
             if (int.TryParse(name, out id))
                 return System.Diagnostics.Process.GetProcessById(id);
 
+            const string exe = ".exe";
+
+            if (name.EndsWith(exe, StringComparison.OrdinalIgnoreCase))
+                name = name.Substring(0, name.Length - exe.Length);
+
             var prc = System.Diagnostics.Process.GetProcessesByName(name);
             return prc.Length > 0 ? prc[0] : null;
         }
