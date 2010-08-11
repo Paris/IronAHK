@@ -180,8 +180,6 @@ namespace IronAHK.Rusty
             SearchableImage SearchableImage;
             bool FastMode; // Not Implemented yet!
 
-            CoordProvider Provider = new CoordProvider(new Size(4, 4), new Size(1, 1));
-
             try {
                 var region = new Rectangle(X1, Y1, X2 - X1, Y2 - Y1);
 
