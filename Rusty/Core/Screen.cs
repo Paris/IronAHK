@@ -1,17 +1,15 @@
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
-using System.Windows.Forms;
-using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using System.Windows.Forms;
 
 namespace IronAHK.Rusty
 {
     partial class Core
     {
         // TODO: organise Screen.cs
-        // BRG - RGB 
-
 
         /// <summary>
         /// Searches a region of the screen for an image.
@@ -34,67 +32,63 @@ namespace IronAHK.Rusty
         /// </param>
         public static void ImageSearch(out int? OutputVarX, out int? OutputVarY, string X1, string Y1, string X2, string Y2, string OptionsImageFile)
         {
-            #region Definitions
+            OutputVarX = null;
+            OutputVarY = null;
 
-            OutputVarX = null; OutputVarY = null;
-            var StartPoint = new Point();
-            var BoundSize = new Size();
-            Bitmap NeedleImage = null;
-            Bitmap SourceImage;
-            int Variation;
+            var optsItems = new Dictionary<string, Regex>();
+            optsItems.Add(Keyword_Icon, new Regex(@"\*icon([0-9]*)"));
+            optsItems.Add(Keyword_Trans, new Regex(@"\*trans([0-9]*)"));
+            optsItems.Add(Keyword_Variation, new Regex(@"\*([0-9]*)"));
+            optsItems.Add("w", new Regex(@"\*w([-0-9]*)"));
+            optsItems.Add("h", new Regex(@"\*h([-0-9]*)"));
 
-            #endregion
+            var opts = ParseOptionsRegex(ref OptionsImageFile, optsItems, true);
+            OptionsImageFile = OptionsImageFile.Trim();
 
-            #region Parsing Definitions
+            Point start;
+            Size bound;
+            Bitmap find;
 
-            var RegExOptionParser = new Dictionary<string, Regex>();
-
-            RegExOptionParser.Add("icon", new Regex(@"\*icon([0-9]*)"));
-            RegExOptionParser.Add("trans", new Regex(@"\*trans([0-9]*)"));
-            RegExOptionParser.Add("w", new Regex(@"\*w([-0-9]*)"));
-            RegExOptionParser.Add("h", new Regex(@"\*h([-0-9]*)"));
-            RegExOptionParser.Add("variation", new Regex(@"\*([0-9]*)"));
-
-            #endregion
-
-            var ParsedOptions = ParseOptionsRegex(ref OptionsImageFile, RegExOptionParser, true);
-            var SearchImagePath = OptionsImageFile.Trim();
-            try {
-                StartPoint = new Point(int.Parse(X1), int.Parse(Y1));
-                BoundSize = new Size(int.Parse(X2) - StartPoint.X, int.Parse(Y2) - StartPoint.Y);
-                NeedleImage = (Bitmap)Bitmap.FromFile(SearchImagePath);
-            } catch(FormatException) {
-                ErrorLevel = 2;
-                return;
-            }
-            SourceImage = GetScreen(new Rectangle(StartPoint, BoundSize));
-
-            if(ParsedOptions.ContainsKey("variation")){
-                if(!int.TryParse(ParsedOptions["variation"], out Variation)){
-                    Variation = 0;
-                }
-            }else{
-                Variation = 0;
-            }
-            var SearchImg = new ImageFinder(SourceImage)
+            try
             {
-                Variation = (byte)Variation
-            };
-
-            Point? ImagePos;
-            try {
-                ImagePos = SearchImg.Find(NeedleImage);
-            } catch {
+                start = new Point(int.Parse(X1), int.Parse(Y1));
+                bound = new Size(int.Parse(X2) - start.X, int.Parse(Y2) - start.Y);
+                find = (Bitmap)Bitmap.FromFile(OptionsImageFile);
+            }
+            catch (FormatException)
+            {
                 ErrorLevel = 2;
                 return;
             }
-            if(ImagePos.HasValue) {
-                OutputVarX = ImagePos.Value.X;
-                OutputVarY = ImagePos.Value.Y;
-                ErrorLevel = 0;
-            }else
-                ErrorLevel = 1;
 
+            var source = GetScreen(new Rectangle(start, bound));
+            byte variation = 0;
+
+            if (opts.ContainsKey(Keyword_Variation))
+                byte.TryParse(opts[Keyword_Variation], out variation);
+
+            var SearchImg = new ImageFinder(source) { Variation = variation };
+
+            Point? location;
+
+            try
+            {
+                location = SearchImg.Find(find);
+            }
+            catch
+            {
+                ErrorLevel = 2;
+                return;
+            }
+
+            if (location.HasValue)
+            {
+                OutputVarX = location.Value.X;
+                OutputVarY = location.Value.Y;
+                ErrorLevel = 0;
+            }
+            else
+                ErrorLevel = 1;
         }
 
         /// <summary>
@@ -128,7 +122,7 @@ namespace IronAHK.Rusty
                     break;
             }
             var bmp = new Bitmap(1, 1, format);
-            if(coords.Mouse == CoordModeType.Relative) //if coordmode Relative using relative coords
+            if (coords.Mouse == CoordModeType.Relative) //if coordmode Relative using relative coords
             {
                 Windows.RECT rect;
                 Windows.GetWindowRect(Windows.GetForegroundWindow(), out rect);
@@ -172,46 +166,39 @@ namespace IronAHK.Rusty
         {
             OutputVarX = null;
             OutputVarY = null;
-            Color NeedlePixel;
-            ImageFinder finder;
-            bool FastMode; // Not Implemented yet!
-
             Variation = Math.Max(byte.MinValue, Math.Min(byte.MaxValue, Variation));
+            Fast_RGB = Fast_RGB.ToLowerInvariant();
+            var region = new Rectangle(X1, Y1, X2 - X1, Y2 - Y1);
+            var finder = new ImageFinder(GetScreen(region)) { Variation = (byte)Variation };
+            Color needle;
 
-            try {
-                var region = new Rectangle(X1, Y1, X2 - X1, Y2 - Y1);
+            if (Fast_RGB.Contains(Keyword_ARGB))
+                needle = Color.FromArgb(ColorID);
+            else if (Fast_RGB.Contains(Keyword_RGB))
+                needle = Color.FromArgb((int)((ColorID | (0xff << 24)) & 0xffffffff));
+            else
+                needle = Color.FromArgb(0xff, ColorID & 0xff, (ColorID >> 8) & 0xff, (ColorID >> 16) & 0xff);
 
-                finder = new ImageFinder(GetScreen(region))
-                {
-                    Variation = (byte)Variation
-                };
-               
-                Fast_RGB = Fast_RGB.ToLowerInvariant();
+            Point? location;
 
-                if(Fast_RGB.Contains("argb")) {
-                    NeedlePixel = Color.FromArgb(ColorID);
-                } else if(Fast_RGB.Contains("rgb")) {
-                    NeedlePixel = Color.FromArgb((int)((ColorID | (0xff << 24)) & 0xffffffff));
-                } else {
-                    NeedlePixel = Color.FromArgb(0xff, ColorID & 0xff, (ColorID >> 8) & 0xff, (ColorID >> 16) & 0xff);
-                }
-
-                var pnt = finder.Find(NeedlePixel);
-
-                if(pnt.HasValue) {
-                    OutputVarX = pnt.Value.X;
-                    OutputVarY = pnt.Value.Y;
-                    ErrorLevel = 0;
-                } else {
-                    ErrorLevel = 1;
-                }
-            } catch {
-                ErrorLevel = 2;
+            try
+            {
+                location = finder.Find(needle);
             }
-            return;
+            catch
+            {
+                ErrorLevel = 2;
+                return;
+            }
+
+            if (location.HasValue)
+            {
+                OutputVarX = location.Value.X;
+                OutputVarY = location.Value.Y;
+                ErrorLevel = 0;
+            }
+            else
+                ErrorLevel = 1;
         }
-
-
-
     }
 }
