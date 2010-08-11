@@ -341,6 +341,9 @@ namespace IronAHK.Rusty
         const string Keyword_ReplyTo = "replyto";
         const string Keyword_Host = "host";
         const char Keyword_Port = ':';
+        const string Keyword_ARGB = "argb";
+        const string Keyword_Variation = "variation";
+        const string Keyword_Trans = "trans";
 
         const char Keyword_ModifierWin = '#';
         const char Keyword_ModifierAlt = '!';
