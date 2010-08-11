@@ -76,14 +76,14 @@ namespace IronAHK.Rusty
             }else{
                 Variation = 0;
             }
-            var SearchImg = new SearchableImage(SourceImage)
+            var SearchImg = new ImageFinder(SourceImage)
             {
-                Variation = Variation
+                Variation = (byte)Variation
             };
 
             Point? ImagePos;
             try {
-                ImagePos = SearchImg.SearchImage(NeedleImage);
+                ImagePos = SearchImg.Find(NeedleImage);
             } catch {
                 ErrorLevel = 2;
                 return;
@@ -96,10 +96,6 @@ namespace IronAHK.Rusty
                 ErrorLevel = 1;
 
         }
-        
-
-
-
 
         /// <summary>
         /// Retrieves the color of the pixel at the specified x,y screen coordinates.
@@ -177,15 +173,17 @@ namespace IronAHK.Rusty
             OutputVarX = null;
             OutputVarY = null;
             Color NeedlePixel;
-            SearchableImage SearchableImage;
+            ImageFinder finder;
             bool FastMode; // Not Implemented yet!
+
+            Variation = Math.Max(byte.MinValue, Math.Min(byte.MaxValue, Variation));
 
             try {
                 var region = new Rectangle(X1, Y1, X2 - X1, Y2 - Y1);
 
-                SearchableImage = new SearchableImage(GetScreen(region))
+                finder = new ImageFinder(GetScreen(region))
                 {
-                    Variation = Variation
+                    Variation = (byte)Variation
                 };
                
                 Fast_RGB = Fast_RGB.ToLowerInvariant();
@@ -198,7 +196,7 @@ namespace IronAHK.Rusty
                     NeedlePixel = Color.FromArgb(0xff, ColorID & 0xff, (ColorID >> 8) & 0xff, (ColorID >> 16) & 0xff);
                 }
 
-                var pnt = SearchableImage.SearchPixel(NeedlePixel);
+                var pnt = finder.Find(NeedlePixel);
 
                 if(pnt.HasValue) {
                     OutputVarX = pnt.Value.X;
