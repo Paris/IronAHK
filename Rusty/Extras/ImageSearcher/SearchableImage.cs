@@ -31,7 +31,7 @@ namespace IronAHK.Rusty
         private ImageData mNeedleImageData = null;
 
         private PixelMask NeedlePixelMask;
-        private CoordProvider Provider;
+        private Size[] Provider;
         private Point? FoundLocation = null;
 
         int ThreadCount = Environment.ProcessorCount;
@@ -94,7 +94,7 @@ namespace IronAHK.Rusty
             if(SourceRect.Contains(NeedleRect)) {
 
                 ResetEvents = new ManualResetEvent[ThreadCount];
-                Provider = new CoordProvider(mSourceImageData.Size, NeedleRect.Size);
+                Provider = new[] { mSourceImageData.Size, NeedleRect.Size };
 
                 for(int i = 0; i < ThreadCount; i++) {
                     ResetEvents[i] = new ManualResetEvent(false);
@@ -120,7 +120,7 @@ namespace IronAHK.Rusty
             NeedlePixelMask = new PixelMask(ColorId, Variation);
 
             ResetEvents = new ManualResetEvent[ThreadCount];
-            Provider = new CoordProvider(mSourceImageData.Size, new Size(1,1));
+            Provider = new[] { mSourceImageData.Size, new Size(1, 1) };
 
             for(int i = 0; i < ThreadCount; i++) {
                 ResetEvents[i] = new ManualResetEvent(false);
@@ -135,20 +135,21 @@ namespace IronAHK.Rusty
         #region Private Methods
 
         private void SearchPixelWorker(object StateInfo) {
-            Point? Location;
             Color pix = new Color();
             int index = (int)StateInfo;
 
             if(Provider == null)
                 throw new ArgumentNullException();
 
-            while((Location = Provider.Next()) != null && !FoundLocation.HasValue) {
-
-                pix = mSourceImageData.Pixel[Location.Value.X, Location.Value.Y];
+            foreach (Point Location in Core.MapTraverse(Provider[0], Provider[1]))
+            {
+                if (FoundLocation.HasValue)
+                    continue;
+                pix = mSourceImageData.Pixel[Location.X, Location.Y];
                 if(NeedlePixelMask.Compare(pix)) {
                     lock(Locker) {
                         if(!FoundLocation.HasValue)
-                            FoundLocation = Location.Value;
+                            FoundLocation = Location;
                     }
                     break;
                 }
@@ -157,17 +158,19 @@ namespace IronAHK.Rusty
         }
 
         private void SearchImageWorker(object StateInfo) {
-            Point? Location;
             int index = (int)StateInfo;
 
             if(Provider == null)
                 throw new ArgumentNullException();
 
-            while((Location = Provider.Next()) != null && !FoundLocation.HasValue) {
-                if(CompareImage(Location.Value)) {
+            foreach (Point Location in Core.MapTraverse(Provider[0], Provider[1]))
+            {
+                if (FoundLocation.HasValue)
+                    continue;
+                if(CompareImage(Location)) {
                     lock(Locker) {
                         if(!FoundLocation.HasValue)
-                            FoundLocation = Location.Value;
+                            FoundLocation = Location;
                     }
                     break;
                 }
