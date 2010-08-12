@@ -53,18 +53,23 @@ namespace IronAHK.Rusty
         }
 
         /// <summary>
-        /// Returns the ID number of the specified item's first/top child (or 0 if none).
+        /// Returns the ID of the specified node's fist child.
         /// </summary>
-        /// <param name="ParentItemID"></param>
-        /// <returns></returns>
-        public static int TV_GetChild(int ParentItemID)
+        /// <param name="id">The parent node ID.</param>
+        /// <returns>The ID of the first child or <c>0</c> if none.</returns>
+        public static long TV_GetChild(long id)
         {
             var tree = DefaultTreeView;
 
             if (tree == null)
                 return 0;
 
-            throw new NotImplementedException(); // TODO: TV_GetChild
+            var node = TV_FindNode(tree, id);
+
+            if (node == null)
+                return 0;
+
+            return node.Nodes.Count == 0 ? 0 : node.FirstNode.Handle.ToInt64();
         }
 
         /// <summary>
