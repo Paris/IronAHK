@@ -24,18 +24,32 @@ namespace IronAHK.Rusty
         }
 
         /// <summary>
-        /// If ItemID is omitted, all items in the TreeView are deleted. Otherwise, only the specified ItemID is deleted. It returns 1 upon success and 0 upon failure.
+        /// Removes all or the specified node.
         /// </summary>
-        /// <param name="ItemID"></param>
-        /// <returns></returns>
-        public static bool TV_Delete(int ItemID)
+        /// <param name="id">The node ID. Leave blank to remove all nodes.</param>
+        /// <returns><c>true</c> if an item was removed, <c>false</c> otherwise.</returns>
+        public static bool TV_Delete(long id = 0)
         {
             var tree = DefaultTreeView;
 
             if (tree == null)
                 return false;
 
-            throw new NotImplementedException(); // TODO: TV_Delete
+            if (id == 0)
+            {
+                tree.Nodes.Clear();
+                return true;
+            }
+
+            var node = TV_FindNode(tree, id);
+
+            if (node != null)
+            {
+                node.Remove();
+                return true;
+            }
+
+            return false;
         }
 
         /// <summary>
