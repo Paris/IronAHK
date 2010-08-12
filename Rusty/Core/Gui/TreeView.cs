@@ -138,17 +138,17 @@ namespace IronAHK.Rusty
         }
 
         /// <summary>
-        /// Returns the selected item's ID number.
+        /// Returns the selected nodes's ID.
         /// </summary>
-        /// <returns></returns>
-        public static int TV_GetSelection()
+        /// <returns>The ID of the currently selected node.</returns>
+        public static long TV_GetSelection()
         {
             var tree = DefaultTreeView;
 
             if (tree == null)
                 return 0;
 
-            throw new NotImplementedException(); // TODO: TV_GetSelection
+            return tree.SelectedNode == null ? 0 : tree.SelectedNode.Handle.ToInt64();
         }
 
         /// <summary>
