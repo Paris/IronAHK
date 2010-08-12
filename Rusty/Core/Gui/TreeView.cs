@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Windows.Forms;
 
 namespace IronAHK.Rusty
 {
@@ -103,18 +104,20 @@ namespace IronAHK.Rusty
         }
 
         /// <summary>
-        /// Returns the specified item's parent as an item ID. Items at the top level have no parent and thus return 0.
+        /// Returns the ID of the specified node's fist parent.
         /// </summary>
-        /// <param name="ItemID"></param>
-        /// <returns></returns>
-        public static int TV_GetParent(int ItemID)
+        /// <param name="id">The child node ID.</param>
+        /// <returns>The ID of the parent or <c>0</c> if none.</returns>
+        public static long TV_GetParent(long id)
         {
             var tree = DefaultTreeView;
 
             if (tree == null)
                 return 0;
 
-            throw new NotImplementedException(); // TODO: TV_GetParent
+            var node = TV_FindNode(tree, id);
+
+            return node == null || node.Parent == null || !(node.Parent is TreeNode) ? 0 : node.Parent.Handle.ToInt64();
         }
 
         /// <summary>
