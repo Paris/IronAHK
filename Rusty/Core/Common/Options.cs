@@ -117,6 +117,42 @@ namespace IronAHK.Rusty
             return options.Trim().Equals(search, StringComparison.OrdinalIgnoreCase);
         }
 
+        static bool OptionContains(string options, params string[] keys)
+        {
+            foreach (string key in keys)
+                if (!OptionContains(options, key))
+                    return false;
+
+            return true;
+        }
+
+        static bool OptionContains(string options, string key, bool casesensitive = false)
+        {
+            // TODO: test OptionContains method
+            var comp = casesensitive ? StringComparison.CurrentCulture : StringComparison.OrdinalIgnoreCase;
+            var i = 0;
+
+            while (i < options.Length)
+            {
+                var z = options.IndexOf(key, i, comp);
+
+                var p = z == 0 || !char.IsLetter(options, z - 1);
+                z += key.Length;
+
+                if (!p)
+                    continue;
+
+                p = z == options.Length || !char.IsLetter(options, z + 1);
+
+                if (!p)
+                    continue;
+
+                return true;
+            }
+
+            return false;
+        }
+
         static Dictionary<string, string> ParseOptionsRegex(ref string options, Dictionary<string, Regex> items, bool remove = true)
         {
             var results = new Dictionary<string, string>();
