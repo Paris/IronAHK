@@ -152,20 +152,29 @@ namespace IronAHK.Rusty
         }
 
         /// <summary>
-        /// Retrieves the text/name of the specified ItemID and stores it in OutputVar. If the text is longer than 8191, only the first 8191 characters are retrieved. Upon success, the function returns the item's own ID. Upon failure, it returns 0 (and OutputVar is also made blank).
+        /// Retrieves the text of the specified node.
         /// </summary>
-        /// <param name="OutputVar"></param>
-        /// <param name="ItemID"></param>
-        /// <returns></returns>
-        public static int TV_GetText(out string OutputVar, int ItemID)
+        /// <param name="result">The variable to store the node text.</param>
+        /// <param name="id">The node ID.</param>
+        /// <returns>The <paramref name="id"/> if found, <c>0</c> otherwise.</returns>
+        public static long TV_GetText(out string result, long id)
         {
             var tree = DefaultTreeView;
-            OutputVar = null;
+            result = null;
 
             if (tree == null)
                 return 0;
 
-            throw new NotImplementedException(); // TODO: TV_GetText
+            var node = TV_FindNode(tree, id);
+
+            if (node == null)
+            {
+                result = string.Empty;
+                return 0;
+            }
+
+            result = node.Text;
+            return node.Handle.ToInt64();
         }
 
         /// <summary>
