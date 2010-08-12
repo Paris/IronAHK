@@ -88,19 +88,52 @@ namespace IronAHK.Rusty
         }
 
         /// <summary>
-        /// This has the following modes:
+        /// Returns the next node with the specified criteria.
         /// </summary>
-        /// <param name="ItemID"></param>
-        /// <param name="Mode"></param>
-        /// <returns></returns>
-        public static int TV_GetNext(int ItemID, string Mode)
+        /// <param name="id">The starting node ID. Leave blank to search from the first node.</param>
+        /// <param name="mode">
+        /// <list type="bullet">
+        /// <item><term><c>Full</c></term>: <description>the next node irrespective of its relationship to the starting node</description></item>
+        /// <item><term><c>Checked</c></term>: <description>the next checked node, implies <c>Full</c></description></item>
+        /// <item><term>(blank)</term>: <description>the next sibling node</description></item>
+        /// </list>
+        /// </param>
+        /// <returns>The ID of the first match.</returns>
+        public static long TV_GetNext(int id = 0, string mode = null)
         {
             var tree = DefaultTreeView;
 
             if (tree == null)
                 return 0;
 
-            throw new NotImplementedException(); // TODO: TV_GetNext
+        none:
+            if (string.IsNullOrEmpty(mode))
+            {
+                if (id == 0)
+                    return tree.Nodes.Count == 0 ? 0 : tree.Nodes[0].Handle.ToInt64();
+
+                var node = TV_FindNode(tree, id);
+                return node == null || node.NextNode == null ? 0 : node.NextNode.Handle.ToInt64();
+            }
+            
+            var check = OptionContains(mode, Keyword_Check, Keyword_Checked, Keyword_Checked[0].ToString());
+            var full = check || OptionContains(mode, Keyword_Full, Keyword_Full[0].ToString());
+
+            if (!full)
+            {
+                mode = null;
+                goto none;
+            }
+
+            for (var i = id == 0 ? 0 : TV_FindNode(tree, id).Index; i < tree.Nodes.Count; i++)
+            {
+                if (check && !tree.Nodes[i].Checked)
+                    continue;
+
+                return tree.Nodes[i].Handle.ToInt64();
+            }
+
+            return 0;
         }
 
         /// <summary>
