@@ -121,18 +121,20 @@ namespace IronAHK.Rusty
         }
 
         /// <summary>
-        /// Returns the ID number of the sibling above the specified item (or 0 if none).
+        /// Returns the ID of the sibling above the specified node.
         /// </summary>
-        /// <param name="ItemID"></param>
-        /// <returns></returns>
-        public static int TV_GetPrev(int ItemID)
+        /// <param name="id">The node ID.</param>
+        /// <returns>The ID of the previous node.</returns>
+        public static long TV_GetPrev(long id)
         {
             var tree = DefaultTreeView;
 
             if (tree == null)
                 return 0;
 
-            throw new NotImplementedException(); // TODO: TV_GetPrev
+            var node = TV_FindNode(tree, id);
+
+            return node.PrevNode == null ? 0 : node.PrevNode.Handle.ToInt64();
         }
 
         /// <summary>
