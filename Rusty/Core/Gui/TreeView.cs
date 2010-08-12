@@ -73,9 +73,9 @@ namespace IronAHK.Rusty
         }
 
         /// <summary>
-        /// Returns the total number of items in the control. This function is always instantaneous because the control keeps track of the count.
+        /// Returns the total number of nodes.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>The number of nodes.</returns>
         public static int TV_GetCount()
         {
             var tree = DefaultTreeView;
@@ -83,7 +83,7 @@ namespace IronAHK.Rusty
             if (tree == null)
                 return 0;
 
-            throw new NotImplementedException(); // TODO: TV_GetCount
+            return tree.Nodes.Count;
         }
 
         /// <summary>
