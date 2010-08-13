@@ -47,6 +47,10 @@ namespace IronAHK.Rusty
                 if (type == typeof(Core))
                     continue;
 
+                // UNDONE: better way to check correct type for reflecting local methods
+                if (type.FullName != "Program")
+                    continue;
+
                 var list = type.GetMethods();
 
                 for (int z = 0; z < list.Length; z++)
