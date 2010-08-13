@@ -15,7 +15,7 @@ namespace IronAHK.Rusty
         /// <param name="command"></param>
         /// <param name="drive">The drive letter.</param>
         /// <param name="value"></param>
-        public static void Drive(string command, string drive = "", string value = "")
+        public static void Drive(string command, string drive = null, string value = null)
         {
 
         }
@@ -26,7 +26,7 @@ namespace IronAHK.Rusty
         /// <param name="result">The name of the variable in which to store the result.</param>
         /// <param name="command"></param>
         /// <param name="value"></param>
-        public static void DriveGet(out string result, string command, string value = "")
+        public static void DriveGet(out string result, string command, string value = null)
         {
             result = null;
         }
@@ -165,7 +165,7 @@ namespace IronAHK.Rusty
         /// <param name="shortcutKey">A hotkey activator.</param>
         /// <param name="iconNumber"></param>
         /// <param name="runState"></param>
-        public static void FileCreateShortcut(string target, string link, string workingDir = "", string args = "", string description = "", string icon = "", string shortcutKey = "", int iconNumber = 0, int runState = 1)
+        public static void FileCreateShortcut(string target, string link, string workingDir = null, string args = null, string description = null, string icon = null, string shortcutKey = null, int iconNumber = 0, int runState = 1)
         {
             throw new NotImplementedException();
         }
@@ -235,7 +235,7 @@ namespace IronAHK.Rusty
         /// <item><term>G</term>: <description>gigabytes</description></item>
         /// </list>
         /// </param>
-        public static void FileGetSize(out long result, string file, string units = "")
+        public static void FileGetSize(out long result, string file, string units = null)
         {
             try
             {

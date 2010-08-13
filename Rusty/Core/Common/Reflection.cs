@@ -13,12 +13,13 @@ namespace IronAHK.Rusty
             if (method == null)
                 return null;
 
-            object value = null;
+            try
+            {
+                return method.Invoke(null, new object[] { args });
+            }
+            catch { }
 
-            try { value = method.Invoke(null, new object[] { args }); }
-            catch (Exception) { }
-            
-            return value;
+            return null;
         }
 
         static void SafeSetProperty(object item, string name, object value)
