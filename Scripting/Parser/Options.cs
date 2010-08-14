@@ -3,6 +3,8 @@ namespace IronAHK.Scripting
 {
     partial class Parser
     {
+        const string Legacy = "LEGACY";
+
         const bool LaxExpressions =
 #if LEGACY
  true

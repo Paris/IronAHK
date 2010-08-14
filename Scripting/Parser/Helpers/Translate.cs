@@ -5,7 +5,7 @@ namespace IronAHK.Scripting
 {
     partial class Parser
     {
-        [Conditional("LEGACY")]
+        [Conditional(Legacy)]
         void Translate(ref string code)
         {
             #region Variables
@@ -579,8 +579,7 @@ namespace IronAHK.Scripting
                 code = replaced.ToString();
         }
 
-
-        [Conditional("LEGACY")]
+        [Conditional(Legacy)]
         void ParameterPrepend(ref string param, string insert)
         {
             if (IsExpressionParameter(param))

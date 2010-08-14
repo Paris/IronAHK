@@ -124,7 +124,7 @@ namespace IronAHK.Scripting
             invokes.Clear();
         }
 
-        [Conditional("LEGACY")]
+        [Conditional(Legacy)]
         void FixDirectionalParameters(MethodInfo core, CodeMethodInvokeExpression invoke)
         {
             if (!(invoke.UserData.Contains(invokeCommand) && invoke.UserData[invokeCommand] is bool && (bool)invoke.UserData[invokeCommand]))

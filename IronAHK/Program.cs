@@ -12,6 +12,7 @@ namespace IronAHK
 {
     static partial class Program
     {
+        const string Debug = "DEBUG";
         const bool debug =
 #if DEBUG
  true
