@@ -130,7 +130,7 @@ namespace IronAHK.Rusty
                             guis[id].Size = size;
                         }
 
-                        var location = guis[id].Location;
+                        var location = new Point();
 
                         if (pos[2] != null)
                             location.X = (int)pos[2];
@@ -138,6 +138,9 @@ namespace IronAHK.Rusty
                             location.Y = (int)pos[3];
 
                         var screen = Screen.PrimaryScreen.Bounds;
+
+                        if (location.IsEmpty)
+                            center = true;
 
                         if (center)
                             cX = cY = true;
@@ -147,13 +150,8 @@ namespace IronAHK.Rusty
                         if (cY)
                             location.Y = (screen.Height - guis[id].Size.Height) / 2 + screen.Y;
 
-                        if (cX && cY || location.IsEmpty)
-                            guis[id].StartPosition = FormStartPosition.CenterScreen;
-                        else
-                        {
-                            guis[id].StartPosition = FormStartPosition.Manual;
-                            guis[id].Location = location;
-                        }
+                        guis[id].StartPosition = FormStartPosition.Manual;
+                        guis[id].Location = location;
 
                         guis[id].Text = Param3;
 
