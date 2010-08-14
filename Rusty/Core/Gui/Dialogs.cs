@@ -352,6 +352,9 @@ namespace IronAHK.Rusty
         /// </param>
         public static void SplashImage(string ImageFile, string Options, string SubText, string MainText, string WinTitle, string FontName)
         {
+            if (string.IsNullOrEmpty(ImageFile))
+                return;
+
             if (splash == null)
             {
                 splash = new SplashDialog();
@@ -367,11 +370,12 @@ namespace IronAHK.Rusty
                 {
                     splash.Invoke((SimpleDelegate)delegate
                     {
-                        splash.ImageLocation = ImageFile;
+                        splash.Image = ImageFile;
                         splash.Title = WinTitle;
-                        splash.SubText = SubText;
+                        splash.Subtext = SubText;
                         splash.MainText = MainText;
                         splash.TopMost = true;
+
                         if (!splash.Visible)
                             splash.Show();
                     });

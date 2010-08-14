@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Windows.Forms;
 
 namespace IronAHK.Rusty
 {
@@ -24,39 +25,58 @@ namespace IronAHK.Rusty
         }
 
         /// <summary>
-        /// If ItemID is omitted, all items in the TreeView are deleted. Otherwise, only the specified ItemID is deleted. It returns 1 upon success and 0 upon failure.
+        /// Removes all or the specified node.
         /// </summary>
-        /// <param name="ItemID"></param>
-        /// <returns></returns>
-        public static bool TV_Delete(int ItemID)
+        /// <param name="id">The node ID. Leave blank to remove all nodes.</param>
+        /// <returns><c>true</c> if an item was removed, <c>false</c> otherwise.</returns>
+        public static bool TV_Delete(long id = 0)
         {
             var tree = DefaultTreeView;
 
             if (tree == null)
                 return false;
 
-            throw new NotImplementedException(); // TODO: TV_Delete
+            if (id == 0)
+            {
+                tree.Nodes.Clear();
+                return true;
+            }
+
+            var node = TV_FindNode(tree, id);
+
+            if (node != null)
+            {
+                node.Remove();
+                return true;
+            }
+
+            return false;
         }
 
         /// <summary>
-        /// Returns the ID number of the specified item's first/top child (or 0 if none).
+        /// Returns the ID of the specified node's fist child.
         /// </summary>
-        /// <param name="ParentItemID"></param>
-        /// <returns></returns>
-        public static int TV_GetChild(int ParentItemID)
+        /// <param name="id">The parent node ID.</param>
+        /// <returns>The ID of the first child or <c>0</c> if none.</returns>
+        public static long TV_GetChild(long id)
         {
             var tree = DefaultTreeView;
 
             if (tree == null)
                 return 0;
 
-            throw new NotImplementedException(); // TODO: TV_GetChild
+            var node = TV_FindNode(tree, id);
+
+            if (node == null)
+                return 0;
+
+            return node.Nodes.Count == 0 ? 0 : node.FirstNode.Handle.ToInt64();
         }
 
         /// <summary>
-        /// Returns the total number of items in the control. This function is always instantaneous because the control keeps track of the count.
+        /// Returns the total number of nodes.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>The number of nodes.</returns>
         public static int TV_GetCount()
         {
             var tree = DefaultTreeView;
@@ -64,84 +84,130 @@ namespace IronAHK.Rusty
             if (tree == null)
                 return 0;
 
-            throw new NotImplementedException(); // TODO: TV_GetCount
+            return tree.Nodes.Count;
         }
 
         /// <summary>
-        /// This has the following modes:
+        /// Returns the next node with the specified criteria.
         /// </summary>
-        /// <param name="ItemID"></param>
-        /// <param name="Mode"></param>
-        /// <returns></returns>
-        public static int TV_GetNext(int ItemID, string Mode)
+        /// <param name="id">The starting node ID. Leave blank to search from the first node.</param>
+        /// <param name="mode">
+        /// <list type="bullet">
+        /// <item><term><c>Full</c></term>: <description>the next node irrespective of its relationship to the starting node</description></item>
+        /// <item><term><c>Checked</c></term>: <description>the next checked node, implies <c>Full</c></description></item>
+        /// <item><term>(blank)</term>: <description>the next sibling node</description></item>
+        /// </list>
+        /// </param>
+        /// <returns>The ID of the first match.</returns>
+        public static long TV_GetNext(int id = 0, string mode = null)
         {
             var tree = DefaultTreeView;
 
             if (tree == null)
                 return 0;
 
-            throw new NotImplementedException(); // TODO: TV_GetNext
+        none:
+            if (string.IsNullOrEmpty(mode))
+            {
+                if (id == 0)
+                    return tree.Nodes.Count == 0 ? 0 : tree.Nodes[0].Handle.ToInt64();
+
+                var node = TV_FindNode(tree, id);
+                return node == null || node.NextNode == null ? 0 : node.NextNode.Handle.ToInt64();
+            }
+            
+            var check = OptionContains(mode, Keyword_Check, Keyword_Checked, Keyword_Checked[0].ToString());
+            var full = check || OptionContains(mode, Keyword_Full, Keyword_Full[0].ToString());
+
+            if (!full)
+            {
+                mode = null;
+                goto none;
+            }
+
+            for (var i = id == 0 ? 0 : TV_FindNode(tree, id).Index; i < tree.Nodes.Count; i++)
+            {
+                if (check && !tree.Nodes[i].Checked)
+                    continue;
+
+                return tree.Nodes[i].Handle.ToInt64();
+            }
+
+            return 0;
         }
 
         /// <summary>
-        /// Returns the specified item's parent as an item ID. Items at the top level have no parent and thus return 0.
+        /// Returns the ID of the specified node's fist parent.
         /// </summary>
-        /// <param name="ItemID"></param>
-        /// <returns></returns>
-        public static int TV_GetParent(int ItemID)
+        /// <param name="id">The child node ID.</param>
+        /// <returns>The ID of the parent or <c>0</c> if none.</returns>
+        public static long TV_GetParent(long id)
         {
             var tree = DefaultTreeView;
 
             if (tree == null)
                 return 0;
 
-            throw new NotImplementedException(); // TODO: TV_GetParent
+            var node = TV_FindNode(tree, id);
+
+            return node == null || node.Parent == null || !(node.Parent is TreeNode) ? 0 : node.Parent.Handle.ToInt64();
         }
 
         /// <summary>
-        /// Returns the ID number of the sibling above the specified item (or 0 if none).
+        /// Returns the ID of the sibling above the specified node.
         /// </summary>
-        /// <param name="ItemID"></param>
-        /// <returns></returns>
-        public static int TV_GetPrev(int ItemID)
+        /// <param name="id">The node ID.</param>
+        /// <returns>The ID of the previous node.</returns>
+        public static long TV_GetPrev(long id)
         {
             var tree = DefaultTreeView;
 
             if (tree == null)
                 return 0;
 
-            throw new NotImplementedException(); // TODO: TV_GetPrev
+            var node = TV_FindNode(tree, id);
+
+            return node.PrevNode == null ? 0 : node.PrevNode.Handle.ToInt64();
         }
 
         /// <summary>
-        /// Returns the selected item's ID number.
+        /// Returns the selected nodes's ID.
         /// </summary>
-        /// <returns></returns>
-        public static int TV_GetSelection()
+        /// <returns>The ID of the currently selected node.</returns>
+        public static long TV_GetSelection()
         {
             var tree = DefaultTreeView;
 
             if (tree == null)
                 return 0;
 
-            throw new NotImplementedException(); // TODO: TV_GetSelection
+            return tree.SelectedNode == null ? 0 : tree.SelectedNode.Handle.ToInt64();
         }
 
         /// <summary>
-        /// Retrieves the text/name of the specified ItemID and stores it in OutputVar. If the text is longer than 8191, only the first 8191 characters are retrieved. Upon success, the function returns the item's own ID. Upon failure, it returns 0 (and OutputVar is also made blank).
+        /// Retrieves the text of the specified node.
         /// </summary>
-        /// <param name="OutputVar"></param>
-        /// <param name="ItemID"></param>
-        /// <returns></returns>
-        public static int TV_GetText(out string OutputVar, int ItemID)
+        /// <param name="result">The variable to store the node text.</param>
+        /// <param name="id">The node ID.</param>
+        /// <returns>The <paramref name="id"/> if found, <c>0</c> otherwise.</returns>
+        public static long TV_GetText(out string result, long id)
         {
             var tree = DefaultTreeView;
-            OutputVar = null;
+            result = null;
 
             if (tree == null)
                 return 0;
 
-            throw new NotImplementedException(); // TODO: TV_GetText
+            var node = TV_FindNode(tree, id);
+
+            if (node == null)
+            {
+                result = string.Empty;
+                return 0;
+            }
+
+            result = node.Text;
+            return node.Handle.ToInt64();
         }
 
         /// <summary>
