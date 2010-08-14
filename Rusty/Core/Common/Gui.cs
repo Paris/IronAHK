@@ -84,7 +84,7 @@ namespace IronAHK.Rusty
                 switch (mode)
                 {
                     // TODO: TV_Modify extended options
-                    case Keyword_Bold: node.NodeFont = new Font(node.NodeFont, on ? FontStyle.Bold : FontStyle.Regular); break;
+                    case Keyword_Bold: node.NodeFont = new Font(node.TreeView.Font, on ? FontStyle.Bold : FontStyle.Regular); break;
                     case Keyword_Check: node.Checked = on; break;
                     case Keyword_Select: node.TreeView.SelectedNode = node; break;
                     case Keyword_Vis: node.EnsureVisible(); break;
