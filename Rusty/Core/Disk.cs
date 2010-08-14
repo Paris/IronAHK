@@ -197,8 +197,10 @@ namespace IronAHK.Rusty
         {
             try
             {
-                var files = Glob(pattern);
-                return files.Length > 0 ? FromFileAttribs(File.GetAttributes(files[0])) : string.Empty;
+                foreach (var file in Glob(pattern))
+                    return FromFileAttribs(File.GetAttributes(file));
+
+                return string.Empty;
             }
             catch (IOException)
             {
