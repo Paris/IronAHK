@@ -10,6 +10,12 @@ namespace IronAHK.Rusty
 
         static IEnumerable<string> Glob(string glob)
         {
+            if (File.Exists(glob) || Directory.Exists(glob))
+            {
+                yield return glob;
+                yield break;
+            }
+
             foreach (string path in Glob(PathHead(glob) + Path.DirectorySeparatorChar, PathTail(glob)))
             {
                 yield return path;
