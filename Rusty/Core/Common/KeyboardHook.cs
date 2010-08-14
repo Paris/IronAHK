@@ -391,31 +391,19 @@ namespace IronAHK.Rusty
             List<HotkeyDefinition> hotkeys;
             List<HotstringDefinition> hotstrings;
             Dictionary<Keys, bool> pressed;
-            string current, previous;
-            int currentTime, priorTime;
 
             StringBuilder history;
             const int retention = 1024;
 
-            public string CurrentHotkey
-            {
-                get { return current; }
-            }
+            public string CurrentHotkey { get; set; }
 
-            public string PriorHotkey
-            {
-                get { return previous; }
-            }
+            public string PriorHotkey { get; set; }
 
-            public int CurrentHotkeyTime
-            {
-                get { return currentTime; }
-            }
+            public int CurrentHotkeyTime { get; set; }
 
-            public int PriorHotkeyTime
-            {
-                get { return priorTime; }
-            }
+            public int PriorHotkeyTime { get; set; }
+
+            public bool Block { get; set; }
 
             #endregion
 
@@ -503,6 +491,9 @@ namespace IronAHK.Rusty
 
             protected bool KeyReceived(Keys key, string typed, bool down)
             {
+                if (Block)
+                    return true;
+
                 bool block = false;
 
                 if (suspended)
@@ -531,10 +522,10 @@ namespace IronAHK.Rusty
                                {
                                    foreach (var hotkey in exec)
                                    {
-                                       priorTime = currentTime;
-                                       currentTime = Environment.TickCount;
-                                       previous = current;
-                                       current = hotkey.ToString();
+                                       PriorHotkeyTime = CurrentHotkeyTime;
+                                       CurrentHotkeyTime = Environment.TickCount;
+                                       PriorHotkey = CurrentHotkey;
+                                       CurrentHotkey = hotkey.ToString();
 
                                        if (hotkey.Condition())
                                            hotkey.Proc(new object[] { });
@@ -610,10 +601,10 @@ namespace IronAHK.Rusty
 
                     new Thread(delegate()
                                    {
-                                       priorTime = currentTime;
-                                       currentTime = Environment.TickCount;
-                                       previous = current;
-                                       current = hotstring.ToString();
+                                       PriorHotkeyTime = CurrentHotkeyTime;
+                                       CurrentHotkeyTime = Environment.TickCount;
+                                       PriorHotkey = CurrentHotkey;
+                                       CurrentHotkey = hotstring.ToString();
                                        int length = hotstring.Sequence.Length;
                                        bool auto = (hotstring.EnabledOptions & HotstringDefinition.Options.AutoTrigger) == HotstringDefinition.Options.AutoTrigger;
 

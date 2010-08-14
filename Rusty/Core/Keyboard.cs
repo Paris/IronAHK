@@ -206,6 +206,9 @@ namespace IronAHK.Rusty
 
             if (Environment.OSVersion.Platform == PlatformID.Win32NT)
                 Windows.BlockInput(state);
+
+            InitKeyboardHook();
+            keyboardHook.Block = state;
         }
 
         /// <summary>

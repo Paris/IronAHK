@@ -76,6 +76,12 @@ namespace IronAHK.Rusty
 
         }
 
+        static TreeNode TV_FindNode(TreeView parent, long id)
+        {
+            var match = parent.Nodes.Find(id.ToString(), true);
+            return match.Length == 0 ? null : match[0];
+        }
+
         static Bitmap GetScreen(Rectangle rect)
         {
             int color = Screen.PrimaryScreen.BitsPerPixel;
