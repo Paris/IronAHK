@@ -7,10 +7,10 @@ namespace IronAHK
 {
     static partial class Program
     {
-        [Conditional("DEBUG"), DllImport("kernel32.dll")]
+        [Conditional(Debug), DllImport("kernel32.dll")]
         static extern void AllocConsole();
 
-        [Conditional("DEBUG")]
+        [Conditional(Debug)]
         static void Start(ref string[] args)
         {
             if (Environment.OSVersion.Platform == PlatformID.Win32NT)
@@ -66,13 +66,13 @@ namespace IronAHK
                 args = new[] { "--out", output, source };
         }
 
-        [Conditional("DEBUG")]
+        [Conditional(Debug)]
         static void Cleanup()
         {
             Console.Read();
         }
 
-        [Conditional("DEBUG")]
+        [Conditional(Debug)]
         static void Sandbox()
         {
 
