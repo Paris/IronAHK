@@ -79,6 +79,7 @@
     <Compile Include="Parser\Construct\Expressions\Operators.cs" />
     <Compile Include="Parser\Construct\Expressions\DateTime.cs" />
     <Compile Include="Parser\Construct\Expressions\Texts.cs" />
+    <Compile Include="Parser\Library.cs" />
     <Compile Include="Parser\Helpers\Auxiliary.cs" />
     <Compile Include="Parser\Helpers\Translate.cs" />
     <Compile Include="Parser\Options.cs" />
