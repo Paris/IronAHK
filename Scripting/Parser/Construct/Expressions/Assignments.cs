@@ -48,7 +48,7 @@ namespace IronAHK.Scripting
             else if (i > 0 && IsArrayExtension(parts[x]))
             {
                 var extend = (CodeMethodInvokeExpression)parts[x];
-                extend.Parameters.Add(right ? WrappedComplexVar(parts[y]) : new CodePrimitiveExpression(null));
+                extend.Parameters.Add(right ? VarMixedExpr(parts[y]) : new CodePrimitiveExpression(null));
                 if (right)
                     parts.RemoveAt(y);
                 parts.RemoveAt(i);
@@ -70,7 +70,7 @@ namespace IronAHK.Scripting
                 assign.Left = (CodeArrayIndexerExpression)parts[x];
             else
                 assign.Left = VarId((CodeExpression)parts[x]);
-            assign.Right = right ? WrappedComplexVar(parts[y]) : new CodePrimitiveExpression(null);
+            assign.Right = right ? VarMixedExpr(parts[y]) : new CodePrimitiveExpression(null);
 
             parts[x] = assign;
 
@@ -107,7 +107,7 @@ namespace IronAHK.Scripting
 
             if (y < parts.Count)
             {
-                set.Parameters.Add(WrappedComplexVar(parts[y]));
+                set.Parameters.Add(VarMixedExpr(parts[y]));
                 parts.RemoveAt(y);
             }
             else
