@@ -72,9 +72,19 @@ namespace IronAHK.Scripting
 
             #region Result
 
+            CodeExpression left;
+            var nameLow = name.ToLowerInvariant();
+
+            if (libProperties.ContainsKey(nameLow))
+                left = new CodePropertyReferenceExpression(new CodeTypeReferenceExpression(bcl), libProperties[nameLow]);
+            else
+                left = VarId(name);
+
             CodeExpression result = value == null ? new CodePrimitiveExpression(null) :
                 IsExpressionParameter(value) ? ParseSingleExpression(value.TrimStart(Spaces).Substring(2)) : VarIdExpand(value);
-            return new CodeExpressionStatement(VarAssign(VarId(name), result));
+
+            var assign = new CodeBinaryOperatorExpression(left, CodeBinaryOperatorType.Assign, result);
+            return new CodeExpressionStatement(assign);
 
             #endregion
         }
