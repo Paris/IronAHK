@@ -257,16 +257,6 @@ namespace IronAHK.Rusty
         }
 
         /// <summary>
-        /// See <see cref="A_FormatFloat"/>.
-        /// </summary>
-        [Obsolete]
-        public static string A_FormatFloatFast
-        {
-            get { return A_FormatFloat; }
-            set { A_FormatFloat = value; }
-        }
-
-        /// <summary>
         /// The current integer format, either <c>H</c> or <c>D</c>.
         /// </summary>
         [Obsolete]
@@ -287,16 +277,6 @@ namespace IronAHK.Rusty
                         break;
                 }
             }
-        }
-
-        /// <summary>
-        /// See <see cref="A_FormatInteger"/>.
-        /// </summary>
-        [Obsolete]
-        public static string A_FormatIntegerFast
-        {
-            get { return A_FormatInteger; }
-            set { A_FormatInteger = value; }
         }
 
         /// <summary>
