@@ -9,7 +9,7 @@ namespace IronAHK.Rusty
     /// <summary>
     /// Create a global Instance of CoordProvider and use it multithreaded
     /// </summary>
-    public sealed class CoordProvider
+    sealed class CoordProvider
     {
         #region Private Data
 
