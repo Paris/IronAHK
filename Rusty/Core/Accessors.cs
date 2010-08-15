@@ -230,6 +230,11 @@ namespace IronAHK.Rusty
 
                 foreach (var exp in new[] { value.IndexOf('e'), value.IndexOf('E') })
                 {
+                    if (exp == -1)
+                    {
+                        continue;
+                    }
+
                     A_FormatNumeric = value.Substring(exp);
                     value = value.Substring(0, exp);
                     e = true;
