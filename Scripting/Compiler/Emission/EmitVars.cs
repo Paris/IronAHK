@@ -79,6 +79,16 @@ namespace IronAHK.Scripting
                 
                 Generator.Emit(OpCodes.Callvirt, SetVariable);
             }
+            else if (Left is CodePropertyReferenceExpression)
+            {
+                var prop = (CodePropertyReferenceExpression)Left;
+
+                // HACK: use correct way to get property target object for compiler
+                var info = typeof(Rusty.Core).GetProperty(prop.PropertyName);
+
+                EmitExpression(Right);
+                Generator.Emit(OpCodes.Call, info.GetSetMethod());
+            }
             else throw new CompileException(Left, "Left hand is unassignable");
 
             Depth--;
