@@ -12,6 +12,7 @@ namespace IronAHK.Scripting
 
         const string mainScope = "";
         const string className = "Program";
+        readonly Type bcl = typeof(Script).BaseType;
         CodeEntryPointMethod main = new CodeEntryPointMethod();
         Dictionary<string, CodeMemberMethod> methods = new Dictionary<string, CodeMemberMethod>();
         CodeStatementCollection prepend = new CodeStatementCollection();
@@ -32,7 +33,6 @@ namespace IronAHK.Scripting
             get
             {
                 var unit = new CodeCompileUnit();
-                var bcl = typeof(Script);
 
                 var space = new CodeNamespace(bcl.Namespace + ".Instance");
                 unit.Namespaces.Add(space);
