@@ -68,6 +68,8 @@ namespace IronAHK.Scripting
             }
             else if (IsVarReference(parts[x]))
                 assign.Left = (CodeArrayIndexerExpression)parts[x];
+            else if (parts[x] is CodePropertyReferenceExpression)
+                assign.Left = (CodePropertyReferenceExpression)parts[x];
             else
                 assign.Left = VarId((CodeExpression)parts[x]);
             assign.Right = right ? VarMixedExpr(parts[y]) : new CodePrimitiveExpression(null);
