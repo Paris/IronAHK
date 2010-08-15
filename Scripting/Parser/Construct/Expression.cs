@@ -162,7 +162,14 @@ namespace IronAHK.Scripting
                     #endregion
                     #region Variables
                     else if (IsIdentifier(part, true) && !IsKeyword(part))
-                        parts[i] = VarIdOrConstant(part);
+                    {
+                        var low = part.ToLowerInvariant();
+
+                        if (libProperties.ContainsKey(low))
+                            parts[i] = new CodePropertyReferenceExpression(new CodeTypeReferenceExpression(bcl), libProperties[low]);
+                        else
+                            parts[i] = VarIdOrConstant(part);
+                    }
                     #endregion
                     #region JSON
                     else if (part.Length == 1 && part[0] == BlockOpen)
