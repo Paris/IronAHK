@@ -22,6 +22,11 @@ namespace IronAHK.Scripting
 
                 if (code.IndexOf(Resolve) == -1)
                     return new CodePrimitiveExpression(code);
+
+                if (!DynamicVars)
+                {
+                    throw new ParseException(ExNoDynamicVars);
+                }
             }
 
             var parts = new List<CodeExpression>();
