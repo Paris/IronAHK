@@ -133,7 +133,7 @@ namespace IronAHK.Scripting
             if (IsExpressionParameter(code))
                 return ParseSingleExpression(code.Substring(2));
             else
-                return VarNameOrBasicString(StripComment(code), true);
+                return VarIdExpand(StripComment(code));
         }
 
         #endregion
