@@ -22,6 +22,8 @@ namespace IronAHK.Scripting
             else
                 libProperties.Clear();
 
+            var ignore = new List<string>();
+
             #endregion
 
             #region Methods
@@ -32,17 +34,19 @@ namespace IronAHK.Scripting
                     continue;
 
                 var name = method.Name.ToLowerInvariant();
+
+                if (ignore.Contains(name))
+                    continue;
+
                 var param = method.GetParameters();
 
                 if (libMethods.ContainsKey(name))
                 {
-                    if (param.Length < libMethods[name].Length)
-                        continue;
-
                     libMethods.Remove(name);
+                    ignore.Add(name);
                 }
-
-                libMethods.Add(name, param);
+                else 
+                    libMethods.Add(name, param);
             }
 
             #endregion
