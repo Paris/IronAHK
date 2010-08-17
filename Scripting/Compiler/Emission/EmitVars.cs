@@ -83,7 +83,7 @@ namespace IronAHK.Scripting
             {
                 var prop = (CodePropertyReferenceExpression)Left;
 
-                // HACK: use correct way to get property target object for compiler
+                // HACK: property set method target
                 var info = typeof(Rusty.Core).GetProperty(prop.PropertyName);
 
                 EmitExpression(Right);
