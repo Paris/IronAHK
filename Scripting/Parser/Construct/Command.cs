@@ -24,8 +24,21 @@ namespace IronAHK.Scripting
                         split = new[] { parts[1] };
                 }
 
-                foreach (var param in split)
-                    invoke.Parameters.Add(ParseCommandParameter(param));
+                var low = parts[0].ToLowerInvariant();
+                var info = libMethods.ContainsKey(low) ? libMethods[low] : null;
+
+                for (var i = 0; i < split.Length; i++)
+                {
+                    bool byref = false, expr = false;
+
+                    if (info != null && i < info.Length)
+                    {
+                        byref = info[i].IsOut || info[i].ParameterType.IsByRef;
+                        expr = Script.IsNumeric(info[i].ParameterType);
+                    }
+
+                    invoke.Parameters.Add(ParseCommandParameter(split[i], byref, expr));
+                }
             }
 
             invoke.UserData.Add(invokeCommand, true);
@@ -123,17 +136,31 @@ namespace IronAHK.Scripting
             return parts.ToArray();
         }
 
-        CodeExpression ParseCommandParameter(string code)
+        CodeExpression ParseCommandParameter(string code, bool byref = false, bool expr = false)
         {
-            code = code.Trim(Spaces); // should depend on AutoTrim
+            code = code.Trim(Spaces);
 
             if (code.Length == 0)
                 return new CodePrimitiveExpression(null);
 
+            if (expr && code.Length > 2 && code[0] == Resolve && code[code.Length - 1] == Resolve)
+                code = code.Substring(1, code.Length - 2);
+
             if (IsExpressionParameter(code))
-                return ParseSingleExpression(code.Substring(2));
-            else
-                return VarIdExpand(StripComment(code));
+            {
+                code = code.Substring(2);
+                expr = true;
+            }
+
+            if (expr)
+                return ParseSingleExpression(code);
+
+            code = StripComment(code);
+
+            if (byref)
+                return VarId(code);
+
+            return VarIdExpand(code);
         }
 
         #endregion
