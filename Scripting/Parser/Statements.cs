@@ -94,7 +94,11 @@ namespace IronAHK.Scripting
                             break;
 
                         case Token.Command:
-                            var command = new CodeExpressionStatement(ParseCommand(code));
+                            var command = new CodeExpressionStatement(OptimiseExpression(ParseCommand(code)));
+
+                            if (command.Expression == null)
+                                continue;
+
                             command.LinePragma = lines[i];
                             parent.Add(command);
                             break;
