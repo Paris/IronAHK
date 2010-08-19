@@ -14,7 +14,14 @@ namespace IronAHK.Scripting
 
             if (parts.Length > 1 && parts[1].Length != 0)
             {
-                var split = SplitCommandParameters(parts[1]);
+                var low = parts[0].ToLowerInvariant();
+                var info = libMethods.ContainsKey(low) ? libMethods[low] : null;
+                var exp = info == null ? new bool[] { } : new bool[info.Length];
+
+                for (var i = 0; info != null && i < info.Length; i++)
+                    exp[i] = Script.IsNumeric(info[i].ParameterType);
+
+                var split = SplitCommandParameters(parts[1], exp);
 
                 if (parts[0].Equals(MsgBox, System.StringComparison.OrdinalIgnoreCase) && split.Length > 1)
                 {
@@ -24,9 +31,6 @@ namespace IronAHK.Scripting
                         split = new[] { parts[1] };
                 }
 
-                var low = parts[0].ToLowerInvariant();
-                var info = libMethods.ContainsKey(low) ? libMethods[low] : null;
-
                 for (var i = 0; i < split.Length; i++)
                 {
                     bool byref = false, expr = false;
@@ -34,7 +38,7 @@ namespace IronAHK.Scripting
                     if (info != null && i < info.Length)
                     {
                         byref = info[i].IsOut || info[i].ParameterType.IsByRef;
-                        expr = Script.IsNumeric(info[i].ParameterType);
+                        expr = exp[i];
                     }
 
                     invoke.Parameters.Add(ParseCommandParameter(split[i], byref, expr));
@@ -74,7 +78,7 @@ namespace IronAHK.Scripting
             return parts;
         }
 
-        string[] SplitCommandParameters(string code)
+        string[] SplitCommandParameters(string code, bool[] exp = null)
         {
             var parts = new List<string>();
             bool start = true, expr = false, str = false;
@@ -103,6 +107,9 @@ namespace IronAHK.Scripting
                         start = false;
                         int n = i + 1;
                         expr = sym == Resolve && (n < code.Length ? IsSpace(code[n]) : true);
+                        n = parts.Count;
+                        if (exp != null && exp.Length > n && exp[n])
+                            expr = true;
                     }
                 }
 
