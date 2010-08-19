@@ -122,6 +122,7 @@
     <Content Include="Site\docs\images\tick.png" />
     <Content Include="Site\docs\main.js" />
     <Content Include="Site\forum\index.html" />
+    <Content Include="Site\ga.js" />
     <Content Include="Site\images\countdown.png" />
     <Content Include="Site\images\editor.png" />
     <Content Include="Site\images\helloworld.png" />
