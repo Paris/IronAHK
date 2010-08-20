@@ -710,27 +710,32 @@ namespace IronAHK.Rusty
         /// <summary>
         /// Separates a file name or URL into its name, directory, extension, and drive.
         /// </summary>
-        /// <param name="InputVar">Name of the variable containing the file name to be analyzed.</param>
-        /// <param name="OutFileName">Name of the variable in which to store the file name without its path. The file's extension is included.</param>
-        /// <param name="OutDir">Name of the variable in which to store the directory of the file, including drive letter or share name (if present). The final backslash is not included even if the file is located in a drive's root directory.</param>
-        /// <param name="OutExtension">Name of the variable in which to store the file's extension (e.g. TXT, DOC, or EXE). The dot is not included.</param>
-        /// <param name="OutNameNoExt">Name of the variable in which to store the file name without its path, dot and extension.</param>
-        /// <param name="OutDrive">Name of the variable in which to store the drive letter or server name of the file. If the file is on a local or mapped drive, the variable will be set to the drive letter followed by a colon (no backslash). If the file is on a network path (UNC), the variable will be set to the share name, e.g. \\Workstation01</param>
-        public static void SplitPath(string InputVar, out string OutFileName, out string OutDir, out string OutExtension, out string OutNameNoExt, out string OutDrive)
+        /// <param name="path">Name of the variable containing the file name to be analyzed.</param>
+        /// <param name="filename">Name of the variable in which to store the file name without its path. The file's extension is included.</param>
+        /// <param name="directory">Name of the variable in which to store the directory of the file, including drive letter or share name (if present). The final backslash is not included even if the file is located in a drive's root directory.</param>
+        /// <param name="extension">Name of the variable in which to store the file's extension (e.g. TXT, DOC, or EXE). The dot is not included.</param>
+        /// <param name="name">Name of the variable in which to store the file name without its path, dot and extension.</param>
+        /// <param name="root">Name of the variable in which to store the drive letter or server name of the file. If the file is on a local or mapped drive, the variable will be set to the drive letter followed by a colon (no backslash). If the file is on a network path (UNC), the variable will be set to the share name, e.g. \\Workstation01</param>
+        public static void SplitPath(ref string path, out string filename, out string directory, out string extension, out string name, out string root)
         {
-            try { InputVar = Path.GetFullPath(InputVar); }
-            catch (Exception)
+            var input = path;
+
+            try
+            {
+                input = Path.GetFullPath(path);
+            }
+            catch (ArgumentException)
             {
                 ErrorLevel = 1;
-                OutFileName = OutDir = OutExtension = OutNameNoExt = OutDrive = null;
+                filename = directory = extension = name = root = null;
                 return;
             }
 
-            OutFileName = Path.GetFileName(InputVar);
-            OutDir = Path.GetDirectoryName(InputVar);
-            OutExtension = Path.GetExtension(InputVar);
-            OutNameNoExt = Path.GetFileNameWithoutExtension(InputVar);
-            OutDrive = Path.GetPathRoot(InputVar);
+            filename = Path.GetFileName(input);
+            directory = Path.GetDirectoryName(input);
+            extension = Path.GetExtension(input);
+            name = Path.GetFileNameWithoutExtension(input);
+            root = Path.GetPathRoot(input);
         }
 
         /// <summary>
