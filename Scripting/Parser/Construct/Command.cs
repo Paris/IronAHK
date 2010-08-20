@@ -156,14 +156,30 @@ namespace IronAHK.Scripting
             if (expr && code.Length > 2 && code[0] == Resolve && code[code.Length - 1] == Resolve)
                 code = code.Substring(1, code.Length - 2);
 
+            var explicitExpr = false;
+
             if (IsExpressionParameter(code))
             {
                 code = code.Substring(2);
                 expr = true;
+                explicitExpr = true;
             }
 
             if (expr)
-                return ParseSingleExpression(code);
+            {
+                try
+                {
+                    return ParseSingleExpression(code);
+                }
+                catch (ParseException)
+                {
+                    // soft failure for implicit expression mode only
+                    if (explicitExpr)
+                        throw;
+                    
+                    return new CodePrimitiveExpression(null);
+                }
+            }
 
             code = StripComment(code);
 
