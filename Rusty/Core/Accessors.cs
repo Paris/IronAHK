@@ -538,24 +538,6 @@ namespace IronAHK.Rusty
             get { return Marshal.GetLastWin32Error(); }
         }
 
-        /// <summary>
-        /// The full path and name of the file to which A_LineNumber belongs, which will be the same as A_ScriptFullPath unless the line belongs to one of a non-compiled script's #Include files.
-        /// </summary>
-        [Obsolete]
-        public static string A_LineFile
-        {
-            get { return null; }
-        }
-
-        /// <summary>
-        /// <para>The number of the currently executing line within the script (or one of its #Include files). This line number will match the one shown by ListLines; it can be useful for error reporting such as this example: MsgBox Could not write to log file (line number %A_LineNumber%).</para>
-        /// <para>Since a compiled script has merged all its #Include files into one big script, its line numbering may be different than when it is run in non-compiled mode.</para>
-        /// </summary>
-        public static string A_LineNumber
-        {
-            get { return null; }
-        }
-
         #region Loops
 
         /// <summary>
@@ -976,31 +958,6 @@ namespace IronAHK.Rusty
         }
 
         /// <summary>
-        /// The full path of the directory where the current script is located.
-        /// </summary>
-        [Obsolete]
-        public static string A_ScriptDir
-        {
-            get { return null; }
-        }
-
-        /// <summary>
-        /// The full path of the running script.
-        /// </summary>
-        public static string A_ScriptFullPath
-        {
-            get { return null; }
-        }
-
-        /// <summary>
-        /// The file name of the current script, without its path, e.g. <code>MyScript.ahk</code>.
-        /// </summary>
-        public static string A_ScriptName
-        {
-            get { return null; }
-        }
-
-        /// <summary>
         /// Current 2-digit second (00-59).
         /// </summary>
         public static string A_Sec
@@ -1109,27 +1066,11 @@ namespace IronAHK.Rusty
         }
 
         /// <summary>
-        /// The name of the user-defined function that is currently executing (blank if none); for example: <code>MyFunction</code>.
-        /// </summary>
-        public static string A_ThisFunc
-        {
-            get { return null; }
-        }
-
-        /// <summary>
         /// The key name of the most recently executed hotkey or hotstring.
         /// </summary>
         public static string A_ThisHotkey
         {
             get { return keyboardHook == null ? null : keyboardHook.CurrentHotkey; }
-        }
-
-        /// <summary>
-        /// The name of the label (subroutine) that is currently executing (blank if none); for example: MyLabel. It is updated whenever the script executes Gosub/Return or Goto. It is also updated for automatically-called labels such as timers, GUI threads, menu items, hotkeys, hotstrings, OnClipboardChange, and OnExit, However, A_ThisLabel is not updated when execution "falls into" a label from above; when that happens, A_ThisLabel retains its previous value. See also: A_ThisHotkey
-        /// </summary>
-        public static string A_ThisLabel
-        {
-            get { return null; }
         }
 
         /// <summary>
