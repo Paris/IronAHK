@@ -93,6 +93,8 @@ namespace IronAHK.Scripting
                 {
                     if (sym == StringBound)
                         str = !str;
+                    else if (sym == Multicast)
+                        goto delim;
                     continue;
                 }
                 else if (IsCommentAt(code, i))
@@ -127,6 +129,7 @@ namespace IronAHK.Scripting
                     }
                 }
                 
+            delim:
                 if (sym == Multicast && (i == 0 || code[i - 1] != Escape) && !str && levels[0] == 0 && levels[1] == 0 && levels[2] == 0)
                 {
                     parts.Add(code.Substring(last, i - last));
