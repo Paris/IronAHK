@@ -13,7 +13,7 @@ namespace IronAHK.Rusty
         /// <param name="options"></param>
         /// <param name="fields"></param>
         /// <returns></returns>
-        public static int LV_Add(string options, string[] fields)
+        public static int LV_Add(string options, string[] fields = null)
         {
             var list = DefaultListView;
 
@@ -21,36 +21,8 @@ namespace IronAHK.Rusty
                 return 0;
 
             var item = new ListViewItem();
-            item.SubItems.AddRange(fields);
-            var vis = false;
-
-            foreach (var opt in ParseOptions(options.ToLowerInvariant()))
-            {
-                var on = opt[0] != '-';
-                var mode = opt.Substring(!on || opt[0] == '+' ? 1 : 0);
-
-                switch (mode)
-                {
-                    case Keyword_Checked: item.Checked = on; break;
-                    case Keyword_Focus: item.Focused = on; break;
-                    case Keyword_Select: item.Selected = on; break;
-                    case Keyword_Vis: vis = on; break;
-
-                    default:
-                        {
-                            int n;
-
-                            if (mode.StartsWith(Keyword_Icon) && int.TryParse(mode.Substring(Keyword_Icon.Length), out n))
-                                item.ImageIndex = n;
-                        }
-                        break;
-                }
-            }
-
             list.Items.Add(item);
-
-            if (vis)
-                item.EnsureVisible();
+            LV_Modify(item.Index, options, fields);
 
             return item.Index;
         }
@@ -248,20 +220,32 @@ namespace IronAHK.Rusty
         }
 
         /// <summary>
-        /// 
+        /// Creates a new column.
         /// </summary>
-        /// <param name="column"></param>
-        /// <param name="options"></param>
-        /// <param name="title"></param>
-        /// <returns></returns>
-        public static int LV_InsertCol(int column, string options, string title)
+        /// <param name="column">Inserts the new column after the specified index.
+        /// Leave blank to add to the end of the list.</param>
+        /// <param name="options">See <see cref="LV_ModifyCol"/>.</param>
+        /// <param name="title">The column title.</param>
+        /// <returns>The index of the created column.</returns>
+        public static int LV_InsertCol(int column = 0, string options = null, string title = null)
         {
             var list = DefaultListView;
 
             if (list == null)
                 return 0;
 
-            throw new NotImplementedException(); // TODO: LV_InsertCol
+            title = title ?? string.Empty;
+            var index = 0;
+
+            if (column < 1 || column > list.Columns.Count)
+                index = list.Columns.Add(title).Index;
+            else
+            {
+                index = column - 1;
+                list.Columns.Insert(index, title);
+            }
+
+            return LV_ModifyCol(index, options, null);
         }
 
         /// <summary>
@@ -269,15 +253,62 @@ namespace IronAHK.Rusty
         /// </summary>
         /// <param name="row"></param>
         /// <param name="options"></param>
-        /// <param name="column"></param>
-        public static void LV_Modify(int row, string options, string[] column)
+        /// <param name="fields"></param>
+        public static bool LV_Modify(int row = 0, string options = null, string[] fields = null)
         {
             var list = DefaultListView;
 
             if (list == null)
-                return;
+                return false;
 
-            throw new NotImplementedException(); // TODO: LV_Modify
+            if (row == 0)
+            {
+                var pass = true;
+
+                foreach (ListViewItem sub in list.Items)
+                    if (!LV_Modify(sub.Index, options, fields))
+                        pass = false;
+
+                return pass;
+            }
+
+            row--;
+
+            if (row < 0 || row > list.Items.Count)
+                return false;
+
+            var item = list.Items[row];
+
+            if (fields != null)
+            {
+                item.SubItems.Clear();
+                item.SubItems.AddRange(fields);
+            }
+
+            foreach (var opt in ParseOptions(options.ToLowerInvariant()))
+            {
+                var on = opt[0] != '-';
+                var mode = opt.Substring(!on || opt[0] == '+' ? 1 : 0);
+
+                switch (mode)
+                {
+                    case Keyword_Checked: item.Checked = on; break;
+                    case Keyword_Focus: item.Focused = on; break;
+                    case Keyword_Select: item.Selected = on; break;
+                    case Keyword_Vis: item.EnsureVisible(); break;
+
+                    default:
+                        {
+                            int n;
+
+                            if (mode.StartsWith(Keyword_Icon) && int.TryParse(mode.Substring(Keyword_Icon.Length), out n))
+                                item.ImageIndex = n;
+                        }
+                        break;
+                }
+            }
+
+            return true;
         }
 
         /// <summary>
