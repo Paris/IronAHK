@@ -130,6 +130,7 @@ namespace IronAHK.Scripting
         {
             // HACK: property get method target
             var info = typeof(Rusty.Core).GetProperty(prop.PropertyName);
+            info = Mirror.GrabProperty(info);
 
             Generator.Emit(OpCodes.Call, info.GetGetMethod());
             return info.PropertyType;
