@@ -15,7 +15,7 @@ namespace IronAHK.Rusty
         /// <param name="command"></param>
         /// <param name="drive">The drive letter.</param>
         /// <param name="value"></param>
-        public static void Drive(string command, string drive = "", string value = "")
+        public static void Drive(string command, string drive = null, string value = null)
         {
 
         }
@@ -26,7 +26,7 @@ namespace IronAHK.Rusty
         /// <param name="result">The name of the variable in which to store the result.</param>
         /// <param name="command"></param>
         /// <param name="value"></param>
-        public static void DriveGet(out string result, string command, string value = "")
+        public static void DriveGet(out string result, string command, string value = null)
         {
             result = null;
         }
@@ -165,7 +165,7 @@ namespace IronAHK.Rusty
         /// <param name="shortcutKey">A hotkey activator.</param>
         /// <param name="iconNumber"></param>
         /// <param name="runState"></param>
-        public static void FileCreateShortcut(string target, string link, string workingDir = "", string args = "", string description = "", string icon = "", string shortcutKey = "", int iconNumber = 0, int runState = 1)
+        public static void FileCreateShortcut(string target, string link, string workingDir = null, string args = null, string description = null, string icon = null, string shortcutKey = null, int iconNumber = 0, int runState = 1)
         {
             throw new NotImplementedException();
         }
@@ -197,8 +197,10 @@ namespace IronAHK.Rusty
         {
             try
             {
-                var files = Glob(pattern);
-                return files.Length > 0 ? FromFileAttribs(File.GetAttributes(files[0])) : string.Empty;
+                foreach (var file in Glob(pattern))
+                    return FromFileAttribs(File.GetAttributes(file));
+
+                return string.Empty;
             }
             catch (IOException)
             {
@@ -235,7 +237,7 @@ namespace IronAHK.Rusty
         /// <item><term>G</term>: <description>gigabytes</description></item>
         /// </list>
         /// </param>
-        public static void FileGetSize(out long result, string file, string units = "")
+        public static void FileGetSize(out long result, string file, string units = null)
         {
             try
             {
@@ -708,27 +710,32 @@ namespace IronAHK.Rusty
         /// <summary>
         /// Separates a file name or URL into its name, directory, extension, and drive.
         /// </summary>
-        /// <param name="InputVar">Name of the variable containing the file name to be analyzed.</param>
-        /// <param name="OutFileName">Name of the variable in which to store the file name without its path. The file's extension is included.</param>
-        /// <param name="OutDir">Name of the variable in which to store the directory of the file, including drive letter or share name (if present). The final backslash is not included even if the file is located in a drive's root directory.</param>
-        /// <param name="OutExtension">Name of the variable in which to store the file's extension (e.g. TXT, DOC, or EXE). The dot is not included.</param>
-        /// <param name="OutNameNoExt">Name of the variable in which to store the file name without its path, dot and extension.</param>
-        /// <param name="OutDrive">Name of the variable in which to store the drive letter or server name of the file. If the file is on a local or mapped drive, the variable will be set to the drive letter followed by a colon (no backslash). If the file is on a network path (UNC), the variable will be set to the share name, e.g. \\Workstation01</param>
-        public static void SplitPath(string InputVar, out string OutFileName, out string OutDir, out string OutExtension, out string OutNameNoExt, out string OutDrive)
+        /// <param name="path">Name of the variable containing the file name to be analyzed.</param>
+        /// <param name="filename">Name of the variable in which to store the file name without its path. The file's extension is included.</param>
+        /// <param name="directory">Name of the variable in which to store the directory of the file, including drive letter or share name (if present). The final backslash is not included even if the file is located in a drive's root directory.</param>
+        /// <param name="extension">Name of the variable in which to store the file's extension (e.g. TXT, DOC, or EXE). The dot is not included.</param>
+        /// <param name="name">Name of the variable in which to store the file name without its path, dot and extension.</param>
+        /// <param name="root">Name of the variable in which to store the drive letter or server name of the file. If the file is on a local or mapped drive, the variable will be set to the drive letter followed by a colon (no backslash). If the file is on a network path (UNC), the variable will be set to the share name, e.g. \\Workstation01</param>
+        public static void SplitPath(ref string path, out string filename, out string directory, out string extension, out string name, out string root)
         {
-            try { InputVar = Path.GetFullPath(InputVar); }
-            catch (Exception)
+            var input = path;
+
+            try
+            {
+                input = Path.GetFullPath(path);
+            }
+            catch (ArgumentException)
             {
                 ErrorLevel = 1;
-                OutFileName = OutDir = OutExtension = OutNameNoExt = OutDrive = null;
+                filename = directory = extension = name = root = null;
                 return;
             }
 
-            OutFileName = Path.GetFileName(InputVar);
-            OutDir = Path.GetDirectoryName(InputVar);
-            OutExtension = Path.GetExtension(InputVar);
-            OutNameNoExt = Path.GetFileNameWithoutExtension(InputVar);
-            OutDrive = Path.GetPathRoot(InputVar);
+            filename = Path.GetFileName(input);
+            directory = Path.GetDirectoryName(input);
+            extension = Path.GetExtension(input);
+            name = Path.GetFileNameWithoutExtension(input);
+            root = Path.GetPathRoot(input);
         }
 
         /// <summary>

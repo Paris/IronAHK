@@ -32,6 +32,14 @@ Loop, 3
 	SB_SetText("Part " . A_Index, A_Index, A_Index - 1)
 SB_SetIcon(icon, "", 2)
 
+P1 := TV_Add("A")
+P1C1 := TV_Add("AA", P1)
+P2 := TV_Add("B")
+P2C1 := TV_Add("BA", P2)
+P2C2 := TV_Add("BB", P2, "Bold")
+P2C2C1 := TV_Add("BBA", P2C2, "Vis")
+TV_Delete(P2C1)
+
 Gui, Show, xCenter y100, Example
 Return
 

@@ -198,6 +198,7 @@ namespace IronAHK.Scripting
         const string ExContJoinTooLong = "Join string for continuation section is too long";
         const string ExTooFewParams = "Too few parameters passed to function";
         const string ExIncludeNotFound = "Include file not found";
+        const string ExNoDynamicVars = "Dynamic variables are not permitted";
 
         #endregion
     }

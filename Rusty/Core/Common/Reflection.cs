@@ -13,12 +13,13 @@ namespace IronAHK.Rusty
             if (method == null)
                 return null;
 
-            object value = null;
+            try
+            {
+                return method.Invoke(null, new object[] { args });
+            }
+            catch { }
 
-            try { value = method.Invoke(null, new object[] { args }); }
-            catch (Exception) { }
-            
-            return value;
+            return null;
         }
 
         static void SafeSetProperty(object item, string name, object value)
@@ -45,6 +46,10 @@ namespace IronAHK.Rusty
                 var type = stack[i].GetMethod().DeclaringType;
 
                 if (type == typeof(Core))
+                    continue;
+
+                // UNDONE: better way to check correct type for reflecting local methods
+                if (type.FullName != "Program")
                     continue;
 
                 var list = type.GetMethods();

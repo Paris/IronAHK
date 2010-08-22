@@ -1,8 +1,10 @@
 ;
-If A_LineNumber != 2
+n = %A_LineNumber%
+If n != 2
 	FileAppend, fail, *
 
-SplitPath, %A_LineFile%, name
+path = %A_LineFile%
+SplitPath, path, name
 If name != line.ahk
 	FileAppend, fail, *
 

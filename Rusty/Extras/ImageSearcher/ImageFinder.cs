@@ -6,19 +6,31 @@ namespace IronAHK.Rusty
 {
     class ImageFinder
     {
-        ImageData sourceImage, findImage;
-        PixelMask findPixel;
-        Size[] regions;
-        Point? match;
-        ManualResetEvent[] resets;
-        int threads = Environment.ProcessorCount;
+        #region Private Data
 
+        private ImageData sourceImage, findImage;
+        private PixelMask findPixel;
+        //private Size[] regions;
+        private CoordProvider Provider;
+        private Point? match;
+        private ManualResetEvent[] resets;
+        private int threads = Environment.ProcessorCount;
+        private object Locker = new object();
+
+        #endregion
+
+        #region Constructor
         public ImageFinder(Bitmap source)
         {
             sourceImage = new ImageData(source);
         }
+        #endregion
+
+        #region Propertys
 
         public byte Variation { get; set; }
+
+        #endregion
 
         public Point? Find(Bitmap findBitmap)
         {
@@ -34,7 +46,7 @@ namespace IronAHK.Rusty
             if (SourceRect.Contains(NeedleRect))
             {
                 resets = new ManualResetEvent[threads];
-                regions = new[] { sourceImage.Size, NeedleRect.Size };
+                Provider = new CoordProvider(sourceImage.Size, NeedleRect.Size);
 
                 for (int i = 0; i < threads; i++)
                 {
@@ -55,7 +67,7 @@ namespace IronAHK.Rusty
             findPixel = new PixelMask(ColorId, Variation);
 
             resets = new ManualResetEvent[threads];
-            regions = new[] { sourceImage.Size, new Size(1, 1) };
+            Provider = new CoordProvider(sourceImage.Size, new Size(1, 1));
 
             for (int i = 0; i < threads; i++)
             {
@@ -69,24 +81,20 @@ namespace IronAHK.Rusty
 
         void PixelWorker(object state)
         {
+            Point? Location;
+            Color pix = new Color();
             int index = (int)state;
 
-            if (regions == null)
+            if(Provider == null)
                 throw new ArgumentNullException();
 
-            foreach (Point Location in Core.MapTraverse(regions[0], regions[1]))
-            {
-                if (match.HasValue)
-                    continue;
+            while((Location = Provider.Next()) != null && !match.HasValue) {
 
-                var pix = sourceImage.Pixel[Location.X, Location.Y];
-
-                if (findPixel.Equals(pix))
-                {
-                    lock (this)
-                    {
-                        if (!match.HasValue)
-                            match = Location;
+                pix = sourceImage.Pixel[Location.Value.X, Location.Value.Y];
+                if(findPixel.Equals(pix)) {
+                    lock(Locker) {
+                        if(!match.HasValue)
+                            match = Location.Value;
                     }
                     break;
                 }
@@ -97,27 +105,21 @@ namespace IronAHK.Rusty
 
         void ImageWorker(object state)
         {
+            Point? Location;
             int index = (int)state;
 
-            if (regions == null)
+            if(Provider == null)
                 throw new ArgumentNullException();
 
-            foreach (Point Location in Core.MapTraverse(regions[0], regions[1]))
-            {
-                if (match.HasValue)
-                    continue;
-
-                if (CompareAt(Location))
-                {
-                    lock (this)
-                    {
-                        if (!match.HasValue)
-                            match = Location;
+            while((Location = Provider.Next()) != null && !match.HasValue) {
+                if(CompareAt(Location.Value)) {
+                    lock(Locker) {
+                        if(!match.HasValue)
+                            match = Location.Value;
                     }
                     break;
                 }
             }
-
             resets[index].Set();
         }
 
@@ -140,25 +142,25 @@ namespace IronAHK.Rusty
 
         class ImageData
         {
-            readonly Size size;
-            readonly Color[,] pixel;
+            readonly Size _size;
+            readonly Color[,] _pixel;
 
             public ImageData(Bitmap bmp)
             {
-                size = bmp.Size;
-                pixel = ColorTable(bmp);
+                _size = bmp.Size;
+                _pixel = ColorTable(bmp);
             }
 
             public PixelMask[,] PixelMask { get; set; }
 
             public Size Size
             {
-                get { return Size; }
+                get { return _size; }
             }
 
             public Color[,] Pixel
             {
-                get { return Pixel; }
+                get { return _pixel; }
             }
 
             Color[,] ColorTable(Bitmap bmp)
