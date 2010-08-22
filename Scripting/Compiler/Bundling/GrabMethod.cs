@@ -41,13 +41,35 @@ namespace IronAHK.Scripting
             MethodsDone.Add(Original, Builder);
             
             // Explicit interface implementations require specifying which method is being overridden.
-            if(Original.IsFinal && Original.Name.Contains("."))
+            if(Original.IsFinal)
             {
-                MethodInfo Overriding = FindBaseMethod(Original, Original.DeclaringType);
-                
-                if(Overriding != null)
-                    On.DefineMethodOverride(Builder, Overriding);
+                if(Original.Name.Contains("."))
+                {
+                    MethodInfo Overriding = FindBaseMethod(Original, Original.DeclaringType);
+                    
+                    if(Overriding != null)
+                        On.DefineMethodOverride(Builder, Overriding);
+                }
+                else
+                {
+                    // Crawl among the interfaces attempting to guess the method that is being overridden.
+                    foreach(Type T in Original.DeclaringType.GetInterfaces())
+                    {
+                        foreach(MethodInfo M in T.GetMethods())
+                        {
+                            if(M.IsAbstract && M.Name == Original.Name)
+                            {
+                                On.DefineMethodOverride(Builder, M);
+                                
+                                goto foundoverride; // For lack of "break 2" statement.
+                            }
+                        }
+                    }
+                    
+                }
             }
+            
+        foundoverride:
             
             Builder.SetImplementationFlags(Original.GetMethodImplementationFlags());
             
