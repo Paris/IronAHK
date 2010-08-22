@@ -6,7 +6,6 @@ namespace IronAHK.Rusty
 {
     class ProgressDialog : Form
     {
-        private Container components;
         private ProgressBar mProgressBar;
         private Label mSubText;
         private Label mMainText;
@@ -39,18 +38,6 @@ namespace IronAHK.Rusty
         {
             InitializeComponent();
             StartPosition = FormStartPosition.CenterScreen;
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                if (components != null)
-                {
-                    components.Dispose();
-                }
-            }
-            base.Dispose(disposing);
         }
 
         private void InitializeComponent()

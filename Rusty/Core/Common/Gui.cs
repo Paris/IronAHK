@@ -71,9 +71,31 @@ namespace IronAHK.Rusty
             
         }
 
-        static void TV_NodeOptions(ref TreeNode node, string options)
+        static void TV_NodeOptions(TreeNode node, string options)
         {
+            if (string.IsNullOrEmpty(options))
+                return;
 
+            foreach (var opt in ParseOptions(options))
+            {
+                var on = opt[0] != '-';
+                var mode = opt.Substring(!on || opt[0] == '+' ? 1 : 0).ToLowerInvariant();
+
+                switch (mode)
+                {
+                    // TODO: TV_Modify extended options
+                    case Keyword_Bold: node.NodeFont = new Font(node.TreeView.Font, on ? FontStyle.Bold : FontStyle.Regular); break;
+                    case Keyword_Check: node.Checked = on; break;
+                    case Keyword_Select: node.TreeView.SelectedNode = node; break;
+                    case Keyword_Vis: node.EnsureVisible(); break;
+                }
+            }
+        }
+
+        static TreeNode TV_FindNode(TreeView parent, long id)
+        {
+            var match = parent.Nodes.Find(id.ToString(), true);
+            return match.Length == 0 ? null : match[0];
         }
 
         static Bitmap GetScreen(Rectangle rect)

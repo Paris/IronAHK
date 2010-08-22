@@ -1,4 +1,6 @@
+using System;
 using System.CodeDom;
+using System.Reflection;
 
 namespace IronAHK.Scripting
 {
@@ -74,8 +76,57 @@ namespace IronAHK.Scripting
 
             switch (cmd.ToUpperInvariant())
             {
+                #region Assembly manifest
+
+                case "ASSEMBLYTITLE":
+                    if (!string.IsNullOrEmpty(parts[1]))
+                        AddAssemblyAttribute(typeof(AssemblyTitleAttribute), parts[1]);
+                    break;
+
+                case "ASSEMBLYDESCRIPTION":
+                    if (!string.IsNullOrEmpty(parts[1]))
+                        AddAssemblyAttribute(typeof(AssemblyDescriptionAttribute), parts[1]);
+                    break;
+
+                case "ASSEMBLYCONFIGURATION":
+                    if (!string.IsNullOrEmpty(parts[1]))
+                        AddAssemblyAttribute(typeof(AssemblyConfigurationAttribute), parts[1]);
+                    break;
+
+                case "ASSEMBLYCOMPANY":
+                    if (!string.IsNullOrEmpty(parts[1]))
+                        AddAssemblyAttribute(typeof(AssemblyCompanyAttribute), parts[1]);
+                    break;
+
+                case "ASSEMBLYPRODUCT":
+                    if (!string.IsNullOrEmpty(parts[1]))
+                        AddAssemblyAttribute(typeof(AssemblyProductAttribute), parts[1]);
+                    break;
+
+                case "ASSEMBLYCOPYRIGHT":
+                    if (!string.IsNullOrEmpty(parts[1]))
+                        AddAssemblyAttribute(typeof(AssemblyCopyrightAttribute), parts[1]);
+                    break;
+
+                case "ASSEMBLYTRADEMARK":
+                    if (!string.IsNullOrEmpty(parts[1]))
+                        AddAssemblyAttribute(typeof(AssemblyTrademarkAttribute), parts[1]);
+                    break;
+
+                case "ASSEMBLYCULTURE":
+                    if (!string.IsNullOrEmpty(parts[1]))
+                        AddAssemblyAttribute(typeof(AssemblyCultureAttribute), parts[1]);
+                    break;
+
+                case "ASSEMBLYVERSION":
+                    if (!string.IsNullOrEmpty(parts[1]))
+                        AddAssemblyAttribute(typeof(AssemblyVersionAttribute), parts[1]);
+                    break;
+
+                #endregion
+
                 case "CLIPBOARDTIMEOUT":
-                    ClipboardTimeout = numeric ? value : ClipboardTimeoutDefault;
+                    ClipboardTimeout = numeric ? value : ClipboardTimeoutDefault;   
                     break;
 
                 case "COMMENTFLAG":
@@ -138,6 +189,15 @@ namespace IronAHK.Scripting
                 default:
                     throw new ParseException(ExUnknownDirv);
             }
+        }
+
+        void AddAssemblyAttribute(Type attribute, object value)
+        {
+            var type = new CodeTypeReference(attribute);
+            type.UserData.Add(RawData, attribute);
+            var arg = new CodeAttributeArgument(new CodePrimitiveExpression(value));
+            var dec = new CodeAttributeDeclaration(type, arg);
+            assemblyAttributes.Add(dec);
         }
     }
 }

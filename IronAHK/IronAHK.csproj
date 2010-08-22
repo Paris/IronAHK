@@ -85,6 +85,19 @@
     <None Include="Site\clean.php" />
     <None Include="Site\docs\commands\.gitignore" />
     <None Include="Site\download\.htaccess" />
+    <Content Include="..\.gitattributes">
+      <Link>.gitattributes</Link>
+    </Content>
+    <Content Include="..\.gitignore">
+      <Link>.gitignore</Link>
+    </Content>
+    <Content Include="Site\docs\syntax\command\index.html" />
+    <Content Include="Site\docs\syntax\directive\index.html" />
+    <Content Include="Site\docs\syntax\expression\index.html" />
+    <Content Include="Site\docs\syntax\flow\index.html" />
+    <Content Include="Site\docs\syntax\function\index.html" />
+    <Content Include="Site\docs\syntax\label\index.html" />
+    <Content Include="Site\docs\syntax\variable\index.html" />
     <Content Include="Site\download\nightly\blank.txt" />
   </ItemGroup>
   <ItemGroup>
@@ -109,6 +122,7 @@
     <Content Include="Site\docs\images\tick.png" />
     <Content Include="Site\docs\main.js" />
     <Content Include="Site\forum\index.html" />
+    <Content Include="Site\ga.js" />
     <Content Include="Site\images\countdown.png" />
     <Content Include="Site\images\editor.png" />
     <Content Include="Site\images\helloworld.png" />
@@ -135,6 +149,7 @@
     <Content Include="Site\images\computer.png" />
     <Content Include="Site\images\package.png" />
     <Content Include="Site\images\page_white_csharp.png" />
+    <Content Include="Site\index.css" />
     <Content Include="Site\index.html" />
     <Content Include="Site\index2.html" />
     <Content Include="Site\robots.txt" />

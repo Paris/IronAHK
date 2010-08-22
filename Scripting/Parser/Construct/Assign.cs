@@ -5,22 +5,6 @@ namespace IronAHK.Scripting
 {
     partial class Parser
     {
-        CodeArrayIndexerExpression VarRef(params CodeExpression[] name)
-        {
-            var vars = new CodePropertyReferenceExpression(new CodeTypeReferenceExpression(typeof(Script)), VarProperty);
-            return new CodeArrayIndexerExpression(vars, name);
-        }
-
-        CodeArrayIndexerExpression VarRef(string name)
-        {
-            return VarRef(new CodePrimitiveExpression(name));
-        }
-
-        CodeBinaryOperatorExpression VarAssign(CodeArrayIndexerExpression name, CodeExpression value)
-        {
-            return new CodeBinaryOperatorExpression(name, CodeBinaryOperatorType.Assign, value);
-        }
-
         CodeExpressionStatement ParseAssign(string code)
         {
             #region Variables
@@ -88,9 +72,19 @@ namespace IronAHK.Scripting
 
             #region Result
 
+            CodeExpression left;
+            var nameLow = name.ToLowerInvariant();
+
+            if (libProperties.ContainsKey(nameLow))
+                left = new CodePropertyReferenceExpression(new CodeTypeReferenceExpression(bcl), libProperties[nameLow]);
+            else
+                left = VarId(name);
+
             CodeExpression result = value == null ? new CodePrimitiveExpression(null) :
-                IsExpressionParameter(value) ? ParseSingleExpression(value.TrimStart(Spaces).Substring(2)) : VarNameOrBasicString(value, true);
-            return new CodeExpressionStatement(VarAssign(VarId(name), result));
+                IsExpressionParameter(value) ? ParseSingleExpression(value.TrimStart(Spaces).Substring(2)) : VarIdExpand(value);
+
+            var assign = new CodeBinaryOperatorExpression(left, CodeBinaryOperatorType.Assign, result);
+            return new CodeExpressionStatement(assign);
 
             #endregion
         }

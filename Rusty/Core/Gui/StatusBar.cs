@@ -24,11 +24,7 @@ namespace IronAHK.Rusty
             if (PartNumber != 0)
                 PartNumber--;
 
-            int max = 0;
-            foreach (var panel in status.Panels)
-                max++;
-
-            if ((PartNumber != 0 && PartNumber > max) || PartNumber < 0)
+            if ((PartNumber != 0 && PartNumber > status.Panels.Count) || PartNumber < 0)
                 return;
 
             try { status.Panels[PartNumber].Icon = new Icon(Filename); }
@@ -74,10 +70,7 @@ namespace IronAHK.Rusty
                 return;
 
             PartNumber--;
-
-            int max = 0;
-            foreach (var panel in status.Panels)
-                max++;
+            var max = status.Panels.Count;
 
             if (PartNumber == max)
             {

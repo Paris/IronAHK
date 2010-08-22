@@ -5,7 +5,7 @@ namespace IronAHK.Scripting
 {
     partial class Parser
     {
-        [Conditional("LEGACY")]
+        [Conditional(Legacy)]
         void Translate(ref string code)
         {
             #region Variables
@@ -90,7 +90,6 @@ namespace IronAHK.Scripting
                 case "setbatchlines":
                 case "setcontroldelay":
                 case "setdefaultmousespeed":
-                case "setformat":
                 case "setkeydelay":
                 case "setmousedelay":
                 case "setstorecapslockmode":
@@ -111,6 +110,20 @@ namespace IronAHK.Scripting
                         replaced.Append(parts[1]);
                     else
                         replaced.Append(NullTxt);
+                    break;
+
+                case "setformat":
+                    if (parts.Length != 2)
+                        throw new ParseException(ExTooFewParams);
+                    replaced.Append("A_Format");
+                    const string fast = "fast";
+                    parts[0] = parts[0].Substring(1, parts[0].Length - 2);
+                    if (parts[0].EndsWith(fast, System.StringComparison.OrdinalIgnoreCase))
+                        parts[0] = parts[0].Substring(0, parts[0].Length - fast.Length);
+                    replaced.Append(parts[0]);
+                    replaced.Append(AssignPre);
+                    replaced.Append(Equal);
+                    replaced.Append(parts[1]);
                     break;
 
                 case "autotrim":
@@ -579,8 +592,7 @@ namespace IronAHK.Scripting
                 code = replaced.ToString();
         }
 
-
-        [Conditional("LEGACY")]
+        [Conditional(Legacy)]
         void ParameterPrepend(ref string param, string insert)
         {
             if (IsExpressionParameter(param))

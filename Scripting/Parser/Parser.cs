@@ -12,9 +12,11 @@ namespace IronAHK.Scripting
 
         const string mainScope = "";
         const string className = "Program";
+        readonly Type bcl = typeof(Script).BaseType;
         CodeEntryPointMethod main = new CodeEntryPointMethod();
         Dictionary<string, CodeMemberMethod> methods = new Dictionary<string, CodeMemberMethod>();
         CodeStatementCollection prepend = new CodeStatementCollection();
+        CodeAttributeDeclarationCollection assemblyAttributes = new CodeAttributeDeclarationCollection();
 
         string fileName;
         int line;
@@ -31,15 +33,21 @@ namespace IronAHK.Scripting
             get
             {
                 var unit = new CodeCompileUnit();
-                var bcl = typeof(Script);
 
                 var space = new CodeNamespace(bcl.Namespace + ".Instance");
                 unit.Namespaces.Add(space);
+
+                AddAssemblyAttribute(typeof(CLSCompliantAttribute), true);
+                unit.AssemblyCustomAttributes.AddRange(assemblyAttributes);
+                assemblyAttributes.Clear();
 
                 var container = new CodeTypeDeclaration(className);
                 container.BaseTypes.Add(bcl);
                 container.Attributes = MemberAttributes.Private;
                 space.Types.Add(container);
+
+                if (!NoTrayIcon)
+                    prepend.Add(new CodeExpressionStatement((CodeMethodInvokeExpression)InternalMethods.CreateTrayMenu));
 
                 for (int i = 0; i < prepend.Count; i++)
                 {
@@ -81,6 +89,7 @@ namespace IronAHK.Scripting
 
         public Parser()
         {
+            ScanLibrary();
             main.CustomAttributes.Add(new CodeAttributeDeclaration(new CodeTypeReference(typeof(STAThreadAttribute))));
             methods.Add(mainScope, main);
         }

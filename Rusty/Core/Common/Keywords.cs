@@ -333,6 +333,18 @@ namespace IronAHK.Rusty
         const string Keyword_FormatDecimal = "d";
         const string Keyword_IniSectionOpen = "[";
         const char Keyword_IniKeyAssign = '=';
+        const string Keyword_Focused = "focused";
+        const string Keyword_Attachments = "attachments";
+        const string Keyword_Bcc = "bcc";
+        const string Keyword_CC = "cc";
+        const string Keyword_From = "from";
+        const string Keyword_ReplyTo = "replyto";
+        const string Keyword_Host = "host";
+        const char Keyword_Port = ':';
+        const string Keyword_ARGB = "argb";
+        const string Keyword_Variation = "variation";
+        const string Keyword_Trans = "trans";
+        const string Keyword_Full = "full";
 
         const char Keyword_ModifierWin = '#';
         const char Keyword_ModifierAlt = '!';

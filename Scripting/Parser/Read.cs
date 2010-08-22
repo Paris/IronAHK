@@ -128,6 +128,10 @@ namespace IronAHK.Scripting
                             }
                             break;
 
+                        case "NODYNAMICVARS":
+                            DynamicVars = false;
+                            break;
+
                         case "NOENV":
                             NoEnv = true;
                             break;
@@ -242,6 +246,9 @@ namespace IronAHK.Scripting
                 #region Statement
 
                 code = code.Trim(Spaces);
+
+                if (code.StartsWith(new string(new[] { MultiComB, MultiComA })))
+                    code = code.Substring(2);
 
                 if (code.Length == 0 || IsCommentLine(code))
                     continue;
