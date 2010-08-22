@@ -1,27 +1,39 @@
-﻿using System;
+﻿using System.Drawing;
 using System.Windows.Forms;
 
 namespace IronAHK.Rusty
 {
     partial class Core
     {
-        // TODO: organise TreeView.cs
-
         /// <summary>
-        /// Adds a new item to the TreeView and returns its unique Item ID number (or 0 upon failure). Name is the displayed text of the item, which can be text or numeric (including numeric expression results). ParentItemID is the ID number of the new item's parent (omit it or specify 0 to add the item at the top level). When adding a large number of items, performance can be improved by using GuiControl, -Redraw, MyTreeView before adding the items, and GuiControl, +Redraw, MyTreeView afterward.
+        /// Adds a new node to the TreeView.
         /// </summary>
-        /// <param name="Name"></param>
-        /// <param name="ParentItemID"></param>
-        /// <param name="Options"></param>
-        /// <returns></returns>
-        public static int TV_Add(string Name, int ParentItemID, string Options)
+        /// <param name="text">The node text.</param>
+        /// <param name="parent">The optional parent node ID.</param>
+        /// <param name="options">See <see cref="TV_Modify"/>.</param>
+        /// <returns>The ID of the created node.</returns>
+        public static long TV_Add(string text = null, long parent = 0, string options = null)
         {
             var tree = DefaultTreeView;
 
             if (tree == null)
                 return 0;
 
-            throw new NotImplementedException(); // TODO: TV_Add
+            text = text ?? string.Empty;
+            TreeNode node;
+
+            if (parent == 0)
+                node = tree.Nodes.Add(text);
+            else
+            {
+                var top = TV_FindNode(tree, parent);
+                node = top == null ? tree.Nodes.Add(text) : top.Nodes.Add(text);
+            }
+
+            var id = node.Handle.ToInt64();
+            node.Name = id.ToString();
+            TV_NodeOptions(node, options);
+            return id;
         }
 
         /// <summary>
@@ -211,20 +223,37 @@ namespace IronAHK.Rusty
         }
 
         /// <summary>
-        /// Modifies the attributes and/or name of an item. It returns the item's own ID upon success or 0 upon failure (or partial failure). When only the first parameter is present, the specified item is selected. When NewName is omitted, the current name is left unchanged. For Options, see the list above.
+        /// Modifies the attributes and/or text of a node.
         /// </summary>
-        /// <param name="ItemID"></param>
-        /// <param name="Options"></param>
-        /// <param name="NewName"></param>
-        /// <returns></returns>
-        public static int TV_Modify(int ItemID, string Options, string NewName)
+        /// <param name="id">The node ID.</param>
+        /// <param name="options">
+        /// <list type="bullet">
+        /// <item><term><c>bold</c></term>: <description>displays <paramref name="text"/> in bold</description></item>
+        /// <item><term><c>check</c></term>: <description>shows a checkmark beside the node</description></item>
+        /// <item><term><c>select</c></term>: <description>selects the node</description></item>
+        /// <item><term><c>vis</c></term>: <description>ensures the node is visible</description></item>
+        /// </list>
+        /// </param>
+        /// <param name="text">The new node text. Leave blank to keep the current text.</param>
+        /// <returns>The ID of the modified node.</returns>
+        public static long TV_Modify(long id, string options, string text = null)
         {
             var tree = DefaultTreeView;
 
             if (tree == null)
                 return 0;
 
-            throw new NotImplementedException(); // TODO: TV_Modify
+            var node = TV_FindNode(tree, id);
+
+            if (node == null)
+                return 0;
+
+            if (text != null)
+                node.Text = text;
+
+            TV_NodeOptions(node, options);
+
+            return node.Handle.ToInt64();
         }
     }
 }

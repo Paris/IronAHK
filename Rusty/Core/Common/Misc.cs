@@ -7,15 +7,6 @@ namespace IronAHK.Rusty
 {
     partial class Core
     {
-        #region Disk
-
-        static string[] Glob(string pattern)
-        {
-            return new string[] { };
-        }
-
-        #endregion
-
         #region Process
 
         static Process FindProcess(string name)

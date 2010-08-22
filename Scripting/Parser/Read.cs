@@ -128,6 +128,10 @@ namespace IronAHK.Scripting
                             }
                             break;
 
+                        case "NODYNAMICVARS":
+                            DynamicVars = false;
+                            break;
+
                         case "NOENV":
                             NoEnv = true;
                             break;

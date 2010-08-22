@@ -130,7 +130,7 @@ namespace IronAHK.Rusty
                             guis[id].Size = size;
                         }
 
-                        var location = guis[id].Location;
+                        var location = new Point();
 
                         if (pos[2] != null)
                             location.X = (int)pos[2];
@@ -138,6 +138,9 @@ namespace IronAHK.Rusty
                             location.Y = (int)pos[3];
 
                         var screen = Screen.PrimaryScreen.Bounds;
+
+                        if (location.IsEmpty)
+                            center = true;
 
                         if (center)
                             cX = cY = true;
@@ -147,13 +150,8 @@ namespace IronAHK.Rusty
                         if (cY)
                             location.Y = (screen.Height - guis[id].Size.Height) / 2 + screen.Y;
 
-                        if (cX && cY || location.IsEmpty)
-                            guis[id].StartPosition = FormStartPosition.CenterScreen;
-                        else
-                        {
-                            guis[id].StartPosition = FormStartPosition.Manual;
-                            guis[id].Location = location;
-                        }
+                        guis[id].StartPosition = FormStartPosition.Manual;
+                        guis[id].Location = location;
 
                         guis[id].Text = Param3;
 
@@ -1481,14 +1479,28 @@ namespace IronAHK.Rusty
                                         break;
 
                                     int x = 0, y = 0;
+                                    int px = 0, py = 0;
 
                                     foreach (Control ctrl in all)
                                     {
+                                        if (ctrl == control)
+                                            continue;
+
                                         x = Math.Max(x, ctrl.Location.X + ctrl.Width);
                                         y = Math.Max(y, ctrl.Location.Y + ctrl.Height);
+
+                                        px = ctrl.Margin.Right;
+                                        py = ctrl.Margin.Bottom;
                                     }
 
-                                    control.Location = alt ? new Point(x, control.Location.Y) : new Point(control.Location.X, y);
+                                    px += control.Margin.Left;
+                                    py += control.Margin.Top;
+
+                                    // don't know why this is necessary:
+                                    px *= 2;
+                                    py *= 2;
+
+                                    control.Location = alt ? new Point(px + x, control.Location.Y) : new Point(control.Location.X, py + y);
                                 }
                                 break;
 

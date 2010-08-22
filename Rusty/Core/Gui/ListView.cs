@@ -120,7 +120,7 @@ namespace IronAHK.Rusty
         /// </list>
         /// </param>
         /// <returns>The number of columns or rows as specified by <paramref name="type"/>.</returns>
-        public static int LV_GetCount(string type = "")
+        public static int LV_GetCount(string type = null)
         {
             var list = DefaultListView;
 
@@ -130,7 +130,7 @@ namespace IronAHK.Rusty
             if (string.IsNullOrEmpty(type))
                 return list.Items.Count;
 
-            type = type.ToLowerInvariant();
+            type = string.IsNullOrEmpty(type) ? string.Empty : type.ToLowerInvariant();
 
             if (type == Keyword_Column || type.Length == 1 && type[0] == Keyword_Column[0] || type.Length == 3 && Keyword_Column.StartsWith(type))
                 return list.Columns.Count;
@@ -161,14 +161,14 @@ namespace IronAHK.Rusty
         /// </list>
         /// </param>
         /// <returns>The next row number matching the specified criteria.</returns>
-        public static int LV_GetNext(int index, string type = "")
+        public static int LV_GetNext(int index, string type = null)
         {
             var list = DefaultListView;
 
             if (list == null)
                 return 0;
 
-            type = type.ToLowerInvariant();
+            type = string.IsNullOrEmpty(type) ? string.Empty : type.ToLowerInvariant();
 
             for (int i = Math.Max(0, index); i < list.Items.Count; i++)
             {

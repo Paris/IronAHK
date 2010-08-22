@@ -162,7 +162,14 @@ namespace IronAHK.Scripting
                     #endregion
                     #region Variables
                     else if (IsIdentifier(part, true) && !IsKeyword(part))
-                        parts[i] = VarIdOrConstant(part);
+                    {
+                        var low = part.ToLowerInvariant();
+
+                        if (libProperties.ContainsKey(low))
+                            parts[i] = new CodePropertyReferenceExpression(new CodeTypeReferenceExpression(bcl), libProperties[low]);
+                        else
+                            parts[i] = VarIdOrConstant(part);
+                    }
                     #endregion
                     #region JSON
                     else if (part.Length == 1 && part[0] == BlockOpen)
@@ -243,7 +250,7 @@ namespace IronAHK.Scripting
                         if (dynamic)
                         {
                             invoke = (CodeMethodInvokeExpression)InternalMethods.FunctionCall;
-                            invoke.Parameters.Add(VarNameOrBasicString(name, true));
+                            invoke.Parameters.Add(VarIdExpand(name));
                         }
                         else
                             invoke = LocalMethodInvoke(name);
@@ -585,7 +592,7 @@ namespace IronAHK.Scripting
                                 goto next;
                             }
                         }
-                        invoke.Parameters.Add(WrappedComplexVar(parts[n]));
+                        invoke.Parameters.Add(VarMixedExpr(parts[n]));
 
                     next:
                         parts[i] = invoke;
@@ -632,7 +639,7 @@ namespace IronAHK.Scripting
                             }
 
                             var eval = (CodeMethodInvokeExpression)InternalMethods.IfElse;
-                            eval.Parameters.Add(WrappedComplexVar(parts[x]));
+                            eval.Parameters.Add(VarMixedExpr(parts[x]));
                             var ternary = new CodeTernaryOperatorExpression { Condition = eval };
 
                             int depth = 1, max = parts.Count - i, start = i;
@@ -685,7 +692,7 @@ namespace IronAHK.Scripting
                                 throw new ParseException("Nullable assignment with no right-hand operator");
 
                             var result = InternalVariable;
-                            var left = new CodeBinaryOperatorExpression(result, CodeBinaryOperatorType.Assign, WrappedComplexVar(parts[x]));
+                            var left = new CodeBinaryOperatorExpression(result, CodeBinaryOperatorType.Assign, VarMixedExpr(parts[x]));
 
                             var eval = (CodeMethodInvokeExpression)InternalMethods.IfElse;
                             eval.Parameters.Add(left);
@@ -717,7 +724,7 @@ namespace IronAHK.Scripting
 
                             invoke.Method = (CodeMethodReferenceExpression)InternalMethods.OperateUnary;
                             invoke.Parameters.Add(OperatorAsFieldReference(op));
-                            invoke.Parameters.Add(WrappedComplexVar(parts[y]));
+                            invoke.Parameters.Add(VarMixedExpr(parts[y]));
                             parts[i] = invoke;
                             parts.RemoveAt(y);
                         }
@@ -731,7 +738,7 @@ namespace IronAHK.Scripting
                                 boolean.Operator = op == Script.Operator.BooleanAnd ? CodeBinaryOperatorType.BooleanAnd : CodeBinaryOperatorType.BooleanOr;
 
                                 var iftest = (CodeMethodInvokeExpression)InternalMethods.IfElse;
-                                iftest.Parameters.Add(WrappedComplexVar(parts[x]));
+                                iftest.Parameters.Add(VarMixedExpr(parts[x]));
                                 boolean.Left = iftest;
 
                                 iftest = (CodeMethodInvokeExpression)InternalMethods.IfElse;
@@ -745,7 +752,7 @@ namespace IronAHK.Scripting
                                 }
                                 else
                                 {
-                                    iftest.Parameters.Add(WrappedComplexVar(parts[y]));
+                                    iftest.Parameters.Add(VarMixedExpr(parts[y]));
                                     parts.RemoveAt(y);
                                 }
                                 boolean.Right = iftest;
@@ -774,9 +781,9 @@ namespace IronAHK.Scripting
                                 if (LaxExpressions && parts[i] is Script.Operator && (Script.Operator)parts[i] == Script.Operator.Concat && parts[x] as CodeBinaryOperatorType? == CodeBinaryOperatorType.Assign)
                                     invoke.Parameters.Add(new CodePrimitiveExpression(string.Empty));
                                 else
-                                    invoke.Parameters.Add(WrappedComplexVar(parts[x]));
+                                    invoke.Parameters.Add(VarMixedExpr(parts[x]));
 
-                                invoke.Parameters.Add(WrappedComplexVar(parts[y]));
+                                invoke.Parameters.Add(VarMixedExpr(parts[y]));
                                 parts[x] = invoke;
 
                             next:
