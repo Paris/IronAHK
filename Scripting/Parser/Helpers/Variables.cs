@@ -8,20 +8,67 @@ namespace IronAHK.Scripting
 {
     partial class Parser
     {
-        #region Names
+        #region Name
 
-        CodeExpression VarNameOrBasicString(string code, bool asValue)
+        CodeArrayIndexerExpression VarId(string name)
+        {
+            return VarId(VarIdExpand(name.ToLowerInvariant()));
+        }
+
+        CodeArrayIndexerExpression VarId(CodeExpression name)
+        {
+            var scope = Scope + ScopeVar;
+
+            if (name is CodePrimitiveExpression)
+            {
+                var raw = (CodePrimitiveExpression)name;
+
+                if (raw.Value is string)
+                    return VarRef(scope + (string)raw.Value);
+            }
+
+            return VarRef(StringConcat(new CodePrimitiveExpression(scope), name));
+        }
+
+        #endregion
+
+        #region Reference
+
+        CodeArrayIndexerExpression VarRef(params CodeExpression[] name)
+        {
+            var vars = new CodePropertyReferenceExpression(new CodeTypeReferenceExpression(typeof(Script)), VarProperty);
+            return new CodeArrayIndexerExpression(vars, name);
+        }
+
+        CodeArrayIndexerExpression VarRef(string name)
+        {
+            return VarRef(new CodePrimitiveExpression(name));
+        }
+
+        CodeBinaryOperatorExpression VarAssign(CodeArrayIndexerExpression name, CodeExpression value)
+        {
+            return new CodeBinaryOperatorExpression(name, CodeBinaryOperatorType.Assign, value);
+        }
+
+        #endregion
+
+        #region Expansion
+
+        CodeExpression VarIdExpand(string code)
         {
             code = EscapedString(code, true);
 
-            if (asValue)
-            {
-                object result;
-                if (IsPrimativeObject(code, out result))
-                    return new CodePrimitiveExpression(result);
+            object result;
 
-                if (code.IndexOf(Resolve) == -1)
-                    return new CodePrimitiveExpression(code);
+            if (IsPrimativeObject(code, out result))
+                return new CodePrimitiveExpression(result);
+
+            if (code.IndexOf(Resolve) == -1)
+                return new CodePrimitiveExpression(code);
+
+            if (!DynamicVars)
+            {
+                throw new ParseException(ExNoDynamicVars);
             }
 
             var parts = new List<CodeExpression>();
@@ -38,7 +85,7 @@ namespace IronAHK.Scripting
                     {
                         if (sub.Length == 0)
                             throw new ParseException(ExEmptyVarRef, i);
-                        parts.Add(ComplexVarRef(VarIdOrConstant(sub.ToString())));
+                        parts.Add(VarRefOrPrimitive(VarIdOrConstant(sub.ToString())));
                         sub.Length = 0;
                         id = false;
                     }
@@ -63,10 +110,7 @@ namespace IronAHK.Scripting
 
             CodeExpression[] all = parts.ToArray();
 
-            if (asValue)
-                return StringConcat(all);
-            else
-                return VarRef(all);
+            return StringConcat(all);
         }
 
         CodeExpression VarIdOrConstant(string name)
@@ -81,6 +125,12 @@ namespace IronAHK.Scripting
 
                 case "a_scriptdir":
                     return new CodePrimitiveExpression(Path.GetDirectoryName(Path.GetFullPath(fileName)));
+
+                case "a_scriptfullpath":
+                    return new CodePrimitiveExpression(Path.GetFullPath(fileName));
+
+                case "a_scriptname":
+                    return new CodePrimitiveExpression(Path.GetFileName(Path.GetFullPath(fileName)));
 
                 case "a_thisfunc":
                     return new CodePrimitiveExpression(Scope);
@@ -101,34 +151,15 @@ namespace IronAHK.Scripting
                     return VarId(name);
             }
         }
-        
-        #endregion
 
-        #region Wrappers
-
-        CodeArrayIndexerExpression VarId(string name)
+        CodeArrayIndexerExpression InternalVariable
         {
-            return VarId(VarNameOrBasicString(name.ToLowerInvariant(), true));
-        }
-
-        CodeArrayIndexerExpression VarId(CodeExpression name)
-        {
-            var scope = Scope + ScopeVar;
-
-            if (name is CodePrimitiveExpression)
-            {
-                var raw = (CodePrimitiveExpression)name;
-
-                if (raw.Value is string)
-                    return VarRef(scope + (string)raw.Value);
-            }
-
-            return VarRef(StringConcat(new CodePrimitiveExpression(scope), name));
+            get { return VarRef(string.Concat(Scope, ScopeVar + "\0", InternalID)); }
         }
 
         #endregion
 
-        #region Complex
+        #region Checks
 
         bool IsVarAssignment(object expr)
         {
@@ -139,8 +170,12 @@ namespace IronAHK.Scripting
         {
             return expr is CodeArrayIndexerExpression;
         }
+        
+        #endregion
 
-        CodeExpression ComplexVarRef(object var)
+        #region Casts
+
+        CodeExpression VarRefOrPrimitive(object var)
         {
             if (var is CodePrimitiveExpression)
                 return (CodePrimitiveExpression)var;
@@ -151,51 +186,9 @@ namespace IronAHK.Scripting
             return (CodeArrayIndexerExpression)var;
         }
 
-        CodeBinaryOperatorExpression ComplexVarAssign(object var)
+        CodeExpression VarMixedExpr(object part)
         {
-            if (!IsVarAssignment(var as CodeExpression))
-                throw new ArgumentException();
-
-            return (CodeBinaryOperatorExpression)var;
-        }
-
-        CodeExpression WrappedComplexVar(object part)
-        {
-            return IsVarReference(part) ? ComplexVarRef(part) : IsVarAssignment(part) ? ComplexVarAssign(part) : (CodeExpression)part;
-        }
-
-        #endregion
-
-        #region Misc
-
-        CodeExpression StringConcat(params CodeExpression[] parts)
-        {
-            var list = new List<CodeExpression>(parts.Length);
-
-            foreach (var part in parts)
-            {
-                if (part is CodePrimitiveExpression)
-                {
-                    var value = ((CodePrimitiveExpression)part).Value;
-                    if (value is string && ((string)value).Length == 0)
-                        continue;
-                }
-
-                list.Add(part);
-            }
-
-            if (list.Count == 1)
-                return list[0];
-
-            Type str = typeof(string);
-            var method = (CodeMethodReferenceExpression)InternalMethods.Concat;
-            var all = new CodeArrayCreateExpression(str, list.ToArray());
-            return new CodeMethodInvokeExpression(method, all);
-        }
-
-        CodeArrayIndexerExpression InternalVariable
-        {
-            get { return VarRef("\0" + ScopeVar); }
+            return IsVarReference(part) ? VarRefOrPrimitive(part) : IsVarAssignment(part) ? (CodeBinaryOperatorExpression)part : (CodeExpression)part;
         }
 
         #endregion

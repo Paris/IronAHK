@@ -378,6 +378,11 @@ namespace IronAHK.Scripting
             return value is int || value is long || value is float || value is double || value is decimal;
         }
 
+        internal static bool IsNumeric(Type type)
+        {
+            return type == typeof(int) || type == typeof(long) || type == typeof(float) || type == typeof(double) || type == typeof(decimal);
+        }
+
         #endregion
     }
 }

@@ -1,0 +1,3 @@
+*.ahk	eol=crlf
+*.sh	eol=lf
+*.txt	eol=crlf

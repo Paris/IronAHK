@@ -45,7 +45,7 @@ namespace IronAHK.Setup
                 File.Delete(output);
 
             wix.StartInfo.FileName = "light";
-            wix.StartInfo.Arguments = string.Format("-nologo -sw2738 -ext WixUIExtension.dll \"{0}\" -out \"{1}\"", proj, output);
+            wix.StartInfo.Arguments = string.Format("-nologo -sw2738 -ext WixUIExtension -ext WiXNetFxExtension \"{0}\" -out \"{1}\"", proj, output);
             wix.Start();
             wix.WaitForExit();
             File.Delete(proj);
@@ -85,81 +85,89 @@ namespace IronAHK.Setup
 
             writer.WriteLine("<?xml version='1.0' encoding='utf-8'?>");
             writer.WriteLine("<Wix xmlns='http://schemas.microsoft.com/wix/2006/wi' xmlns:netfx='http://schemas.microsoft.com/wix/NetFxExtension'>");
-            writer.WriteLine("  <Product Id='{0}' Name='{1}' Language='1033' Codepage='Windows-1252' Version='{2}' Manufacturer='{3}' UpgradeCode='{4}'>",
+            writer.WriteLine("<Product Id='{0}' Name='{1}' Language='1033' Codepage='Windows-1252' Version='{2}' Manufacturer='{3}' UpgradeCode='{4}'>",
                 Guid, name, version, author, upgrade);
 
-            writer.WriteLine("    <Package InstallerVersion='200' Compressed='yes' Languages='1033' InstallScope='perMachine' Platform='x{0}' />", x64 ? "64" : "86");
-            writer.WriteLine("    <Media Id='1' Cabinet='{0}.cab' EmbedCab='yes' />", name);
-            writer.WriteLine("    <Directory Id='TARGETDIR' Name='SourceDir'>");
-            writer.WriteLine("      <Directory Id='ProgramFiles{0}Folder' Name='ProgramFiles{0}Folder'>", x64 ? "64" : string.Empty);
-            writer.WriteLine("        <Directory Id='INSTALLDIR' Name='{0}'>", name);
+            writer.WriteLine("<Package InstallerVersion='200' Compressed='yes' Languages='1033' InstallScope='perMachine' Platform='x{0}' />", x64 ? "64" : "86");
+
+            writer.WriteLine("<PropertyRef Id='NETFRAMEWORK20'/>");
+            writer.WriteLine("<Condition Message='This application requires .NET Framework 2.0. Please install the .NET Framework then run this installer again.'>");
+            writer.WriteLine("<![CDATA[Installed OR NETFRAMEWORK20]]>");
+            writer.WriteLine("</Condition>");
+
+            writer.WriteLine("<Media Id='1' Cabinet='{0}.cab' EmbedCab='yes' />", name);
+            writer.WriteLine("<Directory Id='TARGETDIR' Name='SourceDir'>");
+            writer.WriteLine("<Directory Id='ProgramFiles{0}Folder' Name='ProgramFiles{0}Folder'>", x64 ? "64" : string.Empty);
+            writer.WriteLine("<Directory Id='INSTALLDIR' Name='{0}'>", name);
 
             foreach (var dll in new[] { typeof(Core), typeof(IACodeProvider) })
             {
-                writer.WriteLine("          <Component Id='{0}' Guid='{1}'>", IdL, Guid);
-                writer.WriteLine("            <File Id='{0}' Source='{1}' KeyPath='yes' Assembly='.net' AssemblyManifest='{0}' />", Id, dll.Assembly.Location);
-                writer.WriteLine("          </Component>");
+                writer.WriteLine("<Component Id='{0}' Guid='{1}'>", IdL, Guid);
+                writer.WriteLine("<File Id='{0}' Source='{1}' KeyPath='yes' Assembly='.net' AssemblyManifest='{0}' />", Id, dll.Assembly.Location);
+                writer.WriteLine("</Component>");
             }
 
             string exe = Id;
-            writer.WriteLine("          <Component Id='{0}' Guid='{1}'>", IdL, Guid);
-            writer.WriteLine("            <File Id='{0}' Source='{1}'>", exe, main);
-            writer.WriteLine("              <Shortcut Id='{0}' WorkingDirectory='ProgramMenuFolder' Directory='ProgramMenuFolder' Name='{1}.lnk' />", Id, name);
-            writer.WriteLine("            </File>");
-            writer.WriteLine("            <ProgId Id='{0}' Advertise='no' Description='{1} Script'>", Id, name);
-            writer.WriteLine("              <Extension Id='{0}' ContentType='text/plain'>", extension);
-            writer.WriteLine("                <Verb TargetFile='{0}' Id='Open' Command='Open' Argument='&quot;%1&quot; %*' />", exe);
-            writer.WriteLine("                <Verb TargetFile='{0}' Id='Compile' Command='Compile' Argument='/out ! &quot;%1&quot; %*' />", exe); 
-            writer.WriteLine("              </Extension>");
-            writer.WriteLine("            </ProgId>");
-            writer.WriteLine("          </Component>");
+            writer.WriteLine("<Component Id='{0}' Guid='{1}'>", IdL, Guid);
+            writer.WriteLine("<File Id='{0}' Source='{1}' KeyPath='yes'>", exe, main);
+            writer.WriteLine("<Shortcut Id='{0}Script' WorkingDirectory='ProgramMenuFolder' Directory='ProgramMenuFolder' Name='{0}' Advertise='yes' />", name);
+            writer.WriteLine("</File>");
+            writer.WriteLine("<ProgId Id='{0}' Advertise='yes' Description='{1} Script'>", Id, name);
+            writer.WriteLine("<Extension Id='{0}' ContentType='text/plain'>", extension);
+            writer.WriteLine("<Verb Id='Open' Command='Open' Argument='&quot;%1&quot; %*' />", exe);
+            writer.WriteLine("<Verb Id='Compile' Command='Compile' Argument='/out ! &quot;%1&quot; %*' />", exe); 
+            writer.WriteLine("</Extension>");
+            writer.WriteLine("</ProgId>");
+            writer.WriteLine("</Component>");
 
-            writer.WriteLine("          <Component Id='{0}' Guid='{1}'>", IdL, Guid);
-            writer.WriteLine("            <File Id='{0}' Source='{1}' />", Id, license);
-            writer.WriteLine("          </Component>");
+            writer.WriteLine("<Component Id='{0}' Guid='{1}'>", IdL, Guid);
+            writer.WriteLine("<File Id='{0}' Source='{1}' />", Id, license);
+            writer.WriteLine("</Component>");
 
-            writer.WriteLine("          <Directory Id='INSTALLDIR.{0}' Name='{0}'>", Path.GetFileName(docs));
+            writer.WriteLine("<Directory Id='INSTALLDIR.{0}' Name='{0}'>", Path.GetFileName(docs));
             RecurseTree(writer, docs);
-            writer.WriteLine("          </Directory>");
+            writer.WriteLine("</Directory>");
 
-            writer.WriteLine("          <Component Id='{0}' Guid='{1}'>", IdL, Guid);
-            writer.WriteLine("            <RegistryKey Root='HKCR' Key='.{0}'>", extension);
-            writer.WriteLine("              <RegistryValue Value='text' Type='string' KeyPath='yes' Name='PerceivedType' />");
-            writer.WriteLine("            </RegistryKey>");
-            writer.WriteLine("          </Component>");
+            writer.WriteLine("<Component Id='{0}' Guid='{1}'>", IdL, Guid);
+            writer.WriteLine("<RegistryKey Root='HKCR' Key='.{0}'>", extension);
+            writer.WriteLine("<RegistryValue Value='text' Type='string' KeyPath='yes' Name='PerceivedType' />");
+            writer.WriteLine("</RegistryKey>");
+            writer.WriteLine("</Component>");
 
-            writer.WriteLine("        </Directory>");
-            writer.WriteLine("      </Directory>");
+            writer.WriteLine("</Directory>");
+            writer.WriteLine("</Directory>");
 
-            writer.WriteLine("      <Directory Id='ProgramMenuFolder' Name='ProgramMenuFolder'>");
-            writer.WriteLine("        <Component Id='{0}' Guid='{1}' />", IdL, Guid);
-            writer.WriteLine("      </Directory>");
-            writer.WriteLine("    </Directory>");
+            writer.WriteLine("<Directory Id='ProgramMenuFolder' Name='ProgramMenuFolder'>");
+            writer.WriteLine("<Component Id='{0}' Guid='{1}'>", IdL, Guid);
+            writer.WriteLine("<CreateFolder />");
+            writer.WriteLine("</Component>");
+            writer.WriteLine("</Directory>");
+            writer.WriteLine("</Directory>");
 
-            writer.WriteLine("    <Feature Id='{0}' Title='Complete' Absent='allow' Level='1'>", Id);
+            writer.WriteLine("<Feature Id='{0}' Title='Complete' Absent='allow' Level='1'>", Id);
             foreach (var item in components)
-                writer.WriteLine("      <ComponentRef Id='{0}' />", item);
-            writer.WriteLine("    </Feature>");
+                writer.WriteLine("<ComponentRef Id='{0}' />", item);
+            writer.WriteLine("</Feature>");
 
-            writer.WriteLine("    <Property Id='WIXUI_INSTALLDIR' Value='INSTALLDIR' />");
-            writer.WriteLine("    <UIRef Id='WixUI_InstallDir' />");
-            writer.WriteLine("    <Icon Id='MainIcon' SourceFile='{0}' />", favicon);
-            writer.WriteLine("    <Property Id='ARPPRODUCTICON' Value='MainIcon' />");
-            writer.WriteLine("    <WixVariable Id='WixUILicenseRtf' Value='{0}' />", licenseRtf);
-            writer.WriteLine("    <Upgrade Id='{0}'>", upgrade);
-            writer.WriteLine("      <UpgradeVersion Minimum='0.0.0.0' IncludeMinimum='yes' Maximum='{0}' IncludeMaximum='no' Property='UPGRADEFOUND' />", version);
-            writer.WriteLine("      <UpgradeVersion Minimum='{0}' IncludeMinimum='no' OnlyDetect='yes' Property='NEWPRODUCTFOUND' />", version);
-            writer.WriteLine("    </Upgrade>");
-            writer.WriteLine("    <CustomAction Id='PreventDowngrading' Error='Newer version already installed' />");
-            writer.WriteLine("    <InstallExecuteSequence>");
-            writer.WriteLine("      <Custom Action='PreventDowngrading' After='FindRelatedProducts'>NEWPRODUCTFOUND</Custom>");
-            writer.WriteLine("      <RemoveExistingProducts After='InstallFinalize' />");
-            writer.WriteLine("    </InstallExecuteSequence>");
-            writer.WriteLine("    <InstallUISequence>");
-            writer.WriteLine("      <Custom Action='PreventDowngrading' After='FindRelatedProducts'>NEWPRODUCTFOUND</Custom>");
-            writer.WriteLine("    </InstallUISequence>");
+            writer.WriteLine("<Property Id='WIXUI_INSTALLDIR' Value='INSTALLDIR' />");
+            writer.WriteLine("<UIRef Id='WixUI_InstallDir' />");
+            writer.WriteLine("<Icon Id='MainIcon' SourceFile='{0}' />", favicon);
+            writer.WriteLine("<Property Id='ARPPRODUCTICON' Value='MainIcon' />");
+            writer.WriteLine("<WixVariable Id='WixUILicenseRtf' Value='{0}' />", licenseRtf);
+            writer.WriteLine("<Upgrade Id='{0}'>", upgrade);
+            writer.WriteLine("<UpgradeVersion Minimum='0.0.0.0' IncludeMinimum='yes' Maximum='{0}' IncludeMaximum='no' Property='UPGRADEFOUND' />", version);
+            writer.WriteLine("<UpgradeVersion Minimum='{0}' IncludeMinimum='no' OnlyDetect='yes' Property='NEWPRODUCTFOUND' />", version);
+            writer.WriteLine("</Upgrade>");
+            writer.WriteLine("<CustomAction Id='PreventDowngrading' Error='Newer version already installed' />");
+            writer.WriteLine("<InstallExecuteSequence>");
+            writer.WriteLine("<Custom Action='PreventDowngrading' After='FindRelatedProducts'>NEWPRODUCTFOUND</Custom>");
+            writer.WriteLine("<RemoveExistingProducts After='InstallFinalize' />");
+            writer.WriteLine("</InstallExecuteSequence>");
+            writer.WriteLine("<InstallUISequence>");
+            writer.WriteLine("<Custom Action='PreventDowngrading' After='FindRelatedProducts'>NEWPRODUCTFOUND</Custom>");
+            writer.WriteLine("</InstallUISequence>");
 
-            writer.WriteLine("  </Product>");
+            writer.WriteLine("</Product>");
             writer.WriteLine("</Wix>");
         }
 
@@ -171,21 +179,20 @@ namespace IronAHK.Setup
         static void RecurseTree(TextWriter writer, string parent, string root)
         {
             int offset = Directory.GetParent(root).FullName.Length + 1;
-            const string sp = "            ";
 
             foreach (var dir in Directory.GetDirectories(parent))
             {
                 string sub = Path.GetFullPath(dir).Substring(offset).Replace(Path.DirectorySeparatorChar, '.');
-                writer.WriteLine(sp + "<Directory Id='INSTALLDIR.{0}' Name='{1}'>", sub, Path.GetFileName(dir));
+                writer.WriteLine("<Directory Id='INSTALLDIR.{0}' Name='{1}'>", sub, Path.GetFileName(dir));
                 RecurseTree(writer, dir, root);
-                writer.WriteLine(sp + "</Directory>");
+                writer.WriteLine("</Directory>");
             }
 
             foreach (var file in Directory.GetFiles(parent))
             {
-                writer.WriteLine(sp + "<Component Id='{0}' Guid='{1}'>", IdL, Guid);
-                writer.WriteLine(sp + "  <File Id='{0}' Source='{1}' />", Id, file);
-                writer.WriteLine(sp + "</Component>");
+                writer.WriteLine("<Component Id='{0}' Guid='{1}'>", IdL, Guid);
+                writer.WriteLine("<File Id='{0}' Source='{1}' />", Id, file);
+                writer.WriteLine("</Component>");
             }
         }
 

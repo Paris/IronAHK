@@ -15,6 +15,7 @@ CALL :vs
 SET name=IronAHK
 SET config=Release
 SET outpre=bin
+SET sitedocs=%name%\Site\docs\commands
 GOTO :eof
 
 :vs
@@ -42,4 +43,5 @@ FOR /D %%G IN ("*") DO (
 	RMDIR /Q /S "%%G\obj" 2>NUL
 )
 IF EXIST "%outpre%" RMDIR /Q /S "%outpre%"
+FOR /F %%d in ('DIR /AD /B "%sitedocs%"') DO RMDIR /Q /S "%sitedocs%\%%d"
 GOTO :eof

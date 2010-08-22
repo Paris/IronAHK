@@ -130,7 +130,16 @@ namespace IronAHK.Rusty
                     
                     if(string.IsNullOrEmpty(Lookup.Trim())) return System.Windows.Forms.Keys.None;
                     
-                    return (System.Windows.Forms.Keys) Enum.Parse(typeof(System.Windows.Forms.Keys), Lookup);
+                    try 
+                    {
+                        return (System.Windows.Forms.Keys) Enum.Parse(typeof(System.Windows.Forms.Keys), Lookup);
+                    }
+                    catch(ArgumentException)
+                    {
+                        // TODO
+                        Console.Error.WriteLine("Warning, could not look up key: "+Lookup);
+                        return System.Windows.Forms.Keys.None;
+                    }
                 }
                 else return System.Windows.Forms.Keys.None;
             }
@@ -157,7 +166,12 @@ namespace IronAHK.Rusty
                     if(char.IsUpper(C) || Key.Shift)
                         X11.XTestFakeKeyEvent(Display, (uint) Keys.LeftShift, true, 0);
                     
-                    // Fake a key event. Note that some programs filter this kind of events.
+                    // Make sure the key is up before we press it again.
+                    // If X thinks this key is still down, nothing will happen if we press it.
+                    // Likewise, if X thinks that the key is up, this will do no harm.
+                    X11.XTestFakeKeyEvent(Display, Key.Sym, false, 0); 
+                    
+                    // Fake a key event. Note that some programs filter this kind of event.
                     X11.XTestFakeKeyEvent(Display, Key.Sym, true, 0);
                     X11.XTestFakeKeyEvent(Display, Key.Sym, false, 0);
                     

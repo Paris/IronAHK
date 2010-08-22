@@ -42,6 +42,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <DebugSymbols>true</DebugSymbols>
+    <NoWarn>162</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>none</DebugType>
@@ -62,6 +63,7 @@
   <ItemGroup>
     <Compile Include="Compiler\CompilerSetup.cs" />
     <Compile Include="Compiler\Compiler.cs" />
+    <Compile Include="Compiler\Peripheral\AttributeEmitter.cs" />
     <Compile Include="Generator\Emission\Operators.cs" />
     <Compile Include="Generator\Emission\Flow.cs" />
     <Compile Include="Generator\Emission\Members.cs" />
@@ -76,6 +78,8 @@
     <Compile Include="Parser\Construct\Expressions\Operators.cs" />
     <Compile Include="Parser\Construct\Expressions\DateTime.cs" />
     <Compile Include="Parser\Construct\Expressions\Texts.cs" />
+    <Compile Include="Parser\Library.cs" />
+    <Compile Include="Parser\Helpers\Auxiliary.cs" />
     <Compile Include="Parser\Helpers\Translate.cs" />
     <Compile Include="Parser\Options.cs" />
     <Compile Include="Parser\Helpers\Blocks.cs" />
@@ -88,6 +92,7 @@
     <Compile Include="Script\Call.cs" />
     <Compile Include="Script\Conversion.cs" />
     <Compile Include="Script\Application.cs" />
+    <Compile Include="Script\Menu.cs" />
     <Compile Include="Script\Variables.cs" />
     <Compile Include="Script\Objects.cs" />
     <Compile Include="Script\Labels.cs" />
@@ -157,6 +162,7 @@
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ProjectExtensions>
@@ -189,5 +195,8 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Compiler\Bundling\" />
+    <EmbeddedResource Include="..\IronAHK\Site\favicon.ico">
+      <Link>Script\favicon.ico</Link>
+    </EmbeddedResource>
   </ItemGroup>
 </Project>

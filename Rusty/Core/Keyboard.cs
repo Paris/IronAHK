@@ -57,7 +57,6 @@ namespace IronAHK.Rusty
             InitKeyboardHook();
 
             bool? enabled = true;
-            bool error = false;
 
             foreach (var option in ParseOptions(Options))
             {
@@ -66,7 +65,7 @@ namespace IronAHK.Rusty
                     case Keyword_On: enabled = true; break;
                     case Keyword_Off: enabled = false; break;
                     case Keyword_Toggle: enabled = null; break;
-                    case Keyword_UseErrorLevel: error = true; break;
+                    case Keyword_UseErrorLevel: break;
 
                     default:
                         switch (option[0])
@@ -94,16 +93,11 @@ namespace IronAHK.Rusty
             HotkeyDefinition key;
 
             try { key = HotkeyDefinition.Parse(KeyName); }
-#if !DEBUG
-            catch (Exception)
+            catch (ArgumentException)
             {
                 ErrorLevel = 2;
-                if (!error)
-                    throw new ArgumentException();
                 return;
             }
-#endif
-            finally { }
 
             string id = KeyName;
             key.Name = id;
@@ -212,6 +206,9 @@ namespace IronAHK.Rusty
 
             if (Environment.OSVersion.Platform == PlatformID.Win32NT)
                 Windows.BlockInput(state);
+
+            InitKeyboardHook();
+            keyboardHook.Block = state;
         }
 
         /// <summary>

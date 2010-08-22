@@ -73,6 +73,10 @@ namespace IronAHK.Scripting
             {
                 Generated = EmitDelegateCreateExpression((CodeDelegateCreateExpression)Expression);
             }
+            else if (Expression is CodePropertyReferenceExpression)
+            {
+                Generated = EmitPropertyReferenceExpression((CodePropertyReferenceExpression)Expression);
+            }
             else
             {
                 Depth++;
@@ -120,6 +124,15 @@ namespace IronAHK.Scripting
             Depth--;
            
             return type;
+        }
+
+        Type EmitPropertyReferenceExpression(CodePropertyReferenceExpression prop)
+        {
+            // HACK: property get method target
+            var info = typeof(Rusty.Core).GetProperty(prop.PropertyName);
+
+            Generator.Emit(OpCodes.Call, info.GetGetMethod());
+            return info.PropertyType;
         }
         
         void EmitArrayIndexerExpression(CodeArrayIndexerExpression Indexer)

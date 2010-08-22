@@ -8,6 +8,7 @@ outdir=bin
 deploy=Deploy/$(outdir)/$(config)
 setup=$(deploy)/Setup.exe
 installer=$(deploy)/setup.sh
+sitedocs=$(name)/Site/docs/commands
 
 .PHONY=all docs docs dist install uninstall clean
 
@@ -33,3 +34,6 @@ clean:
 		done; \
 	done;
 	if [ -d "$(outdir)" ]; then rm -R "$(outdir)"; fi
+	for dir in $(shell ls -d $(sitedocs)/*); do \
+		if [ -d "$${dir}" ]; then rm -R $${dir}; fi \
+	done;

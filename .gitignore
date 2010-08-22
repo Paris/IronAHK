@@ -3,6 +3,8 @@
 *.pidb
 *.user*
 /*.suo
+/_UpgradeReport_Files/
+/UpgradeLog.XML
 bin
 obj
 test-results/

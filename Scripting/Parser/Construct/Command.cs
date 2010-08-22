@@ -14,8 +14,35 @@ namespace IronAHK.Scripting
 
             if (parts.Length > 1 && parts[1].Length != 0)
             {
-                foreach (var param in SplitCommandParameters(parts[1]))
-                    invoke.Parameters.Add(ParseCommandParameter(param));
+                var low = parts[0].ToLowerInvariant();
+                var info = libMethods.ContainsKey(low) ? libMethods[low] : null;
+                var exp = info == null ? new bool[] { } : new bool[info.Length];
+
+                for (var i = 0; info != null && i < info.Length; i++)
+                    exp[i] = Script.IsNumeric(info[i].ParameterType);
+
+                var split = SplitCommandParameters(parts[1], exp);
+
+                if (parts[0].Equals(MsgBox, System.StringComparison.OrdinalIgnoreCase) && split.Length > 1)
+                {
+                    int n;
+
+                    if (!int.TryParse(split[0], out n))
+                        split = new[] { parts[1] };
+                }
+
+                for (var i = 0; i < split.Length; i++)
+                {
+                    bool byref = false, expr = false;
+
+                    if (info != null && i < info.Length)
+                    {
+                        byref = info[i].IsOut || info[i].ParameterType.IsByRef;
+                        expr = exp[i];
+                    }
+
+                    invoke.Parameters.Add(ParseCommandParameter(split[i], byref, expr));
+                }
             }
 
             invoke.UserData.Add(invokeCommand, true);
@@ -51,7 +78,7 @@ namespace IronAHK.Scripting
             return parts;
         }
 
-        string[] SplitCommandParameters(string code)
+        string[] SplitCommandParameters(string code, bool[] exp = null)
         {
             var parts = new List<string>();
             bool start = true, expr = false, str = false;
@@ -66,6 +93,8 @@ namespace IronAHK.Scripting
                 {
                     if (sym == StringBound)
                         str = !str;
+                    else if (sym == Multicast)
+                        goto delim;
                     continue;
                 }
                 else if (IsCommentAt(code, i))
@@ -80,6 +109,9 @@ namespace IronAHK.Scripting
                         start = false;
                         int n = i + 1;
                         expr = sym == Resolve && (n < code.Length ? IsSpace(code[n]) : true);
+                        n = parts.Count;
+                        if (exp != null && exp.Length > n && exp[n])
+                            expr = true;
                     }
                 }
 
@@ -97,6 +129,7 @@ namespace IronAHK.Scripting
                     }
                 }
                 
+            delim:
                 if (sym == Multicast && (i == 0 || code[i - 1] != Escape) && !str && levels[0] == 0 && levels[1] == 0 && levels[2] == 0)
                 {
                     parts.Add(code.Substring(last, i - last));
@@ -113,17 +146,47 @@ namespace IronAHK.Scripting
             return parts.ToArray();
         }
 
-        CodeExpression ParseCommandParameter(string code)
+        CodeExpression ParseCommandParameter(string code, bool byref = false, bool expr = false)
         {
-            code = code.Trim(Spaces); // should depend on AutoTrim
+            code = code.Trim(Spaces);
 
             if (code.Length == 0)
                 return new CodePrimitiveExpression(null);
 
+            if (expr && code.Length > 2 && code[0] == Resolve && code[code.Length - 1] == Resolve)
+                code = code.Substring(1, code.Length - 2);
+
+            var explicitExpr = false;
+
             if (IsExpressionParameter(code))
-                return ParseSingleExpression(code.Substring(2));
-            else
-                return VarNameOrBasicString(StripComment(code), true);
+            {
+                code = code.Substring(2);
+                expr = true;
+                explicitExpr = true;
+            }
+
+            if (expr)
+            {
+                try
+                {
+                    return ParseSingleExpression(code);
+                }
+                catch (ParseException)
+                {
+                    // soft failure for implicit expression mode only
+                    if (explicitExpr)
+                        throw;
+                    
+                    return new CodePrimitiveExpression(null);
+                }
+            }
+
+            code = StripComment(code);
+
+            if (byref)
+                return VarId(code);
+
+            return VarIdExpand(code);
         }
 
         #endregion

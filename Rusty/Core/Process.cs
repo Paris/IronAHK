@@ -153,7 +153,7 @@ namespace IronAHK.Rusty
         }
 
         /// <summary>
-        /// Specifies a set of user credentials to use for all subsequent uses of <see cref="Run"/> and <see cref="RunWait"/>.
+        /// Specifies a set of user credentials to use for all subsequent uses of <see cref="Run"/>.
         /// </summary>
         /// <param name="user">The username.</param>
         /// <param name="password">The password.</param>

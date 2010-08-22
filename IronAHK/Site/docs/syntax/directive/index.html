@@ -1,0 +1,65 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Directives</title>
+<link href="../../primary.css" rel="stylesheet" type="text/css" />
+<link href="../../api.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="../../main.js" defer="defer"></script>
+</head>
+<body>
+<h1>Directives</h1>
+<div id="page">
+  <p>Directive are single line statements which are pre-processed and affect the entire script regardless of where they are placed.<br />
+    Conditional blocks such as <a href="../flow/#if">if</a>-statements do not affect directives and with a few exceptions <a href="../variable/">variables</a> may not be used.</p>
+  <h3>Contents</h3>
+  <ul>
+    <li><strong id="script">Script</strong>
+      <ul>
+        <li><a href="#include">Include</a></li>
+        <li><a href="#notrayicon">NoTrayIcon</a></li>
+        <li><a href="#singleinstance">SingleInstance</a></li>
+      </ul>
+    </li>
+    <li><span id="compiled"><strong>Compiled</strong></span>
+      <ul>
+        <li><a href="#assemblytitle">AssemblyTitle</a></li>
+        <li><a href="#assemblydescription">AssemblyDescription</a></li>
+        <li><a href="#assemblycompany">AssemblyCompany</a></li>
+        <li><a href="#assemblyversion">AssemblyVersion</a></li>
+      </ul>
+    </li>
+  </ul>
+  <p>&nbsp;</p>
+  <h3 class="command" id="include">#Include[Again] [*i] path</h3>
+  <p>Reads the specified file <var>path</var> and behaves as though the contents are present at this exact position. 
+    If <var>path</var> is a directory all future include directives will use this as the parent folder.<br />
+    The only variables which may be used are <var>A_ScriptDir</var>, <var>A_AppData</var> and <var>A_AppDataCommon</var>.</p>
+  <p><code>#Include</code> ensures <var>path</var> is included only once, <code>#IncludeAgain</code> allows multiple inclusions of the same file.</p>
+  <p>The <var>path</var> parameter may optionally be preceded by <code>*i</code> and a single space, which causes the program to ignore any failure to load the included file.</p>
+  <p>&nbsp;</p>
+  <h3 class="command" id="notrayicon">#NoTrayIcon</h3>
+  <p>Disables the showing of the default tray (notification) icon.</p>
+  <p>&nbsp;</p>
+  <h3 class="command" id="singleinstance">#SingleInstance [force|ignore|off]</h3>
+  <p>Determines whether a script is allowed to run again when it is already running.</p>
+  <ul>
+    <li><kbd>force</kbd>: replaces the old instance automatically, similar to <a href="../commands/reload/">Reload</a>;</li>
+    <li><kbd>ignore</kbd>: leaves the old instance running;</li>
+    <li><kbd>off</kbd>: allow multiple instances to run concurrently.</li>
+  </ul>
+  <p>&nbsp;</p>
+  <h3 class="command" id="assemblytitle">#AssemblyTitle title</h3>
+  <p>Friendly name for the program.</p>
+  <p>&nbsp;</p>
+  <h3 class="command" id="assemblydescription">#AssemblyDescription description</h3>
+  <p>Short description of the program.</p>
+  <p>&nbsp;</p>
+  <h3 class="command" id="assemblycompany">#AssemblyCompany company</h3>
+  <p>Company shipping the program.</p>
+  <p>&nbsp;</p>
+  <h3 class="command" id="assemblyversion">#AssemblyVersion version</h3>
+  <p>Version number of the program e.g. <code>1.0.27.4315</code>.</p>
+</div>
+</body>
+</html>

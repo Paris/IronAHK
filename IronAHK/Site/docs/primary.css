@@ -27,6 +27,18 @@ table { font-size: 1em; }
 img { border-style: none; }
 div#page { margin: 1.5%; }
 div.clear { clear: both; }
+th {
+	border-bottom-style: solid;
+	border-bottom-width: thin;
+	text-align: left;
+}
+th, td {
+	padding-top: .1em;
+	padding-right: .5em;
+	padding-bottom: .1em;
+	padding-left: .5em;
+}
+
 pre.code {
 	padding: 1em;
 	font-size: 1em;
@@ -41,7 +53,6 @@ code, pre.code { font: .9em "Courier New", Courier, monospace; }
 pre.code em, code em {
 	color: #060;
 	font-style: normal;
-	font-weight: bold;
 }
 pre.code kbd, code kbd {
 	color: #c00;
