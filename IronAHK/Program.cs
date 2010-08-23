@@ -3,6 +3,7 @@ using System.CodeDom.Compiler;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using IronAHK.Scripting;
 
@@ -12,7 +13,6 @@ namespace IronAHK
 {
     static partial class Program
     {
-        const string Debug = "DEBUG";
         const bool debug =
 #if DEBUG
  true
@@ -27,7 +27,6 @@ namespace IronAHK
         [STAThread]
         static int Main(string[] args)
         {
-            //args = new string[] { string.Format("..{0}..{0}..{0}Tests{0}Code{0}isolated.ahk", Path.DirectorySeparatorChar) };
             Start(ref args);
 
             #region Constants
@@ -279,9 +278,19 @@ namespace IronAHK
 
             #endregion
 
-            Cleanup();
-
             return exit;
+        }
+
+        [Conditional("DEBUG"), DllImport("kernel32.dll")]
+        static extern void AllocConsole();
+
+        [Conditional("DEBUG")]
+        static void Start(ref string[] args)
+        {
+            if (Environment.OSVersion.Platform == PlatformID.Win32NT)
+                AllocConsole();
+
+            args = new[] { string.Format("..{0}..{0}..{0}Tests{0}Code{0}isolated.ahk", Path.DirectorySeparatorChar),  };
         }
 
         static int Message(string text, int exit)
