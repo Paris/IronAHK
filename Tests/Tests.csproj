@@ -105,7 +105,6 @@
     <None Include="Code\Benchmarks\increment.ahk" />
     <None Include="Code\comments.ahk" />
     <Content Include="Code\copyright.txt" />
-    <Content Include="Code\select.txt" />
     <None Include="Code\header.ahk" />
     <None Include="Code\gui.ahk" />
     <None Include="Code\line.ahk" />
