@@ -829,7 +829,7 @@ namespace IronAHK.Scripting
                     if (LaxExpressions)
                         typed = IsVarAssignment(parts[i]) || IsVarReference(parts[i]);
 
-                    if (!(typed || parts[i] is CodeMethodInvokeExpression || parts[i] is CodePrimitiveExpression || parts[i] is CodeTernaryOperatorExpression || parts[i] is CodeBinaryOperatorExpression))
+                    if (!(typed || parts[i] is CodeMethodInvokeExpression || parts[i] is CodePrimitiveExpression || parts[i] is CodeTernaryOperatorExpression || parts[i] is CodeBinaryOperatorExpression || parts[i] is CodePropertyReferenceExpression))
                         throw new ArgumentOutOfRangeException();
 
                     if (i % 2 == 1)
