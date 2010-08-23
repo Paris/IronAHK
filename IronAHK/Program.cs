@@ -52,8 +52,8 @@ namespace IronAHK
             var name = typeof(Program).Namespace;
             string script = null;
             string exe = null;
+            var merge = !debug;
             gui = Environment.OSVersion.Platform == PlatformID.Unix || Environment.OSVersion.Platform == PlatformID.MacOSX ? false : true;
-            bool merge = false;
 
             for (int i = 0; i < args.Length; i++)
             {
