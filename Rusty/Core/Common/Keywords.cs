@@ -345,6 +345,13 @@ namespace IronAHK.Rusty
         const string Keyword_Variation = "variation";
         const string Keyword_Trans = "trans";
         const string Keyword_Full = "full";
+        const string Keyword_Auto = "auto";
+        const string Keyword_AutoHdr = "autohdr";
+        const string Keyword_IconRight = "iconright";
+        const string Keyword_Case = "case";
+        const string Keyword_CaseLocale = "caselocale";
+        const string Keyword_Desc = "desc";
+        const string Keyword_Uni = "uni";
 
         const char Keyword_ModifierWin = '#';
         const char Keyword_ModifierAlt = '!';
