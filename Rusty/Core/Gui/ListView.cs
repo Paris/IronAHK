@@ -5,14 +5,12 @@ namespace IronAHK.Rusty
 {
     partial class Core
     {
-        // TODO: organise ListView.cs
-
         /// <summary>
-        /// 
+        /// Adds a new row to the end of the list
         /// </summary>
-        /// <param name="options"></param>
-        /// <param name="fields"></param>
-        /// <returns></returns>
+        /// <param name="options">See <see cref="LV_Modify"/>.</param>
+        /// <param name="fields">Text for each column.</param>
+        /// <returns>The 1-based index of the new row.</returns>
         public static int LV_Add(string options, string[] fields = null)
         {
             var list = DefaultListView;
@@ -22,15 +20,15 @@ namespace IronAHK.Rusty
 
             var item = new ListViewItem();
             list.Items.Add(item);
-            LV_Modify(item.Index, options, fields);
+            LV_Modify(item.Index + 1, options, fields);
 
             return item.Index;
         }
 
         /// <summary>
-        /// Removes one or all ListView rows.
+        /// Removes one or all rows.
         /// </summary>
-        /// <param name="row">The row number to remove. Leave blank to remove every row.</param>
+        /// <param name="row">The 1-based row index. Leave blank to remove every row.</param>
         /// <returns><c>true</c> if one or more rows were deleted, <c>false</c> otherwise.</returns>
         public static bool LV_Delete(int row = -1)
         {
@@ -59,9 +57,9 @@ namespace IronAHK.Rusty
         }
 
         /// <summary>
-        /// Deletes a ListView column.
+        /// Deletes a column.
         /// </summary>
-        /// <param name="column">The column index to remove.</param>
+        /// <param name="column">The 1-based column index.</param>
         /// <returns><c>true</c> if the specified column was removed, <c>false</c> otherwise.</returns>
         public static bool LV_DeleteCol(int column)
         {
@@ -82,7 +80,7 @@ namespace IronAHK.Rusty
         }
 
         /// <summary>
-        /// Returns the number of columns or rows in a ListView.
+        /// Returns the number of columns or rows.
         /// </summary>
         /// <param name="type">
         /// <list type="bullet">
@@ -145,18 +143,19 @@ namespace IronAHK.Rusty
             for (int i = Math.Max(0, index); i < list.Items.Count; i++)
             {
                 var item = list.Items[i];
+                var n = i + 1;
 
                 if (string.IsNullOrEmpty(type))
                     if (item.Selected)
-                        return i;
+                        return n;
 
                 if (type == Keyword_Checked || type.Length == 1 && type[0] == Keyword_Checked[0])
                     if (item.Checked)
-                        return i;
+                        return n;
 
                 if (type == Keyword_Focused || type.Length == 1 && type[0] == Keyword_Focused[0])
                     if (item.Focused)
-                        return i;
+                        return n;
             }
 
             return 0;
@@ -166,8 +165,8 @@ namespace IronAHK.Rusty
         /// Retrieves the text at the specified <paramref name="row"/> and <paramref name="column"/>.
         /// </summary>
         /// <param name="result">The variable in which to store the retrieved text.</param>
-        /// <param name="row">The row index. Leave blank to return the <paramref name="column"/> header.</param>
-        /// <param name="column">The column index.</param>
+        /// <param name="row">The 1-based row index. Leave blank to return the <paramref name="column"/> header.</param>
+        /// <param name="column">The 1-based column index.</param>
         /// <returns><c>true</c> if the specified <paramref name="row"/> and <paramref name="column"/> was found, <c>false</c> otherwise.</returns>
         public static bool LV_GetText(out string result, int row = 1, int column = 1)
         {
@@ -204,26 +203,34 @@ namespace IronAHK.Rusty
         }
 
         /// <summary>
-        /// 
+        /// Inserts a row at the specified position.
         /// </summary>
-        /// <param name="row"></param>
-        /// <param name="options"></param>
-        /// <param name="columns"></param>
-        public static void LV_Insert(int row, string options, string[] columns)
+        /// <param name="row">The 1-based row index.</param>
+        /// <param name="options">See <see cref="LV_Modify"/>.</param>
+        /// <param name="fields">Text for each column.</param>
+        public static void LV_Insert(int row, string options, string[] fields = null)
         {
             var list = DefaultListView;
 
             if (list == null)
                 return;
 
-            throw new NotImplementedException(); // TODO: LV_Insert
+            var item = new ListViewItem();
+
+            row = Math.Max(row - 1, 0);
+
+            if (row > list.Items.Count)
+                list.Items.Add(item);
+            else
+                list.Items.Insert(row, item);
+
+            LV_Modify(item.Index + 1, options, fields);
         }
 
         /// <summary>
-        /// Creates a new column.
+        /// Creates a new column at the specified position.
         /// </summary>
-        /// <param name="column">Inserts the new column after the specified index.
-        /// Leave blank to add to the end of the list.</param>
+        /// <param name="column">The 1-based row index.</param>
         /// <param name="options">See <see cref="LV_ModifyCol"/>.</param>
         /// <param name="title">The column title.</param>
         /// <returns>The index of the created column.</returns>
@@ -235,25 +242,27 @@ namespace IronAHK.Rusty
                 return 0;
 
             title = title ?? string.Empty;
-            var index = 0;
+            column--;
 
-            if (column < 1 || column > list.Columns.Count)
-                index = list.Columns.Add(title).Index;
+            if (column < 0 || column > list.Columns.Count)
+                column = list.Columns.Add(title).Index;
             else
-            {
-                index = column - 1;
-                list.Columns.Insert(index, title);
-            }
+                list.Columns.Insert(column, title);
 
-            return LV_ModifyCol(index, options, null);
+            column++;
+
+            LV_ModifyCol(column, options, null);
+
+            return column;
         }
 
         /// <summary>
-        /// 
+        /// Modifies the attributes and/or text of a row.
         /// </summary>
-        /// <param name="row"></param>
+        /// <param name="row">The 1-based row index.</param>
         /// <param name="options"></param>
-        /// <param name="fields"></param>
+        /// <param name="fields">New text for each column. Leave blank to use the existing contents.</param>
+        /// <returns><c>true</c> if attributes and/or text were successfully applied, <c>false</c> otherwise.</returns>
         public static bool LV_Modify(int row = 0, string options = null, string[] fields = null)
         {
             var list = DefaultListView;
@@ -266,7 +275,7 @@ namespace IronAHK.Rusty
                 var pass = true;
 
                 foreach (ListViewItem sub in list.Items)
-                    if (!LV_Modify(sub.Index, options, fields))
+                    if (!LV_Modify(sub.Index + 1, options, fields))
                         pass = false;
 
                 return pass;
@@ -312,20 +321,86 @@ namespace IronAHK.Rusty
         }
 
         /// <summary>
-        /// 
+        /// Modifies the attributes and/or text of the specified column and its header.
         /// </summary>
-        /// <param name="column"></param>
+        /// <param name="column">The 1-based column index.</param>
         /// <param name="options"></param>
-        /// <param name="title"></param>
-        /// <returns></returns>
-        public static int LV_ModifyCol(int column, string options, string title)
+        /// <param name="title">The column title. Leave blank to keep the existing contents.</param>
+        /// <returns><c>true</c> if attributes and/or text were successfully applied, <c>false</c> otherwise.</returns>
+        /// <remarks>Leave <paramref name="options"/> and <paramref name="title"/> blank to auto-size the column to fit its contents width.
+        /// If <paramref name="column"/> is also unspecified every column will be adjusted this way.</remarks>
+        public static bool LV_ModifyCol(int column = -1, string options = null, string title = null)
         {
             var list = DefaultListView;
 
             if (list == null)
-                return 0;
+                return false;
 
-            throw new NotImplementedException(); // TODO: LV_ModifyCol
+            if (column == -1 && options == null && title == null)
+            {
+                var pass = true;
+                for (var i = 0; i < list.Columns.Count; i++)
+                    if (!LV_ModifyCol(list.Columns[i].Index + 1, null, null))
+                        pass = false;
+                return pass;
+            }
+
+            column--;
+
+            if (column < 0 || column > list.Columns.Count)
+                return false;
+
+            var col = list.Columns[column];
+
+            if (options == null && title == null)
+            {
+                col.AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
+                return true;
+            }
+
+            if (title != null)
+                col.Text = title;
+
+            if (string.IsNullOrEmpty(options))
+                return true;
+
+            foreach (var opt in ParseOptions(options))
+            {
+                bool on = opt[0] != '-';
+                string mode = opt.Substring(!on || opt[0] == '+' ? 1 : 0).ToLowerInvariant();
+                
+                switch (mode)
+                {
+                    // TODO: LV_ModifyCol options
+                    case Keyword_Auto: col.AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent); break;
+                    case Keyword_AutoHdr: col.AutoResize(ColumnHeaderAutoResizeStyle.HeaderSize); break;
+                    case Keyword_IconRight: break;
+                    case Keyword_Float: break;
+                    case Keyword_Integer: break;
+                    case Keyword_Text: break;
+                    case Keyword_Center: col.TextAlign = HorizontalAlignment.Center; break;
+                    case Keyword_Left: col.TextAlign = HorizontalAlignment.Left; break;
+                    case Keyword_Right: col.TextAlign = HorizontalAlignment.Right; break;
+                    case Keyword_Case: break;
+                    case Keyword_CaseLocale: break;
+                    case Keyword_Desc: break;
+                    case Keyword_Locale: break;
+                    case Keyword_NoSort: break;
+                    case Keyword_Sort: break;
+                    case Keyword_SortDesc: break;
+                    case Keyword_Unicode: break;
+
+                    default:
+                        int n;
+                        if (mode.StartsWith(Keyword_Icon, StringComparison.OrdinalIgnoreCase) && int.TryParse(mode.Substring(Keyword_Icon.Length), out n))
+                            col.ImageIndex = n;
+                        else if (int.TryParse(mode, out n))
+                            col.Width = n;
+                        break;
+                }
+            }
+
+            return true;
         }
 
         /// <summary>
