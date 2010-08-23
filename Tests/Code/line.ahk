@@ -1,6 +1,8 @@
+#Include %A_ScriptDir%\header.ahk
+
 ;
 n = %A_LineNumber%
-If n != 2
+If n != 4
 	FileAppend, fail, *
 
 path = %A_LineFile%

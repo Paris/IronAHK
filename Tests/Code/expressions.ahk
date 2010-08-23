@@ -1,3 +1,5 @@
+#Include %A_ScriptDir%\header.ahk
+
 if (a == 1 && v != 2)
 	FileAppend, fail, *
 

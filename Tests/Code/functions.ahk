@@ -1,3 +1,5 @@
+#Include %A_ScriptDir%\header.ahk
+
 x := a() . b() . c("a()")
 
 if x =l!a()z

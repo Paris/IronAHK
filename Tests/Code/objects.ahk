@@ -1,3 +1,5 @@
+#Include %A_ScriptDir%\header.ahk
+
 a =b
 b :={ "one" : 1, two=2
 	,	"three" =["pass", 4,{ "x", "y" = "!", "a": "b{c}"}] }
