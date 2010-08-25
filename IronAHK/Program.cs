@@ -194,8 +194,8 @@ namespace IronAHK
             var ahk = new IACodeProvider();
             self = Path.GetDirectoryName(Path.GetFullPath(self));
             var options = new IACompilerParameters();
-            options.Merge = merge;
             bool reflect = exe == null;
+            options.Merge = merge && (debug || !reflect);
             var exit = ExitSuccess;
             
             if (!reflect)
