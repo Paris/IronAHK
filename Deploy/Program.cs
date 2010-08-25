@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
@@ -9,6 +10,8 @@ namespace IronAHK.Setup
 {
     static partial class Program
     {
+        const string ExecFailed = "Cannot execute \"{0}\": {1}";
+
         static void Main(string[] args)
         {
             Environment.CurrentDirectory = WorkingDir;
@@ -76,8 +79,15 @@ namespace IronAHK.Setup
             sz.StartInfo.WorkingDirectory = working;
             sz.StartInfo.Arguments = string.Format("a \"{0}\" \"{1}\" -mx=9", output, paths);
 
-            sz.Start();
-            sz.WaitForExit();
+            try
+            {
+                sz.Start();
+                sz.WaitForExit();
+            }
+            catch (Win32Exception e)
+            {
+                Console.Error.WriteLine(ExecFailed, sz.StartInfo.FileName, e.Message);
+            }
         }
 
         [Conditional("DEBUG")]
