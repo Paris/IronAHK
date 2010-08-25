@@ -93,7 +93,7 @@ namespace IronAHK.Setup
 
         static string Version
         {
-            get { return File.ReadAllText(Path.Combine(WorkingDir, "version.txt")).Trim(); }
+            get { return IronAHK.Program.Version.ToString(); }
         }
 
         static string WorkingDir
