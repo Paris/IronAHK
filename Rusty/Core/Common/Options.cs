@@ -104,6 +104,39 @@ namespace IronAHK.Rusty
             return table;
         }
 
+        static List<string> ParseFlags(ref string arg)
+        {
+            var list = new List<string>();
+            const char flag = '*';
+            var i = -1;
+
+            foreach (var sym in arg)
+            {
+                i++;
+
+                if (Array.IndexOf(Keyword_Spaces, sym) != -1)
+                    continue;
+
+                if (sym != flag)
+                    break;
+
+                var z = i;
+
+                for (; i < arg.Length; i++)
+                    if (char.IsWhiteSpace(arg, i) || arg[i] == flag)
+                        break;
+
+                if (z == i)
+                    continue;
+
+                var item = arg.Substring(z, i - z);
+                list.Add(item);
+            }
+
+            arg = arg.Substring(i);
+            return list;
+        }
+
         static string[] ParseOptions(string options)
         {
             return options.Split(Keyword_Spaces, StringSplitOptions.RemoveEmptyEntries);
