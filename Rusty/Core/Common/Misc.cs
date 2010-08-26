@@ -51,19 +51,5 @@ namespace IronAHK.Rusty
         }
 
         #endregion
-
-        #region Points
-
-        public static IEnumerable<Point> MapTraverse(Size source, Size find)
-        {
-            var max = new Size(source.Width - find.Width, source.Height - find.Height);
-            var current = new Point(-1, 0);
-
-            for (int y = 0; y < max.Height; y++)
-                for (int x = 0; x < max.Width; x++)
-                    yield return new Point(x, y);
-        }
-
-        #endregion
     }
 }
