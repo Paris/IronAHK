@@ -1,8 +1,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Net;
+using System.Net.Cache;
 using System.Net.Mail;
 
 namespace IronAHK.Rusty
@@ -166,6 +168,50 @@ namespace IronAHK.Rusty
                 if (Debug)
                     throw;
             }
+        }
+
+        /// <summary>
+        /// Downloads a resource from the internet to a file.
+        /// </summary>
+        /// <param name="url">The URL from which to download data.</param>
+        /// <param name="filename">The file path to receive the data.
+        /// Any existing file will be overwritten.</param>
+        [Obsolete, Conditional("LEGACY")]
+        public static void URLDownloadToFile(string url, string filename)
+        {
+            UriDownload(url, filename);
+        }
+
+        /// <summary>
+        /// Downloads a resource from the internet.
+        /// </summary>
+        /// <param name="address">The URI (or URL) of the resource.</param>
+        /// <param name="filename">The file path to receive the downloaded data. An existing file will be overwritten.
+        /// Leave blank to return the data as a string.
+        /// </param>
+        /// <returns>The downloaded data if <paramref name="filename"/> is blank, otherwise an empty string.</returns>
+        public static string UriDownload(string address, string filename = null)
+        {
+            ErrorLevel = 0;
+            var flags = ParseFlags(ref address);
+            var http = new WebClient();
+
+            if (flags.Contains("0"))
+                http.CachePolicy = new RequestCachePolicy(RequestCacheLevel.CacheIfAvailable);
+
+            try
+            {
+                if (string.IsNullOrEmpty(filename))
+                    return http.DownloadString(address);
+
+                http.DownloadFile(address, filename);
+            }
+            catch (WebException)
+            {
+                ErrorLevel = 1;
+            }
+
+            return string.Empty;
         }
     }
 }
