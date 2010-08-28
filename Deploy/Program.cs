@@ -58,7 +58,18 @@ namespace IronAHK.Setup
                     MergePortable();
             }
 
+            Metadata();
             Cleanup();
+        }
+
+        static void Metadata()
+        {
+            var path = Path.Combine(Output, "version.txt");
+
+            if (File.Exists(path))
+                File.Delete(path);
+
+            File.WriteAllText(path, Version);
         }
 
         static void Zip(string output, string paths, string working)
