@@ -59,7 +59,6 @@ namespace IronAHK.Setup
             }
 
             Metadata();
-            Cleanup();
         }
 
         static void Metadata()
@@ -99,12 +98,6 @@ namespace IronAHK.Setup
             {
                 Console.Error.WriteLine(ExecFailed, sz.StartInfo.FileName, e.Message);
             }
-        }
-
-        [Conditional("DEBUG")]
-        static void Cleanup()
-        {
-
         }
 
         static string Name
