@@ -98,7 +98,6 @@
     <Content Include="Site\docs\syntax\function\index.html" />
     <Content Include="Site\docs\syntax\label\index.html" />
     <Content Include="Site\docs\syntax\variable\index.html" />
-    <Content Include="Site\download\nightly\blank.txt" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Version.cs" />

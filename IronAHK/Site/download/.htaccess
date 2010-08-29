@@ -1,7 +1,2 @@
 RewriteEngine on
-
-RewriteRule ^setup-(x\d+)$ http://ironahk.googlecode.com/files/IronAHK-0.5.7-$1.msi [L]
-RewriteRule ^zip$ http://ironahk.googlecode.com/files/IronAHK-0.5.7.zip [L]
-RewriteRule ^source$ http://gitorious.org/ironahk/mainline/archive-tarball/v0.5.7 [L]
-RewriteRule ^app$ http://ironahk.googlecode.com/files/IronAHK.app-0.5.7.zip [L]
-RewriteRule ^portable$ http://ironahk.googlecode.com/files/IronAHK-0.5.7.exe [L]
+RewriteRule ^(?:(nightly)/)?(.+)$ http://build.ironahk.net/download/?type=$2&kind=$1
