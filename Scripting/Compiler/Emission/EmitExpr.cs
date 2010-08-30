@@ -146,10 +146,7 @@ namespace IronAHK.Scripting
             Label EndLabel = Generator.DefineLabel();
             
             if(Binary.Operator == CodeBinaryOperatorType.Assign)
-            {
-                EmitAssignment(Binary.Left, Binary.Right, ForceTypes);
-                return typeof(void);
-            }
+                return EmitAssignment(Binary.Left, Binary.Right, ForceTypes);
 
             Type Generated;
             Depth++;
