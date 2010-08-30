@@ -65,8 +65,8 @@ namespace IronAHK.Scripting
                 GenerateEntryPointHeader();
             
             // "Item" is the property for this-indexers
-            SetVariable = typeof(Script.Variables).GetProperty("Item").GetSetMethod();
-            GetVariable = typeof(Script.Variables).GetProperty("Item").GetGetMethod();
+            SetVariable = typeof(Script.Variables).GetMethod("SetVariable");
+            GetVariable = typeof(Script.Variables).GetMethod("GetVariable");
             
             VarsProperty = Generator.DeclareLocal(typeof(Script.Variables));
             Generator.Emit(OpCodes.Call, typeof(Script).GetProperty(Parser.VarProperty).GetGetMethod());
