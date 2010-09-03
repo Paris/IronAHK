@@ -352,6 +352,7 @@ namespace IronAHK.Rusty
         const string Keyword_CaseLocale = "caselocale";
         const string Keyword_Desc = "desc";
         const string Keyword_Uni = "uni";
+        const string Keyword_Raw = "raw";
 
         const char Keyword_ModifierWin = '#';
         const char Keyword_ModifierAlt = '!';
@@ -364,6 +365,8 @@ namespace IronAHK.Rusty
         const char Keyword_HotkeyPassThrough = '~';
         const char Keyword_HotkeyCombination = '&';
         const char Keyword_HotkeyNoRecurse = '$';
+        const char Keyword_KeyNameOpen = '{';
+        const char Keyword_KeyNameClose = '}';
         const string Keyword_HotkeyVK = "VK";
         const string Keyword_HotkeySC = "SC";
 

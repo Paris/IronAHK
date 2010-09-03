@@ -180,6 +180,13 @@ namespace IronAHK.Rusty
                         X11.XTestFakeKeyEvent(Display, (uint) Keys.LeftShift, false, 0);
                 }
             }
+
+            protected internal override void Send(System.Windows.Forms.Keys key)
+            {
+                var vk = (uint)key;
+                X11.XTestFakeKeyEvent(Display, vk, true, 0);
+                X11.XTestFakeKeyEvent(Display, vk, false, 0);
+            }
             
             CachedKey LookupKeycode(char Code)
             {
