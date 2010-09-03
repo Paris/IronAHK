@@ -6,26 +6,331 @@
 <link href="../../primary.css" rel="stylesheet" type="text/css" />
 <style type="text/css">
 <!--
-table.list td:first-child { padding-right: 1em; }
-table.list td + td + td { padding-left: 1em; }
+#commands td {
+	text-align: center;
+}
+#commands *:first-child {
+	text-align: left;
+}
+.prc {
+	color: #666;
+	font-weight: normal;
+}
 -->
 </style>
 <script type="text/javascript" src="../../main.js" defer="defer"></script>
 <script type="text/javascript" defer="defer">
 <!--
-function statusreport() {
-	var e = document.getElementById("commands").getElementsByTagName("img"), c = [0, 0, 0, 0, 0], i;
-	for (i = 0; i < e.length; i++) {
-		var s = e[i].src.match(/(\w+)\.\w+$/), x = 1;
-		switch (s[1]) { case 'error': x = 2; break; case 'cross': x = 3; break; case 'delete': x = 4; break; }
-		c[0]++; c[x]++;
+function statusreport()
+{
+	var cmd =
+[
+["Abs", false, false, false, false, ""],
+["ACos", false, false, false, false, ""],
+["Asc", false, false, false, false, ""],
+["ASin", false, false, false, false, ""],
+["ATan", false, false, false, false, ""],
+["AutoTrim", false, false, false, false, ""],
+["BlockInput", false, false, false, false, ""],
+["Break", false, false, false, false, ""],
+["Ceil", false, false, false, false, ""],
+["Chr", false, false, false, false, ""],
+["Click", false, false, false, false, ""],
+["ClipWait", false, false, false, false, ""],
+["Continue", false, false, false, false, ""],
+["Control", false, false, false, false, ""],
+["ControlClick", false, false, false, false, ""],
+["ControlFocus", false, false, false, false, ""],
+["ControlGet", false, false, false, false, ""],
+["ControlGetFocus", false, false, false, false, ""],
+["ControlGetPos", false, false, false, false, ""],
+["ControlGetText", false, false, false, false, ""],
+["ControlMove", false, false, false, false, ""],
+["ControlSend", false, false, false, false, ""],
+["ControlSendRaw", false, false, false, false, ""],
+["ControlSetText", false, false, false, false, ""],
+["CoordMode", false, false, false, false, ""],
+["Cos", false, false, false, false, ""],
+["Critical", false, false, false, false, ""],
+["DetectHiddenText", false, false, false, false, ""],
+["DetectHiddenWindows", false, false, false, false, ""],
+["DllCall", false, false, false, false, ""],
+["Drive", false, false, false, false, ""],
+["DriveGet", false, false, false, false, ""],
+["DriveSpaceFree", false, false, false, false, ""],
+["Edit", false, false, false, false, ""],
+["Else", false, false, false, false, ""],
+["EnvAdd", false, false, false, false, ""],
+["EnvDiv", false, false, false, false, ""],
+["EnvGet", false, false, false, false, ""],
+["EnvMult", false, false, false, false, ""],
+["EnvSet", false, false, false, false, ""],
+["EnvSub", false, false, false, false, ""],
+["EnvUpdate", false, false, false, false, ""],
+["Exit", false, false, false, false, ""],
+["ExitApp", false, false, false, false, ""],
+["Exp", false, false, false, false, ""],
+["FileAppend", false, false, false, false, ""],
+["FileCopy", false, false, false, false, ""],
+["FileCopyDir", false, false, false, false, ""],
+["FileCreateDir", false, false, false, false, ""],
+["FileCreateShortcut", false, false, false, false, ""],
+["FileDelete", false, false, false, false, ""],
+["FileExist", false, false, false, false, ""],
+["FileGetAttrib", false, false, false, false, ""],
+["FileGetShortcut", false, false, false, false, ""],
+["FileGetSize", false, false, false, false, ""],
+["FileGetTime", false, false, false, false, ""],
+["FileGetVersion", false, false, false, false, ""],
+["FileInstall", false, false, false, false, ""],
+["FileMove", false, false, false, false, ""],
+["FileMoveDir", false, false, false, false, ""],
+["FileRead", false, false, false, false, ""],
+["FileReadLine", false, false, false, false, ""],
+["FileRecycle", false, false, false, false, ""],
+["FileRecycleEmpty", false, false, false, false, ""],
+["FileRemoveDir", false, false, false, false, ""],
+["FileSelectFile", false, false, false, false, ""],
+["FileSelectFolder", false, false, false, false, ""],
+["FileSetAttrib", false, false, false, false, ""],
+["FileSetTime", false, false, false, false, ""],
+["Floor", false, false, false, false, ""],
+["FormatTime", false, false, false, false, ""],
+["GetKeyState", false, false, false, false, ""],
+["Gosub", false, false, false, false, ""],
+["Goto", false, false, false, false, ""],
+["GroupActivate", false, false, false, false, ""],
+["GroupAdd", false, false, false, false, ""],
+["GroupClose", false, false, false, false, ""],
+["GroupDeactivate", false, false, false, false, ""],
+["Gui", false, false, false, false, ""],
+["GuiControl", false, false, false, false, ""],
+["GuiControlGet", false, false, false, false, ""],
+["Hotkey", false, false, false, false, ""],
+["If", false, false, false, false, ""],
+["IfEqual", true, true, true, false, "%t conditional expression."],
+["IfExist", true, true, true, false, "%t conditional expression (FileExist)."],
+["IfGreater", true, true, true, false, "%t conditional expression."],
+["IfGreaterOrEqual", true, true, true, false, "%t conditional expression."],
+["IfInString", true, true, true, false, "%t conditional expression (InStr)."],
+["IfLess", true, true, true, false, "%t conditional expression."],
+["IfLessOrEqual", true, true, true, false, "%t conditional expression."],
+["IfMsgBox", false, false, false, false, ""],
+["IfNotEqual", true, true, true, false, "%t conditional expression."],
+["IfNotExist", true, true, true, false, "%t conditional expression (FileExist)."],
+["IfNotInString", true, true, true, false, "%t conditional expression (InStr)."],
+["IfWinActive", false, false, false, false, "%t conditional expression (WinActive)."],
+["IfWinExist", false, false, false, false, "%t conditional expression (WinExist)."],
+["IfWinNotActive", false, false, false, false, "%t conditional expression (WinActive)."],
+["IfWinNotExist", false, false, false, false, "%t conditional expression (WinExist)."],
+["IL_Add", false, false, false, false, ""],
+["IL_Create", false, false, false, false, ""],
+["IL_Destroy", false, false, false, false, ""],
+["ImageSearch", false, false, false, false, ""],
+["IniDelete", false, false, false, false, ""],
+["IniRead", false, false, false, false, ""],
+["IniWrite", false, false, false, false, ""],
+["Input", false, false, false, false, ""],
+["InputBox", false, false, false, false, ""],
+["InStr", false, false, false, false, ""],
+["IsFunc", false, false, false, false, ""],
+["IsLabel", false, false, false, false, ""],
+["KeyHistory", false, false, false, false, ""],
+["KeyWait", false, false, false, false, ""],
+["ListHotkeys", false, false, false, false, ""],
+["ListLines", false, false, false, false, ""],
+["ListVars", false, false, false, false, ""],
+["Ln", false, false, false, false, ""],
+["Log", false, false, false, false, ""],
+["Loop", false, false, false, false, ""],
+["Loop, false, ", false, false, false, false, ""],
+["LV_Add", false, false, false, false, ""],
+["LV_Delete", false, false, false, false, ""],
+["LV_DeleteCol", false, false, false, false, ""],
+["LV_GetCount", false, false, false, false, ""],
+["LV_GetNext", false, false, false, false, ""],
+["LV_GetText", false, false, false, false, ""],
+["LV_Insert", false, false, false, false, ""],
+["LV_InsertCol", false, false, false, false, ""],
+["LV_Modify", false, false, false, false, ""],
+["LV_ModifyCol", false, false, false, false, ""],
+["LV_SetImageList", false, false, false, false, ""],
+["Menu", false, false, false, false, ""],
+["Mod", false, false, false, false, ""],
+["MouseClick", false, false, false, false, ""],
+["MouseClickDrag", false, false, false, false, ""],
+["MouseGetPos", false, false, false, false, ""],
+["MouseMove", false, false, false, false, ""],
+["MsgBox", false, false, false, false, ""],
+["NumGet", false, false, false, false, ""],
+["NumPut", false, false, false, false, ""],
+["OnExit", false, false, false, false, ""],
+["OnMessage", false, false, false, false, ""],
+["OutputDebug", false, false, false, false, ""],
+["Pause", false, false, false, false, ""],
+["PixelGetColor", false, false, false, false, ""],
+["PixelSearch", false, false, false, false, ""],
+["PostMessage", false, false, false, false, ""],
+["Process", false, false, false, false, ""],
+["Progress", false, false, false, false, ""],
+["Random", false, false, false, false, ""],
+["RegDelete", false, false, false, false, ""],
+["RegExMatch", false, false, false, false, ""],
+["RegExReplace", false, false, false, false, ""],
+["RegisterCallback", false, false, false, false, ""],
+["RegRead", false, false, false, false, ""],
+["RegWrite", false, false, false, false, ""],
+["Reload", false, false, false, false, ""],
+["Repeat", true, true, true, false, "%t Loop"],
+["Return", false, false, false, false, ""],
+["Round", false, false, false, false, ""],
+["Run", false, false, false, false, ""],
+["RunAs", false, false, false, false, ""],
+["RunWait", false, false, false, false, ""],
+["SB_SetIcon", false, false, false, false, ""],
+["SB_SetParts", false, false, false, false, ""],
+["SB_SetText", false, false, false, false, ""],
+["Send", false, false, false, false, ""],
+["SendEvent", false, false, false, false, ""],
+["SendInput", false, false, false, false, ""],
+["SendMessage", false, false, false, false, ""],
+["SendMode", false, false, false, false, ""],
+["SendPlay", false, false, false, false, ""],
+["SendRaw", false, false, false, false, ""],
+["SetBatchLines", false, false, false, false, ""],
+["SetCapslockState", false, false, false, false, ""],
+["SetControlDelay", false, false, false, false, ""],
+["SetDefaultMouseSpeed", false, false, false, false, ""],
+["SetEnv", false, false, false, false, ""],
+["SetFormat", false, false, false, false, ""],
+["SetKeyDelay", false, false, false, false, ""],
+["SetMouseDelay", false, false, false, false, ""],
+["SetNumlockState", false, false, false, false, ""],
+["SetScrollLockState", false, false, false, false, ""],
+["SetStoreCapslockMode", false, false, false, false, ""],
+["SetTimer", false, false, false, false, ""],
+["SetTitleMatchMode", false, false, false, false, ""],
+["SetWinDelay", false, false, false, false, ""],
+["SetWorkingDir", false, false, false, false, ""],
+["Shutdown", false, false, false, false, ""],
+["Sin", false, false, false, false, ""],
+["Sleep", false, false, false, false, ""],
+["Sort", false, false, false, false, ""],
+["SoundBeep", false, false, false, false, ""],
+["SoundGet", false, false, false, false, ""],
+["SoundGetWaveVolume", false, false, false, false, ""],
+["SoundPlay", false, false, false, false, ""],
+["SoundSet", false, false, false, false, ""],
+["SoundSetWaveVolume", false, false, false, false, ""],
+["SplashImage", false, false, false, false, ""],
+["SplashTextOff", false, false, false, false, ""],
+["SplashTextOn", false, false, false, false, ""],
+["SplitPath", false, false, false, false, ""],
+["Sqrt", false, false, false, false, ""],
+["StatusBarGetText", false, false, false, false, ""],
+["StatusBarWait", false, false, false, false, ""],
+["StringCaseSense", false, false, false, false, ""],
+["StringGetPos", false, false, false, false, ""],
+["StringLeft", false, false, false, false, ""],
+["StringLen", false, false, false, false, ""],
+["StringLower", false, false, false, false, ""],
+["StringMid", false, false, false, false, ""],
+["StringReplace", false, false, false, false, ""],
+["StringRight", false, false, false, false, ""],
+["StringSplit", false, false, false, false, ""],
+["StringTrimLeft", false, false, false, false, ""],
+["StringTrimRight", false, false, false, false, ""],
+["StringUpper", false, false, false, false, ""],
+["StrLen", false, false, false, false, ""],
+["SubStr", false, false, false, false, ""],
+["Suspend", false, false, false, false, ""],
+["SysGet", false, false, false, false, ""],
+["Tan", false, false, false, false, ""],
+["Thread", false, false, false, false, ""],
+["ToolTip", false, false, false, false, ""],
+["Transform", false, false, false, false, ""],
+["TrayTip", false, false, false, false, ""],
+["TV_Add", false, false, false, false, ""],
+["TV_Delete", false, false, false, false, ""],
+["TV_Get", false, false, false, false, ""],
+["TV_GetChild", false, false, false, false, ""],
+["TV_GetCount", false, false, false, false, ""],
+["TV_GetNext", false, false, false, false, ""],
+["TV_GetParent", false, false, false, false, ""],
+["TV_GetPrev", false, false, false, false, ""],
+["TV_GetSelection", false, false, false, false, ""],
+["TV_GetText", false, false, false, false, ""],
+["TV_Modify", false, false, false, false, ""],
+["URLDownloadToFile", false, false, false, false, ""],
+["VarSetCapacity", false, false, false, false, ""],
+["While", false, false, false, false, ""],
+["WinActivate", false, false, false, false, ""],
+["WinActivateBottom", false, false, false, false, ""],
+["WinActive", false, false, false, false, ""],
+["WinClose", false, false, false, false, ""],
+["WinExist", false, false, false, false, ""],
+["WinGet", false, false, false, false, ""],
+["WinGetActiveStats", false, false, false, false, ""],
+["WinGetActiveTitle", false, false, false, false, ""],
+["WinGetClass", false, false, false, false, ""],
+["WinGetPos", false, false, false, false, ""],
+["WinGetText", false, false, false, false, ""],
+["WinGetTitle", false, false, false, false, ""],
+["WinHide", false, false, false, false, ""],
+["WinKill", false, false, false, false, ""],
+["WinMaximize", false, false, false, false, ""],
+["WinMenuSelectItem", false, false, false, false, ""],
+["WinMinimize", false, false, false, false, ""],
+["WinMinimizeAll", false, false, false, false, ""],
+["WinMinimizeAllUndo", false, false, false, false, ""],
+["WinMove", false, false, false, false, ""],
+["WinRestore", false, false, false, false, ""],
+["WinSet", false, false, false, false, ""],
+["WinSetTitle", false, false, false, false, ""],
+["WinShow", false, false, false, false, ""],
+["WinWait", false, false, false, false, ""],
+["WinWaitActive", false, false, false, false, ""],
+["WinWaitClose", false, false, false, false, ""],
+["WinWaitNotActive", false, false, false, false, ""]
+];
+	var e = document.getElementById("commands"), s = e.getElementsByTagName("tbody"), p = [0, 0, 0, 0], i, f = 5;
+	if (s != null && s.length == 1) { e = s[0]; }
+	for (i = 0; i < cmd.length; i++)
+	{
+		var td = document.createElement("td"), tr = document.createElement("tr"), a = document.createElement("a");
+		a.setAttribute("href", "../../commands/" + cmd[i][0].toLowerCase() + "/"); setText(a, cmd[i][0]);
+		td.appendChild(a); tr.appendChild(td);
+		for (var z = 1; z < f; z++)
+		{
+			tr.appendChild(statusicon(cmd[i][z]));
+			if (cmd[i][z]) { p[z - 1]++; }
+		}
+		if (cmd[i].length > f && cmd[i][f].length != 0)
+		{
+			td = document.createElement("td");
+			td.style.textAlign = "left";
+			var c = cmd[i][f].replace("%o", "Obsolete").replace("%t", "Translated to: ");
+			setText(td, c);
+			tr.appendChild(td);
+		}
+		e.appendChild(tr);
 	}
-	for (i = 0; i < c.length; i++) {
-		e = document.getElementById("x" + i);
-		if (!e) { continue; }
-		var v = Math.round(c[i] / c[0] * 100) + "%";
-		if (e.textContent) { e.textContent = v; } else { e.innerHTML = v; }
-	}
+	for (i = 0; i < p.length; i++) { setText(document.getElementById("p" + i), Math.round(p[i] / cmd.length * 100) + "%"); }
+}
+
+function setText(e, c)
+{
+	e.textContent = c;
+	e.innerText = c;
+}
+
+function statusicon(s)
+{
+	var td = document.createElement("td"), img = document.createElement("img");
+	img.width = img.height = 16; img.alt = (s == null ? "Partial" : s ? "Yes" : "No");
+	img.src = "../../images/" + (s == null ? "error" : s ? "tick" : "cross") + ".png";
+	td.appendChild(img);
+	return td;
 }
 
 if (window.addEventListener) { window.addEventListener("load", statusreport, false); }
@@ -36,1095 +341,20 @@ else if (window.attachEvent) { window.attachEvent("onload", statusreport); }
 <body>
 <h1>Status</h1>
 <div id="page">
-  <h2 id="roadmap">Commands</h2>
-  <p><strong>Legend</strong></p>
-  <table class="list" id="status">
-    <tr>
-      <td>Working</td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-      <td id="x1">&nbsp;</td>
-    </tr>
-    <tr>
-      <td>Untested</td>
-      <td><img src="../../images/error.png" width="16" height="16" alt="" /></td>
-      <td id="x2">&nbsp;</td>
-    </tr>
-    <tr>
-      <td>Not working</td>
-      <td><img src="../../images/cross.png" width="16" height="16" alt="" /></td>
-      <td id="x3">&nbsp;</td>
-    </tr>
-    <tr>
-      <td>Obsolete</td>
-      <td><img src="../../images/delete.png" width="16" height="16" alt="" /></td>
-      <td id="x4">&nbsp;</td>
-    </tr>
-  </table>
-  <p>&nbsp;</p>
+  <h2 id="roadmap">Commands  </h2>
   <table class="list" id="commands">
     <tr>
-      <td><a href="../../commands/abs/">Abs</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/acos/">ACos</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/asc/">Asc</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/asin/">ASin</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/atan/">ATan</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/autotrim/">AutoTrim</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/blockinput/">BlockInput</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/break/">Break</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/ceil/">Ceil</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/chr/">Chr</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/click/">Click</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/clipwait/">ClipWait</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/continue/">Continue</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/control/">Control</a></td>
-      <td><img src="../../images/cross.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/controlclick/">ControlClick</a></td>
-      <td><img src="../../images/cross.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/controlfocus/">ControlFocus</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/controlget/">ControlGet</a></td>
-      <td><img src="../../images/cross.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/controlgetfocus/">ControlGetFocus</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/controlgetpos/">ControlGetPos</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/controlgettext/">ControlGetText</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/controlmove/">ControlMove</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/controlsend/">ControlSend</a></td>
-      <td><img src="../../images/cross.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/controlsendraw/">ControlSendRaw</a></td>
-      <td><img src="../../images/cross.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/controlsettext/">ControlSetText</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/coordmode/">CoordMode</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/cos/">Cos</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/critical/">Critical</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/detecthiddentext/">DetectHiddenText</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/detecthiddenwindows/">DetectHiddenWindows</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/dllcall/">DllCall</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/drive/">Drive</a></td>
-      <td><img src="../../images/cross.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/driveget/">DriveGet</a></td>
-      <td><img src="../../images/cross.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/drivespacefree/">DriveSpaceFree</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/edit/">Edit</a></td>
-      <td><img src="../../images/delete.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/else/">Else</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/envadd/">EnvAdd</a></td>
-      <td><img src="../../images/error.png" width="16" height="16" alt="" /></td>
-      <td>Date arithmetic currently unimplemented.</td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/envdiv/">EnvDiv</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/envget/">EnvGet</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/envmult/">EnvMult</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/envset/">EnvSet</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/envsub/">EnvSub</a></td>
-      <td><img src="../../images/error.png" width="16" height="16" alt="" /></td>
-      <td>See <a href="../../commands/envadd/">EnvAdd</a>.</td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/envupdate/">EnvUpdate</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/exit/">Exit</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/exitapp/">ExitApp</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/exp/">Exp</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/fileappend/">FileAppend</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/filecopy/">FileCopy</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/filecopydir/">FileCopyDir</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/filecreatedir/">FileCreateDir</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/filecreateshortcut/">FileCreateShortcut</a></td>
-      <td><img src="../../images/cross.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/filedelete/">FileDelete</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/fileexist/">FileExist</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/filegetattrib/">FileGetAttrib</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/filegetshortcut/">FileGetShortcut</a></td>
-      <td><img src="../../images/cross.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/filegetsize/">FileGetSize</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/filegettime/">FileGetTime</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/filegetversion/">FileGetVersion</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/fileinstall/">FileInstall</a></td>
-      <td><img src="../../images/cross.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/filemove/">FileMove</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/filemovedir/">FileMoveDir</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/fileread/">FileRead</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/filereadline/">FileReadLine</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/filerecycle/">FileRecycle</a></td>
-      <td><img src="../../images/cross.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/filerecycleempty/">FileRecycleEmpty</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/fileremovedir/">FileRemoveDir</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/fileselectfile/">FileSelectFile</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/fileselectfolder/">FileSelectFolder</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/filesetattrib/">FileSetAttrib</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/filesettime/">FileSetTime</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/floor/">Floor</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/formattime/">FormatTime</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/getkeystate/">GetKeyState</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/gosub/">Gosub</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/goto/">Goto</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/groupactivate/">GroupActivate</a></td>
-      <td><img src="../../images/cross.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/groupadd/">GroupAdd</a></td>
-      <td><img src="../../images/cross.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/groupclose/">GroupClose</a></td>
-      <td><img src="../../images/cross.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/groupdeactivate/">GroupDeactivate</a></td>
-      <td><img src="../../images/cross.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/gui/">Gui</a></td>
-      <td><img src="../../images/cross.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/guicontrol/">GuiControl</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/guicontrolget/">GuiControlGet</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/hotkey/">Hotkey</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/ifequal/">IfEqual</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/ifexist/">IfExist</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/ifgreater/">IfGreater</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/ifgreaterorequal/">IfGreaterOrEqual</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/ifinstring/">IfInString</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/ifless/">IfLess</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/iflessorequal/">IfLessOrEqual</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/ifmsgbox/">IfMsgBox</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/ifnotequal/">IfNotEqual</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/ifnotexist/">IfNotExist</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/ifnotinstring/">IfNotInString</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/ifwinactive/">IfWinActive</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/ifwinexist/">IfWinExist</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/ifwinnotactive/">IfWinNotActive</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/ifwinnotexist/">IfWinNotExist</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/il_add/">IL_Add</a></td>
-      <td><img src="../../images/error.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/il_create/">IL_Create</a></td>
-      <td><img src="../../images/error.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/il_destroy/">IL_Destroy</a></td>
-      <td><img src="../../images/error.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/imagesearch/">ImageSearch</a></td>
-      <td><img src="../../images/cross.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/inidelete/">IniDelete</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/iniread/">IniRead</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/iniwrite/">IniWrite</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/input/">Input</a></td>
-      <td><img src="../../images/cross.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/inputbox/">InputBox</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/instr/">InStr</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/isfunc/">IsFunc</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/islabel/">IsLabel</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/keyhistory/">KeyHistory</a></td>
-      <td><img src="../../images/cross.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/keywait/">KeyWait</a></td>
-      <td><img src="../../images/cross.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/listhotkeys/">ListHotkeys</a></td>
-      <td><img src="../../images/delete.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/listlines/">ListLines</a></td>
-      <td><img src="../../images/delete.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/listvars/">ListVars</a></td>
-      <td><img src="../../images/delete.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/ln/">Ln</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/log/">Log</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/loop/">Loop</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/lv_add/">LV_Add</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/lv_delete/">LV_Delete</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/lv_deletecol/">LV_DeleteCol</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/lv_getcount/">LV_GetCount</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/lv_getnext/">LV_GetNext</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/lv_gettext/">LV_GetText</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/lv_insert/">LV_Insert</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/lv_insertcol/">LV_InsertCol</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/lv_modify/">LV_Modify</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/lv_modifycol/">LV_ModifyCol</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/lv_setimagelist/">LV_SetImageList</a></td>
-      <td><img src="../../images/error.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/menu/">Menu</a></td>
-      <td><img src="../../images/cross.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/mod/">Mod</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/mouseclick/">MouseClick</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/mouseclickdrag/">MouseClickDrag</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/mousegetpos/">MouseGetPos</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/mousemove/">MouseMove</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/msgbox/">MsgBox</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/numget/">NumGet</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/numput/">NumPut</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/onexit/">OnExit</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/onmessage/">OnMessage</a></td>
-      <td><img src="../../images/cross.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/outputdebug/">OutputDebug</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/pause/">Pause</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/pixelgetcolor/">PixelGetColor</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/pixelsearch/">PixelSearch</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/postmessage/">PostMessage</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/process/">Process</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/progress/">Progress</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/random/">Random</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/regdelete/">RegDelete</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/regexmatch/">RegExMatch</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/regexreplace/">RegExReplace</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/registercallback/">RegisterCallback</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/regread/">RegRead</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/regwrite/">RegWrite</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/reload/">Reload</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/repeat/">Repeat</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/return/">Return</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/round/">Round</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/run/">Run</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/runas/">RunAs</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/runwait/">RunWait</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/sb_seticon/">SB_SetIcon</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/sb_setparts/">SB_SetParts</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/sb_settext/">SB_SetText</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/send/">Send</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/sendevent/">SendEvent</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/sendinput/">SendInput</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/sendmessage/">SendMessage</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/sendmode/">SendMode</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/sendplay/">SendPlay</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/sendraw/">SendRaw</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/setbatchlines/">SetBatchLines</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/setcapslockstate/">SetCapslockState</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/setcontroldelay/">SetControlDelay</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/setdefaultmousespeed/">SetDefaultMouseSpeed</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/setenv/">SetEnv</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/setformat/">SetFormat</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/setkeydelay/">SetKeyDelay</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/setmousedelay/">SetMouseDelay</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/setnumlockstate/">SetNumlockState</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/setscrolllockstate/">SetScrollLockState</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/setstorecapslockmode/">SetStoreCapslockMode</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/settimer/">SetTimer</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/settitlematchmode/">SetTitleMatchMode</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/setwindelay/">SetWinDelay</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/setworkingdir/">SetWorkingDir</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/shutdown/">Shutdown</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/sin/">Sin</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/sleep/">Sleep</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/sort/">Sort</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/soundbeep/">SoundBeep</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/soundget/">SoundGet</a></td>
-      <td><img src="../../images/cross.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/soundgetwavevolume/">SoundGetWaveVolume</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/soundplay/">SoundPlay</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/soundset/">SoundSet</a></td>
-      <td><img src="../../images/cross.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/soundsetwavevolume/">SoundSetWaveVolume</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/splashimage/">SplashImage</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/splashtextoff/">SplashTextOff</a></td>
-      <td><img src="../../images/cross.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/splashtexton/">SplashTextOn</a></td>
-      <td><img src="../../images/cross.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/splitpath/">SplitPath</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/sqrt/">Sqrt</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/statusbargettext/">StatusBarGetText</a></td>
-      <td><img src="../../images/cross.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/statusbarwait/">StatusBarWait</a></td>
-      <td><img src="../../images/cross.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/stringcasesense/">StringCaseSense</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/stringgetpos/">StringGetPos</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/stringleft/">StringLeft</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/stringlen/">StringLen</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/stringlower/">StringLower</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/stringmid/">StringMid</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/stringreplace/">StringReplace</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/stringright/">StringRight</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/stringsplit/">StringSplit</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/stringtrimleft/">StringTrimLeft</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/stringtrimright/">StringTrimRight</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/stringupper/">StringUpper</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/strlen/">StrLen</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/substr/">SubStr</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/suspend/">Suspend</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/sysget/">SysGet</a></td>
-      <td><img src="../../images/cross.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/tan/">Tan</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/thread/">Thread</a></td>
-      <td><img src="../../images/cross.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/tooltip/">ToolTip</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/transform/">Transform</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/traytip/">TrayTip</a></td>
-      <td><img src="../../images/error.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/tv_add/">TV_Add</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/tv_delete/">TV_Delete</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/tv_get/">TV_Get</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/tv_getchild/">TV_GetChild</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/tv_getcount/">TV_GetCount</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/tv_getnext/">TV_GetNext</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/tv_getparent/">TV_GetParent</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/tv_getprev/">TV_GetPrev</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/tv_getselection/">TV_GetSelection</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/tv_gettext/">TV_GetText</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/tv_modify/">TV_Modify</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/urldownloadtofile/">URLDownloadToFile</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/varsetcapacity/">VarSetCapacity</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/while/">While</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/winactivate/">WinActivate</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/winactivatebottom/">WinActivateBottom</a></td>
-      <td><img src="../../images/cross.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/winactive/">WinActive</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/winclose/">WinClose</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/winexist/">WinExist</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/winget/">WinGet</a></td>
-      <td><img src="../../images/cross.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/wingetactivestats/">WinGetActiveStats</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/wingetactivetitle/">WinGetActiveTitle</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/wingetclass/">WinGetClass</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/wingetpos/">WinGetPos</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/wingettext/">WinGetText</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/wingettitle/">WinGetTitle</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/winhide/">WinHide</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/winkill/">WinKill</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/winmaximize/">WinMaximize</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/winmenuselectitem/">WinMenuSelectItem</a></td>
-      <td><img src="../../images/cross.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/winminimize/">WinMinimize</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/winminimizeall/">WinMinimizeAll</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/winminimizeallundo/">WinMinimizeAllUndo</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/winmove/">WinMove</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/winrestore/">WinRestore</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/winset/">WinSet</a></td>
-      <td><img src="../../images/cross.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/winsettitle/">WinSetTitle</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/winshow/">WinShow</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/winwait/">WinWait</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/winwaitactive/">WinWaitActive</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/winwaitclose/">WinWaitClose</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
-    </tr>
-    <tr>
-      <td><a href="../../commands/winwaitnotactive/">WinWaitNotActive</a></td>
-      <td><img src="../../images/tick.png" width="16" height="16" alt="" /></td>
+      <th>Command</th>
+      <th>Windows <span id="p0" class="prc"></span></th>
+      <th><acronym title="Linux and Mac">Unix</acronym> <span id="p1" class="prc"></span></th>
+      <th><acronym title="Documentation">Docs</acronym> <span id="p2" class="prc"></span></th>
+      <th><acronym title="NUnit Test Cases">Tests</acronym> <span id="p3" class="prc"></span></th>
+      <th>Notes</th>
     </tr>
   </table>
+  <noscript>
+  <p>JavaScript is required to display this page.</p>
+  </noscript>
 </div>
 </body>
 </html>
