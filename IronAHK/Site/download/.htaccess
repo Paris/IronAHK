@@ -1,2 +1,0 @@
-RewriteEngine on
-RewriteRule ^(?:(nightly)/)?(.+)$ http://build.ironahk.net/download/?type=$2&kind=$1
