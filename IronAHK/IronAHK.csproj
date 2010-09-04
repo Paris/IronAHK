@@ -81,10 +81,8 @@
     <None Include="Example.ahk">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Site\.htaccess" />
     <None Include="Site\clean.php" />
     <None Include="Site\docs\commands\.gitignore" />
-    <None Include="Site\download\.htaccess" />
     <Content Include="..\.gitattributes">
       <Link>.gitattributes</Link>
     </Content>
@@ -186,6 +184,7 @@
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup />
   <ProjectExtensions>
     <VisualStudio />
   </ProjectExtensions>
