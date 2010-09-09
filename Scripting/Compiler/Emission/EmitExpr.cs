@@ -113,11 +113,11 @@ namespace IronAHK.Scripting
 
             if (type == null)
                 throw new CompileException(del, "Invalid delegate type");
-
-            var ctor = type.GetConstructors()[0];
             
             if(Mirror != null)
-                ctor = Mirror.GrabConstructor(ctor);
+                type = Mirror.GrabType(type);
+            
+            var ctor = type.GetConstructors()[0];
             
             Generator.Emit(OpCodes.Newobj, ctor);
 

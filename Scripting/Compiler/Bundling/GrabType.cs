@@ -77,8 +77,19 @@ namespace IronAHK.Scripting
             // - If we are copying over a class with an abstract parent, we need to copy over all methods
             //   to prevent a TypeLoadException at runtime (non-abstract types containing methods without
             //   a body cause this)
-            if(Copy.IsExplicitLayout || Copy.BaseType.IsAbstract || Copy.BaseType == typeof(MulticastDelegate) || OurInterfaces.Count > 0)
+            // Delegates have a native-code constructor that is needed, too
+            if(Copy.BaseType == typeof(MulticastDelegate))
             {
+                ConstructorInfo NativeCtor = Copy.GetConstructors()[0];
+                GrabConstructor(NativeCtor, Ret);
+                
+                GrabMethod(Copy.GetMethod("Invoke"), Ret);
+                GrabMethod(Copy.GetMethod("BeginInvoke"), Ret);
+                GrabMethod(Copy.GetMethod("EndInvoke"), Ret);
+            }
+            else if(Copy.IsExplicitLayout || Copy.BaseType.IsAbstract || OurInterfaces.Count > 0)
+            {
+                Console.WriteLine(Copy.FullName);
                 foreach(MethodInfo Method in Copy.GetMethods())
                 {
                     if(Method.DeclaringType != Copy) continue;
@@ -96,16 +107,9 @@ namespace IronAHK.Scripting
                     if(Field.DeclaringType != Copy) continue;
                     GrabField(Field, Ret);
                 }
-                
-                // Delegates have a native-code constructor that is needed, too
-                if(Copy.BaseType == typeof(MulticastDelegate))
-                {
-                    ConstructorInfo NativeCtor = Copy.GetConstructor(new Type[] { typeof(object), typeof(IntPtr) });
-                    GrabConstructor(NativeCtor, Ret);
-                }
             }
             
-            if(Copy.IsEnum)
+            if(Copy.IsEnum || Copy.BaseType == typeof(MulticastDelegate))
                 Ret.CreateType();
             
             return Ret;            
