@@ -1,4 +1,4 @@
-#Include %A_ScriptDir%\header.ahk
+#Include %A_ScriptDir%/header.ahk
 
 a =b
 b :={ "one" : 1, two=2

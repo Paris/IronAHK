@@ -1,4 +1,4 @@
-#Include %A_ScriptDir%\header.ahk
+#Include %A_ScriptDir%/header.ahk
 
 Critical  ; THIS SECTION MUST BE AT THE VERY TOP TO DETECT THIS SORT OF BUG (caused by "iteration_limit = ArgToInt64(1)" vs. "iteration_limit = line->ArgToInt64(1)")
 A := False

@@ -1,4 +1,4 @@
-#Include %A_ScriptDir%\header.ahk
+#Include %A_ScriptDir%/header.ahk
 
 var := A_LineNumber
 if var <> 3

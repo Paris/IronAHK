@@ -1,4 +1,4 @@
-#Include %A_ScriptDir%\header.ahk
+#Include %A_ScriptDir%/header.ahk
 
 x := a() . b() . c("a()")
 
