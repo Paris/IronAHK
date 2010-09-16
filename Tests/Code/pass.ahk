@@ -1,3 +1,3 @@
-#Include %A_ScriptDir%\header.ahk
+#Include %A_ScriptDir%/header.ahk
 
 FileAppend, pass, *
