@@ -148,9 +148,17 @@ namespace IronAHK.Scripting
                                     break;
 
                                 default:
-                                    // TODO: file and normal loops
-                                    skip = false;
-                                    iterator = (CodeMethodInvokeExpression)InternalMethods.Loop;
+                                    {
+                                        var file = false;
+
+                                        if (parts[1].IndexOf(Multicast) != 1)
+                                            file = true;
+
+                                        // TODO: check file/iteration loop types
+
+                                        skip = false;
+                                        iterator = (CodeMethodInvokeExpression)(file ? InternalMethods.LoopFile : InternalMethods.Loop);
+                                    }
                                     break;
                             }
 
