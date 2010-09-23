@@ -1,3 +1,5 @@
+#Include %A_ScriptDir%/header.ahk
+
 Gosub, ::pass
 
 F12::MsgBox

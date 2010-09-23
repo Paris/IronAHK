@@ -174,6 +174,7 @@ namespace IronAHK.Scripting
                     EmitExpression(Ref.Indices[0]);
                     Generator.Emit(OpCodes.Ldloc, Builder);
                     Generator.Emit(OpCodes.Callvirt, SetVariable);
+                    Generator.Emit(OpCodes.Pop);
                 }
             }
             #endregion

@@ -27,7 +27,11 @@ namespace IronAHK.Rusty
         /// </summary>
         public static string A_AhkVersion
         {
-            get { return Assembly.GetExecutingAssembly().GetName().Version.ToString(); }
+            get
+            {
+                var asm = Assembly.GetEntryAssembly() ?? Assembly.GetExecutingAssembly();
+                return asm.GetName().Version.ToString();
+            }
         }
 
         /// <summary>

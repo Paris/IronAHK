@@ -1,3 +1,5 @@
+#Include %A_ScriptDir%/header.ahk
+
 SetWorkingDir %A_ScriptDir%
 #SingleInstance
 

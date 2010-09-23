@@ -18,6 +18,8 @@ if (0)
 else
 	MsgBox problem
 
+#Include %A_ScriptDir%/header.ahk
+
 SUSPEND  ; Turn off all the test hotkeys in this script since they're here mostly just to detect load-time errors.
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

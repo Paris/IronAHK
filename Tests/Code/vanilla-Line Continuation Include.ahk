@@ -1,5 +1,7 @@
+#Include %A_ScriptDir%/header.ahk
+
 var := A_LineNumber
-if var <> 1
+if var <> 3
 	MsgBox %var%
 SplitPath, A_LineFile, filename
 if filename <> vanilla-Line Continuation Include.ahk

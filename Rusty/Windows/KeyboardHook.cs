@@ -71,6 +71,32 @@ namespace IronAHK.Rusty
                 ignore = false;
             }
 
+            protected internal override void Send(Keys key)
+            {
+                key &= ~Keys.Modifiers;
+
+                if (key == Keys.None)
+                    return;
+
+                uint flag = KEYEVENTF_UNICODE;
+                var vk = (ushort)key;
+
+                if ((vk & 0xff00) == 0xe000)
+                    flag |= KEYEVENTF_EXTENDEDKEY;
+
+                var down = new INPUT { type = INPUT_KEYBOARD };
+                down.i.k = new KEYBDINPUT { wVk = vk, dwFlags = flag };
+
+                var up = new INPUT { type = INPUT_KEYBOARD };
+                up.i.k = new KEYBDINPUT { wVk = vk, dwFlags = flag | KEYEVENTF_KEYUP };
+
+                var inputs = new[] { down, up };
+
+                ignore = true;
+                SendInput((uint)inputs.Length, inputs, Marshal.SizeOf(typeof(INPUT)));
+                ignore = false;
+            }
+
             protected override void Backspace(int length)
             {
                 length *= 2;

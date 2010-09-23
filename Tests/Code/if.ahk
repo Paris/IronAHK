@@ -1,3 +1,5 @@
+#Include %A_ScriptDir%/header.ahk
+
 x = 1
 
 If x = 2

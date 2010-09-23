@@ -1,3 +1,5 @@
+using System;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using IronAHK.Rusty;
@@ -22,8 +24,15 @@ namespace IronAHK.Setup
                 "/target:winexe /closed /ndebug /v2 \"/out:{1}\" \"{0}.exe\" \"{2}\" \"{3}\"",
                 Name, bin, ext[0], ext[1]);
 
-            ilm.Start();
-            ilm.WaitForExit();
+            try
+            {
+                ilm.Start();
+                ilm.WaitForExit();
+            }
+            catch (Win32Exception e)
+            {
+                Console.Error.WriteLine(ExecFailed, ilm.StartInfo.FileName, e.Message);
+            }
         }
     }
 }

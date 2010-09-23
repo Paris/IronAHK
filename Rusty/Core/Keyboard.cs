@@ -294,7 +294,7 @@ namespace IronAHK.Rusty
         public static void Send(string Keys)
         {
             InitKeyboardHook();
-            keyboardHook.Send(Keys);
+            keyboardHook.SendMixed(Keys);
         }
 
         /// <summary>
