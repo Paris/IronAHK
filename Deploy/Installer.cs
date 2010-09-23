@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using IronAHK.Rusty;
@@ -35,8 +36,17 @@ namespace IronAHK.Setup
 
             wix.StartInfo.FileName = "candle";
             wix.StartInfo.Arguments = string.Format("-arch x{2} -nologo -out \"{1}\" \"{0}\"", xml, proj, x64 ? "64" : "86");
-            wix.Start();
-            wix.WaitForExit();
+            
+            try
+            {
+                wix.Start();
+                wix.WaitForExit();
+            }
+            catch (Win32Exception e)
+            {
+                Console.Error.WriteLine(ExecFailed, wix.StartInfo.FileName, e.Message);
+            }
+
             File.Delete(xml);
 
             string output = string.Format("{0}-{1}-x{2}.msi", Name, Version, x64 ? "64" : "86");
@@ -46,8 +56,17 @@ namespace IronAHK.Setup
 
             wix.StartInfo.FileName = "light";
             wix.StartInfo.Arguments = string.Format("-nologo -sw2738 -ext WixUIExtension -ext WiXNetFxExtension \"{0}\" -out \"{1}\"", proj, output);
-            wix.Start();
-            wix.WaitForExit();
+
+            try
+            {
+                wix.Start();
+                wix.WaitForExit();
+            }
+            catch (Win32Exception e)
+            {
+                Console.Error.WriteLine(ExecFailed, wix.StartInfo.FileName, e.Message);
+            }
+
             File.Delete(proj);
 
             string export = Path.Combine(Output, output);

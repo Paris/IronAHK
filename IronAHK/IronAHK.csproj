@@ -81,10 +81,8 @@
     <None Include="Example.ahk">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Site\.htaccess" />
     <None Include="Site\clean.php" />
     <None Include="Site\docs\commands\.gitignore" />
-    <None Include="Site\download\.htaccess" />
     <Content Include="..\.gitattributes">
       <Link>.gitattributes</Link>
     </Content>
@@ -98,12 +96,12 @@
     <Content Include="Site\docs\syntax\function\index.html" />
     <Content Include="Site\docs\syntax\label\index.html" />
     <Content Include="Site\docs\syntax\variable\index.html" />
-    <Content Include="Site\download\nightly\blank.txt" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Version.cs" />
+    <Compile Include="Debug.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Test.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -186,6 +184,7 @@
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup />
   <ProjectExtensions>
     <VisualStudio />
   </ProjectExtensions>

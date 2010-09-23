@@ -12,45 +12,51 @@ namespace IronAHK.Scripting
             Stack<string> collect = new Stack<string>();
 
             public bool AutoMark { get; set; }
+            
+            public object SetVariable(string key, object value)
+            {
+                if (SetReservedVariable(key, value))
+                    return value;
 
+                lock (table)
+                {
+                    var exists = table.ContainsKey(key);
+
+                    if (value == null)
+                    {
+                        if (exists)
+                            table.Remove(key);
+                    }
+                    else
+                    {
+                        if (exists)
+                            table[key] = value;
+                        else
+                            table.Add(key, value);
+                    }
+                
+                    return value;
+                }
+            }
+            
+            public object GetVariable(string key)
+            {
+                lock (table)
+                {
+                    if (!table.ContainsKey(key))
+                        return GetReservedVariable(key);
+
+                    if (AutoMark && !collect.Contains(key))
+                        collect.Push(key);
+
+                    return table[key];
+                }
+            }
+            
             public object this[string key]
             {
-                get
-                {
-                    lock (table)
-                    {
-                        if (!table.ContainsKey(key))
-                            return GetReservedVariable(key);
-
-                        if (AutoMark && !collect.Contains(key))
-                            collect.Push(key);
-
-                        return table[key];
-                    }
-                }
-                set
-                {
-                    if (SetReservedVariable(key, value))
-                        return;
-
-                    lock (table)
-                    {
-                        var exists = table.ContainsKey(key);
-
-                        if (value == null)
-                        {
-                            if (exists)
-                                table.Remove(key);
-                        }
-                        else
-                        {
-                            if (exists)
-                                table[key] = value;
-                            else
-                                table.Add(key, value);
-                        }
-                    }
-                }
+                get { return GetVariable(key); }
+                set { SetVariable(key, value); }
             }
 
             #region Collection

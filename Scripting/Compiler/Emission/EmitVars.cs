@@ -40,13 +40,21 @@ namespace IronAHK.Scripting
 
         void EmitAssignStatement(CodeAssignStatement Assign, bool ForceTypes)
         {
-            EmitAssignment(Assign.Left, Assign.Right, ForceTypes);
-        }
-
-        void EmitAssignment(CodeExpression Left, CodeExpression Right, bool ForceTypes)
-        {
             Depth++;
             Debug("Emitting assignment statement");
+            Type Top = EmitAssignment(Assign.Left, Assign.Right, ForceTypes);
+            
+            if(Top != typeof(void))
+                Generator.Emit(OpCodes.Pop);
+            
+            Depth--;
+        }
+
+        Type EmitAssignment(CodeExpression Left, CodeExpression Right, bool ForceTypes)
+        {
+            Depth++;
+            Debug("Emitting assignment expression");
+            Type Generated = typeof(void);
 
             if(Left is CodeVariableReferenceExpression)
             {
@@ -78,6 +86,8 @@ namespace IronAHK.Scripting
                     Generator.Emit(OpCodes.Box, resultType);
                 
                 Generator.Emit(OpCodes.Callvirt, SetVariable);
+                
+                Generated = typeof(object);
             }
             else if (Left is CodePropertyReferenceExpression)
             {
@@ -93,12 +103,17 @@ namespace IronAHK.Scripting
                 else
                 {
                     EmitExpression(Right);
+                    Generator.Emit(OpCodes.Dup);
                     Generator.Emit(OpCodes.Call, set);
                 }
+                
+                Generated = typeof(object);
             }
             else throw new CompileException(Left, "Left hand is unassignable");
 
             Depth--;
+            
+            return Generated;
         }
         
         Type EmitDynamicName(CodeArrayCreateExpression Dynamic)

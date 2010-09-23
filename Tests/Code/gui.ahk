@@ -1,3 +1,5 @@
+#Include %A_ScriptDir%/header.ahk
+
 pic = %A_Temp%\gui_test_picture.png
 icon = %A_Temp%\gui_test_icon.ico
 

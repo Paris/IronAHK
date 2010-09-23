@@ -1,3 +1,5 @@
+#Include %A_ScriptDir%/header.ahk
+
 y = 5
 x = 0
 

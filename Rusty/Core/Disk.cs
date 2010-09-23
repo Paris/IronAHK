@@ -1,7 +1,6 @@
 using System;
 using System.Diagnostics;
 using System.IO;
-using System.Net;
 
 namespace IronAHK.Rusty
 {
@@ -736,26 +735,6 @@ namespace IronAHK.Rusty
             extension = Path.GetExtension(input);
             name = Path.GetFileNameWithoutExtension(input);
             root = Path.GetPathRoot(input);
-        }
-
-        /// <summary>
-        /// Downloads a file from the Internet.
-        /// </summary>
-        /// <param name="URL">URL of the file to download. For example, http://www.example.com might retrieve the welcome page for that organization.</param>
-        /// <param name="Filename">Specify the name of the file to be created locally, which is assumed to be in %A_WorkingDir% if an absolute path isn't specified. Any existing file will be overwritten by the new file.</param>
-        public static void URLDownloadToFile(string URL, string Filename)
-        {
-            int z = URL.IndexOf('*');
-            if (z != -1) // i.e. *0 http://...
-            {
-                for (; z < URL.Length; z++)
-                    if (char.IsWhiteSpace(URL, z))
-                        break;
-                URL = URL.Substring(z);
-            }
-
-            try { (new WebClient()).DownloadFile(URL, Filename); }
-            catch (Exception) { ErrorLevel = 1; }
         }
     }
 }

@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
@@ -9,6 +10,8 @@ namespace IronAHK.Setup
 {
     static partial class Program
     {
+        const string ExecFailed = "Cannot execute \"{0}\": {1}";
+
         static void Main(string[] args)
         {
             Environment.CurrentDirectory = WorkingDir;
@@ -55,7 +58,17 @@ namespace IronAHK.Setup
                     MergePortable();
             }
 
-            Cleanup();
+            Metadata();
+        }
+
+        static void Metadata()
+        {
+            var path = Path.Combine(Output, "version.txt");
+
+            if (File.Exists(path))
+                File.Delete(path);
+
+            File.WriteAllText(path, Version);
         }
 
         static void Zip(string output, string paths, string working)
@@ -76,14 +89,15 @@ namespace IronAHK.Setup
             sz.StartInfo.WorkingDirectory = working;
             sz.StartInfo.Arguments = string.Format("a \"{0}\" \"{1}\" -mx=9", output, paths);
 
-            sz.Start();
-            sz.WaitForExit();
-        }
-
-        [Conditional("DEBUG")]
-        static void Cleanup()
-        {
-
+            try
+            {
+                sz.Start();
+                sz.WaitForExit();
+            }
+            catch (Win32Exception e)
+            {
+                Console.Error.WriteLine(ExecFailed, sz.StartInfo.FileName, e.Message);
+            }
         }
 
         static string Name
@@ -93,7 +107,7 @@ namespace IronAHK.Setup
 
         static string Version
         {
-            get { return File.ReadAllText(Path.Combine(WorkingDir, "version.txt")).Trim(); }
+            get { return IronAHK.Program.Version.ToString(); }
         }
 
         static string WorkingDir

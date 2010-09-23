@@ -12,22 +12,12 @@ namespace IronAHK
 {
     static partial class Program
     {
-        const string Debug = "DEBUG";
-        const bool debug =
-#if DEBUG
- true
-#else
- false
-#endif
-;
-
         const int ExitSuccess = 0;
         static bool gui;
 
         [STAThread]
         static int Main(string[] args)
         {
-            //args = new string[] { string.Format("..{0}..{0}..{0}Tests{0}Code{0}isolated.ahk", Path.DirectorySeparatorChar) };
             Start(ref args);
 
             #region Constants
@@ -284,8 +274,6 @@ namespace IronAHK
             }
 
             #endregion
-
-            Cleanup();
 
             return exit;
         }
