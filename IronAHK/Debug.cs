@@ -24,7 +24,10 @@ namespace IronAHK
             if (Environment.OSVersion.Platform == PlatformID.Win32NT)
                 AllocConsole();
 
-            args = new[] { string.Format("..{0}..{0}..{0}Tests{0}Code{0}isolated.ahk", Path.DirectorySeparatorChar), "/out", "test.exe" };
+            const string source = "..{0}..{0}..{0}Tests{0}Code{0}isolated.ahk";
+            const string binary = "test.exe";
+
+            args = string.Format(source + " --out " + binary, Path.DirectorySeparatorChar).Split(' ');
         }
     }
 }
