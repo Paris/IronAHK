@@ -128,7 +128,9 @@
     <Compile Include="Linux\Structs.cs" />
     <Compile Include="Extras\SimpleJson\Decode.cs" />
     <Compile Include="Extras\SimpleJson\Encode.cs" />
+    <Compile Include="Linux\WindowManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Windows\WindowManager.cs" />
     <Compile Include="Windows\KeyboardHook.cs" />
     <Compile Include="Windows\Misc.cs" />
     <Compile Include="Windows\Input.cs" />
