@@ -12,6 +12,14 @@ namespace IronAHK.Rusty
                 variables = new Dictionary<string, object>();
         }
 
+        static void InitWindowManager()
+        {
+            // TODO:: implement window manager for Win32/X11
+
+            if (windowGroups == null)
+                windowGroups = new Dictionary<string, Stack<WindowManager>>();
+        }
+
         static void InitKeyboardHook()
         {
             if (hotkeys == null)

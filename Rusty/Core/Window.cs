@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Windows.Forms;
 
 namespace IronAHK.Rusty
 {
@@ -21,7 +23,7 @@ namespace IronAHK.Rusty
         /// <param name="ExcludeText">Windows whose text include this value will not be considered.</param>
         public static void Control(string Cmd, string Value, string ControlID, string WinTitle, string WinText, string ExcludeTitle, string ExcludeText)
         {
-            
+
         }
 
         /// <summary>
@@ -250,57 +252,101 @@ namespace IronAHK.Rusty
         }
 
         /// <summary>
-        /// Activates the next window in a window group that was defined with GroupAdd.
+        /// Activates the next window in a window group that was defined with <see cref="GroupAdd"/>.
         /// </summary>
-        /// <param name="GroupName">The name of the group to activate, as originally defined by GroupAdd.</param>
-        /// <param name="R">This determines whether the oldest or the newest window is activated whenever no members of the group are currently active. If omitted, the oldest window is always activated. If it's the letter R, the newest window (the one most recently active) is activated, but only if no members of the group are active when the command is given. "R" is useful in cases where you temporarily switch to working on an unrelated task. When you return to the group via GroupActivate, GroupDeactivate, or GroupClose, the window you were most recently working with is activated rather than the oldest window.</param>
-        public static void GroupActivate(string GroupName, string R)
+        /// <param name="name"></param>
+        /// <param name="mode"></param>
+        public static void GroupActivate(string name, string mode)
         {
-            throw new NotImplementedException();
+            InitWindowManager();
+
+            name = (name ?? string.Empty).ToLowerInvariant();
+
+            if (name == null || !windowGroups.ContainsKey(name) || windowGroups[name].Count == 0)
+                return;
+
+            WindowManager next = null;
+
+            if (mode.Equals(Keyword_R, StringComparison.OrdinalIgnoreCase))
+                next = windowGroups[name].Peek();
+            else if (windowGroups[name].Count != 0)
+                next = windowGroups[name].ToArray()[windowGroups[name].Count - 1];
+
+            if (next != null)
+                next.Active = true;
         }
 
         /// <summary>
         /// Adds a window specification to a window group, creating the group if necessary.
         /// </summary>
-        /// <param name="GroupName">The name of the group to which to add this window specification. If the group doesn't exist, it will be created. Group names are not case sensitive.</param>
-        /// <param name="WinTitle">
-        /// <para>The title or partial title of the target window(s). It can be blank. Note: Although SetTitleMatchMode and DetectHiddenWindows do not directly affect the behavior of this command, they do affect the other group commands such as GroupActivate and GroupClose. They also affect the use of ahk_group in any other command's WinTitle.</para>
-        /// <para>To use a window class, specify ahk_class ExactClassName (shown by Window Spy). To use a process identifier (PID), specify ahk_pid %VarContainingPID%.</para>
-        /// <para>To use a window's unique ID number, specify ahk_id %VarContainingID%. To use a window group, specify ahk_group GroupName (i.e. groups may contain other groups).</para>
-        /// <para>The search can be narrowed by specifying multiple criteria. For example: My File.txt ahk_class Notepad</para>
-        /// </param>
-        /// <param name="WinText">If present, this parameter must be a substring from a single text element of the target window (as revealed by the included Window Spy utility). Hidden text elements are detected if DetectHiddenText is ON at the time that GroupActivate, GroupDeactivate, and GroupClose are used.</param>
-        /// <param name="Label">The label of a subroutine to run if no windows matching this specification exist when the GroupActivate command is used. The label is jumped to as though a Gosub had been used. Omit or leave blank for none.</param>
-        /// <param name="ExcludeTitle">Windows whose titles include this value will not be considered.</param>
-        /// <param name="ExcludeText">Windows whose text include this value will not be considered.</param>
-        public static void GroupAdd(string GroupName, string WinTitle, string WinText, string Label, string ExcludeTitle, string ExcludeText)
+        /// <param name="name"></param>
+        /// <param name="winTitle"></param>
+        /// <param name="winText"></param>
+        /// <param name="label"></param>
+        /// <param name="excludeTitle"></param>
+        /// <param name="excludeText"></param>
+        public static void GroupAdd(string name, string winTitle = null, string winText = null, string label = null, string excludeTitle = null, string excludeText = null)
         {
-            throw new NotImplementedException();
+            InitWindowManager();
+            var win = windowManager.FindFirstWindow(winTitle, winText, excludeTitle, excludeText);
+
+            if (string.IsNullOrEmpty(name) || win == null)
+                return;
+
+            name = name.ToLowerInvariant();
+
+            if (!windowGroups.ContainsKey(name))
+                windowGroups.Add(name, new Stack<WindowManager>());
+
+            windowGroups[name].Push(win);
         }
 
         /// <summary>
-        /// Closes the active window if it was just activated by GroupActivate or GroupDeactivate. It then activates the next window in the series. It can also close all windows in a group.
+        /// Closes the active window if it was just activated by <see cref="GroupActivate"/> or <see cref="GroupDeactivate"/>.
+        /// It then activates the next window in the series. It can also close all windows in a group.
         /// </summary>
-        /// <param name="GroupName">The name of the group as originally defined by GroupAdd.</param>
-        /// <param name="A_R">
-        /// <para>If it's the letter A, all members of the group will be closed. This is the same effect as WinClose ahk_group GroupName.</para>
-        /// <para>Otherwise: If the command closes the active window, it will then activate the next window in the series. This parameter determines whether the oldest or the newest window is activated. If omitted, the oldest window is always activated. If it's the letter R, the newest window (the one most recently active) is activated, but only if no members of the group are active when the command is given. "R" is useful in cases where you temporarily switch to working on an unrelated task. When you return to the group via GroupActivate, GroupDeactivate, or GroupClose, the window you were most recently working with is activated rather than the oldest window.</para>
-        /// </param>
-        public static void GroupClose(string GroupName, string A_R)
+        /// <param name="name"></param>
+        /// <param name="mode"></param>
+        public static void GroupClose(string name, string mode = null)
         {
-            throw new NotImplementedException();
+            InitWindowManager();
+
+            name = (name ?? string.Empty).ToLowerInvariant();
+
+            if (name == null || !windowGroups.ContainsKey(name) || windowGroups[name].Count == 0)
+                return;
+
+            switch (mode.ToLowerInvariant())
+            {
+                case Keyword_A:
+                    while (windowGroups[name].Count != 0)
+                        windowGroups[name].Pop().Close();
+                    windowGroups.Remove(name);
+                    break;
+
+                case Keyword_R:
+                    windowGroups[name].Pop().Close();
+                    windowGroups[name].Peek().Active = true;
+                    break;
+
+                case "":
+                    windowGroups[name].Pop().Close();
+                    if (windowGroups[name].Count != 0)
+                        windowGroups[name].ToArray()[windowGroups[name].Count - 1].Active = true;
+                    break;
+            }
         }
 
         /// <summary>
-        /// Similar to GroupActivate except activates the next window not in the group.
+        /// Similar to <see cref="GroupActivate"/> except activates the next window not in the group.
         /// </summary>
-        /// <param name="GroupName">The name of the target group, as originally defined by GroupAdd.</param>
-        /// <param name="R">This determines whether the oldest or the newest non-member window is activated whenever a member of the group is currently active. If omitted, the oldest non-member window is always activated. If it's the letter R, the newest non-member window (the one most recently active) is activated, but only if a member of the group is active when the command is given. "R" is useful in cases where you temporarily switch to working on an unrelated task. When you return to the group via GroupActivate, GroupDeactivate, or GroupClose, the window you were most recently working with is activated rather than the oldest window.</param>
-        public static void GroupDeactivate(string GroupName, string R)
+        /// <param name="name"></param>
+        /// <param name="mode"></param>
+        public static void GroupDeactivate(string name, string mode)
         {
-            throw new NotImplementedException();
+            // TODO: EnumWindows for GroupDeactivate
         }
-        
+
         /// <summary>
         /// Sends a message to a window or control (SendMessage additionally waits for acknowledgement).
         /// </summary>
@@ -358,7 +404,7 @@ namespace IronAHK.Rusty
         /// </summary>
         public static void SplashTextOff()
         {
-            
+
         }
 
         /// <summary>
@@ -370,7 +416,7 @@ namespace IronAHK.Rusty
         /// <param name="Text">The text of the window. Default empty (blank). If Text is long, it can be broken up into several shorter lines by means of a continuation section, which might improve readability and maintainability.</param>
         public static void SplashTextOn(string Width, string Height, string Title, string Text)
         {
-            
+
         }
 
         /// <summary>
@@ -409,340 +455,290 @@ namespace IronAHK.Rusty
         /// <summary>
         /// Activates the specified window (makes it foremost).
         /// </summary>
-        /// <param name="WinTitle">The title or partial title of the target window (the matching behavior is determined by SetTitleMatchMode). If all parameters are omitted, the Last Found Window will be activated. To use a window class, specify ahk_class ExactClassName (shown by Window Spy). To use a process identifier (PID), specify ahk_pid %VarContainingPID%. To use a window group, specify ahk_group GroupName. To use a window's unique ID number, specify ahk_id %VarContainingID%. The search can be narrowed by specifying multiple criteria. For example: My File.txt ahk_class Notepad</param>
-        /// <param name="WinText">If present, this parameter must be a substring from a single text element of the target window (as revealed by the included Window Spy utility). Hidden text elements are detected if DetectHiddenText is ON.</param>
-        /// <param name="ExcludeTitle">Windows whose titles include this value will not be considered.</param>
-        /// <param name="ExcludeText">Windows whose text include this value will not be considered.</param>
-        public static void WinActivate(string WinTitle, string WinText, string ExcludeTitle, string ExcludeText)
+        /// <param name="title"></param>
+        /// <param name="text"></param>
+        /// <param name="excludeTitle"></param>
+        /// <param name="excludeText"></param>
+        public static void WinActivate(string title = null, string text = null, string excludeTitle = null, string excludeText = null)
         {
-            if (Environment.OSVersion.Platform != PlatformID.Win32NT)
-                return;
-
-            IntPtr hwnd = Windows.FindWindow(WinTitle, WinText, ExcludeTitle, ExcludeText);
-            Windows.ShowWindow(hwnd, Windows.SW_SHOWNORMAL);
-            Windows.SetForegroundWindow(hwnd);
-            Windows.SetActiveWindow(hwnd);
-            if (_WinDelay >= 0)
-                Sleep(_WinDelay ?? 100);
+            InitWindowManager();
+            var win = windowManager.FindFirstWindow(title, text, excludeTitle, excludeText);
+            win.Active = true;
         }
 
         /// <summary>
-        /// Same as WinActivate except that it activates the bottommost (least recently active) matching window rather than the topmost.
+        /// Activates the bottommost (least recently active) matching window rather than the topmost.
         /// </summary>
-        /// <param name="WinTitle">The title or partial title of the target window (the matching behavior is determined by SetTitleMatchMode). To use a window class, specify ahk_class ExactClassName (shown by Window Spy). To use a process identifier (PID), specify ahk_pid %VarContainingPID%. To use a window group, specify ahk_group GroupName. To use a window's unique ID number, specify ahk_id %VarContainingID%. The search can be narrowed by specifying multiple criteria. For example: My File.txt ahk_class Notepad</param>
-        /// <param name="WinText">If present, this parameter must be a substring from a single text element of the target window (as revealed by the included Window Spy utility). Hidden text elements are detected if DetectHiddenText is ON.</param>
-        /// <param name="ExcludeTitle">Windows whose titles include this value will not be considered.</param>
-        /// <param name="ExcludeText">Windows whose text include this value will not be considered.</param>
-        public static void WinActivateBottom(string WinTitle, string WinText, string ExcludeTitle, string ExcludeText)
+        /// <param name="title"></param>
+        /// <param name="text"></param>
+        /// <param name="excludeTitle"></param>
+        /// <param name="excludeText"></param>
+        public static void WinActivateBottom(string title = null, string text = null, string excludeTitle = null, string excludeText = null)
         {
+            InitWindowManager();
+            var criteria = new WindowManager.SearchCriteria { Title = title, Text = text, ExcludeTitle = excludeTitle, ExcludeText = excludeText };
 
+            foreach (var id in windowManager.LastActiveWindows)
+            {
+                var win = windowManager.CreateWindow(id);
+
+                if (win.Equals(criteria))
+                {
+                    win.Active = true;
+                    break;
+                }
+            }
         }
 
         /// <summary>
-        /// Returns the Unique ID (HWND) of the active window if it matches the specified criteria. If it does not, the function returns 0. Since all non-zero numbers are seen as "true", the statement if WinActive("WinTitle") is true whenever WinTitle is active. Finally, WinTitle supports ahk_id, ahk_class, and other special strings. See IfWinActive for details about these and other aspects of window activation.
+        /// Returns the Unique ID (HWND) of the active window if it matches the specified criteria.
         /// </summary>
-        /// <param name="WinTitle"></param>
-        /// <param name="WinText"></param>
-        /// <param name="ExcludeTitle"></param>
-        /// <param name="ExcludeText"></param>
+        /// <param name="title"></param>
+        /// <param name="text"></param>
+        /// <param name="excludeTitle"></param>
+        /// <param name="excludeText"></param>
         /// <returns></returns>
-        public static int WinActive(string WinTitle, string WinText, string ExcludeTitle, string ExcludeText)
+        public static long WinActive(string title = null, string text = null, string excludeTitle = null, string excludeText = null)
         {
-            if (Environment.OSVersion.Platform != PlatformID.Win32NT)
-                return 0;
+            InitWindowManager();
+            var criteria = new WindowManager.SearchCriteria { Title = title, Text = text, ExcludeTitle = excludeTitle, ExcludeText = excludeText };
 
-            IntPtr hwnd = Windows.GetForegroundWindow();
+            foreach (var id in windowManager.ActiveWindows)
+            {
+                var win = windowManager.CreateWindow(id);
 
-            return (hwnd == Windows.FindWindow(WinTitle, WinText, ExcludeTitle, ExcludeText)
-                ? hwnd : IntPtr.Zero).ToInt32();
+                if (win.Equals(criteria))
+                    return id.ToInt32();
+            }
+
+            return 0;
         }
 
         /// <summary>
         /// Closes the specified window.
         /// </summary>
-        /// <param name="WinTitle">The title or partial title of the target window (the matching behavior is determined by SetTitleMatchMode). If this and the other 3 window parameters are blank or omitted, the Last Found Window will be used. If this is the letter A and the other 3 window parameters are blank or omitted, the active window will be used. To use a window class, specify ahk_class ExactClassName (shown by Window Spy). To use a process identifier (PID), specify ahk_pid %VarContainingPID%. To close a group of windows, specify ahk_group GroupName (WinText, ExcludeTitle, and ExcludeText must be blank in this case). To use a window's unique ID number, specify ahk_id %VarContainingID%. The search can be narrowed by specifying multiple criteria. For example: My File.txt ahk_class Notepad</param>
-        /// <param name="WinText">If present, this parameter must be a substring from a single text element of the target window (as revealed by the included Window Spy utility). Hidden text elements are detected if DetectHiddenText is ON.</param>
-        /// <param name="SecondsToWait">If omitted or blank, the command will not wait at all. If 0, it will wait 500ms. Otherwise, it will wait the indicated number of seconds (can contain a decimal point or be an expression) for the window to close. If the window does not close within that period, the script will continue. ErrorLevel is not set by this command, so use IfWinExist or WinWaitClose if you need to determine for certain that a window is closed. While the command is in a waiting state, new threads can be launched via hotkey, custom menu item, or timer.</param>
-        /// <param name="ExcludeTitle">Windows whose titles include this value will not be considered.</param>
-        /// <param name="ExcludeText">Windows whose text include this value will not be considered.</param>
-        public static void WinClose(string WinTitle, string WinText, int SecondsToWait, string ExcludeTitle, string ExcludeText)
+        /// <param name="title"></param>
+        /// <param name="text"></param>
+        /// <param name="excludeTitle"></param>
+        /// <param name="excludeText"></param>
+        public static void WinClose(string title = null, string text = null, string excludeTitle = null, string excludeText = null)
         {
-            if (Environment.OSVersion.Platform != PlatformID.Win32NT)
-                return;
-
-            IntPtr hwnd = Windows.FindWindow(WinTitle, WinText, ExcludeTitle, ExcludeText);
-            Windows.CloseWindow(hwnd);
-
-            int start = Environment.TickCount;
-            SecondsToWait *= 1000;
-
-            while (Windows.IsWindowVisible(hwnd))
-            {
-                System.Threading.Thread.Sleep(LoopFrequency);
-                if (Environment.TickCount - start > SecondsToWait)
-                    break;
-            }
-            if (_WinDelay >= 0)
-                Sleep(_WinDelay ?? 100);
+            InitWindowManager();
+            var win = windowManager.FindFirstWindow(title, text, excludeTitle, excludeText);
+            win.Close();
         }
 
         /// <summary>
-        /// Returns the Unique ID (HWND) of the first matching window (0 if none) as a hexademinal integer. Since all non-zero numbers are seen as "true", the statement if WinExist("WinTitle") is true whenever WinTitle exists. Finally, WinTitle supports ahk_id, ahk_class, and other special strings. See IfWinExist for details about these and other aspects of window searching.
+        /// Returns the Unique ID (HWND) of the first matching window (0 if none) as a hexademinal integer.
         /// </summary>
-        /// <param name="WinTitle"></param>
-        /// <param name="WinText"></param>
-        /// <param name="ExcludeTitle"></param>
-        /// <param name="ExcludeText"></param>
+        /// <param name="title"></param>
+        /// <param name="text"></param>
+        /// <param name="excludeTitle"></param>
+        /// <param name="excludeText"></param>
         /// <returns></returns>
-        public static int WinExist(string WinTitle, string WinText, string ExcludeTitle, string ExcludeText)
+        public static long WinExist(string title = null, string text = null, string excludeTitle = null, string excludeText = null)
         {
-            if (Environment.OSVersion.Platform != PlatformID.Win32NT)
-                return 0;
-
-            return Windows.FindWindow(WinTitle, WinText, ExcludeTitle, ExcludeText).ToInt32();
+            InitWindowManager();
+            var win = windowManager.FindFirstWindow(title, text, excludeTitle, excludeText);
+            return win.ID.ToInt64();
         }
 
         /// <summary>
-        /// Retrieves the specified window's unique ID, process ID, process name, or a list of its controls. It can also retrieve a list of all windows matching the specified criteria.
+        /// Retrieves the specified window's unique ID, process ID, process name, or a list of its controls.
         /// </summary>
-        /// <param name="OutputVar">The name of the variable in which to store the result of Cmd.</param>
-        /// <param name="Cmd">See list below.</param>
-        /// <param name="WinTitle">The title or partial title of the target window (the matching behavior is determined by SetTitleMatchMode). If this and the other 3 parameters are omitted, the Last Found Window will be used. To use a window class, specify ahk_class ExactClassName (shown by Window Spy). To use a process identifier (PID), specify ahk_pid %VarContainingPID%. To use a window's unique ID number, specify ahk_id %VarContainingID%. The search can be narrowed by specifying multiple criteria. For example: My File.txt ahk_pid %VarContainingPID%</param>
-        /// <param name="WinText">If present, this parameter must be a substring from a single text element of the target window (as revealed by the included Window Spy utility). Hidden text elements are detected if DetectHiddenText is ON.</param>
-        /// <param name="ExcludeTitle">Windows whose titles include this value will not be considered.</param>
-        /// <param name="ExcludeText">Windows whose text include this value will not be considered.</param>
-        public static void WinGet(out string OutputVar, string Cmd, string WinTitle, string WinText, string ExcludeTitle, string ExcludeText)
+        /// <param name="result"></param>
+        /// <param name="command"></param>
+        /// <param name="title"></param>
+        /// <param name="text"></param>
+        /// <param name="excludeTitle"></param>
+        /// <param name="excludeText"></param>
+        public static void WinGet(out string result, string command, string title = null, string text = null, string excludeTitle = null, string excludeText = null)
         {
-            OutputVar = null;
+            result = null;
+
+            // TODO: WinGet
         }
 
         /// <summary>
-        /// Combines the functions of WinGetActiveTitle and WinGetPos into one command.
+        /// Combines the functions of <see cref="WinGetActiveTitle"/> and <see cref="WinGetPos"/> into one command.
         /// </summary>
-        /// <param name="Title">The name of the variable in which to store the title of the active window.</param>
-        /// <param name="Width">The names of the variables in which to store the width and height of the active window.</param>
-        /// <param name="Height">See <paramref name="Width"/>.</param>
-        /// <param name="X">The names of the variables in which to store the X and Y coordinates of the active window's upper left corner.</param>
-        /// <param name="Y">See <paramref name="X"/>.</param>
-        public static void WinGetActiveStats(out string Title, out int Width, out int Height, out int X, out int Y)
+        /// <param name="title"></param>
+        /// <param name="width"></param>
+        /// <param name="height"></param>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        public static void WinGetActiveStats(out string title, out int width, out int height, out int x, out int y)
         {
-            Title = null;
-            Width = Height = X = Y = default(int);
+            InitWindowManager();
+            var ids = windowManager.ActiveWindows;
 
-            if (Environment.OSVersion.Platform != PlatformID.Win32NT)
-                return;
-
-            IntPtr hwnd = Windows.GetActiveWindow();
-            if (hwnd == IntPtr.Zero)
+            if (ids.Length == 0)
             {
-                Title = string.Empty;
-                Width = Height = X = Y = 0;
+                title = string.Empty;
+                width = height = x = y = 0;
                 return;
             }
 
-            Title = Windows.GetWindowText(hwnd);
-
-            Windows.RECT size;
-            Windows.GetWindowRect(hwnd, out size);
-
-            Width = size.Left - size.Right;
-            Height = size.Bottom - size.Top;
-            X = size.Left;
-            Y = size.Top;
+            var win = windowManager.CreateWindow(ids[0]);
+            title = win.Title;
+            width = win.Size.Width;
+            height = win.Size.Height;
+            x = win.Location.X;
+            y = win.Location.Y;
         }
 
         /// <summary>
         /// Retrieves the title of the active window.
         /// </summary>
-        /// <param name="OutputVar">The name of the variable in which to store the title of the active window.</param>
-        public static void WinGetActiveTitle(out string OutputVar)
+        /// <param name="result"></param>
+        public static void WinGetActiveTitle(out string result)
         {
-            OutputVar = null;
-
-            if (Environment.OSVersion.Platform != PlatformID.Win32NT)
-                return;
-
-            IntPtr hwnd = Windows.GetActiveWindow();
-            OutputVar = Windows.GetWindowText(hwnd);
+            InitWindowManager();
+            var ids = windowManager.ActiveWindows;
+            result = ids.Length == 0 ? string.Empty : windowManager.CreateWindow(ids[0]).Title;
         }
 
         /// <summary>
         /// Retrieves the specified window's class name.
         /// </summary>
-        /// <param name="OutputVar">The name of the variable in which to store the retrieved class name.</param>
-        /// <param name="WinTitle">The title or partial title of the target window (the matching behavior is determined by SetTitleMatchMode). If this and the next 3 parameters are omitted, the Last Found Window will be used. If this is the letter A and the next 3 parameters are omitted, the active window will be used. To use a process identifier (PID), specify ahk_pid %VarContainingPID%. To use a window group, specify ahk_group GroupName. To use a window's unique ID number, specify ahk_id %VarContainingID%. The search can be narrowed by specifying multiple criteria. For example: My File.txt ahk_pid %VarContainingPID%</param>
-        /// <param name="WinText">If present, this parameter must be a substring from a single text element of the target window (as revealed by the included Window Spy utility). Hidden text elements are detected if DetectHiddenText is ON.</param>
-        /// <param name="ExcludeTitle">Windows whose titles include this value will not be considered.</param>
-        /// <param name="ExcludeText">Windows whose text include this value will not be considered.</param>
-        public static void WinGetClass(out string OutputVar, string WinTitle, string WinText, string ExcludeTitle, string ExcludeText)
+        /// <param name="result"></param>
+        /// <param name="title"></param>
+        /// <param name="text"></param>
+        /// <param name="excludeTitle"></param>
+        /// <param name="excludeText"></param>
+        public static void WinGetClass(out string result, string title = null, string text = null, string excludeTitle = null, string excludeText = null)
         {
-            OutputVar = null;
-
-            if (Environment.OSVersion.Platform != PlatformID.Win32NT)
-                return;
-
-            IntPtr hwnd = Windows.FindWindow(WinTitle, WinText, ExcludeTitle, ExcludeText);
-            OutputVar = Windows.GetClassName(hwnd);
+            InitWindowManager();
+            var win = windowManager.FindFirstWindow(title, text, excludeTitle, excludeText);
+            result = win.ClassName;
         }
 
         /// <summary>
         /// Retrieves the position and size of the specified window.
         /// </summary>
-        /// <param name="X">The names of the variables in which to store the X and Y coordinates of the target window's upper left corner. If omitted, the corresponding values will not be stored.</param>
-        /// <param name="Y">See <paramref name="X"/>.</param>
-        /// <param name="Width">The names of the variables in which to store the width and height of the target window. If omitted, the corresponding values will not be stored.</param>
-        /// <param name="Height">See <paramref name="Width"/>.</param>
-        /// <param name="WinTitle">The title or partial title of the target window (the matching behavior is determined by SetTitleMatchMode). If this and the next 3 parameters are omitted, the Last Found Window will be used. If this is the letter A and the next 3 parameters are omitted, the active window will be used. To use a window class, specify ahk_class ExactClassName (shown by Window Spy). To use a process identifier (PID), specify ahk_pid %VarContainingPID%. To use a window group, specify ahk_group GroupName. To use a window's unique ID number, specify ahk_id %VarContainingID%. The search can be narrowed by specifying multiple criteria. For example: My File.txt ahk_class Notepad</param>
-        /// <param name="WinText">If present, this parameter must be a substring from a single text element of the target window (as revealed by the included Window Spy utility). Hidden text elements are detected if DetectHiddenText is ON.</param>
-        /// <param name="ExcludeTitle">Windows whose titles include this value will not be considered.</param>
-        /// <param name="ExcludeText">Windows whose text include this value will not be considered.</param>
-        public static void WinGetPos(out int X, out int Y, out int Width, out int Height, string WinTitle, string WinText, string ExcludeTitle, string ExcludeText)
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="width"></param>
+        /// <param name="height"></param>
+        /// <param name="title"></param>
+        /// <param name="text"></param>
+        /// <param name="excludeTitle"></param>
+        /// <param name="excludeText"></param>
+        public static void WinGetPos(out int x, out int y, out int width, out int height, string title = null, string text = null, string excludeTitle = null, string excludeText = null)
         {
-            X = Y = Width = Height = default(int);
-
-            if (Environment.OSVersion.Platform != PlatformID.Win32NT)
-                return;
-
-            IntPtr hwnd = Windows.FindWindow(WinTitle, WinText, ExcludeTitle, ExcludeText);
-            Windows.RECT pos;
-            Windows.GetWindowRect(hwnd, out pos);
-            X = pos.Top;
-            Y = pos.Left;
-            Width = pos.Right - pos.Left;
-            Height = pos.Bottom - pos.Top;
+            InitWindowManager();
+            var win = windowManager.FindFirstWindow(title, text, excludeTitle, excludeText);
+            x = win.Location.X;
+            y = win.Location.Y;
+            width = win.Size.Width;
+            height = win.Size.Height;
         }
 
         /// <summary>
         /// Retrieves the text from the specified window.
         /// </summary>
-        /// <param name="OutputVar">The name of the variable in which to store the retrieved text.</param>
-        /// <param name="WinTitle">The title or partial title of the target window (the matching behavior is determined by SetTitleMatchMode). If this and the next 3 parameters are omitted, the Last Found Window will be used. If this is the letter A and the next 3 parameters are omitted, the active window will be used. To use a window class, specify ahk_class ExactClassName (shown by Window Spy). To use a process identifier (PID), specify ahk_pid %VarContainingPID%. To use a window group, specify ahk_group GroupName. To use a window's unique ID number, specify ahk_id %VarContainingID%. The search can be narrowed by specifying multiple criteria. For example: My File.txt ahk_class Notepad</param>
-        /// <param name="WinText">If present, this parameter must be a substring from a single text element of the target window (as revealed by the included Window Spy utility). Hidden text elements are detected if DetectHiddenText is ON.</param>
-        /// <param name="ExcludeTitle">Windows whose titles include this value will not be considered.</param>
-        /// <param name="ExcludeText">Windows whose text include this value will not be considered.</param>
-        public static void WinGetText(out string OutputVar, string WinTitle, string WinText, string ExcludeTitle, string ExcludeText)
+        /// <param name="result"></param>
+        /// <param name="title"></param>
+        /// <param name="text"></param>
+        /// <param name="excludeTitle"></param>
+        /// <param name="excludeText"></param>
+        public static void WinGetText(out string result, string title = null, string text = null, string excludeTitle = null, string excludeText = null)
         {
-            OutputVar = null;
-
-            if (Environment.OSVersion.Platform != PlatformID.Win32NT)
-                return;
-
-            IntPtr hwnd = Windows.FindWindow(WinTitle, WinText, ExcludeTitle, ExcludeText);
-            hwnd = Windows.GetWindow(hwnd, Windows.GW_CHILD);
-            OutputVar = Windows.GetWindowText(hwnd);
+            InitWindowManager();
+            var win = windowManager.FindFirstWindow(title, text, excludeTitle, excludeText);
+            result = win.Text;
         }
 
         /// <summary>
         /// Retrieves the title of the specified window.
         /// </summary>
-        /// <param name="OutputVar">The name of the variable in which to store the retrieved title.</param>
-        /// <param name="WinTitle">The title or partial title of the target window (the matching behavior is determined by SetTitleMatchMode). If this and the next 3 parameters are omitted, the Last Found Window will be used. If this is the letter A and the next 3 parameters are omitted, the active window will be used. To use a window class, specify ahk_class ExactClassName (shown by Window Spy). To use a process identifier (PID), specify ahk_pid %VarContainingPID%. To use a window group, specify ahk_group GroupName. To use a window's unique ID number, specify ahk_id %VarContainingID%. The search can be narrowed by specifying multiple criteria. For example: My File.txt ahk_class Notepad</param>
-        /// <param name="WinText">If present, this parameter must be a substring from a single text element of the target window (as revealed by the included Window Spy utility). Hidden text elements are detected if DetectHiddenText is ON.</param>
-        /// <param name="ExcludeTitle">Windows whose titles include this value will not be considered.</param>
-        /// <param name="ExcludeText">Windows whose text include this value will not be considered.</param>
-        public static void WinGetTitle(out string OutputVar, string WinTitle, string WinText, string ExcludeTitle, string ExcludeText)
+        /// <param name="result"></param>
+        /// <param name="title"></param>
+        /// <param name="text"></param>
+        /// <param name="excludeTitle"></param>
+        /// <param name="excludeText"></param>
+        public static void WinGetTitle(out string result, string title = null, string text = null, string excludeTitle = null, string excludeText = null)
         {
-            OutputVar = null;
-
-            if (Environment.OSVersion.Platform != PlatformID.Win32NT)
-                return;
-
-            IntPtr hwnd = Windows.FindWindow(WinTitle, WinText, ExcludeTitle, ExcludeText);
-            OutputVar = Windows.GetWindowText(hwnd);
+            InitWindowManager();
+            var win = windowManager.FindFirstWindow(title, text, excludeTitle, excludeText);
+            result = win.Title;
         }
 
         /// <summary>
         /// Hides the specified window.
         /// </summary>
-        /// <param name="WinTitle">The title or partial title of the target window (the matching behavior is determined by SetTitleMatchMode). If this and the other 3 parameters are omitted, the Last Found Window will be used. If this is the letter A and the other 3 parameters are omitted, the active window will be used. To use a window class, specify ahk_class ExactClassName (shown by Window Spy). To use a process identifier (PID), specify ahk_pid %VarContainingPID%. To hide a group of windows, specify ahk_group GroupName (WinText, ExcludeTitle, and ExcludeText must be blank in this case). To use a window's unique ID number, specify ahk_id %VarContainingID%. The search can be narrowed by specifying multiple criteria. For example: My File.txt ahk_class Notepad</param>
-        /// <param name="WinText">If present, this parameter must be a substring from a single text element of the target window (as revealed by the included Window Spy utility). Hidden text elements are detected if DetectHiddenText is ON.</param>
-        /// <param name="ExcludeTitle">Windows whose titles include this value will not be considered.</param>
-        /// <param name="ExcludeText">Windows whose text include this value will not be considered.</param>
-        public static void WinHide(string WinTitle, string WinText, string ExcludeTitle, string ExcludeText)
+        /// <param name="title"></param>
+        /// <param name="text"></param>
+        /// <param name="excludeTitle"></param>
+        /// <param name="excludeText"></param>
+        public static void WinHide(string title = null, string text = null, string excludeTitle = null, string excludeText = null)
         {
-            if (Environment.OSVersion.Platform != PlatformID.Win32NT)
-                return;
-
-            IntPtr hwnd = Windows.FindWindow(WinTitle, WinText, ExcludeTitle, ExcludeText);
-            Windows.ShowWindow(hwnd, Windows.SW_HIDE);
+            InitWindowManager();
+            var win = windowManager.FindFirstWindow(title, text, excludeTitle, excludeText);
+            win.Hide();
         }
 
         /// <summary>
         /// Forces the specified window to close.
         /// </summary>
-        /// <param name="WinTitle">The title or partial title of the target window (the matching behavior is determined by SetTitleMatchMode). If this and the other 3 window parameters are blank or omitted, the Last Found Window will be used. If this is the letter A and the other 3 window parameters are blank or omitted, the active window will be used. To use a window class, specify ahk_class ExactClassName (shown by Window Spy). To use a process identifier (PID), specify ahk_pid %VarContainingPID%. To kill a group of windows, specify ahk_group GroupName (WinText, ExcludeTitle, and ExcludeText must be blank in this case). To use a window's unique ID number, specify ahk_id %VarContainingID%. The search can be narrowed by specifying multiple criteria. For example: My File.txt ahk_class Notepad</param>
-        /// <param name="WinText">If present, this parameter must be a substring from a single text element of the target window (as revealed by the included Window Spy utility). Hidden text elements are detected if DetectHiddenText is ON.</param>
-        /// <param name="SecondsToWait">If omitted or blank, the command will not wait at all. If 0, it will wait 500ms. Otherwise, it will wait the indicated number of seconds (can contain a decimal point or be an expression) for the window to close. If the window does not close within that period, the script will continue. ErrorLevel is not set by this command, so use IfWinExist or WinWaitClose if you need to determine for certain that a window is closed.</param>
-        /// <param name="ExcludeTitle">Windows whose titles include this value will not be considered.</param>
-        /// <param name="ExcludeText">Windows whose text include this value will not be considered.</param>
-        public static void WinKill(string WinTitle, string WinText, int SecondsToWait, string ExcludeTitle, string ExcludeText)
+        /// <param name="title"></param>
+        /// <param name="text"></param>
+        /// <param name="excludeTitle"></param>
+        /// <param name="excludeText"></param>
+        public static void WinKill(string title = null, string text = null, string excludeTitle = null, string excludeText = null)
         {
-            if (Environment.OSVersion.Platform != PlatformID.Win32NT)
-                return;
-
-            IntPtr hwnd = Windows.FindWindow(WinTitle, WinText, ExcludeTitle, ExcludeText);
-            Windows.SendMessage(hwnd, Windows.WM_SYSCOMMAND, new IntPtr(Windows.SC_CLOSE), IntPtr.Zero);
-
-            int start = Environment.TickCount;
-            SecondsToWait *= 1000;
-
-            while (Windows.IsWindowVisible(hwnd))
-            {
-                System.Threading.Thread.Sleep(LoopFrequency);
-                if (Environment.TickCount - start > SecondsToWait)
-                    break;
-            }
+            InitWindowManager();
+            var win = windowManager.FindFirstWindow(title, text, excludeTitle, excludeText);
+            win.Kill();
         }
 
         /// <summary>
         /// Enlarges the specified window to its maximum size.
         /// </summary>
-        /// <param name="WinTitle">The title or partial title of the target window (the matching behavior is determined by SetTitleMatchMode). If this and the next 3 parameters are omitted, the Last Found Window will be used. If this is the letter A and the next 3 parameters are omitted, the active window will be used. To use a window class, specify ahk_class ExactClassName (shown by Window Spy). To use a process identifier (PID), specify ahk_pid %VarContainingPID%. To maximize a group of windows, specify ahk_group GroupName (WinText, ExcludeTitle, and ExcludeText must be blank in this case). To use a window's unique ID number, specify ahk_id %VarContainingID%. The search can be narrowed by specifying multiple criteria. For example: My File.txt ahk_class Notepad</param>
-        /// <param name="WinText">If present, this parameter must be a substring from a single text element of the target window (as revealed by the included Window Spy utility). Hidden text elements are detected if DetectHiddenText is ON.</param>
-        /// <param name="ExcludeTitle">Windows whose titles include this value will not be considered.</param>
-        /// <param name="ExcludeText">Windows whose text include this value will not be considered.</param>
-        public static void WinMaximize(string WinTitle, string WinText, string ExcludeTitle, string ExcludeText)
+        /// <param name="title"></param>
+        /// <param name="text"></param>
+        /// <param name="excludeTitle"></param>
+        /// <param name="excludeText"></param>
+        public static void WinMaximize(string title = null, string text = null, string excludeTitle = null, string excludeText = null)
         {
-            if (Environment.OSVersion.Platform != PlatformID.Win32NT)
-                return;
-
-            IntPtr hwnd = Windows.FindWindow(WinTitle, WinText, ExcludeTitle, ExcludeText);
-            Windows.ShowWindow(hwnd, Windows.SW_MAXIMIZE);
+            InitWindowManager();
+            var win = windowManager.FindFirstWindow(title, text, excludeTitle, excludeText);
+            win.WindowState = FormWindowState.Maximized;
         }
 
         /// <summary>
         /// Invokes a menu item from the menu bar of the specified window.
         /// </summary>
-        /// <param name="WinTitle">The title or partial title of the target window (the matching behavior is determined by SetTitleMatchMode). If this and the other 3 window parameters are blank or omitted, the Last Found Window will be used. If this is the letter A and the other 3 window parameters are blank or omitted, the active window will be used. To use a window class, specify ahk_class ExactClassName (shown by Window Spy). To use a process identifier (PID), specify ahk_pid %VarContainingPID%. To use a window group, specify ahk_group GroupName. To use a window's unique ID number, specify ahk_id %VarContainingID%. The search can be narrowed by specifying multiple criteria. For example: My File.txt ahk_class Notepad</param>
-        /// <param name="WinText">If present, this parameter must be a substring from a single text element of the target window (as revealed by the included Window Spy utility). Hidden text elements are detected if DetectHiddenText is ON.</param>
-        /// <param name="Menu">The name of the top-level menu, e.g. File, Edit, View. It can also be the position of the desired menu item by using 1&amp; to represent the first menu, 2&amp; the second, and so on.</param>
-        /// <param name="SubMenu1">The name of the menu item to select or its position (see above).</param>
-        /// <param name="SubMenu2">If SubMenu1 itself contains a menu, this is the name of the menu item inside, or its position.</param>
-        /// <param name="SubMenu3">Same as above.</param>
-        /// <param name="SubMenu4">Same as above.</param>
-        /// <param name="SubMenu5">Same as above.</param>
-        /// <param name="SubMenu6">Same as above.</param>
-        /// <param name="ExcludeTitle">Windows whose titles include this value will not be considered.</param>
-        /// <param name="ExcludeText">Windows whose text include this value will not be considered.</param>
-        public static void WinMenuSelectItem(string WinTitle, string WinText, string Menu, string SubMenu1, string SubMenu2, string SubMenu3, string SubMenu4, string SubMenu5, string SubMenu6, string ExcludeTitle, string ExcludeText)
+        /// <param name="title"></param>
+        /// <param name="text"></param>
+        /// <param name="menu"></param>
+        /// <param name="subMenu1"></param>
+        /// <param name="subMenu2"></param>
+        /// <param name="subMenu3"></param>
+        /// <param name="subMenu4"></param>
+        /// <param name="subMenu5"></param>
+        /// <param name="subMenu6"></param>
+        /// <param name="excludeTitle"></param>
+        /// <param name="excludeText"></param>
+        public static void WinMenuSelectItem(string title = null, string text = null, string menu = null, string subMenu1 = null, string subMenu2 = null, string subMenu3 = null, string subMenu4 = null, string subMenu5 = null, string subMenu6 = null, string excludeTitle = null, string excludeText = null)
         {
-            
+            InitWindowManager();
+            var win = windowManager.FindFirstWindow(title, text, excludeTitle, excludeText);
+            ErrorLevel = win.SelectMenuItem(menu, subMenu1, subMenu2, subMenu3, subMenu4, subMenu5, subMenu6) ? 1 : 0;
         }
 
         /// <summary>
         /// Collapses the specified window into a button on the task bar.
         /// </summary>
-        /// <param name="WinTitle">The title or partial title of the target window (the matching behavior is determined by SetTitleMatchMode). If this and the next 3 parameters are omitted, the Last Found Window will be used. If this is the letter A and the next 3 parameters are omitted, the active window will be used. To use a window class, specify ahk_class ExactClassName (shown by Window Spy). To use a process identifier (PID), specify ahk_pid %VarContainingPID%. To minimize a group of windows, specify ahk_group GroupName (WinText, ExcludeTitle, and ExcludeText must be blank in this case). To use a window's unique ID number, specify ahk_id %VarContainingID%. The search can be narrowed by specifying multiple criteria. For example: My File.txt ahk_class Notepad</param>
-        /// <param name="WinText">If present, this parameter must be a substring from a single text element of the target window (as revealed by the included Window Spy utility). Hidden text elements are detected if DetectHiddenText is ON.</param>
-        /// <param name="ExcludeTitle">Windows whose titles include this value will not be considered.</param>
-        /// <param name="ExcludeText">Windows whose text include this value will not be considered.</param>
-        public static void WinMinimize(string WinTitle, string WinText, string ExcludeTitle, string ExcludeText)
+        /// <param name="title"></param>
+        /// <param name="text"></param>
+        /// <param name="excludeTitle"></param>
+        /// <param name="excludeText"></param>
+        public static void WinMinimize(string title = null, string text = null, string excludeTitle = null, string excludeText = null)
         {
-            if (Environment.OSVersion.Platform != PlatformID.Win32NT)
-                return;
-
-            IntPtr hwnd = Windows.FindWindow(WinTitle, WinText, ExcludeTitle, ExcludeText);
-            Windows.ShowWindow(hwnd, Windows.SW_MINIMIZE);
+            InitWindowManager();
+            var win = windowManager.FindFirstWindow(title, text, excludeTitle, excludeText);
+            win.WindowState = FormWindowState.Normal;
         }
 
         /// <summary>
@@ -750,11 +746,10 @@ namespace IronAHK.Rusty
         /// </summary>
         public static void WinMinimizeAll()
         {
-            if (Environment.OSVersion.Platform != PlatformID.Win32NT)
-                return;
+            InitWindowManager();
 
-            foreach (var hwnd in Windows.FindAllWindows())
-                Windows.ShowWindow(hwnd, Windows.SW_MINIMIZE);
+            foreach (var id in windowManager.AllWindows)
+                windowManager.CreateWindow(id).WindowState = FormWindowState.Minimized;
         }
 
         /// <summary>
@@ -762,223 +757,167 @@ namespace IronAHK.Rusty
         /// </summary>
         public static void WinMinimizeAllUndo()
         {
-            if (Environment.OSVersion.Platform != PlatformID.Win32NT)
-                return;
+            InitWindowManager();
 
-            foreach (var hwnd in Windows.FindAllWindows())
-                Windows.ShowWindow(hwnd, Windows.SW_RESTORE);
+            foreach (var id in windowManager.AllWindows)
+                windowManager.CreateWindow(id).WindowState = FormWindowState.Normal;
         }
 
         /// <summary>
         /// Changes the position and/or size of the specified window.
         /// </summary>
-        /// <param name="WinTitle">The title or partial title of the target window (the matching behavior is determined by SetTitleMatchMode). If this and the other 3 window parameters are blank or omitted, the Last Found Window will be used. If this is the letter A and the other 3 window parameters are blank or omitted, the active window will be used. To use a window class, specify ahk_class ExactClassName (shown by Window Spy). To use a process identifier (PID), specify ahk_pid %VarContainingPID%. To use a window group, specify ahk_group GroupName. To use a window's unique ID number, specify ahk_id %VarContainingID%. The search can be narrowed by specifying multiple criteria. For example: My File.txt ahk_class Notepad</param>
-        /// <param name="WinText">If present, this parameter must be a substring from a single text element of the target window (as revealed by the included Window Spy utility). Hidden text elements are detected if DetectHiddenText is ON.</param>
-        /// <param name="X">
-        /// <para>The X and Y coordinates (in pixels) of the upper left corner of the target window's new location. The upper-left pixel of the screen is at 0, 0.</para>
-        /// <para>If these are the only parameters given with the command, the Last Found Window will be used as the target window.</para>
-        /// </param>
-        /// <param name="Y">See <paramref name="X"/>.</param>
-        /// <param name="Width">The new width and height of the window (in pixels). If either is omitted, blank, or the word DEFAULT, the size in that dimension will not be changed.</param>
-        /// <param name="Height">See <paramref name="Width"/>.</param>
-        /// <param name="ExcludeTitle">Windows whose titles include this value will not be considered.</param>
-        /// <param name="ExcludeText">Windows whose text include this value will not be considered.</param>
-        public static void WinMove(string WinTitle, string WinText, int X, int Y, int Width, int Height, string ExcludeTitle, string ExcludeText)
+        /// <param name="title"></param>
+        /// <param name="text"></param>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="width"></param>
+        /// <param name="height"></param>
+        /// <param name="excludeTitle"></param>
+        /// <param name="excludeText"></param>
+        public static void WinMove(string title = null, string text = null, int x = -1, int y = -1, int width = -1, int height = -1, string excludeTitle = null, string excludeText = null)
         {
-            if (Environment.OSVersion.Platform != PlatformID.Win32NT)
-                return;
+            InitWindowManager();
+            var win = windowManager.FindFirstWindow(title, text, excludeTitle, excludeText);
 
-            IntPtr hwnd = Windows.FindWindow(WinTitle, WinText, ExcludeTitle, ExcludeText);
-            Windows.MoveWindow(hwnd, X, Y, Width, Height, true);
+            var location = win.Location;
+
+            if (x != -1)
+                location.X = x;
+
+            if (y != -1)
+                location.Y = y;
+
+            win.Location = location;
+
+            var size = win.Size;
+
+            if (width != -1)
+                size.Width = width;
+
+            if (height != -1)
+                size.Height = height;
+
+            win.Size = size;
         }
 
         /// <summary>
         /// Unminimizes or unmaximizes the specified window if it is minimized or maximized.
         /// </summary>
-        /// <param name="WinTitle">The title or partial title of the target window (the matching behavior is determined by SetTitleMatchMode). If this and the next 3 parameters are omitted, the Last Found Window will be used. If this is the letter A and the next 3 parameters are omitted, the active window will be used. To use a window class, specify ahk_class ExactClassName (shown by Window Spy). To use a process identifier (PID), specify ahk_pid %VarContainingPID%. To restore a group of windows, specify ahk_group GroupName (WinText, ExcludeTitle, and ExcludeText must be blank in this case). To use a window's unique ID number, specify ahk_id %VarContainingID%. The search can be narrowed by specifying multiple criteria. For example: My File.txt ahk_class Notepad</param>
-        /// <param name="WinText">If present, this parameter must be a substring from a single text element of the target window (as revealed by the included Window Spy utility). Hidden text elements are detected if DetectHiddenText is ON.</param>
-        /// <param name="ExcludeTitle">Windows whose titles include this value will not be considered.</param>
-        /// <param name="ExcludeText">Windows whose text include this value will not be considered.</param>
-        public static void WinRestore(string WinTitle, string WinText, string ExcludeTitle, string ExcludeText)
+        /// <param name="title"></param>
+        /// <param name="text"></param>
+        /// <param name="excludeTitle"></param>
+        /// <param name="excludeText"></param>
+        public static void WinRestore(string title = null, string text = null, string excludeTitle = null, string excludeText = null)
         {
-            if (Environment.OSVersion.Platform != PlatformID.Win32NT)
-                return;
-
-            IntPtr hwnd = Windows.FindWindow(WinTitle, WinText, ExcludeTitle, ExcludeText);
-            Windows.ShowWindow(hwnd, Windows.SW_RESTORE);
+            InitWindowManager();
+            var win = windowManager.FindFirstWindow(title, text, excludeTitle, excludeText);
+            win.WindowState = FormWindowState.Normal;
         }
 
         /// <summary>
         /// Makes a variety of changes to the specified window, such as "always on top" and transparency.
         /// </summary>
-        /// <param name="Attribute">See list below.</param>
-        /// <param name="Value">See list below.</param>
-        /// <param name="WinTitle">The title or partial title of the target window (the matching behavior is determined by SetTitleMatchMode). If this and the next 3 parameters are omitted, the Last Found Window will be used. If this is the letter A and the next 3 parameters are omitted, the active window will be used. To use a window class, specify ahk_class ExactClassName (shown by Window Spy). To use a process identifier (PID), specify ahk_pid %VarContainingPID%. To use a window group, specify ahk_group GroupName. To use a window's unique ID number, specify ahk_id %VarContainingID%. The search can be narrowed by specifying multiple criteria. For example: My File.txt ahk_class Notepad</param>
-        /// <param name="WinText">If present, this parameter must be a substring from a single text element of the target window (as revealed by the included Window Spy utility). Hidden text elements are detected if DetectHiddenText is ON.</param>
-        /// <param name="ExcludeTitle">Windows whose titles include this value will not be considered.</param>
-        /// <param name="ExcludeText">Windows whose text include this value will not be considered.</param>
-        public static void WinSet(string Attribute, string Value, string WinTitle, string WinText, string ExcludeTitle, string ExcludeText)
+        /// <param name="attribute"></param>
+        /// <param name="value"></param>
+        /// <param name="title"></param>
+        /// <param name="text"></param>
+        /// <param name="excludeTitle"></param>
+        /// <param name="excludeText"></param>
+        public static void WinSet(string attribute, string value = null, string title = null, string text = null, string excludeTitle = null, string excludeText = null)
         {
+            InitWindowManager();
+            var win = windowManager.FindFirstWindow(title, text, excludeTitle, excludeText);
             
+            // TODO: winset
         }
 
         /// <summary>
         /// Changes the title of the specified window.
         /// </summary>
-        /// <param name="WinTitle">The title or partial title of the target window (the matching behavior is determined by SetTitleMatchMode). If this and the next 3 parameters are omitted, the Last Found Window will be used. If this is the letter A and the next 3 parameters are omitted, the active window will be used. To use a window class, specify ahk_class ExactClassName (shown by Window Spy). To use a process identifier (PID), specify ahk_pid %VarContainingPID%. To use a window group, specify ahk_group GroupName. To use a window's unique ID number, specify ahk_id %VarContainingID%. The search can be narrowed by specifying multiple criteria. For example: My File.txt ahk_class Notepad</param>
-        /// <param name="WinText">If present, this parameter must be a substring from a single text element of the target window (as revealed by the included Window Spy utility). Hidden text elements are detected if DetectHiddenText is ON.</param>
-        /// <param name="NewTitle">The new title for the window. If this is the only parameter given, the Last Found Window will be used.</param>
-        /// <param name="ExcludeTitle">Windows whose titles include this value will not be considered.</param>
-        /// <param name="ExcludeText">Windows whose text include this value will not be considered.</param>
-        public static void WinSetTitle(string WinTitle, string WinText, string NewTitle, string ExcludeTitle, string ExcludeText)
+        /// <param name="title"></param>
+        /// <param name="text"></param>
+        /// <param name="newTitle"></param>
+        /// <param name="excludeTitle"></param>
+        /// <param name="excludeText"></param>
+        public static void WinSetTitle(string title = null, string text = null, string newTitle = null, string excludeTitle = null, string excludeText = null)
         {
-            if (Environment.OSVersion.Platform != PlatformID.Win32NT)
-                return;
-
-            IntPtr hwnd = Windows.FindWindow(WinTitle, WinText, ExcludeTitle, ExcludeText);
-            Windows.SetWindowText(hwnd, NewTitle);
+            InitWindowManager();
+            var win = windowManager.FindFirstWindow(title, text, excludeTitle, excludeText);
+            win.Title = newTitle;
         }
 
         /// <summary>
         /// Unhides the specified window.
         /// </summary>
-        /// <param name="WinTitle">The title or partial title of the target window (the matching behavior is determined by SetTitleMatchMode). If this and the other 3 parameters are omitted, the Last Found Window will be used. To use a window class, specify ahk_class ExactClassName (shown by Window Spy). To use a process identifier (PID), specify ahk_pid %VarContainingPID%. To show a group of windows, specify ahk_group GroupName (WinText, ExcludeTitle, and ExcludeText must be blank in this case). To use a window's unique ID number, specify ahk_id %VarContainingID%. The search can be narrowed by specifying multiple criteria. For example: My File.txt ahk_class Notepad</param>
-        /// <param name="WinText">If present, this parameter must be a substring from a single text element of the target window (as revealed by the included Window Spy utility). Hidden text elements are detected if DetectHiddenText is ON.</param>
-        /// <param name="ExcludeTitle">Windows whose titles include this value will not be considered.</param>
-        /// <param name="ExcludeText">Windows whose text include this value will not be considered.</param>
-        public static void WinShow(string WinTitle, string WinText, string ExcludeTitle, string ExcludeText)
+        /// <param name="title"></param>
+        /// <param name="text"></param>
+        /// <param name="excludeTitle"></param>
+        /// <param name="excludeText"></param>
+        public static void WinShow(string title = null, string text = null, string excludeTitle = null, string excludeText = null)
         {
-            if (Environment.OSVersion.Platform != PlatformID.Win32NT)
-                return;
-
-            IntPtr hwnd = Windows.FindWindow(WinTitle, WinText, ExcludeTitle, ExcludeText);
-            Windows.ShowWindow(hwnd, Windows.SW_SHOW);
+            InitWindowManager();
+            var win = windowManager.FindFirstWindow(title, text, excludeTitle, excludeText);
+            win.Show();
         }
 
         /// <summary>
         /// Waits until the specified window exists.
         /// </summary>
-        /// <param name="WinTitle">
-        /// <para>The title or partial title of the target window (the matching behavior is determined by SetTitleMatchMode). To use a window class, specify ahk_class ExactClassName (shown by Window Spy). To use a process identifier (PID), specify ahk_pid %VarContainingPID%. To use a window group, specify ahk_group GroupName. The search can be narrowed by specifying multiple criteria. For example: My File.txt ahk_class Notepad</para>
-        /// <para>WinTitle may be blank only when WinText, ExcludeTitle, or ExcludeText is present.</para>
-        /// </param>
-        /// <param name="WinText">If present, this parameter must be a substring from a single text element of the target window (as revealed by the included Window Spy utility). Hidden text elements are detected if DetectHiddenText is ON.</param>
-        /// <param name="Seconds">How many seconds to wait before timing out and setting ErrorLevel to 1. Leave blank to wait indefinitely. Specifying 0 is the same as specifying 0.5. This parameter can be an expression.</param>
-        /// <param name="ExcludeTitle">Windows whose titles include this value will not be considered.</param>
-        /// <param name="ExcludeText">Windows whose text include this value will not be considered.</param>
-        public static void WinWait(string WinTitle, string WinText, int Seconds, string ExcludeTitle, string ExcludeText)
+        /// <param name="title"></param>
+        /// <param name="text"></param>
+        /// <param name="seconds"></param>
+        /// <param name="excludeTitle"></param>
+        /// <param name="excludeText"></param>
+        public static void WinWait(string title = null, string text = null, int seconds = -1, string excludeTitle = null, string excludeText = null)
         {
-            if (Environment.OSVersion.Platform != PlatformID.Win32NT)
-                return;
-
-            int start = Environment.TickCount;
-            Seconds *= 1000;
-            ErrorLevel = 0;
-
-            while (Windows.FindWindow(WinTitle, WinText, ExcludeTitle, ExcludeText) == IntPtr.Zero)
-            {
-                System.Threading.Thread.Sleep(LoopFrequency);
-                if (Environment.TickCount - start > Seconds)
-                {
-                    ErrorLevel = 1;
-                    break;
-                }
-            }
+            InitWindowManager();
+            var win = windowManager.FindFirstWindow(title, text, excludeTitle, excludeText);
+            ErrorLevel = win.Wait(seconds == -1 ? seconds : seconds * 1000) ? 0 : 1;
         }
 
         /// <summary>
         /// Waits until the specified window is active.
         /// </summary>
-        /// <param name="WinTitle">
-        /// <para>The title or partial title of the target window (the matching behavior is determined by SetTitleMatchMode). To use a window class, specify ahk_class ExactClassName (shown by Window Spy). To use a process identifier (PID), specify ahk_pid %VarContainingPID%. To use a window group, specify ahk_group GroupName. The search can be narrowed by specifying multiple criteria. For example: My File.txt ahk_class Notepad</para>
-        /// <para>WinTitle may be blank only when WinText, ExcludeTitle, or ExcludeText is present.</para>
-        /// </param>
-        /// <param name="WinText">If present, this parameter must be a substring from a single text element of the target window (as revealed by the included Window Spy utility). Hidden text elements are detected if DetectHiddenText is ON.</param>
-        /// <param name="Seconds">How many seconds to wait before timing out and setting ErrorLevel to 1. Leave blank to wait indefinitely. Specifying 0 is the same as specifying 0.5. This parameter can be an expression.</param>
-        /// <param name="ExcludeTitle">Windows whose titles include this value will not be considered.</param>
-        /// <param name="ExcludeText">Windows whose text include this value will not be considered.</param>
-        public static void WinWaitActive(string WinTitle, string WinText, int Seconds, string ExcludeTitle, string ExcludeText)
+        /// <param name="title"></param>
+        /// <param name="text"></param>
+        /// <param name="seconds"></param>
+        /// <param name="excludeTitle"></param>
+        /// <param name="excludeText"></param>
+        public static void WinWaitActive(string title = null, string text = null, int seconds = -1, string excludeTitle = null, string excludeText = null)
         {
-            if (Environment.OSVersion.Platform != PlatformID.Win32NT)
-                return;
-
-            int start = Environment.TickCount;
-            Seconds *= 1000;
-            ErrorLevel = 0;
-
-            while (Windows.FindWindow(WinTitle, WinText, ExcludeTitle, ExcludeText) != Windows.GetForegroundWindow())
-            {
-                System.Threading.Thread.Sleep(LoopFrequency);
-                if (Environment.TickCount - start > Seconds)
-                {
-                    ErrorLevel = 1;
-                    break;
-                }
-            }
-            if (_WinDelay >= 0)
-                Sleep(_WinDelay ?? 100);
+            InitWindowManager();
+            var win = windowManager.FindFirstWindow(title, text, excludeTitle, excludeText);
+            ErrorLevel = win.WaitActive(seconds == -1 ? seconds : seconds * 1000) ? 0 : 1;
         }
 
         /// <summary>
         /// Waits until the specified window does not exist.
         /// </summary>
-        /// <param name="WinTitle">
-        /// <para>The title or partial title of the target window (the matching behavior is determined by SetTitleMatchMode). To use a window class, specify ahk_class ExactClassName (shown by Window Spy). To use a process identifier (PID), specify ahk_pid %VarContainingPID%. To use a window group, specify ahk_group GroupName. The search can be narrowed by specifying multiple criteria. For example: My File.txt ahk_class Notepad</para>
-        /// <para>WinTitle may be blank only when WinText, ExcludeTitle, or ExcludeText is present.</para>
-        /// </param>
-        /// <param name="WinText">If present, this parameter must be a substring from a single text element of the target window (as revealed by the included Window Spy utility). Hidden text elements are detected if DetectHiddenText is ON.</param>
-        /// <param name="Seconds">How many seconds to wait before timing out and setting ErrorLevel to 1. Leave blank to wait indefinitely. Specifying 0 is the same as specifying 0.5. This parameter can be an expression.</param>
-        /// <param name="ExcludeTitle">Windows whose titles include this value will not be considered.</param>
-        /// <param name="ExcludeText">Windows whose text include this value will not be considered.</param>
-        public static void WinWaitClose(string WinTitle, string WinText, int Seconds, string ExcludeTitle, string ExcludeText)
+        /// <param name="title"></param>
+        /// <param name="text"></param>
+        /// <param name="seconds"></param>
+        /// <param name="excludeTitle"></param>
+        /// <param name="excludeText"></param>
+        public static void WinWaitClose(string title = null, string text = null, int seconds = -1, string excludeTitle = null, string excludeText = null)
         {
-            if (Environment.OSVersion.Platform != PlatformID.Win32NT)
-                return;
-
-            int start = Environment.TickCount;
-            Seconds *= 1000; 
-            ErrorLevel = 0;
-
-            while (Windows.FindWindow(WinTitle, WinText, ExcludeTitle, ExcludeText) != IntPtr.Zero)
-            {
-                System.Threading.Thread.Sleep(LoopFrequency);
-                if (Environment.TickCount - start > Seconds)
-                {
-                    ErrorLevel = 1;
-                    break;
-                }
-            }
+            InitWindowManager();
+            var win = windowManager.FindFirstWindow(title, text, excludeTitle, excludeText);
+            ErrorLevel = win.WaitClose(seconds == -1 ? seconds : seconds * 1000) ? 0 : 1;
         }
 
         /// <summary>
         /// Waits until the specified window is not active.
         /// </summary>
-        /// <param name="WinTitle">
-        /// <para>The title or partial title of the target window (the matching behavior is determined by SetTitleMatchMode). To use a window class, specify ahk_class ExactClassName (shown by Window Spy). To use a process identifier (PID), specify ahk_pid %VarContainingPID%. To use a window group, specify ahk_group GroupName. The search can be narrowed by specifying multiple criteria. For example: My File.txt ahk_class Notepad</para>
-        /// <para>WinTitle may be blank only when WinText, ExcludeTitle, or ExcludeText is present.</para>
-        /// </param>
-        /// <param name="WinText">If present, this parameter must be a substring from a single text element of the target window (as revealed by the included Window Spy utility). Hidden text elements are detected if DetectHiddenText is ON.</param>
-        /// <param name="Seconds">How many seconds to wait before timing out and setting ErrorLevel to 1. Leave blank to wait indefinitely. Specifying 0 is the same as specifying 0.5. This parameter can be an expression.</param>
-        /// <param name="ExcludeTitle">Windows whose titles include this value will not be considered.</param>
-        /// <param name="ExcludeText">Windows whose text include this value will not be considered.</param>
-        public static void WinWaitNotActive(string WinTitle, string WinText, int Seconds, string ExcludeTitle, string ExcludeText)
+        /// <param name="title"></param>
+        /// <param name="text"></param>
+        /// <param name="seconds"></param>
+        /// <param name="excludeTitle"></param>
+        /// <param name="excludeText"></param>
+        public static void WinWaitNotActive(string title = null, string text = null, int seconds = -1, string excludeTitle = null, string excludeText = null)
         {
-            if (Environment.OSVersion.Platform != PlatformID.Win32NT)
-                return;
-
-            int start = Environment.TickCount;
-            Seconds *= 1000; 
-            ErrorLevel = 0;
-
-            while (Windows.FindWindow(WinTitle, WinText, ExcludeTitle, ExcludeText) != Windows.GetActiveWindow())
-            {
-                System.Threading.Thread.Sleep(LoopFrequency);
-                if (Environment.TickCount - start > Seconds)
-                {
-                    ErrorLevel = 1;
-                    break;
-                }
-            }
+            InitWindowManager();
+            var win = windowManager.FindFirstWindow(title, text, excludeTitle, excludeText);
+            ErrorLevel = win.WaitNotActive(seconds == -1 ? seconds : seconds * 1000) ? 0 : 1;
         }
     }
 }

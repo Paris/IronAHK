@@ -353,6 +353,8 @@ namespace IronAHK.Rusty
         const string Keyword_Desc = "desc";
         const string Keyword_Uni = "uni";
         const string Keyword_Raw = "raw";
+        const string Keyword_A = "a";
+        const string Keyword_R = "r";
 
         const char Keyword_ModifierWin = '#';
         const char Keyword_ModifierAlt = '!';
