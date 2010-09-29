@@ -1,4 +1,5 @@
 using System;
+using System.Drawing;
 using System.Windows.Forms;
 
 namespace IronAHK.Rusty
@@ -47,12 +48,16 @@ namespace IronAHK.Rusty
 
             public override Core.WindowManager CreateWindow(IntPtr id)
             {
-                throw new NotImplementedException();
+                return new WindowManager { ID = id };
             }
 
             protected override IntPtr PID
             {
-                get { throw new NotImplementedException(); }
+                get
+                {
+                    uint n;
+                    return new IntPtr(GetWindowThreadProcessId(ID, out n));
+                }
             }
 
             public override bool Active
@@ -69,40 +74,69 @@ namespace IronAHK.Rusty
 
             public override bool Close()
             {
-                throw new NotImplementedException();
+                if (!IsSpecified)
+                    return false;
+
+                return DestroyWindow(ID);
             }
 
             public override bool Exists
             {
-                get { throw new NotImplementedException(); }
+                get
+                {
+                    return IsSpecified ? IsWindow(ID) : false;
+                }
             }
 
             public override string ClassName
             {
-                get { throw new NotImplementedException(); }
-            }
-
-            public override System.Drawing.Point Location
-            {
                 get
                 {
-                    throw new NotImplementedException();
-                }
-                set
-                {
-                    throw new NotImplementedException();
+                    return IsSpecified ? GetClassName(ID) : string.Empty;
                 }
             }
 
-            public override System.Drawing.Size Size
+            public override Point Location
             {
                 get
                 {
-                    throw new NotImplementedException();
+                    RECT rect;
+
+                    if (!IsSpecified || !GetWindowRect(ID, out rect))
+                        return Point.Empty;
+
+                    return new Point(rect.Left, rect.Top);
                 }
                 set
                 {
-                    throw new NotImplementedException();
+                    RECT rect;
+
+                    if (!IsSpecified || !GetWindowRect(ID, out rect))
+                        return;
+
+                    MoveWindow(ID, value.X, value.Y, rect.Right - rect.Left, rect.Bottom - rect.Top, true);
+                }
+            }
+
+            public override Size Size
+            {
+                get
+                {
+                    RECT rect;
+
+                    if (!IsSpecified || !GetWindowRect(ID, out rect))
+                        return Size.Empty;
+
+                    return new Size(rect.Right - rect.Left, rect.Bottom - rect.Top);
+                }
+                set
+                {
+                    RECT rect;
+
+                    if (!IsSpecified || !GetWindowRect(ID, out rect))
+                        return;
+
+                    MoveWindow(ID, rect.Left, rect.Right, value.Width, value.Height, true);
                 }
             }
 
@@ -115,11 +149,15 @@ namespace IronAHK.Rusty
             {
                 get
                 {
-                    throw new NotImplementedException();
+                    if (!IsSpecified)
+                        return string.Empty;
+
+                    return GetWindowText(ID);
                 }
                 set
                 {
-                    throw new NotImplementedException();
+                    if (IsSpecified)
+                        SetWindowText(ID, value ?? string.Empty);
                 }
             }
 
@@ -137,12 +175,29 @@ namespace IronAHK.Rusty
 
             public override bool Hide()
             {
-                throw new NotImplementedException();
+                if (!IsSpecified)
+                    return false;
+
+                return ShowWindow(ID, SW_HIDE);
             }
 
             public override bool Kill()
             {
-                throw new NotImplementedException();
+                Close();
+
+                if (!Exists)
+                    return true;
+
+                var pid = (uint)PID.ToInt32();
+                var prc = pid != 0 ? OpenProcess(PROCESS_ALL_ACCESS, false, pid) : IntPtr.Zero;
+
+                if (prc != IntPtr.Zero)
+                {
+                    TerminateProcess(prc, 0);
+                    CloseHandle(prc);
+                }
+
+                return !Exists;
             }
 
             public override bool AlwaysOnTop
@@ -183,7 +238,10 @@ namespace IronAHK.Rusty
 
             public override bool Redraw()
             {
-                throw new NotImplementedException();
+                if (!IsSpecified)
+                    return false;
+
+                return InvalidateRect(ID, IntPtr.Zero, true);
             }
 
             public override long Style
@@ -222,7 +280,7 @@ namespace IronAHK.Rusty
                 }
             }
 
-            public override System.Drawing.Color TransparencyColor
+            public override Color TransparencyColor
             {
                 get
                 {
@@ -236,7 +294,10 @@ namespace IronAHK.Rusty
 
             public override bool Show()
             {
-                throw new NotImplementedException();
+                if (!IsSpecified)
+                    return false;
+
+                return ShowWindow(ID, SW_SHOWDEFAULT);
             }
 
             public override FormWindowState WindowState
@@ -247,7 +308,18 @@ namespace IronAHK.Rusty
                 }
                 set
                 {
-                    throw new NotImplementedException();
+                    if (!IsSpecified)
+                        return;
+
+                    var cmd = SW_NORMAL;
+
+                    switch (value)
+                    {
+                        case FormWindowState.Maximized: cmd = SW_MAXIMIZE; break;
+                        case FormWindowState.Minimized: cmd = SW_MINIMIZE; break;
+                    }
+
+                    ShowWindow(ID, cmd);
                 }
             }
 
