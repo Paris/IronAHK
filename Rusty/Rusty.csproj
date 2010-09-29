@@ -132,9 +132,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Windows\WindowManager.cs" />
     <Compile Include="Windows\KeyboardHook.cs" />
-    <Compile Include="Windows\Misc.cs" />
+    <Compile Include="Windows\PInvoke.cs" />
     <Compile Include="Windows\Input.cs" />
-    <Compile Include="Windows\Windows.cs" />
     <Compile Include="Linux\KeyboardHook.cs" />
     <Compile Include="Linux\Mapping.cs" />
   </ItemGroup>
