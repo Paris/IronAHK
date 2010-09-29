@@ -123,6 +123,11 @@ namespace IronAHK.Scripting
                         AddAssemblyAttribute(typeof(AssemblyVersionAttribute), parts[1]);
                     break;
 
+                case "ASSEMBLYMERGE":
+                    if (CompilerParameters is IACompilerParameters)
+                        ((IACompilerParameters)CompilerParameters).Merge = true;
+                    break;
+
                 #endregion
 
                 case "CLIPBOARDTIMEOUT":
