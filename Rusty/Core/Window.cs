@@ -73,11 +73,7 @@ namespace IronAHK.Rusty
         /// <param name="ExcludeText">Windows whose text include this value will not be considered.</param>
         public static void ControlFocus(string Control, string WinTitle, string WinText, string ExcludeTitle, string ExcludeText)
         {
-            if (Environment.OSVersion.Platform != PlatformID.Win32NT)
-                return;
 
-            IntPtr hwnd = Windows.FindWindow(WinTitle, WinText, ExcludeTitle, ExcludeText, Control);
-            Windows.SetFocus(hwnd);
         }
 
         /// <summary>
@@ -97,9 +93,6 @@ namespace IronAHK.Rusty
         public static void ControlGet(out string OutputVar, string Cmd, string Value, string ControlID, string WinTitle, string WinText, string ExcludeTitle, string ExcludeText)
         {
             OutputVar = null;
-
-            if (Environment.OSVersion.Platform != PlatformID.Win32NT)
-                return;
         }
 
         /// <summary>
@@ -113,20 +106,6 @@ namespace IronAHK.Rusty
         public static void ControlGetFocus(out string OutputVar, string WinTitle, string WinText, string ExcludeTitle, string ExcludeText)
         {
             OutputVar = null;
-
-            if (Environment.OSVersion.Platform != PlatformID.Win32NT)
-                return;
-
-            //OutputVarWinTitle = WindowCmd.GetClassName(WindowCmd.GetFocus());
-
-            IntPtr hwnd = Windows.FindWindow(WinTitle, WinText, ExcludeTitle, ExcludeText);
-            uint thread = 0;
-            Windows.GetWindowThreadProcessId(hwnd, out thread);
-
-            Windows.GUITHREADINFO info;
-            Windows.GetGUIThreadInfo(thread, out info);
-
-            OutputVar = Windows.GetClassName(info.hwndActive);
         }
 
         /// <summary>
@@ -149,18 +128,7 @@ namespace IronAHK.Rusty
         /// <param name="ExcludeText">Windows whose text include this value will not be considered.</param>
         public static void ControlGetPos(out int X, out int Y, out int Width, out int Height, string Control, string WinTitle, string WinText, string ExcludeTitle, string ExcludeText)
         {
-            X = Y = Width = Height = default(int);
-
-            if (Environment.OSVersion.Platform != PlatformID.Win32NT)
-                return;
-
-            IntPtr hwnd = Windows.FindWindow(WinTitle, WinText, ExcludeTitle, ExcludeText, Control);
-            Windows.RECT pos;
-            Windows.GetWindowRect(hwnd, out pos);
-            X = pos.Top;
-            Y = pos.Left;
-            Width = pos.Right - pos.Left;
-            Height = pos.Bottom - pos.Top;
+            X = Y = Width = Height = 0;
         }
 
         /// <summary>
@@ -178,12 +146,6 @@ namespace IronAHK.Rusty
         public static void ControlGetText(out string OutputVar, string Control, string WinTitle, string WinText, string ExcludeTitle, string ExcludeText)
         {
             OutputVar = null;
-
-            if (Environment.OSVersion.Platform != PlatformID.Win32NT)
-                return;
-
-            IntPtr hwnd = Windows.FindWindow(WinTitle, WinText, ExcludeTitle, ExcludeText, Control);
-            OutputVar = Windows.GetWindowText(hwnd);
         }
 
         /// <summary>
@@ -203,11 +165,7 @@ namespace IronAHK.Rusty
         /// <param name="ExcludeText">Windows whose text include this value will not be considered.</param>
         public static void ControlMove(string Control, int X, int Y, int Width, int Height, string WinTitle, string WinText, string ExcludeTitle, string ExcludeText)
         {
-            if (Environment.OSVersion.Platform != PlatformID.Win32NT)
-                return;
 
-            IntPtr hwnd = Windows.FindWindow(WinTitle, WinText, ExcludeTitle, ExcludeText, Control);
-            Windows.MoveWindow(hwnd, X, Y, Width, Height, true);
         }
 
         /// <summary>
@@ -244,11 +202,7 @@ namespace IronAHK.Rusty
         /// <param name="ExcludeText">Windows whose text include this value will not be considered.</param>
         public static void ControlSetText(string Control, string NewText, string WinTitle, string WinText, string ExcludeTitle, string ExcludeText)
         {
-            if (Environment.OSVersion.Platform != PlatformID.Win32NT)
-                return;
 
-            IntPtr hwnd = Windows.FindWindow(WinTitle, WinText, ExcludeTitle, ExcludeText, Control);
-            Windows.SetWindowText(hwnd, NewText);
         }
 
         /// <summary>
@@ -363,14 +317,7 @@ namespace IronAHK.Rusty
         /// <param name="ExcludeText"></param>
         public static void PostMessage(int Msg, int wParam, int lParam, string Control, string WinTitle, string WinText, string ExcludeTitle, string ExcludeText)
         {
-            if (Environment.OSVersion.Platform != PlatformID.Win32NT)
-            {
-                ErrorLevel = 0;
-                return;
-            }
 
-            IntPtr hwnd = Windows.FindWindow(WinTitle, WinText, ExcludeTitle, ExcludeText, Control);
-            ErrorLevel = Windows.PostMessage(hwnd, (uint)Msg, new IntPtr(wParam), new IntPtr(lParam)) ? 0 : 1;
         }
 
         /// <summary>
@@ -389,14 +336,7 @@ namespace IronAHK.Rusty
         /// <param name="ExcludeText">Windows whose text include this value will not be considered.</param>
         public static void SendMessage(int Msg, int wParam, int lParam, string Control, string WinTitle, string WinText, string ExcludeTitle, string ExcludeText)
         {
-            if (Environment.OSVersion.Platform != PlatformID.Win32NT)
-            {
-                ErrorLevel = 0;
-                return;
-            }
 
-            IntPtr hwnd = Windows.FindWindow(WinTitle, WinText, ExcludeTitle, ExcludeText, Control);
-            ErrorLevel = Windows.SendMessage(hwnd, (uint)Msg, new IntPtr(wParam), new IntPtr(lParam)).ToInt32();
         }
 
         /// <summary>
