@@ -151,7 +151,7 @@ namespace IronAHK.Scripting
                                     {
                                         var file = false;
 
-                                        if (parts[1].IndexOf(Multicast) != 1)
+                                        if (parts[1].IndexOf(Multicast) != -1)
                                             file = true;
 
                                         // TODO: check file/iteration loop types
