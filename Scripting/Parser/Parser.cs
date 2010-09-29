@@ -83,12 +83,15 @@ namespace IronAHK.Scripting
             }
         }
 
+        CompilerParameters CompilerParameters { get; set; }
+
         #endregion
 
         #region Methods
 
-        public Parser()
+        public Parser(CompilerParameters options)
         {
+            CompilerParameters = options;
             ScanLibrary();
             main.CustomAttributes.Add(new CodeAttributeDeclaration(new CodeTypeReference(typeof(STAThreadAttribute))));
             methods.Add(mainScope, main);
