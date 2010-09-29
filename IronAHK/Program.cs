@@ -85,8 +85,8 @@ namespace IronAHK
                             gui = true;
                             break;
                             
-                        case "LINK":
-                            merge = false;
+                        case "MERGE":
+                            merge = true;
                             break;
 
                         case "OUT":
