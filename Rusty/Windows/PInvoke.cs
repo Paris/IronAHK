@@ -144,6 +144,10 @@ namespace IronAHK.Rusty
         [DllImport(user32)]
         public static extern bool EnableWindow(IntPtr hWnd, bool bEnable);
 
+        [DllImport(user32)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool GetWindowPlacement(IntPtr hWnd, out WINDOWPLACEMENT lpwndpl);
+
         #region Menu
 
         [DllImport(user32)]
@@ -292,6 +296,35 @@ namespace IronAHK.Rusty
             public int Top;
             public int Right;
             public int Bottom;
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct POINT
+        {
+            public int x;
+            public int y;
+        }
+
+        [Serializable]
+        [StructLayout(LayoutKind.Sequential)]
+        public struct WINDOWPLACEMENT
+        {
+            public uint length;
+            public uint flags;
+            public uint showCmd;
+            public POINT ptMinPosition;
+            public POINT ptMaxPosition;
+            public RECT rcNormalPosition;
+
+            public static WINDOWPLACEMENT Default
+            {
+                get
+                {
+                    var result = new WINDOWPLACEMENT();
+                    result.length = (uint)Marshal.SizeOf(result);
+                    return result;
+                }
+            }
         }
 
         #endregion
