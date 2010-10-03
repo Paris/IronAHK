@@ -1,5 +1,6 @@
 using System;
 using System.Drawing;
+using System.Text;
 using System.Windows.Forms;
 
 namespace IronAHK.Rusty
@@ -143,7 +144,49 @@ namespace IronAHK.Rusty
 
             public override bool SelectMenuItem(params string[] items)
             {
-                throw new NotImplementedException();
+                if (!IsSpecified)
+                    return false;
+
+                var menu = GetMenu(ID);
+
+                if (menu == IntPtr.Zero || GetMenuItemCount(menu) == 0)
+                    return false;
+
+                foreach (var item in items)
+                {
+                    int n, l = item.Length;
+
+                    if (l > 1 && item[l] == '&' && int.TryParse(item.Substring(0, l), out n))
+                    {
+                        menu = GetSubMenu(menu, n);
+
+                        if (menu == IntPtr.Zero)
+                            return false;
+                    }
+                    else
+                    {
+                        for (var i = 0; i < GetMenuItemCount(menu); i++)
+                        {
+                            var buf = new StringBuilder(1024);
+                            var result = GetMenuString(menu, (uint)i, buf, buf.Length - 1, (uint)MF_BYPOSITION);
+
+                            if (result == 0)
+                                return false;
+
+                            var name = buf.ToString();
+
+                            if (name.Equals(item, StringComparison.OrdinalIgnoreCase) || name.Replace("&", string.Empty).Equals(item, StringComparison.OrdinalIgnoreCase))
+                            {
+                                menu = GetSubMenu(menu, i);
+                                continue;
+                            }
+                        }
+
+                        return false;
+                    }
+                }
+
+                return true;
             }
 
             public override string Title
