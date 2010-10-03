@@ -137,6 +137,22 @@ namespace IronAHK.Rusty
         [DllImport(user32)]
         public static extern bool ExitWindowsEx(uint uFlags, uint dwReason);
 
+        #region Menu
+
+        [DllImport(user32)]
+        public static extern IntPtr GetMenu(IntPtr hWnd);
+
+        [DllImport(user32)]
+        public static extern int GetMenuItemCount(IntPtr hMenu);
+
+        [DllImport(user32)]
+        public static extern IntPtr GetSubMenu(IntPtr hMenu, int nPos);
+
+        [DllImport(user32)]
+        public static extern int GetMenuString(IntPtr hMenu, uint uIDItem, [Out, MarshalAs(UnmanagedType.LPStr)] StringBuilder lpString, int nMaxCount, uint uFlag);
+
+        #endregion
+
         #endregion
 
         #region Process
@@ -240,6 +256,9 @@ namespace IronAHK.Rusty
         public const int STANDARD_RIGHTS_REQUIRED = 0x000F0000;
         public const int SYNCHRONIZE = 0x00100000;
         public const int PROCESS_ALL_ACCESS = STANDARD_RIGHTS_REQUIRED | SYNCHRONIZE | 0xFFF;
+
+        public const int MF_BYCOMMAND = 0;
+        public const int MF_BYPOSITION = 0x400;
 
         #endregion
 
