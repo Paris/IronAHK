@@ -354,7 +354,20 @@ namespace IronAHK.Rusty
             {
                 get
                 {
-                    throw new NotImplementedException();
+                    if (!IsSpecified)
+                        return FormWindowState.Normal;
+
+                    var info = WINDOWPLACEMENT.Default;
+
+                    if (!GetWindowPlacement(ID, out info))
+                        return FormWindowState.Normal;
+
+                    switch ((int)info.showCmd)
+                    {
+                        case SW_MAXIMIZE: return FormWindowState.Maximized;
+                        case SW_MINIMIZE: return FormWindowState.Minimized;
+                        default: return FormWindowState.Normal;
+                    }
                 }
                 set
                 {
