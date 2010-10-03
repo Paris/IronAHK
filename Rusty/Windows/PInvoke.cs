@@ -137,6 +137,13 @@ namespace IronAHK.Rusty
         [DllImport(user32)]
         public static extern bool ExitWindowsEx(uint uFlags, uint dwReason);
 
+        [DllImport(user32)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool IsWindowEnabled(IntPtr hWnd);
+
+        [DllImport(user32)]
+        public static extern bool EnableWindow(IntPtr hWnd, bool bEnable);
+
         #region Menu
 
         [DllImport(user32)]

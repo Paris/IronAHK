@@ -272,11 +272,17 @@ namespace IronAHK.Rusty
             {
                 get
                 {
-                    throw new NotImplementedException();
+                    if (!IsSpecified)
+                        return false;
+
+                    return IsWindowEnabled(ID);
                 }
                 set
                 {
-                    throw new NotImplementedException();
+                    if (!IsSpecified)
+                        return;
+
+                    EnableWindow(ID, value);
                 }
             }
 
