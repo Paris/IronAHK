@@ -64,11 +64,12 @@ namespace IronAHK.Rusty
             {
                 get
                 {
-                    throw new NotImplementedException();
+                    return IsSpecified && Array.IndexOf(ActiveWindows, ID) != -1;
                 }
                 set
                 {
-                    throw new NotImplementedException();
+                    if (IsSpecified)
+                        SetActiveWindow(ID);
                 }
             }
 
