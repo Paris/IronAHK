@@ -248,11 +248,15 @@ namespace IronAHK.Rusty
             {
                 get
                 {
-                    throw new NotImplementedException();
+                    return IsSpecified ? (ExStyle & WS_EX_TOPMOST) != 0 : false;
                 }
                 set
                 {
-                    throw new NotImplementedException();
+                    if (!IsSpecified)
+                        return;
+
+                    var type = new IntPtr(value ? HWND_TOPMOST : HWND_NOTOPMOST);
+                    SetWindowPos(ID, type, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
                 }
             }
 

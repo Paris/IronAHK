@@ -154,6 +154,10 @@ namespace IronAHK.Rusty
         [DllImport(user32)]
         public static extern int GetWindowLong(IntPtr hWnd, int nIndex);
 
+        [DllImport(user32)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int X, int Y, int cx, int cy, uint uFlags);
+
         #region Menu
 
         [DllImport(user32)]
@@ -258,6 +262,10 @@ namespace IronAHK.Rusty
         public const int SW_FORCEMINIMIZE = 11;
         public const int SW_MAX = 11;
 
+        public const int SWP_NOSIZE = 1;
+        public const int SWP_NOMOVE = 2;
+        public const int SWP_NOACTIVATE = 0x10;
+
         public const int SHERB_NOCONFIRMATION = 0x1;
         public const int SHERB_NOPROGRESSUI = 0x2;
         public const int SHERB_NOSOUND = 0x4;
@@ -266,9 +274,14 @@ namespace IronAHK.Rusty
         public const uint WM_SETTINGCHANGE = 0x001A;
 
         public const int HWND_TOP = 0;
+        public const int HWND_BOTTOM = 1;
+        public const int HWND_TOPMOST = -1;
+        public const int HWND_NOTOPMOST = -2;
 
         public const int WM_GETTEXT = 0x000D;
         public const int WM_GETTEXTLENGTH = 0x000E;
+
+        public const int WS_EX_TOPMOST = 8;
 
         public const uint WM_SYSCOMMAND = 0x0112;
         public const int SC_CLOSE = 0xF060;
