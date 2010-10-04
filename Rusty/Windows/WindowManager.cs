@@ -264,7 +264,11 @@ namespace IronAHK.Rusty
             {
                 set
                 {
-                    throw new NotImplementedException();
+                    if (!IsSpecified)
+                        return;
+                    
+                    var type = new IntPtr(value ? HWND_BOTTOM : HWND_TOP);
+                    SetWindowPos(ID, type, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
                 }
             }
 
