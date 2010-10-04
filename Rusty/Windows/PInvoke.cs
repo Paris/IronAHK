@@ -172,6 +172,9 @@ namespace IronAHK.Rusty
         [DllImport(user32)]
         public static extern int GetMenuString(IntPtr hMenu, uint uIDItem, [Out, MarshalAs(UnmanagedType.LPStr)] StringBuilder lpString, int nMaxCount, uint uFlag);
 
+        [DllImport(user32)]
+        public static extern bool SetLayeredWindowAttributes(IntPtr hwnd, uint crKey, byte bAlpha, uint dwFlags);
+
         #endregion
 
         #endregion
@@ -245,6 +248,10 @@ namespace IronAHK.Rusty
         public const uint GW_CHILD = 5;
         public const int GWL_STYLE = -16;
         public const int GWL_EXSTYLE = -20;
+
+        public const int WS_EX_LAYERED = 0x80000;
+        public const int LWA_ALPHA = 0x2;
+        public const int LWA_COLORKEY = 0x1;
 
         public const int SW_HIDE = 0;
         public const int SW_SHOWNORMAL = 1;
