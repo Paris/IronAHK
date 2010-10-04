@@ -298,11 +298,12 @@ namespace IronAHK.Rusty
             {
                 get
                 {
-                    throw new NotImplementedException();
+                    return IsSpecified ? GetWindowLong(ID, GWL_STYLE) : 0;
                 }
                 set
                 {
-                    throw new NotImplementedException();
+                    if (IsSpecified)
+                        SetWindowLong(ID, GWL_STYLE, value);
                 }
             }
 
@@ -310,11 +311,12 @@ namespace IronAHK.Rusty
             {
                 get
                 {
-                    throw new NotImplementedException();
+                    return IsSpecified ? GetWindowLong(ID, GWL_EXSTYLE) : 0;
                 }
                 set
                 {
-                    throw new NotImplementedException();
+                    if (IsSpecified)
+                        SetWindowLong(ID, GWL_EXSTYLE, value);
                 }
             }
 
