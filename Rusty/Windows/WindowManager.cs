@@ -294,7 +294,7 @@ namespace IronAHK.Rusty
                 return InvalidateRect(ID, IntPtr.Zero, true);
             }
 
-            public override long Style
+            public override int Style
             {
                 get
                 {
@@ -306,7 +306,7 @@ namespace IronAHK.Rusty
                 }
             }
 
-            public override long ExStyle
+            public override int ExStyle
             {
                 get
                 {

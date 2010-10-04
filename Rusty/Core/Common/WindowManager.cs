@@ -230,9 +230,9 @@ namespace IronAHK.Rusty
 
             public abstract bool Redraw();
 
-            public abstract long Style { get; set; }
+            public abstract int Style { get; set; }
 
-            public abstract long ExStyle { get; set; }
+            public abstract int ExStyle { get; set; }
 
             public abstract byte Transparency { get; set; }
 
