@@ -206,28 +206,9 @@ namespace IronAHK.Rusty
                 }
             }
 
-            public override byte Transparency
+            public override void SetTransparency(byte level, System.Drawing.Color color)
             {
-                get
-                {
-                    throw new NotImplementedException();
-                }
-                set
-                {
-                    throw new NotImplementedException();
-                }
-            }
-
-            public override System.Drawing.Color TransparencyColor
-            {
-                get
-                {
-                    throw new NotImplementedException();
-                }
-                set
-                {
-                    throw new NotImplementedException();
-                }
+                throw new NotImplementedException();
             }
 
             public override bool Show()

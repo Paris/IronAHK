@@ -234,9 +234,7 @@ namespace IronAHK.Rusty
 
             public abstract int ExStyle { get; set; }
 
-            public abstract byte Transparency { get; set; }
-
-            public abstract Color TransparencyColor { get; set; }
+            public abstract void SetTransparency(byte level, Color color);
 
             public abstract bool Show();
 
