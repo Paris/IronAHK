@@ -326,7 +326,22 @@ namespace IronAHK.Rusty
 
             public override void SetTransparency(byte level, Color color)
             {
-                throw new NotImplementedException();
+                if (!IsSpecified)
+                    return;
+
+                if (level == byte.MaxValue)
+                    ExStyle &= ~WS_EX_LAYERED;
+                else
+                {
+                    var flags = LWA_ALPHA;
+                    var c = color.B << 16 | color.G << 8 | color.R;
+
+                    if (c != 0)
+                        flags |= LWA_COLORKEY;
+
+                    ExStyle |= WS_EX_LAYERED;
+                    SetLayeredWindowAttributes(ID, (uint)c, level, (uint)flags);
+                }
             }
 
             public override bool Show()
