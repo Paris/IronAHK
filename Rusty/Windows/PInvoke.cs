@@ -148,6 +148,12 @@ namespace IronAHK.Rusty
         [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool GetWindowPlacement(IntPtr hWnd, out WINDOWPLACEMENT lpwndpl);
 
+        [DllImport(user32)]
+        public static extern int SetWindowLong(IntPtr hWnd, int nIndex, int dwNewLong);
+
+        [DllImport(user32)]
+        public static extern int GetWindowLong(IntPtr hWnd, int nIndex);
+
         #region Menu
 
         [DllImport(user32)]
@@ -233,6 +239,9 @@ namespace IronAHK.Rusty
         #region Constants
 
         public const uint GW_CHILD = 5;
+        public const int GWL_STYLE = -16;
+        public const int GWL_EXSTYLE = -20;
+
         public const int SW_HIDE = 0;
         public const int SW_SHOWNORMAL = 1;
         public const int SW_NORMAL = 1;
