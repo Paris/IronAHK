@@ -262,10 +262,6 @@ namespace IronAHK.Rusty
 
             public override bool Bottom
             {
-                get
-                {
-                    throw new NotImplementedException();
-                }
                 set
                 {
                     throw new NotImplementedException();

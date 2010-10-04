@@ -224,7 +224,7 @@ namespace IronAHK.Rusty
 
             public abstract bool AlwaysOnTop { get; set; }
 
-            public abstract bool Bottom { get; set; }
+            public abstract bool Bottom { set; }
 
             public abstract bool Enabled { get; set; }
 
