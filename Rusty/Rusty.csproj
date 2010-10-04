@@ -69,6 +69,7 @@
   -->
   <ItemGroup>
     <Compile Include="Core\Common\Conversions.cs" />
+    <Compile Include="Core\Common\MouseController.cs" />
     <Compile Include="Core\Common\WindowManager.cs" />
     <Compile Include="Core\Common\Disk.cs" />
     <Compile Include="Core\Common\Gui.cs" />
