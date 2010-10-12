@@ -69,7 +69,7 @@ namespace IronAHK.Rusty
         public static extern IntPtr GetActiveWindow();
 
         [DllImport(user32)]
-        public static extern IntPtr FindWindow(IntPtr className, String windowName);
+        public static extern IntPtr FindWindow(string className, string windowName);
 
         [DllImport(user32)]
         public static extern IntPtr FindWindowEx(IntPtr parentHandle, IntPtr childAfter, string className, string windowTitle);
