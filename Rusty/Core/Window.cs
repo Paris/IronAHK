@@ -688,6 +688,13 @@ namespace IronAHK.Rusty
         {
             InitWindowManager();
 
+            if (Environment.OSVersion.Platform == PlatformID.Win32NT)
+            {
+                var id = windowManager.FindWindow(new WindowManager.SearchCriteria { ClassName = "Shell_TrayWnd" });
+                Windows.PostMessage(id, (uint)Windows.WM_COMMAND, new IntPtr(419), IntPtr.Zero);
+                return;
+            }
+
             foreach (var id in windowManager.AllWindows)
                 windowManager.CreateWindow(id).WindowState = FormWindowState.Minimized;
         }
@@ -698,6 +705,13 @@ namespace IronAHK.Rusty
         public static void WinMinimizeAllUndo()
         {
             InitWindowManager();
+
+            if (Environment.OSVersion.Platform == PlatformID.Win32NT)
+            {
+                var id = windowManager.FindWindow(new WindowManager.SearchCriteria { ClassName = "Shell_TrayWnd" });
+                Windows.PostMessage(id, (uint)Windows.WM_COMMAND, new IntPtr(416), IntPtr.Zero);
+                return;
+            }
 
             foreach (var id in windowManager.AllWindows)
                 windowManager.CreateWindow(id).WindowState = FormWindowState.Normal;

@@ -287,6 +287,7 @@ namespace IronAHK.Rusty
 
         public const int WM_GETTEXT = 0x000D;
         public const int WM_GETTEXTLENGTH = 0x000E;
+        public const int WM_COMMAND = 0x0111;
 
         public const int WS_EX_TOPMOST = 8;
 
