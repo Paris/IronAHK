@@ -97,23 +97,13 @@ namespace IronAHK.Rusty
 
             public abstract IntPtr[] LastActiveWindows { get; }
 
-            public abstract IntPtr[] FindWindow(SearchCriteria criteria);
+            public abstract IntPtr FindWindow(SearchCriteria criteria);
 
-            public IntPtr[] FindWindow(params string[] criteria)
+            public WindowManager FindWindow(string title, string text, string excludeTitle, string excludeText)
             {
-                var parts = new string[4];
-
-                for (var i = 0; i < parts.Length; i++)
-                    parts[i] = i < criteria.Length ? criteria[i] : string.Empty;
-
-                var search = SearchCriteria.FromString(parts[0], parts[1], parts[2], parts[3]);
-                return FindWindow(search);
-            }
-
-            public WindowManager FindFirstWindow(string title, string text, string excludeTitle, string excludeText)
-            {
-                var ids = FindWindow(title, text, excludeTitle, excludeText);
-                return CreateWindow(ids.Length > 0 ? ids[0] : IntPtr.Zero);
+                var criteria = new SearchCriteria { Title = title, Text = text, ExcludeTitle = excludeTitle, ExcludeText = excludeTitle };
+                var ids = FindWindow(criteria);
+                return CreateWindow(ids);
             }
 
             #endregion

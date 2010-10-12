@@ -242,7 +242,7 @@ namespace IronAHK.Rusty
         public static void GroupAdd(string name, string winTitle = null, string winText = null, string label = null, string excludeTitle = null, string excludeText = null)
         {
             InitWindowManager();
-            var win = windowManager.FindFirstWindow(winTitle, winText, excludeTitle, excludeText);
+            var win = windowManager.FindWindow(winTitle, winText, excludeTitle, excludeText);
 
             if (string.IsNullOrEmpty(name) || win == null)
                 return;
@@ -402,7 +402,7 @@ namespace IronAHK.Rusty
         public static void WinActivate(string title = null, string text = null, string excludeTitle = null, string excludeText = null)
         {
             InitWindowManager();
-            var win = windowManager.FindFirstWindow(title, text, excludeTitle, excludeText);
+            var win = windowManager.FindWindow(title, text, excludeTitle, excludeText);
             win.Active = true;
         }
 
@@ -464,7 +464,7 @@ namespace IronAHK.Rusty
         public static void WinClose(string title = null, string text = null, string excludeTitle = null, string excludeText = null)
         {
             InitWindowManager();
-            var win = windowManager.FindFirstWindow(title, text, excludeTitle, excludeText);
+            var win = windowManager.FindWindow(title, text, excludeTitle, excludeText);
             win.Close();
         }
 
@@ -479,7 +479,7 @@ namespace IronAHK.Rusty
         public static long WinExist(string title = null, string text = null, string excludeTitle = null, string excludeText = null)
         {
             InitWindowManager();
-            var win = windowManager.FindFirstWindow(title, text, excludeTitle, excludeText);
+            var win = windowManager.FindWindow(title, text, excludeTitle, excludeText);
             return win.ID.ToInt64();
         }
 
@@ -549,7 +549,7 @@ namespace IronAHK.Rusty
         public static void WinGetClass(out string result, string title = null, string text = null, string excludeTitle = null, string excludeText = null)
         {
             InitWindowManager();
-            var win = windowManager.FindFirstWindow(title, text, excludeTitle, excludeText);
+            var win = windowManager.FindWindow(title, text, excludeTitle, excludeText);
             result = win.ClassName;
         }
 
@@ -567,7 +567,7 @@ namespace IronAHK.Rusty
         public static void WinGetPos(out int x, out int y, out int width, out int height, string title = null, string text = null, string excludeTitle = null, string excludeText = null)
         {
             InitWindowManager();
-            var win = windowManager.FindFirstWindow(title, text, excludeTitle, excludeText);
+            var win = windowManager.FindWindow(title, text, excludeTitle, excludeText);
             x = win.Location.X;
             y = win.Location.Y;
             width = win.Size.Width;
@@ -585,7 +585,7 @@ namespace IronAHK.Rusty
         public static void WinGetText(out string result, string title = null, string text = null, string excludeTitle = null, string excludeText = null)
         {
             InitWindowManager();
-            var win = windowManager.FindFirstWindow(title, text, excludeTitle, excludeText);
+            var win = windowManager.FindWindow(title, text, excludeTitle, excludeText);
             result = win.Text;
         }
 
@@ -600,7 +600,7 @@ namespace IronAHK.Rusty
         public static void WinGetTitle(out string result, string title = null, string text = null, string excludeTitle = null, string excludeText = null)
         {
             InitWindowManager();
-            var win = windowManager.FindFirstWindow(title, text, excludeTitle, excludeText);
+            var win = windowManager.FindWindow(title, text, excludeTitle, excludeText);
             result = win.Title;
         }
 
@@ -614,7 +614,7 @@ namespace IronAHK.Rusty
         public static void WinHide(string title = null, string text = null, string excludeTitle = null, string excludeText = null)
         {
             InitWindowManager();
-            var win = windowManager.FindFirstWindow(title, text, excludeTitle, excludeText);
+            var win = windowManager.FindWindow(title, text, excludeTitle, excludeText);
             win.Hide();
         }
 
@@ -628,7 +628,7 @@ namespace IronAHK.Rusty
         public static void WinKill(string title = null, string text = null, string excludeTitle = null, string excludeText = null)
         {
             InitWindowManager();
-            var win = windowManager.FindFirstWindow(title, text, excludeTitle, excludeText);
+            var win = windowManager.FindWindow(title, text, excludeTitle, excludeText);
             win.Kill();
         }
 
@@ -642,7 +642,7 @@ namespace IronAHK.Rusty
         public static void WinMaximize(string title = null, string text = null, string excludeTitle = null, string excludeText = null)
         {
             InitWindowManager();
-            var win = windowManager.FindFirstWindow(title, text, excludeTitle, excludeText);
+            var win = windowManager.FindWindow(title, text, excludeTitle, excludeText);
             win.WindowState = FormWindowState.Maximized;
         }
 
@@ -663,7 +663,7 @@ namespace IronAHK.Rusty
         public static void WinMenuSelectItem(string title = null, string text = null, string menu = null, string subMenu1 = null, string subMenu2 = null, string subMenu3 = null, string subMenu4 = null, string subMenu5 = null, string subMenu6 = null, string excludeTitle = null, string excludeText = null)
         {
             InitWindowManager();
-            var win = windowManager.FindFirstWindow(title, text, excludeTitle, excludeText);
+            var win = windowManager.FindWindow(title, text, excludeTitle, excludeText);
             ErrorLevel = win.SelectMenuItem(menu, subMenu1, subMenu2, subMenu3, subMenu4, subMenu5, subMenu6) ? 1 : 0;
         }
 
@@ -677,7 +677,7 @@ namespace IronAHK.Rusty
         public static void WinMinimize(string title = null, string text = null, string excludeTitle = null, string excludeText = null)
         {
             InitWindowManager();
-            var win = windowManager.FindFirstWindow(title, text, excludeTitle, excludeText);
+            var win = windowManager.FindWindow(title, text, excludeTitle, excludeText);
             win.WindowState = FormWindowState.Normal;
         }
 
@@ -717,7 +717,7 @@ namespace IronAHK.Rusty
         public static void WinMove(string title = null, string text = null, int x = -1, int y = -1, int width = -1, int height = -1, string excludeTitle = null, string excludeText = null)
         {
             InitWindowManager();
-            var win = windowManager.FindFirstWindow(title, text, excludeTitle, excludeText);
+            var win = windowManager.FindWindow(title, text, excludeTitle, excludeText);
 
             var location = win.Location;
 
@@ -750,7 +750,7 @@ namespace IronAHK.Rusty
         public static void WinRestore(string title = null, string text = null, string excludeTitle = null, string excludeText = null)
         {
             InitWindowManager();
-            var win = windowManager.FindFirstWindow(title, text, excludeTitle, excludeText);
+            var win = windowManager.FindWindow(title, text, excludeTitle, excludeText);
             win.WindowState = FormWindowState.Normal;
         }
 
@@ -766,7 +766,7 @@ namespace IronAHK.Rusty
         public static void WinSet(string attribute, string value = null, string title = null, string text = null, string excludeTitle = null, string excludeText = null)
         {
             InitWindowManager();
-            var win = windowManager.FindFirstWindow(title, text, excludeTitle, excludeText);
+            var win = windowManager.FindWindow(title, text, excludeTitle, excludeText);
             
             // TODO: winset
         }
@@ -782,7 +782,7 @@ namespace IronAHK.Rusty
         public static void WinSetTitle(string title = null, string text = null, string newTitle = null, string excludeTitle = null, string excludeText = null)
         {
             InitWindowManager();
-            var win = windowManager.FindFirstWindow(title, text, excludeTitle, excludeText);
+            var win = windowManager.FindWindow(title, text, excludeTitle, excludeText);
             win.Title = newTitle;
         }
 
@@ -796,7 +796,7 @@ namespace IronAHK.Rusty
         public static void WinShow(string title = null, string text = null, string excludeTitle = null, string excludeText = null)
         {
             InitWindowManager();
-            var win = windowManager.FindFirstWindow(title, text, excludeTitle, excludeText);
+            var win = windowManager.FindWindow(title, text, excludeTitle, excludeText);
             win.Show();
         }
 
@@ -811,7 +811,7 @@ namespace IronAHK.Rusty
         public static void WinWait(string title = null, string text = null, int seconds = -1, string excludeTitle = null, string excludeText = null)
         {
             InitWindowManager();
-            var win = windowManager.FindFirstWindow(title, text, excludeTitle, excludeText);
+            var win = windowManager.FindWindow(title, text, excludeTitle, excludeText);
             ErrorLevel = win.Wait(seconds == -1 ? seconds : seconds * 1000) ? 0 : 1;
         }
 
@@ -826,7 +826,7 @@ namespace IronAHK.Rusty
         public static void WinWaitActive(string title = null, string text = null, int seconds = -1, string excludeTitle = null, string excludeText = null)
         {
             InitWindowManager();
-            var win = windowManager.FindFirstWindow(title, text, excludeTitle, excludeText);
+            var win = windowManager.FindWindow(title, text, excludeTitle, excludeText);
             ErrorLevel = win.WaitActive(seconds == -1 ? seconds : seconds * 1000) ? 0 : 1;
         }
 
@@ -841,7 +841,7 @@ namespace IronAHK.Rusty
         public static void WinWaitClose(string title = null, string text = null, int seconds = -1, string excludeTitle = null, string excludeText = null)
         {
             InitWindowManager();
-            var win = windowManager.FindFirstWindow(title, text, excludeTitle, excludeText);
+            var win = windowManager.FindWindow(title, text, excludeTitle, excludeText);
             ErrorLevel = win.WaitClose(seconds == -1 ? seconds : seconds * 1000) ? 0 : 1;
         }
 
@@ -856,7 +856,7 @@ namespace IronAHK.Rusty
         public static void WinWaitNotActive(string title = null, string text = null, int seconds = -1, string excludeTitle = null, string excludeText = null)
         {
             InitWindowManager();
-            var win = windowManager.FindFirstWindow(title, text, excludeTitle, excludeText);
+            var win = windowManager.FindWindow(title, text, excludeTitle, excludeText);
             ErrorLevel = win.WaitNotActive(seconds == -1 ? seconds : seconds * 1000) ? 0 : 1;
         }
     }
