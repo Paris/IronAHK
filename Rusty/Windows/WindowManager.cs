@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
@@ -25,7 +26,16 @@ namespace IronAHK.Rusty
 
             public override IntPtr[] AllWindows
             {
-                get { throw new NotImplementedException(); }
+                get
+                {
+                    var ids = new List<IntPtr>();
+                    EnumWindows(delegate(IntPtr hwnd, int lParam)
+                    {
+                        ids.Add(hwnd);
+                        return true;
+                    }, 0);
+                    return ids.ToArray();
+                }
             }
 
             public override IntPtr[] ActiveWindows
