@@ -50,7 +50,15 @@ namespace IronAHK.Rusty
 
             public override IntPtr FindWindow(Core.WindowManager.SearchCriteria criteria)
             {
-                throw new NotImplementedException();
+                if (!string.IsNullOrEmpty(criteria.ClassName) && !criteria.HasExcludes && !criteria.HasID && string.IsNullOrEmpty(criteria.Text))
+                    return Windows.FindWindow(criteria.ClassName, criteria.Title);
+
+                foreach (var id in AllWindows)
+                {
+                    // TODO: find windows by selection
+                }
+
+                return IntPtr.Zero;
             }
 
             #endregion
