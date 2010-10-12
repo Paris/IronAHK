@@ -37,53 +37,14 @@ namespace IronAHK.Rusty
                 public IntPtr PID { get; set; }
                 public string Group { get; set; }
 
-                public static SearchCriteria FromString(string mixed)
+                public bool HasExcludes
                 {
-                    var criteria = new SearchCriteria();
-                    var opts = ParseOptions(mixed);
-                    var i = 0;
-
-                    while (i < opts.Length)
-                    {
-                        var current = opts[i++].ToLowerInvariant();
-                        var next = ++i < opts.Length ? opts[i] : string.Empty;
-
-                        switch (current)
-                        {
-                            case Keyword_ahk_class: criteria.ClassName = next; break;
-                            case Keyword_ahk_group: criteria.Group = next; break;
-
-                            case Keyword_ahk_id:
-                                {
-                                    long x;
-                                    if (long.TryParse(next, out x)) criteria.ID = new IntPtr(x);
-                                }
-                                break;
-
-                            case Keyword_ahk_pid:
-                                {
-                                    long x;
-                                    if (long.TryParse(next, out x)) criteria.PID = new IntPtr(x);
-                                }
-                                break;
-
-                            default:
-                                criteria.Title = next;
-                                i--;
-                                break;
-                        }
-                    }
-
-                    return criteria;
+                    get { return !string.IsNullOrEmpty(ExcludeTitle) || !string.IsNullOrEmpty(ExcludeText); }
                 }
 
-                public static SearchCriteria FromString(string title, string text, string excludeTitle, string excludeText)
+                public bool HasID
                 {
-                    var criteria = FromString(title);
-                    criteria.Text = text;
-                    criteria.ExcludeTitle = excludeTitle;
-                    criteria.ExcludeText = excludeText;
-                    return criteria;
+                    get { return ID != IntPtr.Zero || PID != IntPtr.Zero; }
                 }
             }
 
