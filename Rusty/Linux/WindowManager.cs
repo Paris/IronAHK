@@ -36,7 +36,7 @@ namespace IronAHK.Rusty
                 get { throw new NotImplementedException(); }
             }
 
-            public override IntPtr[] FindWindow(Core.WindowManager.SearchCriteria criteria)
+            public override IntPtr FindWindow(Core.WindowManager.SearchCriteria criteria)
             {
                 throw new NotImplementedException();
             }
