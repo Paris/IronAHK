@@ -237,7 +237,19 @@ namespace IronAHK.Rusty
             {
                 get
                 {
-                    throw new NotImplementedException();
+                    if (!IsSpecified)
+                        return new string[0];
+
+                    var items = new List<string>();
+
+                    EnumChildWindows(ID, delegate(IntPtr hwnd, int lParam)
+                    {
+                        var text = GetWindowText(hwnd);
+                        items.Add(text);
+                        return true;
+                    }, 0);
+
+                    return items.ToArray();
                 }
             }
 
