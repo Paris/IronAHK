@@ -61,7 +61,7 @@ namespace IronAHK.Rusty
 
             public abstract IntPtr[] ActiveWindows { get; }
 
-            public abstract IntPtr[] LastActiveWindows { get; }
+            public abstract IntPtr PreviousWindow { get; }
 
             public abstract IntPtr FindWindow(SearchCriteria criteria);
 

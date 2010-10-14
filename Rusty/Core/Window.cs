@@ -418,7 +418,7 @@ namespace IronAHK.Rusty
             InitWindowManager();
             var criteria = new WindowManager.SearchCriteria { Title = title, Text = text, ExcludeTitle = excludeTitle, ExcludeText = excludeText };
 
-            foreach (var id in windowManager.LastActiveWindows)
+            for (var id = windowManager.FindWindow(criteria); id != IntPtr.Zero; id = windowManager.CreateWindow(id).PreviousWindow)
             {
                 var win = windowManager.CreateWindow(id);
 
