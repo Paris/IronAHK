@@ -149,7 +149,7 @@ namespace IronAHK.Rusty
 
             #endregion
 
-            protected abstract IntPtr PID { get; }
+            public abstract IntPtr PID { get; }
 
             public abstract bool Active { get; set; }
 
