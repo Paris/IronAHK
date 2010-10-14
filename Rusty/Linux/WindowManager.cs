@@ -50,7 +50,7 @@ namespace IronAHK.Rusty
                 throw new NotImplementedException();
             }
 
-            protected override IntPtr PID
+            public override IntPtr PID
             {
                 get { throw new NotImplementedException(); }
             }

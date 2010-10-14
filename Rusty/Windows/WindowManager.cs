@@ -70,7 +70,7 @@ namespace IronAHK.Rusty
                 return new WindowManager { ID = id };
             }
 
-            protected override IntPtr PID
+            public override IntPtr PID
             {
                 get
                 {
