@@ -46,6 +46,11 @@ namespace IronAHK.Rusty
                 {
                     get { return ID != IntPtr.Zero || PID != IntPtr.Zero; }
                 }
+
+                public bool IsEmpty
+                {
+                    get { return !HasID && !HasExcludes && string.IsNullOrEmpty(Title) && string.IsNullOrEmpty(Text) && string.IsNullOrEmpty(ClassName); }
+                }
             }
 
             #endregion
