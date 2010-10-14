@@ -35,7 +35,13 @@ namespace IronAHK.Rusty
 
             public override IntPtr PreviousWindow
             {
-                get { throw new NotImplementedException(); }
+                get
+                {
+                    if (!IsSpecified)
+                        return IntPtr.Zero;
+
+                    return GetWindow(ID, GW_HWNDPREV);
+                }
             }
 
             public override IntPtr FindWindow(Core.WindowManager.SearchCriteria criteria)
