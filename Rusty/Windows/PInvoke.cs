@@ -30,7 +30,11 @@ namespace IronAHK.Rusty
         public static extern bool InvalidateRect(IntPtr hWnd, IntPtr lpRect, bool bErase);
 
         [DllImport(user32)]
-        public static extern int EnumWindows(EnumFunc lpEnumFunc, int lParam);
+        public static extern int EnumWindows(EnumWindowsProc lpEnumFunc, int lParam);
+
+        [DllImport(user32)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        static extern bool EnumChildWindows(IntPtr hwndParent, EnumWindowsProc lpEnumFunc, int lParam);
 
         [DllImport(user32)]
         public static extern IntPtr SendMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
@@ -364,7 +368,7 @@ namespace IronAHK.Rusty
 
         delegate IntPtr LowLevelKeyboardProc(int nCode, IntPtr wParam, IntPtr lParam);
 
-        public delegate bool EnumFunc(IntPtr hwnd, int lParam);
+        public delegate bool EnumWindowsProc(IntPtr hwnd, int lParam);
 
         #endregion
 
