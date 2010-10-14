@@ -12,17 +12,7 @@ namespace IronAHK.Rusty
         {
             #region Find
 
-            public override IntPtr LastFound
-            {
-                get
-                {
-                    throw new NotImplementedException();
-                }
-                set
-                {
-                    throw new NotImplementedException();
-                }
-            }
+            public override IntPtr LastFound { get; set; }
 
             public override IntPtr[] AllWindows
             {
@@ -53,16 +43,26 @@ namespace IronAHK.Rusty
                 if (criteria.IsEmpty)
                     return LastFound;
 
-                if (!string.IsNullOrEmpty(criteria.ClassName) && !criteria.HasExcludes && !criteria.HasID && string.IsNullOrEmpty(criteria.Text))
-                    return Windows.FindWindow(criteria.ClassName, criteria.Title);
+                var found = IntPtr.Zero;
 
-                foreach (var id in AllWindows)
+                if (!string.IsNullOrEmpty(criteria.ClassName) && !criteria.HasExcludes && !criteria.HasID && string.IsNullOrEmpty(criteria.Text))
+                    found = Windows.FindWindow(criteria.ClassName, criteria.Title);
+                else
                 {
-                    if (CreateWindow(id).Equals(criteria))
-                        return id;
+                    foreach (var id in AllWindows)
+                    {
+                        if (CreateWindow(id).Equals(criteria))
+                        {
+                            found = id;
+                            break;
+                        }
+                    }
                 }
 
-                return IntPtr.Zero;
+                if (found != IntPtr.Zero)
+                    LastFound = found;
+
+                return found;
             }
 
             #endregion
