@@ -577,7 +577,7 @@ namespace IronAHK.Rusty
         {
             InitWindowManager();
             var win = windowManager.FindWindow(title, text, excludeTitle, excludeText);
-            result = win.Text;
+            result = string.Join(Keyword_Linefeed, win.Text);
         }
 
         /// <summary>

@@ -4,6 +4,7 @@ namespace IronAHK.Rusty
     partial class Core
     {
         static readonly char[] Keyword_Spaces = { '\r', '\n', ' ', '\t', '\xA0' };
+        const string Keyword_Linefeed = "\r\n";
 
         const string Keyword_Pixel = "pixel";
         const string Keyword_Mouse = "mouse";

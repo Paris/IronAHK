@@ -233,13 +233,9 @@ namespace IronAHK.Rusty
                 }
             }
 
-            public override string Text
+            public override string[] Text
             {
                 get
-                {
-                    throw new NotImplementedException();
-                }
-                set
                 {
                     throw new NotImplementedException();
                 }
