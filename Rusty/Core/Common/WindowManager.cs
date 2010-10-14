@@ -163,8 +163,9 @@ namespace IronAHK.Rusty
 
                 if (!string.IsNullOrEmpty(criteria.Text))
                 {
-                    if (Text.IndexOf(criteria.Text, comp) == -1)
-                        return false;
+                    foreach (var text in Text)
+                        if (text.IndexOf(criteria.Text, comp) == -1)
+                            return false;
                 }
 
                 if (!string.IsNullOrEmpty(criteria.ExcludeTitle))
@@ -175,8 +176,9 @@ namespace IronAHK.Rusty
 
                 if (!string.IsNullOrEmpty(criteria.ExcludeText))
                 {
-                    if (Text.IndexOf(criteria.ExcludeText, comp) != -1)
-                        return false;
+                    foreach (var text in Text)
+                        if (text.IndexOf(criteria.ExcludeText, comp) != -1)
+                            return false;
                 }
 
                 return false;
@@ -224,7 +226,7 @@ namespace IronAHK.Rusty
 
             public abstract string Title { get; set; }
 
-            public abstract string Text { get; set; }
+            public abstract string[] Text { get; }
 
             public abstract bool Hide();
 
