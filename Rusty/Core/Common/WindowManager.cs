@@ -108,7 +108,7 @@ namespace IronAHK.Rusty
 
             public abstract IntPtr[] AllWindows { get; }
 
-            public abstract IntPtr[] ActiveWindows { get; }
+            public abstract IntPtr ActiveWindow { get; }
 
             public abstract IntPtr PreviousWindow { get; }
 

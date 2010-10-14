@@ -28,9 +28,9 @@ namespace IronAHK.Rusty
                 }
             }
 
-            public override IntPtr[] ActiveWindows
+            public override IntPtr ActiveWindow
             {
-                get { throw new NotImplementedException(); }
+                get { return GetForegroundWindow(); }
             }
 
             public override IntPtr PreviousWindow
@@ -93,7 +93,7 @@ namespace IronAHK.Rusty
             {
                 get
                 {
-                    return IsSpecified && Array.IndexOf(ActiveWindows, ID) != -1;
+                    return IsSpecified && ActiveWindow == ID;
                 }
                 set
                 {
