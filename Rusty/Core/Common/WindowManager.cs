@@ -89,6 +89,9 @@ namespace IronAHK.Rusty
 
             public bool Equals(SearchCriteria criteria)
             {
+                if (!IsSpecified)
+                    return false;
+
                 if (ID != criteria.ID)
                     return false;
 
