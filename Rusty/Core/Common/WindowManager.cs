@@ -51,6 +51,55 @@ namespace IronAHK.Rusty
                 {
                     get { return !HasID && !HasExcludes && string.IsNullOrEmpty(Title) && string.IsNullOrEmpty(Text) && string.IsNullOrEmpty(ClassName); }
                 }
+
+                public static SearchCriteria FromString(string mixed)
+                {
+                    var criteria = new SearchCriteria();
+                    var opts = ParseOptions(mixed);
+                    var i = 0;
+
+                    while (i < opts.Length)
+                    {
+                        var current = opts[i++].ToLowerInvariant();
+                        var next = ++i < opts.Length ? opts[i] : string.Empty;
+
+                        switch (current)
+                        {
+                            case Keyword_ahk_class: criteria.ClassName = next; break;
+                            case Keyword_ahk_group: criteria.Group = next; break;
+
+                            case Keyword_ahk_id:
+                                {
+                                    long x;
+                                    if (long.TryParse(next, out x)) criteria.ID = new IntPtr(x);
+                                }
+                                break;
+
+                            case Keyword_ahk_pid:
+                                {
+                                    long x;
+                                    if (long.TryParse(next, out x)) criteria.PID = new IntPtr(x);
+                                }
+                                break;
+
+                            default:
+                                criteria.Title = next;
+                                i--;
+                                break;
+                        }
+                    }
+
+                    return criteria;
+                }
+
+                public static SearchCriteria FromString(string title, string text, string excludeTitle, string excludeText)
+                {
+                    var criteria = FromString(title);
+                    criteria.Text = text;
+                    criteria.ExcludeTitle = excludeTitle;
+                    criteria.ExcludeText = excludeText;
+                    return criteria;
+                }
             }
 
             #endregion
@@ -67,7 +116,7 @@ namespace IronAHK.Rusty
 
             public WindowManager FindWindow(string title, string text, string excludeTitle, string excludeText)
             {
-                var criteria = new SearchCriteria { Title = title, Text = text, ExcludeTitle = excludeTitle, ExcludeText = excludeTitle };
+                var criteria = SearchCriteria.FromString(title, text, excludeTitle, excludeText);
                 var ids = FindWindow(criteria);
                 return CreateWindow(ids);
             }
