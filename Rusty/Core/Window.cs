@@ -442,16 +442,8 @@ namespace IronAHK.Rusty
         {
             InitWindowManager();
             var criteria = WindowManager.SearchCriteria.FromString(title, text, excludeTitle, excludeText);
-
-            foreach (var id in windowManager.ActiveWindows)
-            {
-                var win = windowManager.CreateWindow(id);
-
-                if (win.Equals(criteria))
-                    return id.ToInt32();
-            }
-
-            return 0;
+            var id = windowManager.ActiveWindow;
+            return windowManager.CreateWindow(id).Equals(criteria) ? id.ToInt64() : 0;
         }
 
         /// <summary>
@@ -510,16 +502,16 @@ namespace IronAHK.Rusty
         public static void WinGetActiveStats(out string title, out int width, out int height, out int x, out int y)
         {
             InitWindowManager();
-            var ids = windowManager.ActiveWindows;
+            var id = windowManager.ActiveWindow;
 
-            if (ids.Length == 0)
+            if (id == IntPtr.Zero)
             {
                 title = string.Empty;
                 width = height = x = y = 0;
                 return;
             }
 
-            var win = windowManager.CreateWindow(ids[0]);
+            var win = windowManager.CreateWindow(id);
             title = win.Title;
             width = win.Size.Width;
             height = win.Size.Height;
@@ -534,8 +526,7 @@ namespace IronAHK.Rusty
         public static void WinGetActiveTitle(out string result)
         {
             InitWindowManager();
-            var ids = windowManager.ActiveWindows;
-            result = ids.Length == 0 ? string.Empty : windowManager.CreateWindow(ids[0]).Title;
+            result = windowManager.CreateWindow(windowManager.ActiveWindow).Title;
         }
 
         /// <summary>

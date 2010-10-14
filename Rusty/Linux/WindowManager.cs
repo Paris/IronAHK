@@ -26,7 +26,7 @@ namespace IronAHK.Rusty
                 get { throw new NotImplementedException(); }
             }
 
-            public override IntPtr[] ActiveWindows
+            public override IntPtr ActiveWindow
             {
                 get { throw new NotImplementedException(); }
             }
