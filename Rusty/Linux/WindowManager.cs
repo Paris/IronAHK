@@ -31,7 +31,7 @@ namespace IronAHK.Rusty
                 get { throw new NotImplementedException(); }
             }
 
-            public override IntPtr[] LastActiveWindows
+            public override IntPtr PreviousWindow
             {
                 get { throw new NotImplementedException(); }
             }
