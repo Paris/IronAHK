@@ -55,7 +55,8 @@ namespace IronAHK.Rusty
 
                 foreach (var id in AllWindows)
                 {
-                    // TODO: find windows by selection
+                    if (CreateWindow(id).Equals(criteria))
+                        return id;
                 }
 
                 return IntPtr.Zero;
