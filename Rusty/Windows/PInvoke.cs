@@ -246,6 +246,7 @@ namespace IronAHK.Rusty
         #region Constants
 
         public const uint GW_CHILD = 5;
+        public const uint GW_HWNDPREV = 3;
         public const int GWL_STYLE = -16;
         public const int GWL_EXSTYLE = -20;
 
