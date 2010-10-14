@@ -416,7 +416,7 @@ namespace IronAHK.Rusty
         public static void WinActivateBottom(string title = null, string text = null, string excludeTitle = null, string excludeText = null)
         {
             InitWindowManager();
-            var criteria = new WindowManager.SearchCriteria { Title = title, Text = text, ExcludeTitle = excludeTitle, ExcludeText = excludeText };
+            var criteria = WindowManager.SearchCriteria.FromString(title, text, excludeTitle, excludeText);
 
             for (var id = windowManager.FindWindow(criteria); id != IntPtr.Zero; id = windowManager.CreateWindow(id).PreviousWindow)
             {
@@ -441,7 +441,7 @@ namespace IronAHK.Rusty
         public static long WinActive(string title = null, string text = null, string excludeTitle = null, string excludeText = null)
         {
             InitWindowManager();
-            var criteria = new WindowManager.SearchCriteria { Title = title, Text = text, ExcludeTitle = excludeTitle, ExcludeText = excludeText };
+            var criteria = WindowManager.SearchCriteria.FromString(title, text, excludeTitle, excludeText);
 
             foreach (var id in windowManager.ActiveWindows)
             {
