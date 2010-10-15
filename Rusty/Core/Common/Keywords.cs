@@ -385,5 +385,25 @@ namespace IronAHK.Rusty
         const string Keyword_IfWinNotActive = "ifwinnotactive";
         const string Keyword_IfWinExist = "ifwinexist";
         const string Keyword_IfWinNotExit = "ifwinnotexist";
+
+
+
+        //Keywords for Splash/Progress Options
+
+        const string Keyword_NotAlwaysOnTop = "A";
+        const string Keyword_Borderless = "B";
+        const string Keyword_ProgressStartPos = "P";
+        const string Keyword_ProgressRange = "R";
+        const string Keyword_ShowInTaskbar = "T";
+        const string Keyword_X = "X";
+        const string Keyword_Y = "Y";
+        const string Keyword_W = "W";
+        const string Keyword_H = "H";
+
+        const string Keyword_Centered = "C"; // Centered
+        const string Keyword_ZH = "ZH";
+        const string Keyword_ZW = "ZW";
+        const string Keyword_ZX = "ZX";
+        const string Keyword_ZY = "ZY";
     }
 }
