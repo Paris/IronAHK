@@ -77,17 +77,19 @@
     <Compile Include="Core\Common\Options.cs" />
     <Compile Include="Core\Common\Reflection.cs" />
     <Compile Include="Core\Common\Initialisers.cs" />
+    <Compile Include="Core\Gui\Dialogs\ComplexDlgOptions.cs" />
+    <Compile Include="Core\Gui\Dialogs\IComplexDialoge.cs" />
     <Compile Include="Core\Network.cs" />
     <Compile Include="Core\Security.cs" />
     <Compile Include="Core\Core.cs" />
     <Compile Include="Core\Disk.cs" />
-    <Compile Include="Core\Gui\Dialogs\Input.cs">
+    <Compile Include="Core\Gui\Dialogs\InputDialog.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Core\Gui\Dialogs\Progress.cs">
+    <Compile Include="Core\Gui\Dialogs\ProgressDialog.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Core\Gui\Dialogs\Splash.cs">
+    <Compile Include="Core\Gui\Dialogs\SplashDialog.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Core\Gui\HotkeyBox.cs" />

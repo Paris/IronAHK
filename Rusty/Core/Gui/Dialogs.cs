@@ -8,7 +8,12 @@ namespace IronAHK.Rusty
 {
     partial class Core
     {
+        delegate void AsyncCallDlgOptions(ComplexDlgOptions options);
+        delegate void AsyncComplexDialoge(IComplexDialoge complexDlg);
+
         // TODO: organise Dialogs.cs
+
+        #region FileSelectFile
 
         /// <summary>
         /// Displays a standard dialog that allows the user to open or save files.
@@ -87,6 +92,10 @@ namespace IronAHK.Rusty
             }
         }
 
+        #endregion
+
+        #region FileSelectFolder
+
         /// <summary>
         /// Displays a standard dialog that allows the user to select a folder.
         /// </summary>
@@ -128,6 +137,10 @@ namespace IronAHK.Rusty
                 ErrorLevel = 1;
             }
         }
+
+        #endregion
+
+        #region InputBox
 
         /// <summary>
         /// Displays an input box to ask the user to enter a string.
@@ -176,6 +189,10 @@ namespace IronAHK.Rusty
             return result;
         }
 
+        #endregion
+
+        #region MsgBox
+
         /// <summary>
         /// Show a message box.
         /// </summary>
@@ -192,6 +209,8 @@ namespace IronAHK.Rusty
             else
                 MessageBox.Show(Text, title);
         }
+
+        
 
         /// <summary>
         /// Displays the specified text in a small window containing one or more buttons (such as Yes and No).
@@ -270,6 +289,10 @@ namespace IronAHK.Rusty
             return result;
         }
 
+        #endregion
+
+        #region Progress
+
         /// <summary>
         /// Creates or updates a window containing a progress bar or an image.
         /// </summary>
@@ -289,45 +312,58 @@ namespace IronAHK.Rusty
         /// <para>The name of the font to use for both MainText and SubText. The font table lists the fonts included with the various versions of Windows. If unspecified or if the font cannot be found, the system's default GUI font will be used.</para>
         /// <para>See the options section below for how to change the size, weight, and color of the font.</para>
         /// </param>
-        public static void Progress(string ProgressParam1, string SubText, string MainText, string WinTitle, string FontName)
-        {
-            if (progress == null)
+        public static void Progress(string ProgressParam1, string SubText, string MainText, string WinTitle, string FontName) {
+
+            InitDialoges();
+
+            var progressOptions = new ComplexDlgOptions()
             {
-                progress = new ProgressDialog();
-                progress.Show();
-                progress.Hide();
-            }
+                SubText = SubText,
+                MainText = MainText,
+                WinTitle = WinTitle,
+            };
+            progressOptions.ParseGuiID(ProgressParam1);
+            progressOptions.ParseComplexOptions(ProgressParam1);
 
-            lock (progress)
-            {
-                if (ProgressParam1.Trim().Equals(Keyword_Off, StringComparison.OrdinalIgnoreCase))
-                    progress.Invoke((SimpleDelegate)delegate { progress.Hide(); });
-                else
-                {
-                    progress.Invoke((SimpleDelegate)delegate
-                    {
-                        int ProgressValue;
+            ProgressAssync(progressOptions);
+        }
 
-                        progress.Title = WinTitle;
+        private static void ProgressAssync(ComplexDlgOptions Options) {
+            ProgressDialog thisProgress = null;
 
-                        if (!string.IsNullOrEmpty(SubText))
-                            progress.SubText = SubText;
-
-                        if (!string.IsNullOrEmpty(MainText))
-                            progress.MainText = MainText;
-
-                        if (int.TryParse(ProgressParam1, out ProgressValue))
-                            progress.Value = ProgressValue;
-
-                        progress.TopMost = true;
-                        progress.ShowInTaskbar = false;
-
-                        if (!progress.Visible)
-                            progress.Show();
-                    });
+            if(progressDialgos.ContainsKey(Options.GUIID)) {
+                thisProgress = progressDialgos[Options.GUIID];
+                if(thisProgress.InvokeRequired) {
+                    thisProgress.Invoke(new AsyncCallDlgOptions(ProgressAssync), Options);
                 }
             }
+
+            if(thisProgress != null) {
+                Options.AppendShowHideTo(thisProgress);
+            } else {
+                thisProgress = new ProgressDialog();
+                progressDialgos.Add(Options.GUIID, thisProgress);
+            }
+
+            Options.AppendTo(thisProgress);
+
+            #region Parse Progress specific Options
+
+            short num;
+            if(!short.TryParse(Options.Param1, out num)) {
+                num = 0;
+            }
+            thisProgress.ProgressValue = num;
+
+            #endregion
+
+            if(!Options.Hide && !thisProgress.Visible)
+                thisProgress.Show();
         }
+
+        #endregion
+
+        #region SplashImage
 
         /// <summary>
         /// Creates or updates a window containing a progress bar or an image.
@@ -350,37 +386,73 @@ namespace IronAHK.Rusty
         /// <para>The name of the font to use for both MainText and SubText. The font table lists the fonts included with the various versions of Windows. If unspecified or if the font cannot be found, the system's default GUI font will be used.</para>
         /// <para>See the options section below for how to change the size, weight, and color of the font.</para>
         /// </param>
-        public static void SplashImage(string ImageFile, string Options, string SubText, string MainText, string WinTitle, string FontName)
-        {
-            if (string.IsNullOrEmpty(ImageFile))
+        public static void SplashImage(string ImageFile, string Options, string SubText, string MainText, string WinTitle, string FontName) {
+
+            InitDialoges();
+
+            if(string.IsNullOrEmpty(ImageFile))
                 return;
 
-            if (splash == null)
+            var splashOptions = new ComplexDlgOptions()
             {
-                splash = new SplashDialog();
-                splash.Show();
-                splash.Hide();
-            }
+                SubText = SubText,
+                MainText = MainText,
+                WinTitle = WinTitle,
+            };
+            splashOptions.ParseGuiID(ImageFile);
+            splashOptions.ParseComplexOptions(Options);
 
-            lock (splash)
-            {
-                if (ImageFile.Trim().Equals(Keyword_Off, StringComparison.OrdinalIgnoreCase))
-                    splash.Invoke((SimpleDelegate)delegate { splash.Hide(); });
-                else
-                {
-                    splash.Invoke((SimpleDelegate)delegate
-                    {
-                        splash.Image = ImageFile;
-                        splash.Title = WinTitle;
-                        splash.Subtext = SubText;
-                        splash.MainText = MainText;
-                        splash.TopMost = true;
 
-                        if (!splash.Visible)
-                            splash.Show();
-                    });
+            SplashImageAssync(splashOptions);
+        }
+
+
+
+
+        private static void SplashImageAssync(ComplexDlgOptions Options) {
+
+            SplashDialog thisSplash = null;
+            System.Drawing.Image thisImage = null;
+
+
+            if(splashDialogs.ContainsKey(Options.GUIID)) {
+                thisSplash = splashDialogs[Options.GUIID];
+                if(thisSplash.InvokeRequired) {
+                    thisSplash.Invoke(new AsyncCallDlgOptions(SplashImageAssync), Options);
                 }
             }
+
+            if(thisSplash != null) {
+                Options.AppendShowHideTo(thisSplash);
+            } else {
+                thisSplash = new SplashDialog();
+                splashDialogs.Add(Options.GUIID, thisSplash);
+            }
+
+            Options.AppendTo(thisSplash);
+
+            #region Splash specific Options
+
+            if(File.Exists(Options.Param1)) {
+                try {
+                    thisImage = System.Drawing.Bitmap.FromFile(Options.Param1);
+                } catch(Exception) {
+                    ErrorLevel = 1;
+                    return;
+                }
+
+                if(thisImage != null) {
+                    thisSplash.Image = thisImage;
+                }
+            }
+
+            #endregion
+
+            if(!Options.Hide && !thisSplash.Visible)
+                thisSplash.Show();
+
         }
+
+        #endregion
     }
 }

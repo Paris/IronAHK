@@ -186,22 +186,44 @@ namespace IronAHK.Rusty
             return false;
         }
 
-        static Dictionary<string, string> ParseOptionsRegex(ref string options, Dictionary<string, Regex> items, bool remove = true)
-        {
+        static Dictionary<string, string> ParseOptionsRegex(ref string options, Dictionary<string, Regex> items, bool remove = true) {
             var results = new Dictionary<string, string>();
 
-            foreach (var item in items)
-            {
-                if (item.Value.IsMatch(options))
-                {
+            foreach(var item in items) {
+                if(item.Value.IsMatch(options)) {
                     var match = item.Value.Match(options).Groups[1].Captures[0];
                     results.Add(item.Key, match.Value);
 
-                    if (remove)
+                    if(remove)
                         options = options.Substring(0, match.Index) + options.Substring(match.Index + match.Length);
+                } else {
+                    results.Add(item.Key, "");
                 }
             }
             return results;
+        }
+
+        /// <summary>Merges two Dictionarys in generic way
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="T2"></typeparam>
+        /// <param name="dict1"></param>
+        /// <param name="dict2"></param>
+        /// <returns></returns>
+        static Dictionary<T, T2> MergeDictionarys<T, T2>(Dictionary<T, T2> dict1, Dictionary<T, T2> dict2) {
+
+            var MergedDict = new Dictionary<T, T2>();
+
+            foreach(var key in dict1.Keys) {
+                MergedDict.Add(key, dict1[key]);
+            }
+
+            foreach(var key in dict2.Keys) {
+                if(!MergedDict.ContainsKey(key))
+                    MergedDict.Add(key, dict2[key]);
+            }
+            return MergedDict;
         }
     }
 }

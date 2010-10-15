@@ -48,5 +48,16 @@ namespace IronAHK.Rusty
             if (imageLists == null)
                 imageLists = new Dictionary<long, ImageList>();
         }
+
+
+        static void InitDialoges() {
+
+            if(progressDialgos == null)
+                progressDialgos = new Dictionary<int, ProgressDialog>();
+
+            if(splashDialogs == null)
+                splashDialogs = new Dictionary<int, SplashDialog>();
+        }
+
     }
 }
