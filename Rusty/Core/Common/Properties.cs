@@ -170,9 +170,8 @@ namespace IronAHK.Rusty
 
         #region Dialogs
 
-        static ProgressDialog progress;
-
-        static SplashDialog splash;
+        static Dictionary<int, ProgressDialog> progressDialgos;
+        static Dictionary<int, SplashDialog> splashDialogs;
 
         #endregion
 
