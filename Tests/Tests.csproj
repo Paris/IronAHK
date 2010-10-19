@@ -62,22 +62,8 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Rusty\Accessors.cs" />
-    <Compile Include="Rusty\Security.cs" />
-    <Compile Include="Rusty\Gui.cs" />
-    <Compile Include="Rusty\Disk.cs" />
-    <Compile Include="Rusty\Environment.cs" />
     <Compile Include="Rusty\Rusty.cs" />
-    <Compile Include="Rusty\Screen.cs" />
     <Compile Include="Rusty\String.cs" />
-    <Compile Include="Rusty\Process.cs" />
-    <Compile Include="Rusty\Sound.cs" />
-    <Compile Include="Rusty\Mouse.cs" />
-    <Compile Include="Rusty\Window.cs" />
-    <Compile Include="Rusty\Registery.cs" />
-    <Compile Include="Rusty\Keyboard.cs" />
-    <Compile Include="Rusty\Json.cs" />
-    <Compile Include="Rusty\Flow.cs" />
-    <Compile Include="Rusty\Ini.cs" />
     <Compile Include="Rusty\Variables.cs" />
     <Compile Include="Rusty\Loop.cs" />
     <Compile Include="Rusty\Math.cs" />
