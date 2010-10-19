@@ -89,6 +89,9 @@
     <Content Include="..\.gitignore">
       <Link>.gitignore</Link>
     </Content>
+    <Content Include="..\readme.txt">
+      <Link>readme.txt</Link>
+    </Content>
     <Content Include="Site\docs\syntax\command\index.html" />
     <Content Include="Site\docs\syntax\directive\index.html" />
     <Content Include="Site\docs\syntax\expression\index.html" />
