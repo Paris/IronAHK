@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 
 namespace IronAHK.Rusty
 {
@@ -17,13 +17,13 @@ namespace IronAHK.Rusty
         }
 
         /// <summary>
-        /// Returns the arccosine of a number in radians.
+        /// Returns the angle whose cosine is the specified number.
         /// </summary>
-        /// <param name="Number">-1 &lt; n &lt; 1</param>
-        /// <returns></returns>
-        public static decimal ACos(decimal Number)
+        /// <param name="n">A number representing a cosine, where -1 ≤ <paramref name="n"/> ≤ 1.</param>
+        /// <returns>An angle, θ, measured in radians, such that 0 ≤ θ ≤ π.</returns>
+        public static double ACos(double n)
         {
-            return (decimal)Math.Acos((double)Number);
+            return Math.Acos(n);
         }
 
         /// <summary>
