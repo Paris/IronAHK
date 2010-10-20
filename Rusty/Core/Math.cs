@@ -27,13 +27,13 @@ namespace IronAHK.Rusty
         }
 
         /// <summary>
-        /// Returns the arcsine of a number in radians.
+        /// Returns the angle whose sine is the specified number.
         /// </summary>
-        /// <param name="Number">-1 &lt; n &lt; 1</param>
-        /// <returns></returns>
-        public static decimal ASin(decimal Number)
+        /// <param name="n">A number representing a sine, where -1 ≤ <paramref name="n"/> ≤ 1.</param>
+        /// <returns>An angle, θ, measured in radians, such that -π/2 ≤ θ ≤ π/2.</returns>
+        public static double ASin(double n)
         {
-            return (decimal)Math.Asin((double)Number);
+            return Math.Asin(n);
         }
 
         /// <summary>
