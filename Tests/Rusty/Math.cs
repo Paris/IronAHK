@@ -9,6 +9,15 @@ namespace IronAHK.Tests
         // TODO: math tests
 
         [Test, Category("Math")]
+        public void Abs()
+        {
+            Assert.AreEqual(1, Core.Abs(1));
+            Assert.AreEqual(1, Core.Abs(-1));
+            Assert.AreEqual(9.81, Core.Abs(-9.81m));
+            Assert.AreEqual(0, Core.Abs(-0));
+        }
+
+        [Test, Category("Math")]
         public void Trigonometry()
         {
             foreach (var d in new[] { 0m, 45m, 90m, 271.3m, (decimal)Math.PI * -10 })
