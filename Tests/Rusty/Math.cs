@@ -44,5 +44,15 @@ namespace IronAHK.Tests
             foreach (var n in new[] { -1m, -2.1m, 0m, 1.000001m })
                 Assert.AreEqual(Math.Ceiling(n), Core.Ceil(n));
         }
+
+        [Test, Category("Math")]
+        public void Cos()
+        {
+            foreach (var n in new[] { -1, -0.5, 0, 0.5, 1, 0.675 })
+            {
+                var v = n * Math.PI;
+                Assert.AreEqual(Math.Atan(v), Core.ATan(v));
+            }
+        }
     }
 }
