@@ -9,11 +9,11 @@ namespace IronAHK.Rusty
         /// <summary>
         /// Returns the absolute value of a number.
         /// </summary>
-        /// <param name="Number">Any number.</param>
-        /// <returns></returns>
-        public static decimal Abs(decimal Number)
+        /// <param name="n">Any number.</param>
+        /// <returns>The magnitude of <paramref name="n"/>.</returns>
+        public static decimal Abs(decimal n)
         {
-            return Math.Abs(Number);
+            return Math.Abs(n);
         }
 
         /// <summary>
