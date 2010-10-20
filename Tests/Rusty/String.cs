@@ -1,4 +1,4 @@
-using IronAHK.Rusty;
+﻿using IronAHK.Rusty;
 using NUnit.Framework;
 
 namespace IronAHK.Tests
@@ -6,6 +6,20 @@ namespace IronAHK.Tests
     partial class Rusty
     {
         // TODO: string tests
+
+        [Test, Category("String")]
+        public void Asc()
+        {
+            const string str = "AbCdEf ≤ 123\n";
+
+            for (var i = 0; i < str.Length; i++)
+                Assert.AreEqual(str[i], Core.Asc(str, i));
+
+            Assert.AreEqual(0, Core.Asc(null));
+            Assert.AreEqual(0, Core.Asc(string.Empty));
+            Assert.AreEqual(0, Core.Asc(str, -1));
+            Assert.AreEqual(0, Core.Asc(str, str.Length + 1));
+        }
 
         [Test, Category("String")]
         public void SubStr()

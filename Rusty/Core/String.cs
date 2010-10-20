@@ -13,6 +13,19 @@ namespace IronAHK.Rusty
     partial class Core
     {
         /// <summary>
+        /// Returns the Unicode value (an integer between 1 and 65535) for the specified character in a string.
+        /// </summary>
+        /// <param name="str">A string.</param>
+        /// <param name="n">The zero-based character position in the string.
+        /// If this is blank it is assumed to be <c>0</c>.</param>
+        /// <returns>The Unicode value.
+        /// If <paramref name="str"/> is empty or <paramref name="n"/> is specified out of bounds, <c>0</c> is returned.</returns>
+        public static int Asc(string str, int n = 0)
+        {
+            return string.IsNullOrEmpty(str) || n < 0 || n > str.Length ? 0 : (int)str[n];
+        }
+
+        /// <summary>
         /// Encodes binary data to a base 64 character string.
         /// </summary>
         /// <param name="value">The data to encode.</param>
