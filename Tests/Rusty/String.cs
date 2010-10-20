@@ -22,6 +22,13 @@ namespace IronAHK.Tests
         }
 
         [Test, Category("String")]
+        public void Chr()
+        {
+            foreach (var n in new[] { 0, 1, '.', '!', 'a', 'A', '≤', char.MaxValue - 1, -1 })
+                Assert.AreEqual(((char)n).ToString(), Core.Chr(n));
+        }
+
+        [Test, Category("String")]
         public void SubStr()
         {
             const string subject = "abcdefghi";

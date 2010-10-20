@@ -46,6 +46,16 @@ namespace IronAHK.Rusty
         }
 
         /// <summary>
+        /// Returns the single character corresponding to a Unicode value.
+        /// </summary>
+        /// <param name="n">A Unicode value.</param>
+        /// <returns>A Unicode character whose value is <paramref name="n"/>.</returns>
+        public static string Chr(int n)
+        {
+            return ((char)n).ToString();
+        }
+
+        /// <summary>
         /// Transforms a YYYYMMDDHH24MISS timestamp into the specified date/time format.
         /// </summary>
         /// <param name="output">The variable to store the result.</param>
