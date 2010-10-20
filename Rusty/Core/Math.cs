@@ -47,13 +47,13 @@ namespace IronAHK.Rusty
         }
 
         /// <summary>
-        /// Returns a number rounded up to the nearest integer.
+        /// Returns the smallest integer greater than or equal to the specified decimal number.
         /// </summary>
-        /// <param name="Number">Any number.</param>
-        /// <returns></returns>
-        public static decimal Ceil(decimal Number)
+        /// <param name="n">A number.</param>
+        /// <returns>The smallest integer greater than or equal to <paramref name="n"/>.</returns>
+        public static decimal Ceil(decimal n)
         {
-            return Math.Ceiling(Number);
+            return Math.Ceiling(n);
         }
 
         /// <summary>
