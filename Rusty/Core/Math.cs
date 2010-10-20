@@ -57,13 +57,13 @@ namespace IronAHK.Rusty
         }
 
         /// <summary>
-        /// Returns the cosent of a number in radians.
+        /// Returns the cosine of the specified angle.
         /// </summary>
-        /// <param name="Number">-1 &lt; n &lt; 1</param>
-        /// <returns></returns>
-        public static decimal Cos(decimal Number)
+        /// <param name="n">An angle, measured in radians.</param>
+        /// <returns>The cosine of <paramref name="n"/>.</returns>
+        public static double Cos(double n)
         {
-            return (decimal)Math.Cos((double)Number);
+            return Math.Cos(n);
         }
 
         /// <summary>
