@@ -27,16 +27,6 @@ namespace IronAHK.Rusty
         }
 
         /// <summary>
-        /// Returns the ASCII code (a number between 1 and 255) for the first character in a string.
-        /// </summary>
-        /// <param name="String">A string.</param>
-        /// <returns>The ASCII code. If String is empty, 0 is returned.</returns>
-        public static decimal Asc(string String)
-        {
-            return string.IsNullOrEmpty(String) ? 0 : String[0];
-        }
-
-        /// <summary>
         /// Returns the arcsine of a number in radians.
         /// </summary>
         /// <param name="Number">-1 &lt; n &lt; 1</param>
