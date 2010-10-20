@@ -30,5 +30,12 @@ namespace IronAHK.Tests
             foreach (var n in new[] { -1, -0.5, 0, 0.5, 1, 0.675 })
                 Assert.AreEqual(Math.Asin(n), Core.ASin(n));
         }
+
+        [Test, Category("Math")]
+        public void ATan()
+        {
+            foreach (var n in new[] { -1, -0.5, 0, 0.5, 1, 0.675 })
+                Assert.AreEqual(Math.Atan(n), Core.ATan(n));
+        }
     }
 }

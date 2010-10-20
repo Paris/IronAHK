@@ -37,13 +37,13 @@ namespace IronAHK.Rusty
         }
 
         /// <summary>
-        /// Returns the arctangent of a number in radians.
+        /// Returns the angle whose tangent is the specified number.
         /// </summary>
-        /// <param name="Number">-1 &lt; n &lt; 1</param>
-        /// <returns></returns>
-        public static decimal ATan(decimal Number)
+        /// <param name="n">A number representing a tangent.</param>
+        /// <returns>An angle, θ, measured in radians, such that -π/2 ≤ θ ≤ π/2.</returns>
+        public static double ATan(double n)
         {
-            return (decimal)Math.Atan((double)Number);
+            return Math.Atan(n);
         }
 
         /// <summary>
