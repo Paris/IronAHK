@@ -37,5 +37,12 @@ namespace IronAHK.Tests
             foreach (var n in new[] { -1, -0.5, 0, 0.5, 1, 0.675 })
                 Assert.AreEqual(Math.Atan(n), Core.ATan(n));
         }
+
+        [Test, Category("Math")]
+        public void Ceil()
+        {
+            foreach (var n in new[] { -1m, -2.1m, 0m, 1.000001m })
+                Assert.AreEqual(Math.Ceiling(n), Core.Ceil(n));
+        }
     }
 }
