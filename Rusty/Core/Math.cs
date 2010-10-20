@@ -57,16 +57,6 @@ namespace IronAHK.Rusty
         }
 
         /// <summary>
-        /// Returns the single character corresponding to the Unicode value indicated by a number.
-        /// </summary>
-        /// <param name="Number">A positive integer.</param>
-        /// <returns></returns>
-        public static string Chr(decimal Number)
-        {
-            return ((char)Number).ToString();
-        }
-
-        /// <summary>
         /// Returns the cosent of a number in radians.
         /// </summary>
         /// <param name="Number">-1 &lt; n &lt; 1</param>
