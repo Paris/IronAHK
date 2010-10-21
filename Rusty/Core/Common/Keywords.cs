@@ -356,6 +356,8 @@ namespace IronAHK.Rusty
         const string Keyword_Raw = "raw";
         const string Keyword_A = "a";
         const string Keyword_R = "r";
+        const string Keyword_Months = "months";
+        const string Keyword_Years = "years";
 
         const char Keyword_ModifierWin = '#';
         const char Keyword_ModifierAlt = '!';
