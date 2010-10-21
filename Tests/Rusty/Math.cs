@@ -97,5 +97,12 @@ namespace IronAHK.Tests
                 }
             }
         }
+
+        [Test, Category("Math")]
+        public void Exp()
+        {
+            foreach (var n in new[] { -1, -0.5, 0, 0.5, 1, 0.675 })
+                Assert.AreEqual(Math.Exp(n), Core.Exp(n));
+        }
     }
 }
