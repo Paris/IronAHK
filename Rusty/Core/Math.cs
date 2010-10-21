@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 
 namespace IronAHK.Rusty
 {
@@ -67,66 +68,71 @@ namespace IronAHK.Rusty
         }
 
         /// <summary>
-        /// Sets a variable to the sum of itself plus the given value (can also add or subtract time from a date-time value). Synonymous with: var += value
+        /// Add a value to a variable using numeric or date-time arithmetic.
         /// </summary>
-        /// <param name="Var">The name of the variable upon which to operate.</param>
-        /// <param name="Value">Any integer or floating point number.</param>
-        /// <param name="TimeUnits">
-        /// <para>If present, this parameter directs the command to add Value to Var, treating Var as a date-time stamp in the YYYYMMDDHH24MISS format and treating Value as the integer or floating point number of units to add (specify a negative number to perform subtraction). TimeUnits can be either Seconds, Minutes, Hours, or Days (or just the first letter of each of these).</para>
-        /// <para>If Var is an empty variable, the current time will be used in its place. If Var contains an invalid timestamp or a year prior to 1601, or if Value is non-numeric, Var will be made blank to indicate the problem.</para>
-        /// <para>The built-in variable A_Now contains the current local time in YYYYMMDDHH24MISS format.</para>
-        /// <para>To calculate the amount of time between two timestamps, use EnvSub.</para>
+        /// <param name="var">A variable.</param>
+        /// <param name="value">A number.</param>
+        /// <param name="units">
+        /// To use date arithmetic specify one of the following words:
+        /// <c>seconds</c> (<c>s</c>), <c>minutes</c> (<c>m</c>), <c>hours</c> (<c>h</c>), <c>days</c> (<c>d</c>), <c>months</c> or <c>years</c> (<c>y</c>).
+        /// If this parameter is blank the functions performs a numeric addition.
         /// </param>
-        public static void EnvAdd(ref int Var, int Value, string TimeUnits)
+        public static void EnvAdd(ref double var, double value, string units = null)
         {
-            if (TimeUnits.Length == 0)
-                Var -= Value;
+            if (string.IsNullOrEmpty(units))
+            {
+                var += value;
+                return;
+            }
 
-            DateTime x = ToDateTime(Var.ToString());
-            switch (TimeUnits.ToLowerInvariant())
+            var time = ToDateTime(((int)var).ToString());
+
+            switch (units.ToLowerInvariant())
             {
                 case Keyword_Seconds:
                 case "s":
-                    x.AddSeconds(Value);
+                    time = time.AddSeconds(value);
                     break;
 
                 case Keyword_Minutes:
                 case "m":
-                    x.AddMinutes(Value);
+                    time = time.AddMinutes(value);
                     break;
 
                 case Keyword_Hours:
                 case "h":
-                    x.AddHours(Value);
+                    time = time.AddHours(value);
                     break;
 
                 case Keyword_Days:
                 case "d":
-                    x.AddDays(Value);
+                    time = time.AddDays(value);
                     break;
 
-                default:
-                    throw new ArgumentOutOfRangeException();
+                case Keyword_Months:
+                case "mn":
+                    time = time.AddMonths((int)value);
+                    break;
+
+                case Keyword_Years:
+                case "y":
+                    time = time.AddYears((int)value);
+                    break;
             }
-            Var = FromTime(x);
+
+            var = FromTime(time);
         }
 
         /// <summary>
-        /// Sets a variable to itself minus the given value (can also compare date-time values). Synonymous with: var -= value
+        /// See <see cref="EnvAdd"/>.
         /// </summary>
-        /// <param name="Var">The name of the variable upon which to operate.</param>
-        /// <param name="Value">Any integer or floating point number. Expressions are not supported when TimeUnits is present.</param>
-        /// <param name="TimeUnits">
-        /// <para>If present, this parameter directs the command to subtract Value from Var as though both of them are date-time stamps in the YYYYMMDDHH24MISS format. TimeUnits can be either Seconds, Minutes, Hours, or Days (or just the first letter of each of these). If Value is blank, the current time will be used in its place. Similarly, if Var is an empty variable, the current time will be used in its place.</para>
-        /// <para>The result is always rounded down to the nearest integer. For example, if the actual difference between two timestamps is 1.999 days, it will be reported as 1 day. If higher precision is needed, specify Seconds for TimeUnits and divide the result by 60.0, 3600.0, or 86400.0.</para>
-        /// <para>If either Var or Value is an invalid timestamp or contains a year prior to 1601, Var will be made blank to indicate the problem.</para>
-        /// <para>The built-in variable A_Now contains the current local time in YYYYMMDDHH24MISS format.</para>
-        /// <para>To precisely determine the elapsed time between two events, use the A_TickCount method because it provides millisecond precision.</para>
-        /// <para>To add or subtract a certain number of seconds, minutes, hours, or days from a timestamp, use EnvAdd (subtraction is achieved by adding a negative number).</para>
-        /// </param>
-        public static void EnvSub(ref int Var, int Value, string TimeUnits)
+        /// <param name="var">A variable.</param>
+        /// <param name="value">A value.</param>
+        /// <param name="units">A numeric unit.</param>
+        [Obsolete, Conditional("LEGACY")]
+        public static void EnvSub(ref double var, double value, string units = null)
         {
-            EnvAdd(ref Var, -Value, TimeUnits);
+            EnvAdd(ref var, -value, units);
         }
 
         /// <summary>

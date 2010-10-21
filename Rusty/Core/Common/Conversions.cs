@@ -266,7 +266,7 @@ namespace IronAHK.Rusty
             return new string[] { };
         }
 
-        static int FromTime(DateTime time)
+        internal static long FromTime(DateTime time)
         {
             const int len = 2;
             const char pad = '0';
@@ -277,10 +277,10 @@ namespace IronAHK.Rusty
             str.Append(time.Hour.ToString().PadLeft(len, pad));
             str.Append(time.Minute.ToString().PadLeft(len, pad));
             str.Append(time.Second.ToString().PadLeft(len, pad));
-            return int.Parse(str.ToString());
+            return long.Parse(str.ToString());
         }
 
-        static DateTime ToDateTime(string time)
+        internal static DateTime ToDateTime(string time)
         {
             if (time.Length > 7)
                 return DateTime.Now;

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using IronAHK.Rusty;
 using NUnit.Framework;
 
@@ -52,6 +53,48 @@ namespace IronAHK.Tests
             {
                 var v = n * Math.PI;
                 Assert.AreEqual(Math.Atan(v), Core.ATan(v));
+            }
+        }
+
+        [Test, Category("Math")]
+        public void EnvAdd()
+        {
+            const double d = 100;
+            double n;
+
+            n = 0;
+            Core.EnvAdd(ref n, d);
+            Assert.AreEqual(0 + d, n);
+
+            n = 0;
+            Core.EnvAdd(ref n, -d);
+            Assert.AreEqual(0 + -d, n);
+
+            n = 0;
+            Core.EnvAdd(ref n, d, null);
+            Assert.AreEqual(0 + d, n);
+
+            n = 0;
+            Core.EnvAdd(ref n, d, string.Empty);
+            Assert.AreEqual(0 + d, n);
+
+            var time = DateTime.Now;
+            var list = new Dictionary<DateTime, string[]>(6);
+            list.Add(time.AddSeconds(d), new[] { "s", "S", "Seconds" });
+            list.Add(time.AddMinutes(d), new[] { "m", "M", "Minutes" });
+            list.Add(time.AddHours(d), new[] { "h", "h", "Hours" });
+            list.Add(time.AddDays(d), new[] { "d", "d", "Days" });
+            list.Add(time.AddMonths((int)d), new[] { "mn", "MN", "Months" });
+            list.Add(time.AddYears((int)d), new[] { "y", "Y", "Years" });
+
+            foreach (var offset in list.Keys)
+            {
+                foreach (var unit in list[offset])
+                {
+                    n = Core.FromTime(time);
+                    Core.EnvAdd(ref n, d, unit);
+                    Assert.AreEqual(Core.FromTime(offset), n, unit);
+                }
             }
         }
     }
