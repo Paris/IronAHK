@@ -136,13 +136,13 @@ namespace IronAHK.Rusty
         }
 
         /// <summary>
-        /// Returns e (which is approximately 2.71828182845905) raised to the Nth power. N may be negative and may contain a decimal point. To raise numbers other than e to a power, use the ** operator.
+        /// Returns <c>e</c> raised to the specified power.
         /// </summary>
-        /// <param name="Number"></param>
-        /// <returns></returns>
-        public static decimal Exp(decimal Number)
+        /// <param name="n">A number specifying a power.</param>
+        /// <returns>The number <c>e</c> raised to the power <paramref name="n"/>.</returns>
+        public static double Exp(double n)
         {
-            return (decimal)Math.Exp((double)Number);
+            return Math.Exp(n);
         }
 
         /// <summary>
