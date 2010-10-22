@@ -156,13 +156,13 @@ namespace IronAHK.Rusty
         }
 
         /// <summary>
-        /// Returns the natural logarithm (base e) of Number. The result is formatted as floating point. If Number is negative, an empty string is returned.
+        /// Returns the natural (base e) logarithm of a specified number.
         /// </summary>
-        /// <param name="Number"></param>
-        /// <returns></returns>
-        public static decimal Ln(decimal Number)
+        /// <param name="n">A number whose logarithm is to be found.</param>
+        /// <returns>The natural logarithm of <paramref name="n"/>.</returns>
+        public static double Ln(double n)
         {
-            return (decimal)Math.Log((double)Number, Math.E);
+            return Math.Log(n);
         }
 
         /// <summary>
