@@ -118,5 +118,16 @@ namespace IronAHK.Tests
             foreach (var n in new[] { -1, -0.5, 0, 0.5, 1, 0.675 })
                 Assert.AreEqual(Math.Log(n), Core.Ln(n));
         }
+
+        [Test, Category("Math")]
+        public void Log()
+        {
+            foreach (var n in new[] { -1, -0.5, 0, 0.5, 1, 0.675 })
+                foreach (var b in new[] { -1, 0, 1, 2, 3, 4 })
+                    Assert.AreEqual(Math.Log(n, b), Core.Log(n, b));
+
+            foreach (var n in new[] { -1, -0.5, 0, 0.5, 1, 0.675 })
+                Assert.AreEqual(Math.Log10(n), Core.Log(n));
+        }
     }
 }

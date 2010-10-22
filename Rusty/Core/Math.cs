@@ -166,13 +166,14 @@ namespace IronAHK.Rusty
         }
 
         /// <summary>
-        /// Returns the logarithm (base 10) of Number. The result is formatted as floating point. If Number is negative, an empty string is returned.
+        /// Returns the logarithm of a specified number in a specified base.
         /// </summary>
-        /// <param name="Number"></param>
-        /// <returns></returns>
-        public static decimal Log(decimal Number)
+        /// <param name="n">A number whose logarithm is to be found.</param>
+        /// <param name="b">The base of the logarithm. If unspecified this is <c>10</c>.</param>
+        /// <returns>The logarithm of <paramref name="n"/> to base <paramref name="b"/>.</returns>
+        public static double Log(double n, double b = 10)
         {
-            return (decimal)Math.Log10((double)Number);
+            return b == 10 ? Math.Log10(n) : Math.Log(n, b);
         }
 
         /// <summary>
