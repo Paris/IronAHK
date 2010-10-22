@@ -177,14 +177,14 @@ namespace IronAHK.Rusty
         }
 
         /// <summary>
-        /// Modulo. Returns the remainder when Dividend is divided by Divisor. The sign of the result is always the same as the sign of the first parameter. For example, both mod(5, 3) and mod(5, -3) yield 2, but mod(-5, 3) and mod(-5, -3) yield -2. If either input is a floating point number, the result is also a floating point number. For example, mod(5.0, 3) is 2.0 and mod(5, 3.5) is 1.5. If the second parameter is zero, the function yields a blank result (empty string).
+        /// Returns the remainder after dividing two numbers.
         /// </summary>
-        /// <param name="Dividend"></param>
-        /// <param name="Divisor"></param>
-        /// <returns></returns>
-        public static decimal Mod(decimal Dividend, decimal Divisor)
+        /// <param name="dividend">The dividend.</param>
+        /// <param name="divisor">The divisor.</param>
+        /// <returns>The remainder after dividing <paramref name="dividend"/> by <paramref name="divisor"/>.</returns>
+        public static decimal Mod(decimal dividend, decimal divisor)
         {
-            return Dividend % Divisor;
+            return divisor == 0 ? 0 : dividend % divisor;
         }
 
         /// <summary>
