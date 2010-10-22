@@ -188,20 +188,22 @@ namespace IronAHK.Rusty
         }
 
         /// <summary>
-        /// Generates a pseudo-random number.
+        /// Returns a random number within a specified range.
         /// </summary>
-        /// <param name="OutputVar">The name of the variable in which to store the result. The format of stored floating point numbers is determined by SetFormat.</param>
-        /// <param name="Min">The smallest number that can be generated, which can be negative or floating point. If omitted, the smallest number will be 0. The lowest allowed value is -2147483648 for integers, but floating point numbers have no restrictions.</param>
-        /// <param name="Max">The largest number that can be generated, which can be negative or floating point. If omitted, the largest number will be 2147483647 (which is also the largest allowed integer value -- but floating point numbers have no restrictions).</param>
-        public static void Random(out double OutputVar, double Min, double Max)
+        /// <param name="result">The name of the variable in which to store the result.</param>
+        /// <param name="min">The inclusive lower bound of the random number returned.</param>
+        /// <param name="max">The exclusive upper bound of the random number returned.</param>
+        /// <remarks>If <paramref name="min"/> and <paramref name="max"/> are both integers <paramref name="result"/> will also be an integer.
+        /// Otherwise <paramref name="result"/> can be a floating point number.</remarks>
+        public static void Random(out double result, double min = int.MinValue, double max = int.MaxValue)
         {
             var r = new Random();
-            double x = Math.IEEERemainder(Min, 1), y = Math.IEEERemainder(Max, 1), z = r.Next((int)Min, (int)Max);
+            double x = Math.IEEERemainder(min, 1), y = Math.IEEERemainder(max, 1), z = r.Next((int)min, (int)max);
 
             if (x != 0 || y != 0)
                 z += (r.NextDouble() % Math.Abs(y - x)) + x;
 
-            OutputVar = z;
+            result = z;
         }
 
         /// <summary>
