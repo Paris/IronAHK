@@ -137,5 +137,37 @@ namespace IronAHK.Tests
                 foreach (var d in new[] { -1m, -0.5m, 0m, 0.5m, 1m, 0.675m })
                     Assert.AreEqual(d == 0 ? 0 : n % d, Core.Mod(n, d));
         }
+
+        [Test, Category("Math")]
+        public void Random()
+        {
+            double n;
+
+            n = -1;
+            Core.Random(out n, 0, 0);
+            Assert.AreEqual(0, n);
+
+            Core.Random(out n, -1, -1);
+            Assert.AreEqual(-1, n);
+
+            Core.Random(out n, -3, -1);
+            Assert.IsTrue(n == -3 || n == -2);
+
+            Core.Random(out n, 0.1, 1);
+            Assert.IsTrue(n >= 0.1 && n < 1);
+
+            var c = new double[100];
+
+            for (var i = 0; i < c.Length; i++)
+                Core.Random(out c[i]);
+
+            var eq = true;
+
+            for (var i = 1; i < c.Length; i++)
+                if (!(eq = c[i] == c[i - 1]))
+                    break;
+
+            Assert.IsFalse(eq);
+        }
     }
 }
