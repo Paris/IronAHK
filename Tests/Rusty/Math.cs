@@ -129,5 +129,13 @@ namespace IronAHK.Tests
             foreach (var n in new[] { -1, -0.5, 0, 0.5, 1, 0.675 })
                 Assert.AreEqual(Math.Log10(n), Core.Log(n));
         }
+
+        [Test, Category("Math")]
+        public void Mod()
+        {
+            foreach (var n in new[] { -1m, 0m, 1m, 2m, 3m, 4m })
+                foreach (var d in new[] { -1m, -0.5m, 0m, 0.5m, 1m, 0.675m })
+                    Assert.AreEqual(d == 0 ? 0 : n % d, Core.Mod(n, d));
+        }
     }
 }
