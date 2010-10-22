@@ -146,13 +146,13 @@ namespace IronAHK.Rusty
         }
 
         /// <summary>
-        /// Returns Number rounded down to the nearest integer (without any .00 suffix). For example, Floor(1.2) is 1 and Floor(-1.2) is -2.
+        /// Returns the largest integer less than or equal to the specified decimal number.
         /// </summary>
-        /// <param name="Number"></param>
-        /// <returns></returns>
-        public static decimal Floor(decimal Number)
+        /// <param name="n">A number.</param>
+        /// <returns>The largest integer less than or equal to <paramref name="n"/>.</returns>
+        public static decimal Floor(decimal n)
         {
-            return Math.Floor(Number);
+            return Math.Floor(n);
         }
 
         /// <summary>
