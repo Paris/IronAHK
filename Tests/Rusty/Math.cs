@@ -104,5 +104,12 @@ namespace IronAHK.Tests
             foreach (var n in new[] { -1, -0.5, 0, 0.5, 1, 0.675 })
                 Assert.AreEqual(Math.Exp(n), Core.Exp(n));
         }
+
+        [Test, Category("Math")]
+        public void Floor()
+        {
+            foreach (var n in new[] { -1m, -0.5m, 0m, 0.5m, 1m, 0.675m })
+                Assert.AreEqual(Math.Floor(n), Core.Floor(n));
+        }
     }
 }
