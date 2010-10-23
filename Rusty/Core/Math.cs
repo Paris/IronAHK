@@ -5,8 +5,6 @@ namespace IronAHK.Rusty
 {
     partial class Core
     {
-        // TODO: organise Math.cs
-
         /// <summary>
         /// Returns the absolute value of a number.
         /// </summary>
