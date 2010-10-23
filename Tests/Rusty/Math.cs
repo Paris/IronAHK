@@ -169,5 +169,15 @@ namespace IronAHK.Tests
 
             Assert.IsFalse(eq);
         }
+
+        [Test, Category("Math")]
+        public void Round()
+        {
+            foreach (var n in new[] { -1m, -0.5m, 0m, 0.5m, 1m, 0.675m })
+                foreach (var d in new[] { 2, 1, 0 })
+                    Assert.AreEqual(Math.Round(n, d), Core.Round(n, d));
+
+            Assert.AreEqual(5, Core.Round(5.3m, -1));
+        }
     }
 }
