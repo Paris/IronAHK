@@ -238,13 +238,13 @@ namespace IronAHK.Rusty
         }
 
         /// <summary>
-        /// Returns the trigonometric tangent of Number. Number must be expressed in radians.
+        /// Returns the tangent of the specified angle.
         /// </summary>
-        /// <param name="Number"></param>
-        /// <returns></returns>
-        public static decimal Tan(decimal Number)
+        /// <param name="n">An angle, measured in radians.</param>
+        /// <returns>The tangent of <paramref name="n"/>.</returns>
+        public static double Tan(double n)
         {
-            return (decimal)Math.Tan((double)Number);
+            return Math.Tan(n);
         }
     }
 }

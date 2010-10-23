@@ -198,5 +198,15 @@ namespace IronAHK.Tests
 
             Assert.AreEqual(0, Core.Sqrt(-1));
         }
+
+        [Test, Category("Math")]
+        public void Tan()
+        {
+            foreach (var n in new[] { -1, -0.5, 0, 0.5, 1, 0.675 })
+            {
+                var v = n * Math.PI;
+                Assert.AreEqual(Math.Tan(v), Core.Tan(v));
+            }
+        }
     }
 }
