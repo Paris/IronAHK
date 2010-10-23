@@ -56,6 +56,16 @@ namespace IronAHK.Tests
         }
 
         [Test, Category("Math")]
+        public void Cosh()
+        {
+            foreach (var n in new[] { -1, -0.5, 0, 0.5, 1, 0.675 })
+            {
+                var v = n * Math.PI;
+                Assert.AreEqual(Math.Cosh(v), Core.Cosh(v));
+            }
+        }
+
+        [Test, Category("Math")]
         public void EnvAdd()
         {
             const double d = 100;
@@ -193,6 +203,16 @@ namespace IronAHK.Tests
         }
 
         [Test, Category("Math")]
+        public void Sinh()
+        {
+            foreach (var n in new[] { -1, -0.5, 0, 0.5, 1, 0.675 })
+            {
+                var v = n * Math.PI;
+                Assert.AreEqual(Math.Sinh(v), Core.Sinh(v));
+            }
+        }
+
+        [Test, Category("Math")]
         public void Sqrt()
         {
             foreach (var n in new[] { 0, 1, 4, 9, 36, 12769, 8 })
@@ -208,6 +228,16 @@ namespace IronAHK.Tests
             {
                 var v = n * Math.PI;
                 Assert.AreEqual(Math.Tan(v), Core.Tan(v));
+            }
+        }
+
+        [Test, Category("Math")]
+        public void Tanh()
+        {
+            foreach (var n in new[] { -1, -0.5, 0, 0.5, 1, 0.675 })
+            {
+                var v = n * Math.PI;
+                Assert.AreEqual(Math.Tanh(v), Core.Tanh(v));
             }
         }
     }

@@ -66,6 +66,16 @@ namespace IronAHK.Rusty
         }
 
         /// <summary>
+        /// Returns the hyperbolic cosine of the specified angle.
+        /// </summary>
+        /// <param name="n">An angle, measured in radians.</param>
+        /// <returns>The hyperbolic cosine of <paramref name="n"/>.</returns>
+        public static double Cosh(double n)
+        {
+            return Math.Cosh(n);
+        }
+
+        /// <summary>
         /// Add a value to a variable using numeric or date-time arithmetic.
         /// </summary>
         /// <param name="var">A variable.</param>
@@ -226,6 +236,16 @@ namespace IronAHK.Rusty
         }
 
         /// <summary>
+        /// Returns the hyperbolic sine of the specified angle.
+        /// </summary>
+        /// <param name="n">An angle, measured in radians.</param>
+        /// <returns>The hyperbolic sine of <paramref name="n"/>.</returns>
+        public static double Sinh(double n)
+        {
+            return Math.Sinh(n);
+        }
+
+        /// <summary>
         /// Returns the square root of a specified number.
         /// </summary>
         /// <param name="n">A number.</param>
@@ -243,6 +263,16 @@ namespace IronAHK.Rusty
         public static double Tan(double n)
         {
             return Math.Tan(n);
+        }
+
+        /// <summary>
+        /// Returns the hyperbolic tangent of the specified angle.
+        /// </summary>
+        /// <param name="n">An angle, measured in radians.</param>
+        /// <returns>The hyperbolic tangent of <paramref name="n"/>.</returns>
+        public static double Tanh(double n)
+        {
+            return Math.Tanh(n);
         }
     }
 }
