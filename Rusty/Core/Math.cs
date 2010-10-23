@@ -228,13 +228,13 @@ namespace IronAHK.Rusty
         }
 
         /// <summary>
-        /// Returns the square root of Number. The result is formatted as floating point. If Number is negative, the function yields a blank result (empty string).
+        /// Returns the square root of a specified number.
         /// </summary>
-        /// <param name="Number"></param>
-        /// <returns></returns>
-        public static decimal Sqrt(decimal Number)
+        /// <param name="n">A number.</param>
+        /// <returns>The positive square root of <paramref name="n"/>.</returns>
+        public static double Sqrt(double n)
         {
-            return (decimal)Math.Sqrt((double)Number);
+            return n < 0 ? 0 : Math.Sqrt(n);
         }
 
         /// <summary>
