@@ -215,6 +215,23 @@ namespace IronAHK.Rusty
         }
 
         /// <summary>
+        /// Returns the remainder resulting from the division of a specified number by another specified number.
+        /// </summary>
+        /// <param name="x">A dividend.</param>
+        /// <param name="y">A divisor.</param>
+        /// <returns>A number equal to <c><paramref name="x"/> - (<paramref name="y"/> Q)</c>,
+        /// where <c>Q</c> is the quotient of <c><paramref name="x"/> / <paramref name="y"/></c> rounded to
+        /// the nearest integer (if <c><paramref name="x"/> / y</c> falls halfway between two integers, the even integer is returned).
+        /// 
+        /// If <c><paramref name="x"/> - (<paramref name="y"/> Q)</c> is zero, the value <c>0</c> is returned.
+        /// 
+        /// If <c><paramref name="y"/> = 0</c>, <c>0</c> is returned.</returns>
+        public static double Remainder(double x, double y)
+        {
+            return y == 0 ? 0 : Math.IEEERemainder(x, y);
+        }
+
+        /// <summary>
         /// Rounds a number to a specified number of fractional digits.
         /// </summary>
         /// <param name="n">A decimal number to be rounded.</param>

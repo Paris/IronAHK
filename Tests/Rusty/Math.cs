@@ -183,6 +183,16 @@ namespace IronAHK.Tests
         }
 
         [Test, Category("Math")]
+        public void Remainder()
+        {
+            foreach (var n in new[] { -1, -0.5, 0, 0.5, 1, 0.675 })
+                foreach (var d in new[] { 2, 1 })
+                    Assert.AreEqual(Math.IEEERemainder(n, d), Core.Remainder(n, d));
+
+            Assert.AreEqual(0, Core.Remainder(1, 0));
+        }
+
+        [Test, Category("Math")]
         public void Round()
         {
             foreach (var n in new[] { -1m, -0.5m, 0m, 0.5m, 1m, 0.675m })
