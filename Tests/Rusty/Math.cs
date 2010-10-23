@@ -7,8 +7,6 @@ namespace IronAHK.Tests
 {
     partial class Rusty
     {
-        // TODO: math tests
-
         [Test, Category("Math")]
         public void Abs()
         {
