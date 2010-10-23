@@ -218,13 +218,13 @@ namespace IronAHK.Rusty
         }
 
         /// <summary>
-        /// Returns the trigonometric sine Number. Number must be expressed in radians.
+        /// Returns the sine of the specified angle.
         /// </summary>
-        /// <param name="Number"></param>
-        /// <returns></returns>
-        public static decimal Sin(decimal Number)
+        /// <param name="n">An angle, measured in radians.</param>
+        /// <returns>The sine of <paramref name="n"/>.</returns>
+        public static double Sin(double n)
         {
-            return (decimal)Math.Sin((double)Number);
+            return Math.Sin(n);
         }
 
         /// <summary>
