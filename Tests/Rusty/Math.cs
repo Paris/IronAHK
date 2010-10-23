@@ -189,5 +189,14 @@ namespace IronAHK.Tests
                 Assert.AreEqual(Math.Sin(v), Core.Sin(v));
             }
         }
+
+        [Test, Category("Math")]
+        public void Sqrt()
+        {
+            foreach (var n in new[] { 0, 1, 4, 9, 36, 12769, 8 })
+                Assert.AreEqual(Math.Sqrt(n), Core.Sqrt(n));
+
+            Assert.AreEqual(0, Core.Sqrt(-1));
+        }
     }
 }
