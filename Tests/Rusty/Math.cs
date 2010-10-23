@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using IronAHK.Rusty;
 using NUnit.Framework;
 
@@ -156,7 +157,10 @@ namespace IronAHK.Tests
 
             var c = new double[100];
 
-            for (var i = 0; i < c.Length; i++)
+            Core.Random(out c[0]);
+            Thread.Sleep(50);
+            
+            for (var i = 1; i < c.Length; i++)
                 Core.Random(out c[i]);
 
             var eq = true;
