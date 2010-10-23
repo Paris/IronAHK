@@ -250,5 +250,12 @@ namespace IronAHK.Tests
                 Assert.AreEqual(Math.Tanh(v), Core.Tanh(v));
             }
         }
+
+        [Test, Category("Math")]
+        public void Truncate()
+        {
+            foreach (var n in new[] { -1m, -4.5m, 0m, 2.5m, 1m, 8.675m })
+                Assert.AreEqual(Math.Truncate(n), Core.Truncate(n));
+        }
     }
 }
