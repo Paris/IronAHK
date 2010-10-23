@@ -52,7 +52,7 @@ namespace IronAHK.Tests
             foreach (var n in new[] { -1, -0.5, 0, 0.5, 1, 0.675 })
             {
                 var v = n * Math.PI;
-                Assert.AreEqual(Math.Atan(v), Core.ATan(v));
+                Assert.AreEqual(Math.Cos(v), Core.Cos(v));
             }
         }
 
