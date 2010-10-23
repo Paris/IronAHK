@@ -207,14 +207,14 @@ namespace IronAHK.Rusty
         }
 
         /// <summary>
-        /// If N is omitted or 0, Number is rounded to the nearest integer. If N is positive number, Number is rounded to N decimal places. If N is negative, Number is rounded by N digits to the left of the decimal point. For example, Round(345, -1) is 350 and Round (345, -2) is 300. Unlike Transform Round, the result has no .000 suffix whenever N is omitted or less than 1. In v1.0.44.01+, a value of N greater than zero displays exactly N decimal places rather than obeying SetFormat. To avoid this, perform another math operation on Round()'s return value; for example: Round(3.333, 1)+0.
+        /// Rounds a number to a specified number of fractional digits.
         /// </summary>
-        /// <param name="Number"></param>
-        /// <param name="Places"></param>
-        /// <returns></returns>
-        public static decimal Round(decimal Number, decimal Places)
+        /// <param name="n">A decimal number to be rounded.</param>
+        /// <param name="decimals">The number of decimal places in the return value.</param>
+        /// <returns>The number nearest to <paramref name="n"/> that contains a number of fractional digits equal to <paramref name="decimals"/>.</returns>
+        public static decimal Round(decimal n, int decimals)
         {
-            return Math.Round(Number, (int)Places);
+            return Math.Round(n, Math.Max(0, decimals));
         }
 
         /// <summary>
