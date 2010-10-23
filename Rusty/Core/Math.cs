@@ -291,5 +291,15 @@ namespace IronAHK.Rusty
         {
             return Math.Tanh(n);
         }
+
+        /// <summary>
+        /// Calculates the integral part of a specified number.
+        /// </summary>
+        /// <param name="n">A number to truncate.</param>
+        /// <returns>The integral part of <paramref name="n"/>; that is, the number that remains after any fractional digits have been discarded.</returns>
+        public static decimal Truncate(decimal n)
+        {
+            return Math.Truncate(n);
+        }
     }
 }
