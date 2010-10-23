@@ -179,5 +179,15 @@ namespace IronAHK.Tests
 
             Assert.AreEqual(5, Core.Round(5.3m, -1));
         }
+
+        [Test, Category("Math")]
+        public void Sin()
+        {
+            foreach (var n in new[] { -1, -0.5, 0, 0.5, 1, 0.675 })
+            {
+                var v = n * Math.PI;
+                Assert.AreEqual(Math.Sin(v), Core.Sin(v));
+            }
+        }
     }
 }
