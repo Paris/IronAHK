@@ -508,7 +508,6 @@ namespace IronAHK.Rusty
                         parent.Controls.Add(button);
                         control = button;
                         button.Text = content;
-                        button.Click += delegate { SafeInvoke(Keyword_GuiButton + content); };
                     }
                     break;
                 #endregion
@@ -1131,6 +1130,16 @@ namespace IronAHK.Rusty
 
             if (opts == null)
                 GuiApplyStyles(control, options);
+
+            if (control is Button)
+            {
+                var button = (Button)control;
+
+                if ((button.Tag as bool?) != true)
+                    button.Click += delegate { SafeInvoke(Keyword_GuiButton + content); };
+                else
+                    button.Tag = null;
+            }
         }
 
         static string[] GuiParseList(Control control, out int select, out bool clear)
@@ -1387,6 +1396,8 @@ namespace IronAHK.Rusty
                                 break;
 
                             case 'g':
+                                if (control is Button)
+                                    control.Tag = true;
                                 control.Click += delegate { SafeInvoke(arg); };
                                 break;
 
