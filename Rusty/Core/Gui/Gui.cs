@@ -181,8 +181,10 @@ namespace IronAHK.Rusty
 
                         var table = new Dictionary<string, string>();
 
-                        foreach (Control ctrl in guis[id].Controls)
-                            table.Add(ctrl.Name, ctrl.Text);
+                        foreach(Control ctrl in guis[id].Controls) {
+                            if(!table.ContainsKey(ctrl.Name))
+                                table.Add(ctrl.Name, ctrl.Text);
+                        }
 
                         // TODO: way to return multipart variable (A_LastResult?) for Gui,Submit and GuiControlGet,,Pos
                     }
