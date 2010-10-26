@@ -89,6 +89,9 @@
     <Content Include="..\.gitignore">
       <Link>.gitignore</Link>
     </Content>
+    <Content Include="..\readme.txt">
+      <Link>readme.txt</Link>
+    </Content>
     <Content Include="Site\docs\syntax\command\index.html" />
     <Content Include="Site\docs\syntax\directive\index.html" />
     <Content Include="Site\docs\syntax\expression\index.html" />
@@ -149,7 +152,6 @@
     <Content Include="Site\images\page_white_csharp.png" />
     <Content Include="Site\index.css" />
     <Content Include="Site\index.html" />
-    <Content Include="Site\index2.html" />
     <Content Include="Site\robots.txt" />
     <Content Include="Site\docs\api.css" />
     <Content Include="Site\docs\primary.css" />
