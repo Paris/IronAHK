@@ -179,13 +179,6 @@ namespace IronAHK.Rusty
                         if (!Keyword_NoHide.Equals(Param2, StringComparison.OrdinalIgnoreCase))
                             guis[id].Hide();
 
-                        var table = new Dictionary<string, string>();
-
-                        foreach(Control ctrl in guis[id].Controls) {
-                            if(!table.ContainsKey(ctrl.Name))
-                                table.Add(ctrl.Name, ctrl.Text);
-                        }
-
                         // TODO: way to return multipart variable (A_LastResult?) for Gui,Submit and GuiControlGet,,Pos
                     }
                     break;
@@ -510,7 +503,6 @@ namespace IronAHK.Rusty
                         parent.Controls.Add(button);
                         control = button;
                         button.Text = content;
-                        button.Click += delegate { SafeInvoke(Keyword_GuiButton + content); };
                     }
                     break;
                 #endregion
@@ -1133,6 +1125,16 @@ namespace IronAHK.Rusty
 
             if (opts == null)
                 GuiApplyStyles(control, options);
+
+            if (control is Button)
+            {
+                var button = (Button)control;
+
+                if ((button.Tag as bool?) != true)
+                    button.Click += delegate { SafeInvoke(Keyword_GuiButton + content); };
+                else
+                    button.Tag = null;
+            }
         }
 
         static string[] GuiParseList(Control control, out int select, out bool clear)
@@ -1389,6 +1391,8 @@ namespace IronAHK.Rusty
                                 break;
 
                             case 'g':
+                                if (control is Button)
+                                    control.Tag = true;
                                 control.Click += delegate { SafeInvoke(arg); };
                                 break;
 
