@@ -27,7 +27,7 @@ namespace IronAHK.Scripting
                 {
                     int n;
 
-                    if (!int.TryParse(split[0], out n))
+                    if (split[0].Length != 0 && !int.TryParse(split[0], out n))
                         split = new[] { parts[1] };
                 }
 
