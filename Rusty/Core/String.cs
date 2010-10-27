@@ -220,7 +220,8 @@ namespace IronAHK.Rusty
                 index = 0;
             }
 
-            index = Math.Min(0, index - 1);
+            index = (index - 1) < 0 ? 0 : (index - 1);
+            
             Match res = exp.Match(input, index);
 
             var matches = new string[res.Groups.Count];
