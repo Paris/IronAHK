@@ -4,6 +4,7 @@ namespace IronAHK.Rusty
     partial class Core
     {
         static readonly char[] Keyword_Spaces = { '\r', '\n', ' ', '\t', '\xA0' };
+        const string Keyword_Linefeed = "\r\n";
 
         const string Keyword_Pixel = "pixel";
         const string Keyword_Mouse = "mouse";
@@ -353,6 +354,10 @@ namespace IronAHK.Rusty
         const string Keyword_Desc = "desc";
         const string Keyword_Uni = "uni";
         const string Keyword_Raw = "raw";
+        const string Keyword_A = "a";
+        const string Keyword_R = "r";
+        const string Keyword_Months = "months";
+        const string Keyword_Years = "years";
 
         const char Keyword_ModifierWin = '#';
         const char Keyword_ModifierAlt = '!';

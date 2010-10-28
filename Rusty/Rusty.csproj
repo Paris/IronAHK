@@ -69,6 +69,8 @@
   -->
   <ItemGroup>
     <Compile Include="Core\Common\Conversions.cs" />
+    <Compile Include="Core\Common\MouseController.cs" />
+    <Compile Include="Core\Common\WindowManager.cs" />
     <Compile Include="Core\Common\Disk.cs" />
     <Compile Include="Core\Common\Gui.cs" />
     <Compile Include="Core\Common\Crypt.cs" />
@@ -127,11 +129,12 @@
     <Compile Include="Linux\Structs.cs" />
     <Compile Include="Extras\SimpleJson\Decode.cs" />
     <Compile Include="Extras\SimpleJson\Encode.cs" />
+    <Compile Include="Linux\WindowManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Windows\WindowManager.cs" />
     <Compile Include="Windows\KeyboardHook.cs" />
-    <Compile Include="Windows\Misc.cs" />
+    <Compile Include="Windows\PInvoke.cs" />
     <Compile Include="Windows\Input.cs" />
-    <Compile Include="Windows\Windows.cs" />
     <Compile Include="Linux\KeyboardHook.cs" />
     <Compile Include="Linux\Mapping.cs" />
   </ItemGroup>

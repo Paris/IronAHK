@@ -41,7 +41,6 @@ namespace IronAHK.Tests
         {
             var provider = new IACodeProvider();
             var options = new IACompilerParameters { GenerateExecutable = false, GenerateInMemory = true };
-            options.ReferencedAssemblies.Add(typeof(Core).Namespace + ".dll");
             var results = provider.CompileAssemblyFromFile(options, source);
 
             var buffer = new StringBuilder();

@@ -194,7 +194,7 @@ namespace IronAHK.Scripting
                         var paren = Dissect(parts, n, Set(parts, i));
                         parts.RemoveAt(n);
 
-                        if (i > 0 && IsObject(parts[i - 1]))
+                        if (i > 0 && parts[i - 1] is CodeExpression)
                         {
                             var invoke = (CodeMethodInvokeExpression)InternalMethods.Index;
                             n = i - 1;
