@@ -125,7 +125,13 @@ namespace IronAHK.Scripting
 
                 case "ASSEMBLYMERGE":
                     if (CompilerParameters is IACompilerParameters)
-                        ((IACompilerParameters)CompilerParameters).Merge = true;
+                    {
+                        var options = (IACompilerParameters)CompilerParameters;
+                        options.Merge = true;
+
+                        if (parts[1].Equals("FORCE", StringComparison.OrdinalIgnoreCase))
+                            options.MergeFallbackToLink = false;
+                    }
                     break;
 
                 #endregion
