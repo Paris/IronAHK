@@ -13,6 +13,19 @@ namespace IronAHK.Rusty
     partial class Core
     {
         /// <summary>
+        /// Returns the Unicode value (an integer between 1 and 65535) for the specified character in a string.
+        /// </summary>
+        /// <param name="str">A string.</param>
+        /// <param name="n">The zero-based character position in the string.
+        /// If this is blank it is assumed to be <c>0</c>.</param>
+        /// <returns>The Unicode value.
+        /// If <paramref name="str"/> is empty or <paramref name="n"/> is specified out of bounds, <c>0</c> is returned.</returns>
+        public static int Asc(string str, int n = 0)
+        {
+            return string.IsNullOrEmpty(str) || n < 0 || n > str.Length ? 0 : (int)str[n];
+        }
+
+        /// <summary>
         /// Encodes binary data to a base 64 character string.
         /// </summary>
         /// <param name="value">The data to encode.</param>
@@ -30,6 +43,16 @@ namespace IronAHK.Rusty
         public static byte[] Base64Decode(string s)
         {
             return Convert.FromBase64String(s);
+        }
+
+        /// <summary>
+        /// Returns the single character corresponding to a Unicode value.
+        /// </summary>
+        /// <param name="n">A Unicode value.</param>
+        /// <returns>A Unicode character whose value is <paramref name="n"/>.</returns>
+        public static string Chr(int n)
+        {
+            return ((char)n).ToString();
         }
 
         /// <summary>
@@ -197,7 +220,8 @@ namespace IronAHK.Rusty
                 index = 0;
             }
 
-            index = Math.Min(0, index - 1);
+            index = Math.Max(0, index - 1);
+            
             Match res = exp.Match(input, index);
 
             var matches = new string[res.Groups.Count];

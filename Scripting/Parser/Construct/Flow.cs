@@ -151,7 +151,7 @@ namespace IronAHK.Scripting
                                     {
                                         var file = false;
 
-                                        if (parts[1].IndexOf(Multicast) != 1)
+                                        if (parts[1].IndexOf(Multicast) != -1)
                                             file = true;
 
                                         // TODO: check file/iteration loop types
@@ -308,6 +308,7 @@ namespace IronAHK.Scripting
                 return ParseLegacyIf(code);
             else if (expr || IsExpressionIf(code))
             {
+                code = StripCommentSingle(code).TrimEnd(Spaces);
                 int l = code.Length - 1;
                 if (code.Length > 0 && code[l] == BlockOpen)
                 {
