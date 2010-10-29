@@ -75,6 +75,7 @@
     <Compile Include="Docs.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Installer.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <PropertyGroup>
     <PostBuildEvent>
