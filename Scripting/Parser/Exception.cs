@@ -2,6 +2,7 @@ using System;
 
 namespace IronAHK.Scripting
 {
+    [Serializable]
     class ParseException : Exception
     {
         string message;
