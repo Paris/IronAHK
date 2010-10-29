@@ -23,28 +23,35 @@ namespace IronAHK.Setup
         static void BuildMsi(bool x64)
         {
             string xml = Path.GetTempFileName(), proj = Path.GetTempFileName();
-            var src = new StreamWriter(xml);
-            BuildMsi(src, x64);
-            src.Close();
+
+            using (var src = new StreamWriter(xml))
+            {
+                BuildMsi(src, x64);
+            }
 
             string dir = string.Format("..{0}..{0}WiX", Path.DirectorySeparatorChar);
 
             if (Directory.Exists(dir))
                 Environment.SetEnvironmentVariable("PATH", string.Concat(Environment.GetEnvironmentVariable("PATH"), Path.PathSeparator.ToString(), dir));
 
-            var wix = new Process { StartInfo = new ProcessStartInfo { UseShellExecute = false } };
+            using (var prc = new Process())
+            {
+                prc.StartInfo = new ProcessStartInfo
+                {
+                    UseShellExecute = false,
+                    FileName = "candle",
+                    Arguments = string.Format("-arch x{2} -nologo -out \"{1}\" \"{0}\"", xml, proj, x64 ? "64" : "86")
+                };
 
-            wix.StartInfo.FileName = "candle";
-            wix.StartInfo.Arguments = string.Format("-arch x{2} -nologo -out \"{1}\" \"{0}\"", xml, proj, x64 ? "64" : "86");
-            
-            try
-            {
-                wix.Start();
-                wix.WaitForExit();
-            }
-            catch (Win32Exception e)
-            {
-                Console.Error.WriteLine(ExecFailed, wix.StartInfo.FileName, e.Message);
+                try
+                {
+                    prc.Start();
+                    prc.WaitForExit();
+                }
+                catch (Win32Exception e)
+                {
+                    Console.Error.WriteLine(ExecFailed, prc.StartInfo.FileName, e.Message);
+                }
             }
 
             File.Delete(xml);
@@ -54,17 +61,24 @@ namespace IronAHK.Setup
             if (File.Exists(output))
                 File.Delete(output);
 
-            wix.StartInfo.FileName = "light";
-            wix.StartInfo.Arguments = string.Format("-nologo -sw2738 -ext WixUIExtension -ext WiXNetFxExtension \"{0}\" -out \"{1}\"", proj, output);
+            using (var prc = new Process())
+            {
+                prc.StartInfo = new ProcessStartInfo
+                {
+                    UseShellExecute = false,
+                    FileName = "light",
+                    Arguments = string.Format("-nologo -sw2738 -ext WixUIExtension -ext WiXNetFxExtension \"{0}\" -out \"{1}\"", proj, output)
+                };
 
-            try
-            {
-                wix.Start();
-                wix.WaitForExit();
-            }
-            catch (Win32Exception e)
-            {
-                Console.Error.WriteLine(ExecFailed, wix.StartInfo.FileName, e.Message);
+                try
+                {
+                    prc.Start();
+                    prc.WaitForExit();
+                }
+                catch (Win32Exception e)
+                {
+                    Console.Error.WriteLine(ExecFailed, prc.StartInfo.FileName, e.Message);
+                }
             }
 
             File.Delete(proj);
