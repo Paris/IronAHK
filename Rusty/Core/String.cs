@@ -220,7 +220,7 @@ namespace IronAHK.Rusty
                 index = 0;
             }
 
-            index = (index - 1) < 0 ? 0 : (index - 1);
+            index = Math.Max(0, index - 1);
             
             Match res = exp.Match(input, index);
 
