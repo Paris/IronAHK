@@ -148,7 +148,7 @@ namespace IronAHK.Scripting
                     if (first)
                         first = false;
                     else
-                        buffer.Append(Parser.Multicast);
+                        buffer.Append(Parser.DefaultMulticast);
 
                     buffer.Append(Parser.StringBound);
                     buffer.Append(ForceString(key));
@@ -187,7 +187,7 @@ namespace IronAHK.Scripting
                     if (first)
                         first = false;
                     else
-                        buffer.Append(Parser.Multicast);
+                        buffer.Append(Parser.DefaultMulticast);
 
                     buffer.Append(ForceString(item));
                 }

@@ -36,7 +36,7 @@ namespace IronAHK.Scripting
                 if (first)
                     first = false;
                 else
-                    writer.Write(Parser.Multicast);
+                    writer.Write(Parser.DefaultMulticast);
 
             }
 
