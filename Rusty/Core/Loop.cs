@@ -127,19 +127,7 @@ namespace IronAHK.Rusty
                     if (current == -1)
                         break;
                 }
-            }
-            else if (string.IsNullOrEmpty(omit))
-            {
-                for (int i = 0; i < input.Length; i++)
-                {
-                    string result = input.Substring(i, 1);
-                    info.result = result;
-                    info.index++;
-                    yield return result;
-                }
-            }
-            else
-            {
+            } else {
                 string[] parts = input.Split(delimiters.ToCharArray(), StringSplitOptions.None);
                 char[] remove = omit.ToCharArray();
 
