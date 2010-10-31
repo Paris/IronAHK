@@ -128,12 +128,22 @@ namespace IronAHK.Rusty
                         break;
                 }
             } else {
-                string[] parts = input.Split(delimiters.ToCharArray(), StringSplitOptions.None);
-                char[] remove = omit.ToCharArray();
+                string[] parts;
+                var remove = omit.ToCharArray();
+
+                if(string.IsNullOrEmpty(delimiters)) {
+                    var chars = input.ToCharArray();
+                    parts = new string[chars.Length];
+                    for(int i=0; i < chars.Length; i++)
+                        parts[i] = chars[i].ToString();
+                }else
+                    parts = input.Split(delimiters.ToCharArray(), StringSplitOptions.None);
 
                 foreach (var part in parts)
                 {
-                    string result = part.Trim(remove);
+                    var result = part.Trim(remove);
+                    if(string.IsNullOrEmpty(result))
+                        continue;
                     info.result = result;
                     info.index++;
                     yield return result;
