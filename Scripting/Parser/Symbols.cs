@@ -31,7 +31,6 @@ namespace IronAHK.Scripting
         internal const char TernaryB = ':';
         internal const char HotkeyBound = ':';
         internal const string HotkeySignal = "::";
-        internal const char Multicast = ',';
         internal const char Directive = '#';
 
 #if !LEGACY
@@ -41,6 +40,7 @@ namespace IronAHK.Scripting
         internal const char DefaultEscpe = '`';
         internal const char DefaultComment = ';';
         internal const char DefaultResolve = '%';
+        internal const char DefaultMulticast = ',';
 
 #if !LEGACY
         const
@@ -56,6 +56,11 @@ namespace IronAHK.Scripting
         const
 #endif
         internal char Resolve = DefaultResolve;
+
+#if !LEGACY
+        const
+#endif
+        internal char Multicast = DefaultMulticast;
 
 #if LEGACY
         internal const string VarExt = "#_@$?"; // []

@@ -141,6 +141,10 @@ namespace IronAHK.Scripting
                     Escape = parts[1][0];
                     break;
 
+                case "DELIMITER":
+                    Multicast = parts[1][0];
+                    break;
+
                 case "HOTSTRING":
                     HotstringNewOptions = parts[1];
                     break;
