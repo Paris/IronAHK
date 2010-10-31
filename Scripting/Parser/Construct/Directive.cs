@@ -133,6 +133,10 @@ namespace IronAHK.Scripting
                     Comment = parts[1];
                     break;
 
+                case "DEREFCHAR":
+                    Resolve = parts[1][0];
+                    break;
+
                 case "ESCAPECHAR":
                     Escape = parts[1][0];
                     break;
