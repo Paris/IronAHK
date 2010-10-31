@@ -40,6 +40,7 @@ namespace IronAHK.Scripting
 
         internal const char DefaultEscpe = '`';
         internal const char DefaultComment = ';';
+        internal const char DefaultResolve = '%';
 
 #if !LEGACY
         const
@@ -50,6 +51,11 @@ namespace IronAHK.Scripting
         const char Comment = DefaultComment;
 #endif
         string Comment = DefaultComment.ToString();
+
+#if !LEGACY
+        const
+#endif
+        internal char Resolve = DefaultResolve;
 
 #if LEGACY
         internal const string VarExt = "#_@$?"; // []
@@ -98,7 +104,6 @@ namespace IronAHK.Scripting
         internal const string ContainsTxt = "contains";
         internal const string IsTxt = "is";
 
-        internal const char Resolve = '%';
         internal const char Minus = '-';
         internal const char Not = '!';
         internal const char Address = '&';

@@ -179,7 +179,6 @@ namespace IronAHK.Scripting
                         {
                             switch (sym)
                             {
-                                case Resolve:
                                 case Add:
                                 case Minus:
                                 case Multiply:
@@ -236,6 +235,8 @@ namespace IronAHK.Scripting
                                     break;
 
                                 default:
+                                    if (sym == Resolve)
+                                        goto case Add;
                                     throw new ParseException(ExUnexpected);
                             }
                         }
