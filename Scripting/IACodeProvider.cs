@@ -76,7 +76,7 @@ namespace IronAHK.Scripting
         {
             var units = new CodeCompileUnit[fileNames.Length];
             var errors = new CompilerErrorCollection();
-            var syntax = new Parser();
+            var syntax = new Parser(options);
 
             for (int i = 0; i < fileNames.Length; i++)
             {

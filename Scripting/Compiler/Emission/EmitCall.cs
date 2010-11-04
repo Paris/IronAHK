@@ -17,8 +17,14 @@ namespace IronAHK.Scripting
             Type[] types = null;
             
             #region Lookup target function
+            MethodInfo actual = null;
             if (invoke.Method.TargetObject != null)
+            {
                 target = GetMethodInfo(invoke.Method);
+                
+                if(Mirror != null)
+                    actual = Mirror.GrabMethod(target);
+            }
 
             // Case insensitive method search in local scope
             if (target == null)
@@ -37,11 +43,21 @@ namespace IronAHK.Scripting
             
             // Then the methods provided by rusty
             if(target == null)
+            {
                 target = Lookup.BestMatch(invoke.Method.MethodName, invoke.Parameters.Count);
+                
+                if(Mirror != null)
+                    actual = Mirror.GrabMethod(target);
+            }
             
             // Lastly, the native methods
             if(target == null && invoke.Method.TargetObject != null)
+            {
                 target = GetMethodInfo(invoke.Method);
+                
+                if(Mirror != null)
+                    actual = Mirror.GrabMethod(target);
+            }
             
             if(target == null)
                 throw new CompileException(invoke, "Could not look up method "+invoke.Method.MethodName);
@@ -143,7 +159,9 @@ namespace IronAHK.Scripting
             }
             #endregion
             
-            Generator.Emit(OpCodes.Call, target);
+            if(actual == null)
+                Generator.Emit(OpCodes.Call, target);
+            else Generator.Emit(OpCodes.Call, actual);
             
             #region Save back the variables
             // Save the variables passed to reference back in Rusty's variable handling
