@@ -1,4 +1,5 @@
 using System;
+using System.CodeDom;
 using System.CodeDom.Compiler;
 using System.Diagnostics;
 using System.IO;
@@ -21,7 +22,6 @@ namespace IronAHK.Scripting
         public Compiler()
         {
             Methods = new MethodCollection();
-            
         }
         
         public void LinkTo(string file)
@@ -31,7 +31,7 @@ namespace IronAHK.Scripting
             MineTypes(LinkingTo);
         }
         
-        void Setup(CompilerParameters Options)
+        void Setup(CompilerParameters Options, bool ContainsLocalFunctions)
         {
             if (string.IsNullOrEmpty(Options.OutputAssembly))
             {
@@ -46,7 +46,8 @@ namespace IronAHK.Scripting
             AName = new AssemblyName(name);
             ABuilder = AppDomain.CurrentDomain.DefineDynamicAssembly(AName, AssemblyBuilderAccess.RunAndSave, dir);
 
-            if((Options as IACompilerParameters).Merge)
+            var Parameters = Options as IACompilerParameters;
+            if(Parameters.Merge && (!Parameters.MergeFallbackToLink || !ContainsLocalFunctions))
             {
                 Mirror = new ILMirror();
                 Mirror.Sources.Add(typeof(Rusty.Core).Module);
@@ -58,6 +59,29 @@ namespace IronAHK.Scripting
 
             foreach (var assembly in Options.ReferencedAssemblies)
                 LinkTo(assembly);
+        }
+        
+        bool ContainsLocalFunctions(CodeCompileUnit[] Units)
+        {
+            // Drill down into the hierachy to scan for local functions.
+            foreach(CodeCompileUnit Unit in Units)
+            {
+                foreach(CodeNamespace Namespace in Unit.Namespaces) 
+                {
+                    foreach(CodeTypeDeclaration Decl in Namespace.Types)
+                    {
+                        foreach(CodeTypeMember Member in Decl.Members)
+                        {
+                            if(Member is CodeMemberMethod)
+                            {
+                                if(!(Member is CodeEntryPointMethod))
+                                    return true;
+                            }
+                        }
+                    }
+                }
+            }
+            return false;
         }
 
         void MineTypes(Assembly Asm)

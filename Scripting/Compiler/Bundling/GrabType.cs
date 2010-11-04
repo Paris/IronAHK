@@ -89,7 +89,6 @@ namespace IronAHK.Scripting
             }
             else if(Copy.IsExplicitLayout || Copy.BaseType.IsAbstract || OurInterfaces.Count > 0)
             {
-                Console.WriteLine(Copy.FullName);
                 foreach(MethodInfo Method in Copy.GetMethods())
                 {
                     if(Method.DeclaringType != Copy) continue;

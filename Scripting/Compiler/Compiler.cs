@@ -10,7 +10,7 @@ namespace IronAHK.Scripting
     {
         public CompilerResults CompileAssemblyFromDomBatch(CompilerParameters options, CodeCompileUnit[] compilationUnits)
         {
-            Setup(options);
+            Setup(options, ContainsLocalFunctions(compilationUnits));
 
             foreach(var Unit in compilationUnits)
             {
