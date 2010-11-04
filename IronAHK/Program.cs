@@ -185,13 +185,14 @@ namespace IronAHK
             using (var ahk = new IACodeProvider())
             {
                 self = Path.GetDirectoryName(Path.GetFullPath(self));
-                var options = new CompilerParameters();
+                var options = new IACompilerParameters { MergeFallbackToLink = true };
 
                 if (!reflect)
                 {
                     if (File.Exists(exe))
                         File.Delete(exe);
                     options.OutputAssembly = exe;
+                    options.Merge = !debug;
                 }
 
                 options.GenerateExecutable = !reflect;
@@ -235,11 +236,7 @@ namespace IronAHK
 
             #region Execute
 
-#if DEBUG
-            reflect = true;
-#endif
-
-            if (reflect)
+            if (reflect || debug)
             {
                 GC.Collect();
                 GC.WaitForPendingFinalizers();
