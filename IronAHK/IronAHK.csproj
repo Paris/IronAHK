@@ -109,7 +109,6 @@
     <Content Include="Site\docs\syntax\variable\index.html" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Version.cs" />
     <Compile Include="Debug.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
