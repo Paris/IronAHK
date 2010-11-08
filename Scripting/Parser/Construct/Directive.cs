@@ -149,6 +149,8 @@ namespace IronAHK.Scripting
                     break;
 
                 case "COMMENTFLAG":
+                    if (parts[1].Length == 2 && parts[1][0] == MultiComA && parts[1][1] == MultiComB)
+                        throw new ParseException(ExIllegalCommentFlag);
                     Comment = parts[1];
                     break;
 
