@@ -209,6 +209,7 @@ namespace IronAHK.Scripting
         const string ExTooFewParams = "Too few parameters passed to function";
         const string ExIncludeNotFound = "Include file not found";
         const string ExNoDynamicVars = "Dynamic variables are not permitted";
+        const string ExIllegalCommentFlag = "Illegal comment flag";
 
         #endregion
     }
