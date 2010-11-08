@@ -129,8 +129,16 @@ namespace IronAHK.Scripting
                         var options = (IACompilerParameters)CompilerParameters;
                         options.Merge = true;
 
-                        if (parts[1].Equals("FORCE", StringComparison.OrdinalIgnoreCase))
-                            options.MergeFallbackToLink = false;
+                        switch (parts[1].ToUpperInvariant())
+                        {
+                            case "FORCE":
+                                options.MergeFallbackToLink = false;
+                                break;
+
+                            case "OFF":
+                                options.Merge = false;
+                                break;
+                        }
                     }
                     break;
 
