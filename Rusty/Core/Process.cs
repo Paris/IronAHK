@@ -126,12 +126,12 @@ namespace IronAHK.Rusty
             if (runPassword != null && runPassword.Length != 0)
                 prc.StartInfo.Password = runPassword;
 
-            switch ((showMode).Trim().Substring(2, 1).ToLowerInvariant().ToCharArray()[0])
+            switch (showMode.ToLowerInvariant())
             {
-                case 'x': prc.StartInfo.WindowStyle = ProcessWindowStyle.Maximized; break;
-                case 'n': prc.StartInfo.WindowStyle = ProcessWindowStyle.Minimized; break;
-                case 'd': prc.StartInfo.WindowStyle = ProcessWindowStyle.Hidden; break;
-                case 'e': UseErrorLevel = true; break;
+                case Keyword_Max: prc.StartInfo.WindowStyle = ProcessWindowStyle.Maximized; break;
+                case Keyword_Min: prc.StartInfo.WindowStyle = ProcessWindowStyle.Minimized; break;
+                case Keyword_Hide: prc.StartInfo.WindowStyle = ProcessWindowStyle.Hidden; break;
+                case Keyword_UseErrorLevel: UseErrorLevel = true; break;
             }
 
             ErrorLevel = 0;
