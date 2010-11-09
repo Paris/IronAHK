@@ -123,7 +123,7 @@ namespace IronAHK.Rusty
             if (!string.IsNullOrEmpty(runDomain))
                 prc.StartInfo.Domain = runDomain;
 
-            if (runPassword != null || runPassword.Length != 0)
+            if (runPassword != null && runPassword.Length != 0)
                 prc.StartInfo.Password = runPassword;
 
             switch ((showMode).Trim().Substring(2, 1).ToLowerInvariant().ToCharArray()[0])
