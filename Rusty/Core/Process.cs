@@ -175,6 +175,19 @@ namespace IronAHK.Rusty
                 runPassword.MakeReadOnly();
             }
         }
+        
+        /// <summary>
+        /// See <see cref="Run"/>.
+        /// </summary>
+        /// <param name="target"></param>
+        /// <param name="workingDir"></param>
+        /// <param name="showMode"></param>
+        /// <param name="pid"></param>
+        [Obsolete]
+        public static void RunWait(string target, string workingDir, string showMode, out int pid)
+        {
+            Run(target, workingDir, showMode, out pid, true);
+        }
 
         /// <summary>
         /// Shuts down, restarts, or logs off the system.
