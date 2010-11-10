@@ -10,9 +10,14 @@ namespace IronAHK.Scripting
     {
         #region Name
 
+        string VarNormalisedName(string name)
+        {
+            return name.ToLowerInvariant();
+        }
+
         CodeArrayIndexerExpression VarId(string name)
         {
-            return VarId(VarIdExpand(name.ToLowerInvariant()));
+            return VarId(VarIdExpand(VarNormalisedName(name)));
         }
 
         CodeArrayIndexerExpression VarId(CodeExpression name)

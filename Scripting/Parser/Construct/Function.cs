@@ -174,7 +174,7 @@ namespace IronAHK.Scripting
                         part = code.Substring(x, i - x);
                     }
 
-                    names.Add(new CodePrimitiveExpression((byref ? mainScope : Scope) + ScopeVar + part));
+                    names.Add(new CodePrimitiveExpression((byref ? mainScope : Scope) + ScopeVar + VarNormalisedName(part)));
                 }
 
                 while (i < code.Length && IsSpace(code[i])) i++;
