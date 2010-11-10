@@ -191,6 +191,9 @@ namespace IronAHK.Scripting
 
         object GetDefaultValueOfType(Type t)
         {
+            if (t.IsByRef)
+                t = t.GetElementType();
+
             if (t == typeof(string))
                 return string.Empty;
             else if (t == typeof(object[]))
