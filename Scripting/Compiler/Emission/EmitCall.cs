@@ -199,6 +199,8 @@ namespace IronAHK.Scripting
                 return false;
             else if (t == typeof(int))
                 return default(int);
+            else if (t == typeof(long))
+                return default(long);
             else if (t == typeof(decimal))
                 return default(decimal);
             else if (t == typeof(float))
