@@ -43,7 +43,7 @@ namespace IronAHK.Tests
 
             using (var provider = new IACodeProvider())
             {
-                var options = new CompilerParameters { GenerateExecutable = false, GenerateInMemory = true, };
+                var options = new IACompilerParameters { GenerateExecutable = false, GenerateInMemory = true, Merge = true, MergeFallbackToLink = true };
                 results = provider.CompileAssemblyFromFile(options, source);
             }
 
