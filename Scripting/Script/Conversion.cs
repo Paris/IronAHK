@@ -98,6 +98,8 @@ namespace IronAHK.Scripting
                 return (bool)input ? "1" : "0";
             else if (input is byte[])
                 return Encoding.Unicode.GetString((byte[])input);
+            else if (input is decimal)
+                return ((decimal)input).ToString();
             else if (IsNumeric(input))
             {
                 var t = input.GetType();
