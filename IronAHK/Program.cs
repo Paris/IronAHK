@@ -289,6 +289,9 @@ namespace IronAHK
                         }
                     }
                     catch { }
+
+                    if (debug)
+                        Console.Read();
                 }
                 #endregion
             }
