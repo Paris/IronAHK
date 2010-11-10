@@ -127,9 +127,10 @@ namespace IronAHK.Scripting
                     {
                         // Variables passed by reference need to be stored in a local
                         Debug("Parameter "+p+" was by reference");
-                        LocalBuilder Temporary = Generator.DeclareLocal(typeof(object));
+                        LocalBuilder Temporary = Generator.DeclareLocal(types[p].GetElementType());
+                        ForceTopStack(typeof(object), types[p].GetElementType());
                         Generator.Emit(OpCodes.Stloc, Temporary);
-                        Generator.Emit(OpCodes.Ldloca, Temporary);
+                        Generator.Emit(OpCodes.Ldloca_S, Temporary);
 
                         if(invoke.Parameters[p] is CodeArrayIndexerExpression)
                             ByRef.Add(Temporary, invoke.Parameters[p]);
@@ -173,6 +174,10 @@ namespace IronAHK.Scripting
                     Generator.Emit(OpCodes.Ldloc, VarsProperty);
                     EmitExpression(Ref.Indices[0]);
                     Generator.Emit(OpCodes.Ldloc, Builder);
+                    
+                    if(Builder.LocalType != typeof(object))
+                        ForceTopStack(Builder.LocalType, typeof(object));
+                    
                     Generator.Emit(OpCodes.Callvirt, SetVariable);
                     Generator.Emit(OpCodes.Pop);
                 }
