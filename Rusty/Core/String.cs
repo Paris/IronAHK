@@ -654,7 +654,7 @@ namespace IronAHK.Rusty
         /// <seealso cref="Floor"/>
         /// <seealso cref="Floor"/>
         /// </summary>
-        [Obsolete, Conditional("LEGACY")]
+        [Obsolete]
         public static void Transform(ref string OutputVar, string Cmd, string Value1, string Value2)
         {
             OutputVar = string.Empty;
