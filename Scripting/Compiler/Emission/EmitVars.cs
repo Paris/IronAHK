@@ -95,7 +95,10 @@ namespace IronAHK.Scripting
 
                 // HACK: property set method target
                 var info = typeof(Rusty.Core).GetProperty(prop.PropertyName);
-                info = Mirror.GrabProperty(info);
+
+                if (Mirror != null)
+                    info = Mirror.GrabProperty(info);
+                
                 var set = info == null ? null : info.GetSetMethod();
 
                 if (set == null)
