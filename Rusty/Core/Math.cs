@@ -137,7 +137,7 @@ namespace IronAHK.Rusty
         /// <param name="var">A variable.</param>
         /// <param name="value">A value.</param>
         /// <param name="units">A numeric unit.</param>
-        [Obsolete, Conditional("LEGACY")]
+        [Obsolete]
         public static void EnvSub(ref double var, double value, string units = null)
         {
             EnvAdd(ref var, -value, units);

@@ -179,7 +179,6 @@ namespace IronAHK.Scripting
                         {
                             switch (sym)
                             {
-                                case Resolve:
                                 case Add:
                                 case Minus:
                                 case Multiply:
@@ -190,7 +189,6 @@ namespace IronAHK.Scripting
                                 case Less:
                                 case BitXOR:
                                 case BitOR:
-                                case Multicast:
                                 case ParenOpen:
                                 case ParenClose:
                                 case Equal:
@@ -236,6 +234,8 @@ namespace IronAHK.Scripting
                                     break;
 
                                 default:
+                                    if (sym == Resolve || sym == Multicast)
+                                        goto case Add;
                                     throw new ParseException(ExUnexpected);
                             }
                         }

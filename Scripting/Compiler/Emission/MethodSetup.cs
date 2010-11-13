@@ -22,6 +22,7 @@ namespace IronAHK.Scripting
         LocalBuilder VarsProperty;
 
         MethodCollection Lookup;
+        ILMirror Mirror;
 
         public bool IsEntryPoint;
         public MethodBuilder Method;
@@ -36,12 +37,13 @@ namespace IronAHK.Scripting
         Dictionary<string, LocalBuilder> Locals;
         Dictionary<string, LabelMetadata> Labels;
 
-        public MethodWriter(TypeBuilder Parent, CodeMemberMethod Member, MethodCollection Lookup)
+        public MethodWriter(TypeBuilder Parent, CodeMemberMethod Member, MethodCollection Lookup, ILMirror Mirror)
         {
             Loops = new Stack<LoopMetadata>();
 
             this.Member = Member;
             this.Lookup = Lookup;
+            this.Mirror = Mirror;
 
             if(Member is CodeEntryPointMethod)
             {
@@ -61,19 +63,35 @@ namespace IronAHK.Scripting
             Locals = new Dictionary<string, LocalBuilder>();
             Labels = new Dictionary<string, LabelMetadata>();
             
-            if(IsEntryPoint)
-                GenerateEntryPointHeader();
+            Type Variables = typeof(Script.Variables);
             
-            // "Item" is the property for this-indexers
+            if(IsEntryPoint)
+                GenerateEntryPointHeader(Generator);
+            
             SetVariable = typeof(Script.Variables).GetMethod("SetVariable");
             GetVariable = typeof(Script.Variables).GetMethod("GetVariable");
             
-            VarsProperty = Generator.DeclareLocal(typeof(Script.Variables));
-            Generator.Emit(OpCodes.Call, typeof(Script).GetProperty(Parser.VarProperty).GetGetMethod());
+            MethodInfo GetVars = typeof(Script).GetMethod("get_Vars");
+            
+            if(Mirror != null)
+            {
+                ForceString = Mirror.GrabMethod(ForceString);
+                ForceDecimal = Mirror.GrabMethod(ForceDecimal);
+                ForceLong = Mirror.GrabMethod(ForceLong);
+                ForceInt = Mirror.GrabMethod(ForceInt);
+                ForceBool = Mirror.GrabMethod(ForceBool);
+                SetVariable = Mirror.GrabMethod(SetVariable);
+                GetVariable = Mirror.GrabMethod(GetVariable);
+                Variables = Mirror.GrabType(Variables);
+                GetVars = Mirror.GrabMethod(GetVars);
+            }
+            
+            VarsProperty = Generator.DeclareLocal(Variables);
+            Generator.Emit(OpCodes.Call, GetVars);
             Generator.Emit(OpCodes.Stloc, VarsProperty);            
         }
 
-        void GenerateEntryPointHeader()
+        void GenerateEntryPointHeader(ILGenerator Generator)
         {
             ConstructorInfo StatThreadConstructor = typeof(STAThreadAttribute).GetConstructor(Type.EmptyTypes);
             var Attribute = new CustomAttributeBuilder(StatThreadConstructor, new object[] {});

@@ -308,7 +308,7 @@ namespace IronAHK.Scripting
                 return ParseLegacyIf(code);
             else if (expr || IsExpressionIf(code))
             {
-                code = StripCommentSingle(code).TrimEnd(Spaces);
+                code = StripComment(code).TrimEnd(Spaces);
                 int l = code.Length - 1;
                 if (code.Length > 0 && code[l] == BlockOpen)
                 {

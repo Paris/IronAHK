@@ -17,8 +17,14 @@ namespace IronAHK.Scripting
             Type[] types = null;
             
             #region Lookup target function
+            MethodInfo actual = null;
             if (invoke.Method.TargetObject != null)
+            {
                 target = GetMethodInfo(invoke.Method);
+                
+                if(Mirror != null)
+                    actual = Mirror.GrabMethod(target);
+            }
 
             // Case insensitive method search in local scope
             if (target == null)
@@ -37,11 +43,21 @@ namespace IronAHK.Scripting
             
             // Then the methods provided by rusty
             if(target == null)
+            {
                 target = Lookup.BestMatch(invoke.Method.MethodName, invoke.Parameters.Count);
+                
+                if(Mirror != null)
+                    actual = Mirror.GrabMethod(target);
+            }
             
             // Lastly, the native methods
             if(target == null && invoke.Method.TargetObject != null)
+            {
                 target = GetMethodInfo(invoke.Method);
+                
+                if(Mirror != null)
+                    actual = Mirror.GrabMethod(target);
+            }
             
             if(target == null)
                 throw new CompileException(invoke, "Could not look up method "+invoke.Method.MethodName);
@@ -111,9 +127,10 @@ namespace IronAHK.Scripting
                     {
                         // Variables passed by reference need to be stored in a local
                         Debug("Parameter "+p+" was by reference");
-                        LocalBuilder Temporary = Generator.DeclareLocal(typeof(object));
+                        LocalBuilder Temporary = Generator.DeclareLocal(types[p].GetElementType());
+                        ForceTopStack(typeof(object), types[p].GetElementType());
                         Generator.Emit(OpCodes.Stloc, Temporary);
-                        Generator.Emit(OpCodes.Ldloca, Temporary);
+                        Generator.Emit(OpCodes.Ldloca_S, Temporary);
 
                         if(invoke.Parameters[p] is CodeArrayIndexerExpression)
                             ByRef.Add(Temporary, invoke.Parameters[p]);
@@ -143,7 +160,9 @@ namespace IronAHK.Scripting
             }
             #endregion
             
-            Generator.Emit(OpCodes.Call, target);
+            if(actual == null)
+                Generator.Emit(OpCodes.Call, target);
+            else Generator.Emit(OpCodes.Call, actual);
             
             #region Save back the variables
             // Save the variables passed to reference back in Rusty's variable handling
@@ -155,6 +174,10 @@ namespace IronAHK.Scripting
                     Generator.Emit(OpCodes.Ldloc, VarsProperty);
                     EmitExpression(Ref.Indices[0]);
                     Generator.Emit(OpCodes.Ldloc, Builder);
+                    
+                    if(Builder.LocalType != typeof(object))
+                        ForceTopStack(Builder.LocalType, typeof(object));
+                    
                     Generator.Emit(OpCodes.Callvirt, SetVariable);
                     Generator.Emit(OpCodes.Pop);
                 }
@@ -173,6 +196,9 @@ namespace IronAHK.Scripting
 
         object GetDefaultValueOfType(Type t)
         {
+            if (t.IsByRef)
+                t = t.GetElementType();
+
             if (t == typeof(string))
                 return string.Empty;
             else if (t == typeof(object[]))
@@ -181,6 +207,8 @@ namespace IronAHK.Scripting
                 return false;
             else if (t == typeof(int))
                 return default(int);
+            else if (t == typeof(long))
+                return default(long);
             else if (t == typeof(decimal))
                 return default(decimal);
             else if (t == typeof(float))

@@ -32,20 +32,22 @@ namespace IronAHK.Setup
             const string sh = "MacOS.sh";
             File.Copy(sh, Path.Combine(osx, Name));
 
-            var writer = new StreamWriter(Path.Combine(root, "Info.plist")) { NewLine = "\n" };
-            writer.WriteLine("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-            writer.WriteLine("<!DOCTYPE plist PUBLIC \"-//Apple Computer//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">");
-            writer.WriteLine("<plist version=\"1.0\">");
-            writer.WriteLine("<dict>");
-            writer.WriteLine("  <key>CFBundleIdentifier</key>");
-            writer.WriteLine("  <string>{0}</string>", Name);
-            writer.WriteLine("  <key>CFBundleExecutable</key>");
-            writer.WriteLine("  <string>{0}</string>", Name);
-            writer.WriteLine("  <key>CFBundleIconFile</key>");
-            writer.WriteLine("  <string>{0}</string>", Path.GetFileName(favicon));
-            writer.WriteLine("</dict>");
-            writer.WriteLine("</plist>");
-            writer.Close();
+            using (var writer = new StreamWriter(Path.Combine(root, "Info.plist")))
+            {
+                writer.NewLine = "\n";
+                writer.WriteLine("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+                writer.WriteLine("<!DOCTYPE plist PUBLIC \"-//Apple Computer//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">");
+                writer.WriteLine("<plist version=\"1.0\">");
+                writer.WriteLine("<dict>");
+                writer.WriteLine("  <key>CFBundleIdentifier</key>");
+                writer.WriteLine("  <string>{0}</string>", Name);
+                writer.WriteLine("  <key>CFBundleExecutable</key>");
+                writer.WriteLine("  <string>{0}</string>", Name);
+                writer.WriteLine("  <key>CFBundleIconFile</key>");
+                writer.WriteLine("  <string>{0}</string>", Path.GetFileName(favicon));
+                writer.WriteLine("</dict>");
+                writer.WriteLine("</plist>");
+            }
 
             Zip(zip, name, tmp);
 

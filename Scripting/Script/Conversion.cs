@@ -98,6 +98,8 @@ namespace IronAHK.Scripting
                 return (bool)input ? "1" : "0";
             else if (input is byte[])
                 return Encoding.Unicode.GetString((byte[])input);
+            else if (input is decimal)
+                return ((decimal)input).ToString();
             else if (IsNumeric(input))
             {
                 var t = input.GetType();
@@ -148,7 +150,7 @@ namespace IronAHK.Scripting
                     if (first)
                         first = false;
                     else
-                        buffer.Append(Parser.Multicast);
+                        buffer.Append(Parser.DefaultMulticast);
 
                     buffer.Append(Parser.StringBound);
                     buffer.Append(ForceString(key));
@@ -187,7 +189,7 @@ namespace IronAHK.Scripting
                     if (first)
                         first = false;
                     else
-                        buffer.Append(Parser.Multicast);
+                        buffer.Append(Parser.DefaultMulticast);
 
                     buffer.Append(ForceString(item));
                 }

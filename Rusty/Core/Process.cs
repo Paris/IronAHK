@@ -107,15 +107,14 @@ namespace IronAHK.Rusty
         /// <param name="showMode">Optionally one of the following: <c>min</c> (minimised), <c>max</c> (maximised) or <c>hide</c> (hidden).</param>
         /// <param name="pid">The variable to store the newly created process ID.</param>
         /// <param name="wait"><c>true</c> to wait for the process to close before continuing, <c>false</c> otherwise.</param>
-        public static void Run(string target, string workingDir, string showMode, out int pid, bool wait)
+        public static void Run(string target, string workingDir, string showMode, out int pid, bool wait = false)
         {
-            var prc = new Process();
-            prc.StartInfo.UseShellExecute = true;
-            prc.StartInfo.FileName = target;
-            if (workingDir != null)
+            var prc = new Process { StartInfo = new ProcessStartInfo { UseShellExecute = true, FileName = target } };
+
+            if (!string.IsNullOrEmpty(workingDir))
                 prc.StartInfo.WorkingDirectory = workingDir;
 
-            bool UseErrorLevel = false;
+            var error = false;
 
             if (!string.IsNullOrEmpty(runUser))
                 prc.StartInfo.UserName = runUser;
@@ -123,27 +122,29 @@ namespace IronAHK.Rusty
             if (!string.IsNullOrEmpty(runDomain))
                 prc.StartInfo.Domain = runDomain;
 
-            if (runPassword != null || runPassword.Length != 0)
+            if (runPassword != null && runPassword.Length != 0)
                 prc.StartInfo.Password = runPassword;
 
-            switch ((showMode).Trim().Substring(2, 1).ToLowerInvariant().ToCharArray()[0])
+            switch (showMode.ToLowerInvariant())
             {
-                case 'x': prc.StartInfo.WindowStyle = ProcessWindowStyle.Maximized; break;
-                case 'n': prc.StartInfo.WindowStyle = ProcessWindowStyle.Minimized; break;
-                case 'd': prc.StartInfo.WindowStyle = ProcessWindowStyle.Hidden; break;
-                case 'e': UseErrorLevel = true; break;
+                case Keyword_Max: prc.StartInfo.WindowStyle = ProcessWindowStyle.Maximized; break;
+                case Keyword_Min: prc.StartInfo.WindowStyle = ProcessWindowStyle.Minimized; break;
+                case Keyword_Hide: prc.StartInfo.WindowStyle = ProcessWindowStyle.Hidden; break;
+                case Keyword_UseErrorLevel: error = true; break;
             }
 
             ErrorLevel = 0;
+
             try
             {
                 prc.Start();
+
                 if (wait)
                     prc.WaitForExit();
             }
             catch (Exception)
             {
-                if (UseErrorLevel)
+                if (error)
                     ErrorLevel = 2;
                 else if (wait)
                     ErrorLevel = prc.ExitCode;
@@ -173,6 +174,19 @@ namespace IronAHK.Rusty
                     runPassword.AppendChar(sym);
                 runPassword.MakeReadOnly();
             }
+        }
+        
+        /// <summary>
+        /// See <see cref="Run"/>.
+        /// </summary>
+        /// <param name="target"></param>
+        /// <param name="workingDir"></param>
+        /// <param name="showMode"></param>
+        /// <param name="pid"></param>
+        [Obsolete]
+        public static void RunWait(string target, string workingDir, string showMode, out int pid)
+        {
+            Run(target, workingDir, showMode, out pid, true);
         }
 
         /// <summary>

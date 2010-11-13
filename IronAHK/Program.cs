@@ -3,10 +3,12 @@ using System.CodeDom.Compiler;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Windows.Forms;
 using IronAHK.Scripting;
 
 [assembly: CLSCompliant(true)]
+[assembly: InternalsVisibleTo("Setup, PublicKey=00240000048000009400000006020000002400005253413100040000010001009734282d68c536699358b36ad5636aa2d7fbd95ead0f6dc6c0708f19d400740e3aa4a0b5e6e779e5196bbefa6f12f19240a0f1a4daa3a4c8a59bf0067730915f9fcf4b3ee3844b290d39be63eb444f030ecd34570b3d784f307f10efc680ec37701e7f0008b0a8de2c6249c4896bf0cf1aa3cfadd434c40dcde17a25874cebcc")]
 
 namespace IronAHK
 {
@@ -95,22 +97,22 @@ namespace IronAHK
                                 {
                                     exe = null;
 
-                                    var saveas = new SaveFileDialog
-                                                     {
-                                        AddExtension = true,
-                                        AutoUpgradeEnabled = true,
-                                        CheckPathExists = true,
-                                        DefaultExt = "exe",
-                                        Filter = "Application (*.exe)|*.exe",
-                                        OverwritePrompt = true,
-                                        ValidateNames = true,
-                                    };
+                                    using (var saveas = new SaveFileDialog())
+                                    {
+                                        saveas.AddExtension = true;
+                                        saveas.AutoUpgradeEnabled = true;
+                                        saveas.CheckPathExists = true;
+                                        saveas.DefaultExt = "exe";
+                                        saveas.Filter = "Application (*.exe)|*.exe";
+                                        saveas.OverwritePrompt = true;
+                                        saveas.ValidateNames = true;
 
-                                    if (!string.IsNullOrEmpty(script))
-                                        saveas.FileName = Path.GetFileNameWithoutExtension(script) + ".exe";
+                                        if (!string.IsNullOrEmpty(script))
+                                            saveas.FileName = Path.GetFileNameWithoutExtension(script) + ".exe";
 
-                                    if (saveas.ShowDialog() == DialogResult.OK)
-                                        exe = saveas.FileName;
+                                        if (saveas.ShowDialog() == DialogResult.OK)
+                                            exe = saveas.FileName;
+                                    }
                                 }
                             }
                             if (exe == null)
@@ -176,50 +178,67 @@ namespace IronAHK
 
             #region Compile
 
-            var ahk = new IACodeProvider();
-            self = Path.GetDirectoryName(Path.GetFullPath(self));
-            var options = new CompilerParameters();
+            #region Source
+
+            CompilerResults results;
             bool reflect = exe == null;
             var exit = ExitSuccess;
-            
-            if (!reflect)
+
+            using (var ahk = new IACodeProvider())
             {
-                if (File.Exists(exe))
-                    File.Delete(exe);
-                options.OutputAssembly = exe;
-            }
+                self = Path.GetDirectoryName(Path.GetFullPath(self));
+                var options = new IACompilerParameters { MergeFallbackToLink = true };
 
-            options.GenerateExecutable = !reflect;
-            options.GenerateInMemory = reflect;
-
-            var results = ahk.CompileAssemblyFromFile(options, script);
-            bool failed = false;
-
-            var warnings = new StringWriter();
-            warnings.WriteLine(ErrorErrorsOccurred);
-            warnings.WriteLine();
-
-            foreach (CompilerError error in results.Errors)
-            {
-                string file = string.IsNullOrEmpty(error.FileName) ? script : error.FileName;
-
-                if (!error.IsWarning)
+                if (!reflect)
                 {
-                    failed = true;
-                    warnings.WriteLine("{0}:{1} - {2}", Path.GetFileName(file), error.Line, error.ErrorText);
+                    if (File.Exists(exe))
+                        File.Delete(exe);
+                    options.OutputAssembly = exe;
+                    options.Merge = !debug;
                 }
 
-                Console.Error.WriteLine("{0} ({1}): ==> {2}", file, error.Line, error.ErrorText);
+                options.GenerateExecutable = !reflect;
+                options.GenerateInMemory = reflect;
+
+                results = ahk.CompileAssemblyFromFile(options, script);
+            }
+
+            #endregion
+
+            #region Warnings
+
+            var failed = false;
+            string failure;
+
+            using (var warnings = new StringWriter())
+            {
+                warnings.WriteLine(ErrorErrorsOccurred);
+                warnings.WriteLine();
+
+                foreach (CompilerError error in results.Errors)
+                {
+                    string file = string.IsNullOrEmpty(error.FileName) ? script : error.FileName;
+
+                    if (!error.IsWarning)
+                    {
+                        failed = true;
+                        warnings.WriteLine("{0}:{1} - {2}", Path.GetFileName(file), error.Line, error.ErrorText);
+                    }
+
+                    Console.Error.WriteLine("{0} ({1}): ==> {2}", file, error.Line, error.ErrorText);
+                }
+
+                failure = warnings.ToString();
             }
 
             if (failed)
-                return Message(gui ? warnings.ToString() : ErrorCompilationFailed, ExitInvalidFunction);
+                return Message(gui ? failure : ErrorCompilationFailed, ExitInvalidFunction);
 
-#if DEBUG
-            reflect = true;
-#endif
+            #endregion
 
-            if (reflect)
+            #region Execute
+
+            if (reflect || debug)
             {
                 GC.Collect();
                 GC.WaitForPendingFinalizers();
@@ -231,21 +250,27 @@ namespace IronAHK
                     Environment.SetEnvironmentVariable("SCRIPT", script);
                     results.CompiledAssembly.EntryPoint.Invoke(null, null);
                 }
+                #region Error
                 catch (Exception e)
                 {
                     if (e is TargetInvocationException)
                         e = e.InnerException;
 
-                    var error = new StringWriter();
-                    error.WriteLine("{0}: {1}", e.GetType().Name, e.Message);
-                    error.WriteLine();
-                    error.WriteLine(e.StackTrace);
+                    string msg;
+
+                    using (var error = new StringWriter())
+                    {
+                        error.WriteLine("{0}: {1}", e.GetType().Name, e.Message);
+                        error.WriteLine();
+                        error.WriteLine(e.StackTrace);
+                        msg = error.ToString();
+                    }
 
 #pragma warning disable 162
                     if (debug)
                     {
                         Console.WriteLine();
-                        Console.Write(error.ToString());
+                        Console.Write(msg);
                     }
                     else
                         exit = Message("Could not execute: " + e.Message, ExitInvalidFunction);
@@ -260,12 +285,18 @@ namespace IronAHK
                             if (File.Exists(trace))
                                 File.Delete(trace);
 
-                            File.WriteAllText(trace, error.ToString());
+                            File.WriteAllText(trace, msg);
                         }
                     }
                     catch { }
+
+                    if (debug)
+                        Console.Read();
                 }
+                #endregion
             }
+
+            #endregion
 
             #endregion
 
@@ -283,6 +314,11 @@ namespace IronAHK
             stdout.WriteLine(text);
 
             return exit;
+        }
+
+        internal static Version Version
+        {
+            get { return Assembly.GetExecutingAssembly().GetName().Version; }
         }
     }
 }

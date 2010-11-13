@@ -10,7 +10,7 @@ namespace IronAHK.Scripting
     {
         void EmitType(ModuleBuilder Parent, CodeTypeDeclaration Decl)
         {
-            TypeBuilder Type = Parent.DefineType(Decl.Name, TypeAttributes.Public, typeof(Script));
+            TypeBuilder Type = Parent.DefineType(Decl.Name, TypeAttributes.Public);
 
             // Allow for late binding
             var LocalMethods = new Dictionary<string, MethodWriter>();
@@ -18,7 +18,7 @@ namespace IronAHK.Scripting
 
             foreach(CodeMemberMethod Method in Decl.Members)
             {
-                var Writer = new MethodWriter(Type, Method, Methods);
+                var Writer = new MethodWriter(Type, Method, Methods, Mirror);
                 LocalParameters.Add(Method.Name, GetParameterTypes(Method.Parameters));
                 LocalMethods.Add(Method.Name, Writer);
             }

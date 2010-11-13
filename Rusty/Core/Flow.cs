@@ -302,7 +302,7 @@ namespace IronAHK.Rusty
         /// <summary>
         /// This method is obsolete, use <see cref="Critical"/>.
         /// </summary>
-        [Obsolete, Conditional("LEGACY")]
+        [Obsolete]
         public static void Thread()
         {
 

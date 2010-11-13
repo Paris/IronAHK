@@ -128,7 +128,7 @@ namespace IronAHK.Scripting
                             first = false;
                         else
                         {
-                            writer.Write(Parser.Multicast);
+                            writer.Write(Parser.DefaultMulticast);
                             writer.Write(Parser.SingleSpace);
                         }
 
@@ -165,7 +165,7 @@ namespace IronAHK.Scripting
                 depth++;
                 if (i > 0)
                 {
-                    writer.Write(Parser.Multicast);
+                    writer.Write(Parser.DefaultMulticast);
                     writer.Write(Parser.SingleSpace);
                 }
                 EmitExpression(invoke.Parameters[i]);
@@ -272,7 +272,7 @@ namespace IronAHK.Scripting
                     first = false;
                 else
                 {
-                    writer.Write(Parser.Multicast);
+                    writer.Write(Parser.DefaultMulticast);
                     writer.Write(Parser.SingleSpace);
                 }
                 EmitExpression(expr);

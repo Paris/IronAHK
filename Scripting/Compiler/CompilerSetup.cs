@@ -1,4 +1,5 @@
 using System;
+using System.CodeDom;
 using System.CodeDom.Compiler;
 using System.Diagnostics;
 using System.IO;
@@ -16,6 +17,7 @@ namespace IronAHK.Scripting
         Assembly LinkingTo;
         MethodBuilder EntryPoint;
         MethodCollection Methods;
+        ILMirror Mirror;
 
         public Compiler()
         {
@@ -29,7 +31,7 @@ namespace IronAHK.Scripting
             MineTypes(LinkingTo);
         }
         
-        void Setup(CompilerParameters Options)
+        void Setup(CompilerParameters Options, bool ContainsLocalFunctions)
         {
             if (string.IsNullOrEmpty(Options.OutputAssembly))
             {
@@ -44,19 +46,48 @@ namespace IronAHK.Scripting
             AName = new AssemblyName(name);
             ABuilder = AppDomain.CurrentDomain.DefineDynamicAssembly(AName, AssemblyBuilderAccess.RunAndSave, dir);
 
+            var Parameters = Options as IACompilerParameters;
+            if(Parameters.Merge && (!Parameters.MergeFallbackToLink || !ContainsLocalFunctions))
+            {
+                Mirror = new ILMirror();
+                Mirror.Sources.Add(typeof(Rusty.Core).Module);
+                Mirror.Sources.Add(typeof(Script).Module);
+            }
+            
             foreach (var type in new[] { typeof(Core), typeof(Script) })
                 MineMethods(type);
 
             foreach (var assembly in Options.ReferencedAssemblies)
                 LinkTo(assembly);
         }
+        
+        bool ContainsLocalFunctions(CodeCompileUnit[] Units)
+        {
+            // Drill down into the hierachy to scan for local functions.
+            foreach(CodeCompileUnit Unit in Units)
+            {
+                foreach(CodeNamespace Namespace in Unit.Namespaces) 
+                {
+                    foreach(CodeTypeDeclaration Decl in Namespace.Types)
+                    {
+                        foreach(CodeTypeMember Member in Decl.Members)
+                        {
+                            if(Member is CodeMemberMethod)
+                            {
+                                if(!(Member is CodeEntryPointMethod))
+                                    return true;
+                            }
+                        }
+                    }
+                }
+            }
+            return false;
+        }
 
         void MineTypes(Assembly Asm)
         {
             foreach(var T in Asm.GetTypes())
-            {
                 MineMethods(T);
-            }
         }
 
         void MineMethods(Type Typ)
@@ -86,6 +117,9 @@ namespace IronAHK.Scripting
 
         public void Save()
         {
+            if(Mirror != null)
+                Mirror.Complete();
+            
             ABuilder.Save(AName.Name);
         }
     }
