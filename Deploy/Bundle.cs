@@ -29,8 +29,23 @@ namespace IronAHK.Setup
             if (!Directory.Exists(osx))
                 Directory.CreateDirectory(osx);
 
-            const string sh = "MacOS.sh";
-            File.Copy(sh, Path.Combine(osx, Name));
+            using (var writer = new StreamWriter(Path.Combine(osx, Name)))
+            {
+                writer.NewLine = "\n";
+                writer.WriteLine("#!/bin/sh");
+                writer.WriteLine("PWD=`pwd`");
+                writer.WriteLine("APP_PATH=`echo $0 | awk '{split($0,patharr,\"/\"); idx=1; while(patharr[idx+3] != \"\") { if (patharr[idx] != \"/\") {printf(\"%s/\", patharr[idx]); idx++ }} }'`");
+                writer.WriteLine("APP_NAME=`echo $0 | awk '{split($0,patharr,\"/\"); idx=1; while(patharr[idx+1] != \"\") {idx++} printf(\"%s\", patharr[idx]); }'`");
+                writer.WriteLine("ASSEMBLY=`echo $0 | awk '{split($0,patharr,\"/\"); idx=1; while(patharr[idx+1] != \"\") {idx++} printf(\"%s.exe\", patharr[idx]); }'`");
+                writer.WriteLine("export MONO_MWF_USE_CARBON_BACKEND=1");
+                writer.WriteLine("export GDIPLUS_NOX=1");
+                writer.WriteLine("cd \"$APP_PATH/Contents/Resources\"");
+                writer.WriteLine("if [ ! -d \"./bin\" ]; then mkdir bin ; fi");
+                writer.WriteLine("if [ -f \"./bin/$APP_NAME\" ]; then rm -f \"./bin/$APP_NAME\" ; fi");
+                writer.WriteLine("ln -s `which mono` \"./bin/$APP_NAME\" ");
+                writer.WriteLine("\"./bin/$APP_NAME\" \"$ASSEMBLY\"");
+            }
+
 
             using (var writer = new StreamWriter(Path.Combine(root, "Info.plist")))
             {
