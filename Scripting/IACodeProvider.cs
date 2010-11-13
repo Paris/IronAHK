@@ -2,6 +2,7 @@ using System;
 using System.CodeDom;
 using System.CodeDom.Compiler;
 using System.Diagnostics;
+using System.Security.Permissions;
 using System.IO;
 
 [assembly: CLSCompliant(true)]
@@ -14,6 +15,7 @@ namespace IronAHK.Scripting
 
         public override string FileExtension
         {
+            [PermissionSet(SecurityAction.LinkDemand, Name = "FullTrust")]
             get { return "ahk"; }
         }
 
@@ -21,7 +23,7 @@ namespace IronAHK.Scripting
 
         #region Generator
 
-        [Obsolete]
+        [Obsolete, PermissionSet(SecurityAction.LinkDemand, Name = "FullTrust")]
         public override ICodeGenerator CreateGenerator()
         {
             return new Generator();
@@ -33,12 +35,13 @@ namespace IronAHK.Scripting
 
         #region Wrappers
 
-        [Obsolete]
+        [Obsolete, PermissionSet(SecurityAction.LinkDemand, Name = "FullTrust")]
         public override ICodeCompiler CreateCompiler()
         {
             throw new NotImplementedException();
         }
 
+        [PermissionSet(SecurityAction.LinkDemand, Name = "FullTrust")]
         public override CompilerResults CompileAssemblyFromSource(CompilerParameters options, params string[] sources)
         {
             var readers = new TextReader[sources.Length];
@@ -68,11 +71,12 @@ namespace IronAHK.Scripting
 
         #endregion
 
+        [PermissionSet(SecurityAction.LinkDemand, Name = "FullTrust")]
         public override CompilerResults CompileAssemblyFromFile(CompilerParameters options, params string[] fileNames)
         {
             var units = new CodeCompileUnit[fileNames.Length];
             var errors = new CompilerErrorCollection();
-            var syntax = new Parser();
+            var syntax = new Parser(options);
 
             for (int i = 0; i < fileNames.Length; i++)
             {
@@ -99,6 +103,7 @@ namespace IronAHK.Scripting
             return results;
         }
 
+        [PermissionSet(SecurityAction.LinkDemand, Name = "FullTrust")]
         public override CompilerResults CompileAssemblyFromDom(CompilerParameters options, params CodeCompileUnit[] compilationUnits)
         {
             PrintCode(compilationUnits, Console.Out);

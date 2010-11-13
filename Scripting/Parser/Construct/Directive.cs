@@ -123,6 +123,25 @@ namespace IronAHK.Scripting
                         AddAssemblyAttribute(typeof(AssemblyVersionAttribute), parts[1]);
                     break;
 
+                case "ASSEMBLYMERGE":
+                    if (CompilerParameters is IACompilerParameters)
+                    {
+                        var options = (IACompilerParameters)CompilerParameters;
+                        options.Merge = true;
+
+                        switch (parts[1].ToUpperInvariant())
+                        {
+                            case "FORCE":
+                                options.MergeFallbackToLink = false;
+                                break;
+
+                            case "OFF":
+                                options.Merge = false;
+                                break;
+                        }
+                    }
+                    break;
+
                 #endregion
 
                 case "CLIPBOARDTIMEOUT":
@@ -130,11 +149,21 @@ namespace IronAHK.Scripting
                     break;
 
                 case "COMMENTFLAG":
+                    if (parts[1].Length == 2 && parts[1][0] == MultiComA && parts[1][1] == MultiComB)
+                        throw new ParseException(ExIllegalCommentFlag);
                     Comment = parts[1];
+                    break;
+
+                case "DEREFCHAR":
+                    Resolve = parts[1][0];
                     break;
 
                 case "ESCAPECHAR":
                     Escape = parts[1][0];
+                    break;
+
+                case "DELIMITER":
+                    Multicast = parts[1][0];
                     break;
 
                 case "HOTSTRING":

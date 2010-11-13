@@ -148,12 +148,9 @@ namespace IronAHK.Scripting
 
                         case '0': buffer.Append('\0'); break;
 
-                        case Resolve:
-                            if (resolve)
-                                buffer.Append(Escape);
-                            goto default;
-
                         default:
+                            if (sym == Resolve)
+                                buffer.Append(Escape);
                             buffer.Append(sym);
                             break;
                     }

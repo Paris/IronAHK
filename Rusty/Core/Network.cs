@@ -176,7 +176,7 @@ namespace IronAHK.Rusty
         /// <param name="url">The URL from which to download data.</param>
         /// <param name="filename">The file path to receive the data.
         /// Any existing file will be overwritten.</param>
-        [Obsolete, Conditional("LEGACY")]
+        [Obsolete]
         public static void URLDownloadToFile(string url, string filename)
         {
             UriDownload(url, filename);

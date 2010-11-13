@@ -10,7 +10,7 @@ namespace IronAHK.Scripting
     {
         public CompilerResults CompileAssemblyFromDomBatch(CompilerParameters options, CodeCompileUnit[] compilationUnits)
         {
-            Setup(options);
+            Setup(options, ContainsLocalFunctions(compilationUnits));
 
             foreach(var Unit in compilationUnits)
             {
@@ -79,7 +79,7 @@ namespace IronAHK.Scripting
         CompilerResults CompileAssemblyFromReaderBatch(CompilerParameters options, TextReader[] readers)
         {
             var units = new CodeCompileUnit[readers.Length];
-            var syntax = new Parser();
+            var syntax = new Parser(options);
 
             for (int i = 0; i < readers.Length; i++)
                 units[i] = syntax.Parse(readers[i]);

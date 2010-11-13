@@ -76,27 +76,30 @@ namespace IronAHK.Setup
             if (File.Exists(output))
                 File.Delete(output);
 
-            var sz = new Process { StartInfo = new ProcessStartInfo { FileName = "7za", UseShellExecute = false } };
-
-            if (Environment.OSVersion.Platform == PlatformID.Win32NT)
+            using (var sz = new Process())
             {
-                string exe = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "7-Zip\\7z.exe");
+                sz.StartInfo = new ProcessStartInfo { FileName = "7za", UseShellExecute = false };
 
-                if (File.Exists(exe))
-                    sz.StartInfo.FileName = exe;
-            }
+                if (Environment.OSVersion.Platform == PlatformID.Win32NT)
+                {
+                    string exe = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "7-Zip\\7z.exe");
 
-            sz.StartInfo.WorkingDirectory = working;
-            sz.StartInfo.Arguments = string.Format("a \"{0}\" \"{1}\" -mx=9", output, paths);
+                    if (File.Exists(exe))
+                        sz.StartInfo.FileName = exe;
+                }
 
-            try
-            {
-                sz.Start();
-                sz.WaitForExit();
-            }
-            catch (Win32Exception e)
-            {
-                Console.Error.WriteLine(ExecFailed, sz.StartInfo.FileName, e.Message);
+                sz.StartInfo.WorkingDirectory = working;
+                sz.StartInfo.Arguments = string.Format("a \"{0}\" \"{1}\" -mx=9", output, paths);
+
+                try
+                {
+                    sz.Start();
+                    sz.WaitForExit();
+                }
+                catch (Win32Exception e)
+                {
+                    Console.Error.WriteLine(ExecFailed, sz.StartInfo.FileName, e.Message);
+                }
             }
         }
 

@@ -31,7 +31,6 @@ namespace IronAHK.Scripting
         internal const char TernaryB = ':';
         internal const char HotkeyBound = ':';
         internal const string HotkeySignal = "::";
-        internal const char Multicast = ',';
         internal const char Directive = '#';
 
 #if !LEGACY
@@ -40,6 +39,8 @@ namespace IronAHK.Scripting
 
         internal const char DefaultEscpe = '`';
         internal const char DefaultComment = ';';
+        internal const char DefaultResolve = '%';
+        internal const char DefaultMulticast = ',';
 
 #if !LEGACY
         const
@@ -50,6 +51,16 @@ namespace IronAHK.Scripting
         const char Comment = DefaultComment;
 #endif
         string Comment = DefaultComment.ToString();
+
+#if !LEGACY
+        const
+#endif
+        internal char Resolve = DefaultResolve;
+
+#if !LEGACY
+        const
+#endif
+        internal char Multicast = DefaultMulticast;
 
 #if LEGACY
         internal const string VarExt = "#_@$?"; // []
@@ -98,7 +109,6 @@ namespace IronAHK.Scripting
         internal const string ContainsTxt = "contains";
         internal const string IsTxt = "is";
 
-        internal const char Resolve = '%';
         internal const char Minus = '-';
         internal const char Not = '!';
         internal const char Address = '&';
@@ -199,6 +209,7 @@ namespace IronAHK.Scripting
         const string ExTooFewParams = "Too few parameters passed to function";
         const string ExIncludeNotFound = "Include file not found";
         const string ExNoDynamicVars = "Dynamic variables are not permitted";
+        const string ExIllegalCommentFlag = "Illegal comment flag";
 
         #endregion
     }

@@ -39,22 +39,34 @@ namespace IronAHK.Tests
 
         string RunScript(string source, bool execute)
         {
-            var provider = new IACodeProvider();
-            var options = new CompilerParameters { GenerateExecutable = false, GenerateInMemory = true, };
-            var results = provider.CompileAssemblyFromFile(options, source);
+            CompilerResults results;
+
+            using (var provider = new IACodeProvider())
+            {
+                var options = new IACompilerParameters { GenerateExecutable = false, GenerateInMemory = true, Merge = true, MergeFallbackToLink = true };
+                results = provider.CompileAssemblyFromFile(options, source);
+            }
 
             var buffer = new StringBuilder();
-            var writer = new StringWriter(buffer);
-            Console.SetOut(writer);
 
-            if (execute)
-                results.CompiledAssembly.EntryPoint.Invoke(null, null);
+            using (var writer = new StringWriter(buffer))
+            {
+                Console.SetOut(writer);
 
-            writer.Flush();
+                if (execute)
+                    results.CompiledAssembly.EntryPoint.Invoke(null, null);
+
+                writer.Flush();
+            }
+
             string output = buffer.ToString();
-            var stdout = new StreamWriter(Console.OpenStandardOutput());
-            stdout.AutoFlush = true;
-            Console.SetOut(stdout);
+
+            using (var console = Console.OpenStandardOutput())
+            {
+                var stdout = new StreamWriter(console);
+                stdout.AutoFlush = true;
+                Console.SetOut(stdout);
+            }
 
             return output;
         }

@@ -113,8 +113,13 @@ namespace IronAHK.Scripting
 
             if (type == null)
                 throw new CompileException(del, "Invalid delegate type");
-
-            Generator.Emit(OpCodes.Newobj, type.GetConstructors()[0]);
+            
+            if(Mirror != null)
+                type = Mirror.GrabType(type);
+            
+            var ctor = type.GetConstructors()[0];
+            
+            Generator.Emit(OpCodes.Newobj, ctor);
 
             Depth--;
            
@@ -125,6 +130,9 @@ namespace IronAHK.Scripting
         {
             // HACK: property get method target
             var info = typeof(Rusty.Core).GetProperty(prop.PropertyName);
+
+            if (Mirror != null)
+                info = Mirror.GrabProperty(info);
 
             Generator.Emit(OpCodes.Call, info.GetGetMethod());
             return info.PropertyType;

@@ -38,7 +38,6 @@ namespace IronAHK.Scripting
                 case Concatenate:
                 case Equal:
                 case TernaryA:
-                case Multicast:
                 case Not:
                 case BitNOT:
                 case BitXOR:
@@ -62,6 +61,11 @@ namespace IronAHK.Scripting
                     if (code.Length > 1 && code[1] == Equal)
                         return true;
                     return !(code.Length > 1 && !IsSpace(code[1]));
+
+                default:
+                    if (code[0] == Multicast)
+                        goto case Divide;
+                    break;
             }
 
             if (code.Length >= AndTxt.Length && code.Substring(0, AndTxt.Length).Equals(AndTxt, StringComparison.OrdinalIgnoreCase))

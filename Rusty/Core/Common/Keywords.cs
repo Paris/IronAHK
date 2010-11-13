@@ -358,6 +358,8 @@ namespace IronAHK.Rusty
         const string Keyword_R = "r";
         const string Keyword_Months = "months";
         const string Keyword_Years = "years";
+        const string Keyword_Max = "max";
+        const string Keyword_Min = "min";
 
         const char Keyword_ModifierWin = '#';
         const char Keyword_ModifierAlt = '!';

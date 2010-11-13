@@ -798,12 +798,14 @@ namespace IronAHK.Scripting
                     }
                     else if (parts[i] as CodeBinaryOperatorType? != CodeBinaryOperatorType.Assign)
                     {
-                        int x = i - 1, y = i + 1;
+                        var x = i - 1;
 
-                        if (x > 0 && y < parts.Count && !IsVarAssignment(parts[i]) &&
-                            (parts[x] is CodeMethodInvokeExpression || parts[x] is CodePrimitiveExpression || IsVarReference(parts[x])) &&
-                            (parts[y] is CodeMethodInvokeExpression || parts[y] is CodePrimitiveExpression || IsVarReference(parts[y])))
-                            parts.Insert(y, Script.Operator.Concat);
+                        if (x > 0 && !(parts[x] is Script.Operator || parts[x] is CodeBinaryOperatorType))
+                        {
+                            parts.Insert(i, Script.Operator.Concat);
+                            i--;
+                            continue;
+                        }
                     }
                 }
                 level--;
