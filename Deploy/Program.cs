@@ -71,38 +71,6 @@ namespace IronAHK.Setup
             File.WriteAllText(path, Version);
         }
 
-        static void Zip(string output, string paths, string working)
-        {
-            if (File.Exists(output))
-                File.Delete(output);
-
-            using (var sz = new Process())
-            {
-                sz.StartInfo = new ProcessStartInfo { FileName = "7za", UseShellExecute = false };
-
-                if (Environment.OSVersion.Platform == PlatformID.Win32NT)
-                {
-                    string exe = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "7-Zip\\7z.exe");
-
-                    if (File.Exists(exe))
-                        sz.StartInfo.FileName = exe;
-                }
-
-                sz.StartInfo.WorkingDirectory = working;
-                sz.StartInfo.Arguments = string.Format("a \"{0}\" \"{1}\" -mx=9", output, paths);
-
-                try
-                {
-                    sz.Start();
-                    sz.WaitForExit();
-                }
-                catch (Win32Exception e)
-                {
-                    Console.Error.WriteLine(ExecFailed, sz.StartInfo.FileName, e.Message);
-                }
-            }
-        }
-
         static string Name
         {
             get { return typeof(Program).Namespace.Split(new[] { '.' }, 2)[0]; }

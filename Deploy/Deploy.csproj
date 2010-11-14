@@ -70,6 +70,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Bundle.cs" />
+    <Compile Include="Zip.cs" />
     <Compile Include="Portable.cs" />
     <Compile Include="Package.cs" />
     <Compile Include="Docs.cs" />
