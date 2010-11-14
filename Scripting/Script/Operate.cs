@@ -118,6 +118,7 @@ namespace IronAHK.Scripting
                 case Operator.Power:
                     return Math.Pow(ForceDouble(left), ForceDouble(right));
 
+                case Operator.Minus:
                 case Operator.Subtract:
                     return ForceDouble(left) - ForceDouble(right);
 
