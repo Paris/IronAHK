@@ -52,41 +52,53 @@ namespace IronAHK.Rusty
                     get { return !HasID && !HasExcludes && string.IsNullOrEmpty(Title) && string.IsNullOrEmpty(Text) && string.IsNullOrEmpty(ClassName); }
                 }
 
+
                 public static SearchCriteria FromString(string mixed)
                 {
                     var criteria = new SearchCriteria();
-                    var opts = ParseOptions(mixed);
                     var i = 0;
+                    var t = false;
 
-                    while (i < opts.Length)
+                    while ((i = mixed.IndexOf(Keyword_ahk, i, StringComparison.OrdinalIgnoreCase)) != -1)
                     {
-                        var current = opts[i++].ToLowerInvariant();
-                        var next = ++i < opts.Length ? opts[i] : string.Empty;
-
-                        switch (current)
+                        if (!t)
                         {
-                            case Keyword_ahk_class: criteria.ClassName = next; break;
-                            case Keyword_ahk_group: criteria.Group = next; break;
+                            var pre = i == 0 ? string.Empty : mixed.Substring(0, i).Trim(Keyword_Spaces);
+
+                            if (pre.Length != 0)
+                                criteria.Title = pre;
+
+                            t = true;
+                        }
+
+                        var z = mixed.IndexOfAny(Keyword_Spaces, i);
+
+                        if (z == -1)
+                            break;
+
+                        var word = mixed.Substring(i, z - i);
+
+                        var e = mixed.IndexOf(Keyword_ahk, ++i, StringComparison.OrdinalIgnoreCase);
+                        var arg = (e == -1 ? mixed.Substring(z) : mixed.Substring(z, e - z)).Trim();
+                        long n;
+
+                        switch (word.ToLowerInvariant())
+                        {
+                            case Keyword_ahk_class: criteria.ClassName = arg; break;
+                            case Keyword_ahk_group: criteria.Group = arg; break;
 
                             case Keyword_ahk_id:
-                                {
-                                    long x;
-                                    if (long.TryParse(next, out x)) criteria.ID = new IntPtr(x);
-                                }
+                                if (long.TryParse(arg, out n))
+                                    criteria.ID = new IntPtr(n);
                                 break;
 
                             case Keyword_ahk_pid:
-                                {
-                                    long x;
-                                    if (long.TryParse(next, out x)) criteria.PID = new IntPtr(x);
-                                }
-                                break;
-
-                            default:
-                                criteria.Title = next;
-                                i--;
+                                if (long.TryParse(arg, out n))
+                                    criteria.PID = new IntPtr(n);
                                 break;
                         }
+
+                        i++;
                     }
 
                     return criteria;
