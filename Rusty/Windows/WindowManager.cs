@@ -46,10 +46,10 @@ namespace IronAHK.Rusty
 
             public override IntPtr FindWindow(Core.WindowManager.SearchCriteria criteria)
             {
-                if (criteria.IsEmpty)
-                    return LastFound;
-
                 var found = IntPtr.Zero;
+
+                if (criteria.IsEmpty)
+                    return found;
 
                 if (!string.IsNullOrEmpty(criteria.ClassName) && !criteria.HasExcludes && !criteria.HasID && string.IsNullOrEmpty(criteria.Text))
                     found = Windows.FindWindow(criteria.ClassName, criteria.Title);
