@@ -131,9 +131,17 @@ namespace IronAHK.Rusty
 
             public WindowManager FindWindow(string title, string text, string excludeTitle, string excludeText)
             {
-                var criteria = SearchCriteria.FromString(title, text, excludeTitle, excludeText);
-                var ids = FindWindow(criteria);
-                return CreateWindow(ids);
+                var id = IntPtr.Zero;
+
+                if (string.IsNullOrEmpty(title) && string.IsNullOrEmpty(text) && string.IsNullOrEmpty(excludeTitle) && string.IsNullOrEmpty(excludeText))
+                    id = LastFound;
+                else
+                {
+                    var criteria = SearchCriteria.FromString(title, text, excludeTitle, excludeText);
+                    id = FindWindow(criteria);
+                }
+
+                return CreateWindow(id);
             }
 
             #endregion
