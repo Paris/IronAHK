@@ -55,6 +55,9 @@ namespace IronAHK.Rusty
 
                 public static SearchCriteria FromString(string mixed)
                 {
+                    if (mixed.IndexOf(Keyword_ahk, StringComparison.OrdinalIgnoreCase) == -1)
+                        return new SearchCriteria { Title = mixed };
+
                     var criteria = new SearchCriteria();
                     var i = 0;
                     var t = false;
