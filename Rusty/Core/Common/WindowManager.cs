@@ -156,10 +156,10 @@ namespace IronAHK.Rusty
                 if (!IsSpecified)
                     return false;
 
-                if (ID != criteria.ID)
+                if (criteria.ID != IntPtr.Zero && ID != criteria.ID)
                     return false;
 
-                if (PID != criteria.PID)
+                if (criteria.PID != IntPtr.Zero && PID != criteria.PID)
                     return false;
 
                 var comp = StringComparison.OrdinalIgnoreCase;
