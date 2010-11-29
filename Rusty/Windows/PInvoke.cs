@@ -109,7 +109,7 @@ namespace IronAHK.Rusty
         public static extern IntPtr GetForegroundWindow();
 
         [DllImport(user32)]
-        public static extern Int32 SetForegroundWindow(IntPtr handle);
+        public static extern bool SetForegroundWindow(IntPtr hWnd);
 
         [DllImport(user32)]
         public static extern int SetActiveWindow(IntPtr handle);
