@@ -196,7 +196,7 @@ namespace IronAHK.Rusty
                             return false;
                 }
 
-                return false;
+                return true;
             }
 
             bool TitleCompare(string a, string b)
