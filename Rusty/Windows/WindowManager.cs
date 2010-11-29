@@ -107,7 +107,7 @@ namespace IronAHK.Rusty
                 if (!IsSpecified)
                     return false;
 
-                return DestroyWindow(ID);
+                return PostMessage(ID, WM_CLOSE, IntPtr.Zero, IntPtr.Zero);
             }
 
             public override bool Exists
