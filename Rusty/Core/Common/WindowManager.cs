@@ -55,6 +55,9 @@ namespace IronAHK.Rusty
 
                 public static SearchCriteria FromString(string mixed)
                 {
+                    if (mixed.IndexOf(Keyword_ahk, StringComparison.OrdinalIgnoreCase) == -1)
+                        return new SearchCriteria { Title = mixed };
+
                     var criteria = new SearchCriteria();
                     var i = 0;
                     var t = false;
@@ -128,9 +131,17 @@ namespace IronAHK.Rusty
 
             public WindowManager FindWindow(string title, string text, string excludeTitle, string excludeText)
             {
-                var criteria = SearchCriteria.FromString(title, text, excludeTitle, excludeText);
-                var ids = FindWindow(criteria);
-                return CreateWindow(ids);
+                var id = IntPtr.Zero;
+
+                if (string.IsNullOrEmpty(title) && string.IsNullOrEmpty(text) && string.IsNullOrEmpty(excludeTitle) && string.IsNullOrEmpty(excludeText))
+                    id = LastFound;
+                else
+                {
+                    var criteria = SearchCriteria.FromString(title, text, excludeTitle, excludeText);
+                    id = FindWindow(criteria);
+                }
+
+                return CreateWindow(id);
             }
 
             #endregion
@@ -153,10 +164,10 @@ namespace IronAHK.Rusty
                 if (!IsSpecified)
                     return false;
 
-                if (ID != criteria.ID)
+                if (criteria.ID != IntPtr.Zero && ID != criteria.ID)
                     return false;
 
-                if (PID != criteria.PID)
+                if (criteria.PID != IntPtr.Zero && PID != criteria.PID)
                     return false;
 
                 var comp = StringComparison.OrdinalIgnoreCase;
@@ -193,7 +204,7 @@ namespace IronAHK.Rusty
                             return false;
                 }
 
-                return false;
+                return true;
             }
 
             bool TitleCompare(string a, string b)

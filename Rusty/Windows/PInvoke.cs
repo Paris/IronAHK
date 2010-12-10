@@ -109,7 +109,7 @@ namespace IronAHK.Rusty
         public static extern IntPtr GetForegroundWindow();
 
         [DllImport(user32)]
-        public static extern Int32 SetForegroundWindow(IntPtr handle);
+        public static extern bool SetForegroundWindow(IntPtr hWnd);
 
         [DllImport(user32)]
         public static extern int SetActiveWindow(IntPtr handle);
@@ -290,6 +290,7 @@ namespace IronAHK.Rusty
         public const int HWND_TOPMOST = -1;
         public const int HWND_NOTOPMOST = -2;
 
+        public const int WM_CLOSE = 0x0010;
         public const int WM_GETTEXT = 0x000D;
         public const int WM_GETTEXTLENGTH = 0x000E;
         public const int WM_COMMAND = 0x0111;
