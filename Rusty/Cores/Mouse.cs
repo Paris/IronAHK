@@ -24,7 +24,7 @@ namespace IronAHK.Rusty
         public static void Click(object[] options)
         {
             string ParamLine = string.Empty;
-            var aInput = new Windows.INPUT[2];
+            var aInput = new WindowsAPI.INPUT[2];
             var MousePos = new Point(0, 0);
             int ClickCount = 1;
             const string delimiter = ",";
@@ -53,8 +53,8 @@ namespace IronAHK.Rusty
                 ParamLine = RE_Coord.Replace(ParamLine, string.Empty); //remove coord
                 if (coords.Mouse == CoordModeType.Relative)
                 {
-                    Windows.RECT rect;
-                    Windows.GetWindowRect(Windows.GetForegroundWindow(), out rect);
+                    WindowsAPI.RECT rect;
+                    WindowsAPI.GetWindowRect(WindowsAPI.GetForegroundWindow(), out rect);
                     MousePos.X += rect.Left;
                     MousePos.Y += rect.Top;
                 }
@@ -73,23 +73,23 @@ namespace IronAHK.Rusty
                 //right or left mouse
                 if (ParamLine.Contains(Keyword_Right))
                 {
-                    aInput[0].i.m.dwFlags = (uint)Windows.MOUSEEVENTF.RIGHTDOWN;
-                    aInput[1].i.m.dwFlags = (uint)Windows.MOUSEEVENTF.RIGHTUP;
+                    aInput[0].i.m.dwFlags = (uint)WindowsAPI.MOUSEEVENTF.RIGHTDOWN;
+                    aInput[1].i.m.dwFlags = (uint)WindowsAPI.MOUSEEVENTF.RIGHTUP;
                 }
                 else
                 {
-                    aInput[0].i.m.dwFlags = (uint)Windows.MOUSEEVENTF.LEFTDOWN;
-                    aInput[1].i.m.dwFlags = (uint)Windows.MOUSEEVENTF.LEFTUP;
+                    aInput[0].i.m.dwFlags = (uint)WindowsAPI.MOUSEEVENTF.LEFTDOWN;
+                    aInput[1].i.m.dwFlags = (uint)WindowsAPI.MOUSEEVENTF.LEFTUP;
                 }
                 //down event
-                aInput[0].type = Windows.INPUT_MOUSE;
+                aInput[0].type = WindowsAPI.INPUT_MOUSE;
                 aInput[0].i.m.dwExtraInfo = IntPtr.Zero;
                 aInput[0].i.m.mouseData = 0;
                 aInput[0].i.m.time = 0;
                 aInput[0].i.m.dx = MousePos.X;
                 aInput[0].i.m.dy = MousePos.Y;
                 //up event
-                aInput[1].type = Windows.INPUT_MOUSE;
+                aInput[1].type = WindowsAPI.INPUT_MOUSE;
                 aInput[1].i.m.dwExtraInfo = IntPtr.Zero;
                 aInput[1].i.m.mouseData = 0;
                 aInput[1].i.m.time = 0;
@@ -100,17 +100,17 @@ namespace IronAHK.Rusty
                 { //just send the up event:
                     aInput[0] = aInput[1];
                     for (int i = 1; ClickCount >= i; i++)
-                        Windows.SendInput(1, aInput, Marshal.SizeOf(typeof(Windows.INPUT)));
+                        WindowsAPI.SendInput(1, aInput, Marshal.SizeOf(typeof(WindowsAPI.INPUT)));
                 }
                 else if (ParamLine.Contains(Keyword_Down))
                 {
                     //just send the down event:
                     for (int i = 1; ClickCount >= i; i++)
-                        Windows.SendInput(1, aInput, Marshal.SizeOf(typeof(Windows.INPUT)));
+                        WindowsAPI.SendInput(1, aInput, Marshal.SizeOf(typeof(WindowsAPI.INPUT)));
                 }
                 else //send both events:
                     for (int i = 1; ClickCount >= i; i++)
-                        Windows.SendInput((uint)aInput.Length, aInput, Marshal.SizeOf(typeof(Windows.INPUT)));
+                        WindowsAPI.SendInput((uint)aInput.Length, aInput, Marshal.SizeOf(typeof(WindowsAPI.INPUT)));
             }
         }
 
@@ -197,16 +197,16 @@ namespace IronAHK.Rusty
 
             if (Environment.OSVersion.Platform == PlatformID.Win32NT)
             {
-                Windows.GetCursorPos(out pos);
-                var hwnd = Windows.WindowFromPoint(pos);
+                WindowsAPI.GetCursorPos(out pos);
+                var hwnd = WindowsAPI.WindowFromPoint(pos);
 
                 win = hwnd.ToInt32();
 
-                var rect = new Windows.RECT();
-                Windows.GetWindowRect(hwnd, out rect);
-                var chwnd = Windows.RealChildWindowFromPoint(hwnd, new Point(pos.X - rect.Left, pos.Y - rect.Top));
+                var rect = new WindowsAPI.RECT();
+                WindowsAPI.GetWindowRect(hwnd, out rect);
+                var chwnd = WindowsAPI.RealChildWindowFromPoint(hwnd, new Point(pos.X - rect.Left, pos.Y - rect.Top));
 
-                control = cid ? Windows.GetWindowText(chwnd) : chwnd.ToInt64().ToString();
+                control = cid ? WindowsAPI.GetWindowText(chwnd) : chwnd.ToInt64().ToString();
             }
             else
                 pos = System.Windows.Forms.Control.MousePosition;
@@ -218,8 +218,8 @@ namespace IronAHK.Rusty
             {
                 if (Environment.OSVersion.Platform == PlatformID.Win32NT)
                 {
-                    Windows.RECT rect;
-                    Windows.GetWindowRect(Windows.GetForegroundWindow(), out rect);
+                    WindowsAPI.RECT rect;
+                    WindowsAPI.GetWindowRect(WindowsAPI.GetForegroundWindow(), out rect);
                     x -= rect.Left;
                     y -= rect.Top;
                 }

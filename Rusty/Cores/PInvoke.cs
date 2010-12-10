@@ -135,12 +135,12 @@ namespace IronAHK.Rusty
                     {
                         foreach (var lib in new[] { "user32", "kernel32", "comctl32", "gdi32" })
                         {
-                            var handle = Windows.GetModuleHandle(lib);
+                            var handle = WindowsAPI.GetModuleHandle(lib);
                             if (handle == IntPtr.Zero)
                                 continue;
-                            var address = Windows.GetProcAddress(handle, name);
+                            var address = WindowsAPI.GetProcAddress(handle, name);
                             if (address == IntPtr.Zero)
-                                address = Windows.GetProcAddress(handle, name + "W");
+                                address = WindowsAPI.GetProcAddress(handle, name + "W");
                             if (address != IntPtr.Zero)
                             {
                                 path = lib + ".dll";

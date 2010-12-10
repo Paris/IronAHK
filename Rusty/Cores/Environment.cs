@@ -56,7 +56,7 @@ namespace IronAHK.Rusty
             ErrorLevel = 0;
             if (Environment.OSVersion.Platform == PlatformID.Win32NT)
             {
-                try { Windows.SendMessage(new IntPtr(Windows.HWND_BROADCAST), Windows.WM_SETTINGCHANGE, IntPtr.Zero, IntPtr.Zero); }
+                try { WindowsAPI.SendMessage(new IntPtr(WindowsAPI.HWND_BROADCAST), WindowsAPI.WM_SETTINGCHANGE, IntPtr.Zero, IntPtr.Zero); }
                 catch (Exception) { ErrorLevel = 1; }
             }
         }

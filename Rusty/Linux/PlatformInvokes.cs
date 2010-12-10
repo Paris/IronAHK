@@ -4,7 +4,7 @@ using System.Text;
 
 namespace IronAHK.Rusty
 {
-    partial class Linux
+    partial class LinuxAPI
     {
         internal class X11
         {

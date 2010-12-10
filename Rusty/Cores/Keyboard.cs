@@ -205,7 +205,7 @@ namespace IronAHK.Rusty
             bool state = OnOff(Mode) ?? false;
 
             if (Environment.OSVersion.Platform == PlatformID.Win32NT)
-                Windows.BlockInput(state);
+                WindowsAPI.BlockInput(state);
 
             InitKeyboardHook();
             keyboardHook.Block = state;

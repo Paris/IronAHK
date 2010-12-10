@@ -7,7 +7,7 @@ using System.Timers;
 // X11 Version
 namespace IronAHK.Rusty
 {
-    partial class Linux
+    partial class LinuxAPI
     {
         internal enum Keys
         {

@@ -6,7 +6,7 @@ using System.Threading;
 
 namespace IronAHK.Rusty
 {
-    partial class Linux
+    partial class LinuxAPI
     {
         public partial class KeyboardHook : Core.KeyboardHook
         {
