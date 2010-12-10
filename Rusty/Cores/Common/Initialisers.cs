@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
+using IronAHK.Rusty.Windows;
 
 namespace IronAHK.Rusty
 {
@@ -25,9 +26,9 @@ namespace IronAHK.Rusty
                 return;
 
             if (Environment.OSVersion.Platform == PlatformID.Win32NT)
-                keyboardHook = new WindowsAPI.KeyboardHook();
+                keyboardHook = new KeyboardHookWindwos();
             else
-                keyboardHook = new LinuxAPI.KeyboardHook();
+                keyboardHook = new KeyboardHookLinux();
         }
 
         static void InitGui()
