@@ -235,7 +235,7 @@ namespace IronAHK.Rusty
 
                 case Keyword_Flash:
                     if (Environment.OSVersion.Platform == PlatformID.Win32NT)
-                        Windows.FlashWindow(guis[id].Handle, OnOff(Param2) ?? true);
+                        WindowsAPI.FlashWindow(guis[id].Handle, OnOff(Param2) ?? true);
                     break;
 
                 case Keyword_Default:
@@ -1742,7 +1742,7 @@ namespace IronAHK.Rusty
                     var focued = GuiControlGetFocused(gui);
 
                     if (Environment.OSVersion.Platform == PlatformID.Win32NT && command == Keyword_Focus)
-                        result = Windows.GetClassName(focued.Handle);
+                        result = WindowsAPI.GetClassName(focued.Handle);
                     else
                         result = focued.Name;
 

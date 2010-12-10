@@ -556,7 +556,7 @@ namespace IronAHK.Rusty
         {
             try
             {
-                Windows.SHEmptyRecycleBin(IntPtr.Zero, Root, Windows.SHERB_NOCONFIRMATION | Windows.SHERB_NOPROGRESSUI | Windows.SHERB_NOSOUND);
+                WindowsAPI.SHEmptyRecycleBin(IntPtr.Zero, Root, WindowsAPI.SHERB_NOCONFIRMATION | WindowsAPI.SHERB_NOPROGRESSUI | WindowsAPI.SHERB_NOSOUND);
                 ErrorLevel = 0;
             }
             catch (Exception) { ErrorLevel = 1; }

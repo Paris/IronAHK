@@ -51,7 +51,7 @@ namespace IronAHK.Rusty
                 return;
 
             uint vol = 0;
-            Windows.waveOutGetVolume(new IntPtr(device), out vol);
+            WindowsAPI.waveOutGetVolume(new IntPtr(device), out vol);
             output = (int)vol;
 
             // UNDONE: cross platform SoundGetWaveVolume
@@ -148,13 +148,13 @@ namespace IronAHK.Rusty
             char p = percent[0];
             if (p == '+' || p == '-')
             {
-                Windows.waveOutGetVolume(dev, out vol);
+                WindowsAPI.waveOutGetVolume(dev, out vol);
                 vol = (uint)(vol * double.Parse(percent.Substring(1)) / 100);
             }
             else
                 vol = (uint)(0xfffff * (double.Parse(percent) / 100));
 
-            Windows.waveOutSetVolume(dev, vol);
+            WindowsAPI.waveOutSetVolume(dev, vol);
 
             // TODO: cross platform SoundSetWaveVolume
         }

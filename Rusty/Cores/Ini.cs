@@ -16,7 +16,7 @@ namespace IronAHK.Rusty
         {
             if (Environment.OSVersion.Platform == PlatformID.Win32NT)
             {
-                ErrorLevel = Windows.WritePrivateProfileString(section, key.Length == 0 ? null : key, null, file) ? 0 : 1;
+                ErrorLevel = WindowsAPI.WritePrivateProfileString(section, key.Length == 0 ? null : key, null, file) ? 0 : 1;
                 return;
             }
 
@@ -39,7 +39,7 @@ namespace IronAHK.Rusty
             if (Environment.OSVersion.Platform == PlatformID.Win32NT)
             {
                 var buf = new StringBuilder(char.MaxValue);
-                Windows.GetPrivateProfileString(section, key, error, buf, (uint)buf.Capacity, file);
+                WindowsAPI.GetPrivateProfileString(section, key, error, buf, (uint)buf.Capacity, file);
                 result = buf.ToString();
             }
 
@@ -86,7 +86,7 @@ namespace IronAHK.Rusty
         {
             if (Environment.OSVersion.Platform == PlatformID.Win32NT)
             {
-                ErrorLevel = Windows.WritePrivateProfileString(section, key, value, file) ? 0 : 1;
+                ErrorLevel = WindowsAPI.WritePrivateProfileString(section, key, value, file) ? 0 : 1;
                 return;
             }
 

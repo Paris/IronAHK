@@ -231,7 +231,7 @@ namespace IronAHK.Rusty
                     name = name.Substring(Keyword_HotkeySC.Length);
 
                     if (int.TryParse(name, NumberStyles.HexNumber, System.Threading.Thread.CurrentThread.CurrentCulture, out n) && n > -1)
-                        value = (Keys)Windows.MapVirtualKeyEx((uint)n, Windows.MAPVK_VSC_TO_VK_EX, Windows.GetKeyboardLayout(0));
+                        value = (Keys)WindowsAPI.MapVirtualKeyEx((uint)n, WindowsAPI.MAPVK_VSC_TO_VK_EX, WindowsAPI.GetKeyboardLayout(0));
                 }
 
                 try

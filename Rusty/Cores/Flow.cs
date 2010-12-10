@@ -118,7 +118,7 @@ namespace IronAHK.Rusty
         public static void OutputDebug(string text)
         {
             if (Environment.OSVersion.Platform == PlatformID.Win32NT)
-                Windows.OutputDebugString(text);
+                WindowsAPI.OutputDebugString(text);
         }
 
         /// <summary>

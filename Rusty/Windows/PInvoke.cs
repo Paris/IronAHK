@@ -5,7 +5,7 @@ using System.Text;
 
 namespace IronAHK.Rusty
 {
-    partial class Windows
+    partial class WindowsAPI
     {
         const string kernel32 = "kernel32.dll", shell32 = "shell32.dll", user32 = "user32.dll", version = "version.dll", winmm = "winmm.dll";
 
@@ -34,7 +34,7 @@ namespace IronAHK.Rusty
 
         [DllImport(user32)]
         [return: MarshalAs(UnmanagedType.Bool)]
-        static extern bool EnumChildWindows(IntPtr hwndParent, EnumWindowsProc lpEnumFunc, int lParam);
+        public static extern bool EnumChildWindows(IntPtr hwndParent, EnumWindowsProc lpEnumFunc, int lParam);
 
         [DllImport(user32)]
         public static extern IntPtr SendMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);

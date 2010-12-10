@@ -7,7 +7,7 @@ using System.Windows.Forms;
 
 namespace IronAHK.Rusty
 {
-    partial class Windows
+    partial class WindowsAPI
     {
         public class KeyboardHook : Core.KeyboardHook
         {

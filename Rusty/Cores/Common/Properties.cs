@@ -198,10 +198,6 @@ namespace IronAHK.Rusty
 
         #region Windows
 
-        static WindowManager windowManager;
-
-        static Dictionary<string, Stack<WindowManager>> windowGroups;
-
         [ThreadStatic]
         static int? _ControlDelay;
 

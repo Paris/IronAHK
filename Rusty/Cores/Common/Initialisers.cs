@@ -12,19 +12,6 @@ namespace IronAHK.Rusty
                 variables = new Dictionary<string, object>();
         }
 
-        static void InitWindowManager()
-        {
-            if (windowGroups == null)
-                windowGroups = new Dictionary<string, Stack<WindowManager>>();
-
-            if (windowManager != null)
-                return;
-
-            if (Environment.OSVersion.Platform == PlatformID.Win32NT)
-                windowManager = new Windows.WindowManager();
-            else
-                windowManager = new Linux.WindowManager();
-        }
 
         static void InitKeyboardHook()
         {
@@ -38,9 +25,9 @@ namespace IronAHK.Rusty
                 return;
 
             if (Environment.OSVersion.Platform == PlatformID.Win32NT)
-                keyboardHook = new Windows.KeyboardHook();
+                keyboardHook = new WindowsAPI.KeyboardHook();
             else
-                keyboardHook = new Linux.KeyboardHook();
+                keyboardHook = new LinuxAPI.KeyboardHook();
         }
 
         static void InitGui()

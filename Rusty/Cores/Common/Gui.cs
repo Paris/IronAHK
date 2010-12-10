@@ -32,7 +32,7 @@ namespace IronAHK.Rusty
             if (Environment.OSVersion.Platform == PlatformID.Win32NT)
             {
                 var prc = System.Diagnostics.Process.GetCurrentProcess().Handle;
-                var icon = Windows.ExtractIcon(prc, source, n);
+                var icon = WindowsAPI.ExtractIcon(prc, source, n);
 
                 if (icon != IntPtr.Zero)
                     return Icon.FromHandle(icon);
