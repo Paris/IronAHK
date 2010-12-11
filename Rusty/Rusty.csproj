@@ -137,12 +137,12 @@
     <Compile Include="Extras\SimpleJson\Encode.cs" />
     <Compile Include="Linux\WindowManagerLinux.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Windows\SystemWindows\WindowManagerWindows.cs" />
+    <Compile Include="Windows\WindowManagerWindows.cs" />
     <Compile Include="Windows\KeyboardHookWindows.cs" />
     <Compile Include="Windows\PInvoke.cs" />
     <Compile Include="Windows\Input.cs" />
     <Compile Include="Linux\KeyboardHookLinux.cs" />
-    <Compile Include="Windows\SystemWindows\WindowWindows.cs" />
+    <Compile Include="Windows\WindowWindows.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />

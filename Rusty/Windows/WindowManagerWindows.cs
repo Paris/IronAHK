@@ -5,7 +5,7 @@ using System.Text;
 using System.Windows.Forms;
 using IronAHK.Rusty.Cores.SystemWindow;
 
-namespace IronAHK.Rusty.Windows.SystemWindows
+namespace IronAHK.Rusty.Windows
 {
     /// <summary>
     /// Concrete Implementation of WindowManager for Windows Platfrom
@@ -71,6 +71,14 @@ namespace IronAHK.Rusty.Windows.SystemWindows
 
         public override SystemWindow CreateWindow(IntPtr id) {
             return new WindowWindows(id);
+        }
+
+        public override SystemWindow GetForeGroundWindow() {
+            return  new WindowWindows(WindowsAPI.GetForegroundWindow());
+        }
+
+        public override SystemWindow WindowFromPoint(Point location) {
+            return new WindowWindows(WindowsAPI.WindowFromPoint(location));
         }
     }
 }
