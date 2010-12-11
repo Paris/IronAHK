@@ -2,6 +2,7 @@ using System;
 using System.Windows.Forms;
 using IronAHK.Rusty.Cores.SystemWindow;
 using System.Collections.Generic;
+using System.Drawing;
 
 namespace IronAHK.Rusty.Linux
 {
@@ -40,7 +41,15 @@ namespace IronAHK.Rusty.Linux
             throw new NotImplementedException();
         }
 
+        public override SystemWindow GetForeGroundWindow() {
+            throw new NotImplementedException();
+        }
 
+
+
+        public override SystemWindow WindowFromPoint(Point location) {
+            throw new NotImplementedException();
+        }
     }
 
 }

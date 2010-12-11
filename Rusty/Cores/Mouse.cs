@@ -190,43 +190,26 @@ namespace IronAHK.Rusty
         /// </param>
         public static void MouseGetPos(out int x, out int y, out long win, out string control, int mode = 0)
         {
-            Point pos;
             win = 0;
             control = null;
             var cid = (mode & 2) == 2;
 
-            if (Environment.OSVersion.Platform == PlatformID.Win32NT)
-            {
-                WindowsAPI.GetCursorPos(out pos);
-                var hwnd = WindowsAPI.WindowFromPoint(pos);
+            var pos = Cursor.Position;
+            var found = windowManager.WindowFromPoint(pos);
+            win = found.Handle.ToInt32();
 
-                win = hwnd.ToInt32();
+            var foundLocation = found.Location;
+            var child = found.RealChildWindowFromPoint(new Point(pos.X - foundLocation.X, pos.Y - foundLocation.Y));
 
-                var rect = new WindowsAPI.RECT();
-                WindowsAPI.GetWindowRect(hwnd, out rect);
-                var chwnd = WindowsAPI.RealChildWindowFromPoint(hwnd, new Point(pos.X - rect.Left, pos.Y - rect.Top));
-
-                control = cid ? WindowsAPI.GetWindowText(chwnd) : chwnd.ToInt64().ToString();
-            }
-            else
-                pos = System.Windows.Forms.Control.MousePosition;
+            control = cid ? child.Handle.ToInt64().ToString() : child.Title;
 
             x = pos.X;
             y = pos.Y;
-
             if (coords.Mouse == CoordModeType.Relative)
             {
-                if (Environment.OSVersion.Platform == PlatformID.Win32NT)
-                {
-                    WindowsAPI.RECT rect;
-                    WindowsAPI.GetWindowRect(WindowsAPI.GetForegroundWindow(), out rect);
-                    x -= rect.Left;
-                    y -= rect.Top;
-                }
-                else
-                {
-                    // TODO: X11 get topstack window Rect(last in XQueryTree)  
-                }
+                var location = windowManager.GetForeGroundWindow().Location;
+                x -= location.X;
+                y -= location.Y;
             }
         }
     }
