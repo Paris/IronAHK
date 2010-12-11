@@ -5,7 +5,7 @@ using IronAHK.Rusty.Cores.SystemWindow;
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace IronAHK.Rusty.Windows.SystemWindows
+namespace IronAHK.Rusty.Windows
 {
 
     /// <summary>
@@ -323,6 +323,14 @@ namespace IronAHK.Rusty.Windows.SystemWindows
         }
 
         #endregion
+
+
+        public override SystemWindow RealChildWindowFromPoint(Point location) {
+            SystemWindow child = null;
+            if(this.IsSpecified)
+                child = new WindowWindows(WindowsAPI.RealChildWindowFromPoint(this.Handle, location));
+            return child;  
+        }
     }
 
 }
