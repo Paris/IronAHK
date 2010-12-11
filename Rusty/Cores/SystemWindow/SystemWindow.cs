@@ -99,6 +99,9 @@ namespace IronAHK.Rusty.Cores.SystemWindow
 
         public abstract bool Show();
 
+        // This may be better replaced with a enumaration of all Childwindows
+        public abstract SystemWindow RealChildWindowFromPoint(Point location);
+
 
         #region Wait
 
@@ -203,8 +206,6 @@ namespace IronAHK.Rusty.Cores.SystemWindow
         }
 
         #endregion
-
-        
 
         #region Overrides
         

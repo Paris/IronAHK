@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using IronAHK.Rusty.Windows.SystemWindows;
 using IronAHK.Rusty.Linux;
+using IronAHK.Rusty.Windows;
 
 namespace IronAHK.Rusty.Cores.SystemWindow
 {

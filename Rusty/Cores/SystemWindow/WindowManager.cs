@@ -31,6 +31,10 @@ namespace IronAHK.Rusty.Cores.SystemWindow
         /// </summary>
         public abstract void MinimizeAllUndo();
 
+        public abstract SystemWindow GetForeGroundWindow();
+
+        public abstract SystemWindow WindowFromPoint(Point location);
+
 
         #region Find
 
