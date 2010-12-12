@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Drawing;
 
 namespace IronAHK.Rusty
 {
@@ -203,27 +204,37 @@ namespace IronAHK.Rusty
             return results;
         }
 
-        /// <summary>Merges two Dictionarys in generic way
-        /// 
+        /// <summary>
+        /// Parse a string and get Coordinates
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <typeparam name="T2"></typeparam>
-        /// <param name="dict1"></param>
-        /// <param name="dict2"></param>
-        /// <returns></returns>
+        /// <param name="input">String in Format X123 Y123</param>
+        /// <param name="p">out Point Struct if possible</param>
+        /// <returns>true if parsing succesful</returns>
+        private static bool TryParseCoordinate(string input, out Point p) {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Merges two Dictionarys in generic way
+        /// </summary>
+        /// <typeparam name="T">any</typeparam>
+        /// <typeparam name="T2">any</typeparam>
+        /// <param name="dict1">Dictionary 1</param>
+        /// <param name="dict2">Dictionary 2</param>
+        /// <returns>Merged Dictionary</returns>
         static Dictionary<T, T2> MergeDictionarys<T, T2>(Dictionary<T, T2> dict1, Dictionary<T, T2> dict2) {
 
-            var MergedDict = new Dictionary<T, T2>();
+            var merged = new Dictionary<T, T2>();
 
             foreach(var key in dict1.Keys) {
-                MergedDict.Add(key, dict1[key]);
+                merged.Add(key, dict1[key]);
             }
 
             foreach(var key in dict2.Keys) {
-                if(!MergedDict.ContainsKey(key))
-                    MergedDict.Add(key, dict2[key]);
+                if(!merged.ContainsKey(key))
+                    merged.Add(key, dict2[key]);
             }
-            return MergedDict;
+            return merged;
         }
     }
 }

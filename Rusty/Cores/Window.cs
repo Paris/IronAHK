@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using IronAHK.Rusty.Cores.SystemWindow;
+using System.Drawing;
 
 namespace IronAHK.Rusty
 {
@@ -48,7 +49,7 @@ namespace IronAHK.Rusty
         /// <summary>
         /// Sends a mouse button or mouse wheel event to a control.
         /// </summary>
-        /// <param name="Target">
+        /// <param name="controlOrPos">
         /// <para>If this parameter is blank, the target window's topmost control will be clicked (or the target window itself if it has no controls). Otherwise, one of the two modes below will be used.</para>
         /// <para>Mode 1 (Position): Specify the X and Y coordinates relative to the target window's upper left corner. The X coordinate must precede the Y coordinate and there must be at least one space or tab between them. For example: X55 Y33. If there is a control at the specified coordinates, it will be sent the click-event at those exact coordinates. If there is no control, the target window itself will be sent the event (which might have no effect depending on the nature of the window). Note: In this mode, the X and Y option letters of the Options parameter are ignored.</para>
         /// <para>Mode 2 (ClassNN or Text): Specify either ClassNN (the classname and instance number of the control) or the name/text of the control, both of which can be determined via Window Spy. When using name/text, the matching behavior is determined by SetTitleMatchMode.</para>
@@ -74,10 +75,36 @@ namespace IronAHK.Rusty
         /// </param>
         /// <param name="ExcludeTitle">Windows whose titles include this value will not be considered.</param>
         /// <param name="ExcludeText">Windows whose text include this value will not be considered.</param>
-        public static void ControlClick(string Target, string WinTitle, string WinText, string WhichButton, string ClickCount, string Options, string ExcludeTitle, string ExcludeText)
+        public static void ControlClick(string controlOrPos, string title, string text, string WhichButton, string ClickCount, string Options, string excludeTitle, string excludeText)
         {
+            Point _click;
+            Point? click = null;
+            var criteria = SearchCriteria.FromString(title, text, excludeTitle, excludeText);
+            var target = windowManager.FindWindow(criteria);
 
+            int clickCount = 1;
+
+            if(!target.IsSpecified)
+                return; // window/control not found.
+
+            if(string.IsNullOrEmpty(controlOrPos)) {
+                // click topmost control/window
+            } else if(TryParseCoordinate(controlOrPos, out _click)) {
+                click = _click;
+            } else {
+                // controlOrPos must be control identifier
+                // ToDo: set target to spec. control!
+                throw new NotImplementedException();
+            }
+
+            // ToDo: Parse Options and send specific Mousekey 
+            // For now, just send single Click
+            for(int i = 0; i < clickCount; i++)
+                target.Click(click);
         }
+
+
+
 
         /// <summary>
         /// Sets input focus to a given control on a window.
