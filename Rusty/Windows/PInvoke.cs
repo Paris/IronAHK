@@ -387,6 +387,10 @@ namespace IronAHK.Rusty
 
         #region Helpers
 
+        public static int MakeInt(short lowPart, short highPart) {
+            return (int)(((ushort)lowPart) | (uint)(highPart << 16));
+        }
+
         public static string GetWindowText(IntPtr hwnd)
         {
             var length = SendMessage(hwnd, WM_GETTEXTLENGTH, IntPtr.Zero, IntPtr.Zero).ToInt32();
