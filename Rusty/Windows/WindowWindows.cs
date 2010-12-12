@@ -390,6 +390,22 @@ namespace IronAHK.Rusty.Windows
                 child = new WindowWindows(WindowsAPI.RealChildWindowFromPoint(this.Handle, location));
             return child;  
         }
+
+        public override void SendMouseEvent(WindowsAPI.MOUSEEVENTF mouseevent, Point? location = null) {
+            var click = new Point();
+            if(location.HasValue) {
+                click = location.Value;
+            } else {
+                // if not specified find middlepoint of this window/control
+                var size = this.Size;
+                click.X = size.Width / 2;
+                click.Y = size.Height / 2;
+            }
+            var lparam = new IntPtr(WindowsAPI.MakeInt((short)click.X, (short)click.Y));
+            WindowsAPI.PostMessage(this.Handle, (uint)mouseevent, new IntPtr(1), lparam);
+        }
+
+
     }
 
 }
