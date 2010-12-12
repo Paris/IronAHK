@@ -5,7 +5,7 @@ using System.Text;
 
 namespace IronAHK.Rusty
 {
-    partial class WindowsAPI
+    public partial class WindowsAPI
     {
         [DllImport("user32.dll")]
         public static extern uint SendInput(uint nInputs, INPUT[] pInputs, int cbSize);
