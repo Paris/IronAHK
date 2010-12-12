@@ -8,6 +8,7 @@ using System.Text.RegularExpressions;
 
 namespace IronAHK.Rusty.Cores.SystemWindow
 {
+
     /// <summary>
     /// Abstraction of a single Platform independend Window
     /// </summary>
@@ -108,9 +109,34 @@ namespace IronAHK.Rusty.Cores.SystemWindow
 
         public abstract bool Show();
 
-        // This may be better replaced with a enumaration of all Childwindows
+
         public abstract SystemWindow RealChildWindowFromPoint(Point location);
 
+        /// <summary>
+        /// Sends MouseEvent to the current Window/Child/Control
+        /// </summary>
+        /// <param name="mouseevent">MouseEvent to send (for now we take also on abstract layer the windows enum, this might be mapped for other OS.)</param>
+        public abstract void SendMouseEvent(WindowsAPI.MOUSEEVENTF mouseevent, Point? location = null);
+
+        /// <summary>
+        /// Left-Clicks on this window/control
+        /// </summary>
+        /// <param name="location"></param>
+        public virtual void Click(Point? location = null) {
+            this.SendMouseEvent(WindowsAPI.MOUSEEVENTF.LEFTDOWN, location);
+            this.SendMouseEvent(WindowsAPI.MOUSEEVENTF.LEFTUP, location);
+        }
+
+        /// <summary>
+        /// Right-Clicks on this window/control
+        /// </summary>
+        /// <param name="location"></param>
+        public virtual void ClickRight(Point? location = null) {
+            this.SendMouseEvent(WindowsAPI.MOUSEEVENTF.RIGHTDOWN, location);
+            this.SendMouseEvent(WindowsAPI.MOUSEEVENTF.RIGHTUP, location);
+        }
+
+        
 
         #region Wait
 
