@@ -93,7 +93,7 @@ namespace IronAHK.Rusty
         public const uint MAPVK_VSC_TO_VK_EX = 3;
 
         [Flags]
-        public enum MOUSEEVENTF
+        public enum MOUSEEVENTF : uint
         {
             MOVE = 0x0001,  // mouse move 
             LEFTDOWN = 0x0002,  // left button down
