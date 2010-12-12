@@ -201,7 +201,7 @@ namespace IronAHK.Rusty
             var foundLocation = found.Location;
             var child = found.RealChildWindowFromPoint(new Point(pos.X - foundLocation.X, pos.Y - foundLocation.Y));
 
-            control = cid ? child.Handle.ToInt64().ToString() : child.Title;
+            control = cid ? child.Handle.ToInt64().ToString() : child.ClassNN;
 
             x = pos.X;
             y = pos.Y;

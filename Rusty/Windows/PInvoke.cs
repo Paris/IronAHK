@@ -11,6 +11,8 @@ namespace IronAHK.Rusty
 
         #region Functions
 
+
+
         #region DLL
 
         [DllImport(kernel32)]
@@ -80,6 +82,9 @@ namespace IronAHK.Rusty
 
         [DllImport(user32)]
         public static extern IntPtr GetWindow(IntPtr hWnd, uint uCmd);
+
+        [DllImport(user32, CharSet = CharSet.Auto, ExactSpelling = true)]
+        public static extern IntPtr GetAncestor(IntPtr hWnd, gaFlags gaFlags);
 
         [DllImport(user32)]
         public static extern int CloseWindow(IntPtr hWnd);
@@ -248,6 +253,13 @@ namespace IronAHK.Rusty
         #endregion
 
         #region Constants
+
+        public enum gaFlags : uint
+        {
+            GA_PARENT = 1,
+            GA_ROOT = 2,
+            GA_ROOTOWNER = 3
+        }
 
         public const uint GW_CHILD = 5;
         public const uint GW_HWNDPREV = 3;

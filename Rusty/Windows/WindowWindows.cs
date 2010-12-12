@@ -13,14 +13,24 @@ namespace IronAHK.Rusty.Windows
     /// </summary>
     public class WindowWindows : SystemWindow
     {
+        #region Constructor
 
         public WindowWindows(IntPtr handle) : base(handle) { }
 
+        #endregion
+
+        #region Public Properties
 
         public override IntPtr PID {
             get {
                 uint n;
                 return new IntPtr(WindowsAPI.GetWindowThreadProcessId(this.Handle, out n));
+            }
+        }
+
+        public override SystemWindow ParentWindow {
+            get {
+                return new WindowWindows(WindowsAPI.GetAncestor(this.Handle, WindowsAPI.gaFlags.GA_PARENT));
             }
         }
 
@@ -219,6 +229,51 @@ namespace IronAHK.Rusty.Windows
             }
         }
 
+        public override IEnumerable<SystemWindow> ChildWindows {
+            get {
+                var childs = new List<SystemWindow>();
+                if(this.IsSpecified) {
+                    WindowsAPI.EnumChildWindows(this.Handle, delegate(IntPtr hwnd, int lParam)
+                    {
+                        childs.Add(new WindowWindows(hwnd));
+                        return true;
+                    }, 0);
+                }
+                return childs;
+            }
+        }
+
+        #endregion
+
+        public override string ClassNN {
+            get {
+                string className = this.ClassName;
+                string classNN = className;
+                // to get the classNN we must know the enumeration
+                // of our parent window:
+                var parent = this.ParentWindow;
+
+                if(parent.IsSpecified){
+                    int nn = 1; // Class NN counter
+                    // now we must know the postion of our "control"
+                    foreach(var c in parent.ChildWindows) {
+                        if(c.IsSpecified) {
+                            if(c.ClassName == className) {
+                                if(c.Equals(this)) {
+                                    break;
+                                } else
+                                    ++nn;  // if its the same class but not our control
+                            }
+                        }
+                    }
+                    classNN += nn.ToString(); // if its the same class and our control
+                }
+                return classNN;
+            }
+        }
+
+
+
         #region Methods
 
         public override bool Close() {
@@ -324,7 +379,11 @@ namespace IronAHK.Rusty.Windows
 
         #endregion
 
-
+        /// <summary>
+        /// Searches for a child window/control at <paramref name="location"/> 
+        /// </summary>
+        /// <param name="location"></param>
+        /// <returns></returns>
         public override SystemWindow RealChildWindowFromPoint(Point location) {
             SystemWindow child = null;
             if(this.IsSpecified)

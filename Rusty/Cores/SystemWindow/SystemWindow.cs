@@ -47,9 +47,9 @@ namespace IronAHK.Rusty.Cores.SystemWindow
             set { delay = value; }
         }
 
-        
-
         public abstract IntPtr PID { get; }
+
+        public abstract SystemWindow ParentWindow { get; }
 
         public abstract SystemWindow PreviousWindow { get; }
 
@@ -77,6 +77,15 @@ namespace IronAHK.Rusty.Cores.SystemWindow
 
         public abstract int ExStyle { get; set; }
 
+        /// <summary>
+        /// Enumerates all child windows/controls
+        /// </summary>
+        public abstract IEnumerable<SystemWindow> ChildWindows { get; }
+
+        /// <summary>
+        /// Get the ClassName + number of occurence of this window (control)
+        /// </summary>
+        public abstract string ClassNN { get; }
 
 
         public abstract FormWindowState WindowState { get; set; }
