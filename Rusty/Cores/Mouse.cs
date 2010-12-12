@@ -24,7 +24,6 @@ namespace IronAHK.Rusty
         public static void Click(object[] options)
         {
             string ParamLine = string.Empty;
-            var aInput = new WindowsAPI.INPUT[2];
             var MousePos = new Point(0, 0);
             int ClickCount = 1;
             const string delimiter = ",";
@@ -70,6 +69,7 @@ namespace IronAHK.Rusty
             }
             if (Environment.OSVersion.Platform == PlatformID.Win32NT)
             {
+                var aInput = new WindowsAPI.INPUT[2];
                 //right or left mouse
                 if (ParamLine.Contains(Keyword_Right))
                 {
