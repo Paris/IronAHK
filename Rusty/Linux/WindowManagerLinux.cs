@@ -3,11 +3,19 @@ using System.Windows.Forms;
 using IronAHK.Rusty.Cores.SystemWindow;
 using System.Collections.Generic;
 using System.Drawing;
+using IronAHK.Rusty.Linux.Proxies;
 
 namespace IronAHK.Rusty.Linux
 {
     public class WindowManagerLinux : WindowManager
     {
+        XDisplay display = null;
+
+        public WindowManagerLinux() {
+            display = XDisplay.GetDefault();
+        }
+
+
         public override SystemWindow LastFound {
             get {
                 throw new NotImplementedException();
@@ -44,8 +52,6 @@ namespace IronAHK.Rusty.Linux
         public override SystemWindow GetForeGroundWindow() {
             throw new NotImplementedException();
         }
-
-
 
         public override SystemWindow WindowFromPoint(Point location) {
             throw new NotImplementedException();

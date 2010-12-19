@@ -1,5 +1,5 @@
 ﻿
-namespace IronAHK.Rusty
+namespace IronAHK.Rusty.Linux
 {
     partial class LinuxAPI { }
 }

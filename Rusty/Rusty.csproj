@@ -131,7 +131,10 @@
     <Compile Include="Extras\SimpleJson\SimpleJSON.cs" />
     <Compile Include="Cores\Common\KeyboardHook.cs" />
     <Compile Include="Linux\Linux.cs" />
+    <Compile Include="Linux\LinuxWindow.cs" />
     <Compile Include="Linux\PlatformInvokes.cs" />
+    <Compile Include="Linux\Proxies\XDisplay.cs" />
+    <Compile Include="Linux\Proxies\XWindow.cs" />
     <Compile Include="Linux\Structs.cs" />
     <Compile Include="Extras\SimpleJson\Decode.cs" />
     <Compile Include="Extras\SimpleJson\Encode.cs" />
@@ -183,6 +186,7 @@
     <VisualStudio />
   </ProjectExtensions>
   <ItemGroup>
+    <None Include="ClassDiagram1.cd" />
     <None Include="Rusty.snk" />
   </ItemGroup>
   <ItemGroup />

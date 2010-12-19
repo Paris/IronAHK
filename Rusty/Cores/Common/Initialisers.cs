@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Windows.Forms;
 using IronAHK.Rusty.Windows;
+using IronAHK.Rusty.Linux;
 
 namespace IronAHK.Rusty
 {
