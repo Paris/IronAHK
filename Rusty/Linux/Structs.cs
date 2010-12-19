@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 using System.Timers;
 
 // X11 Version
-namespace IronAHK.Rusty
+namespace IronAHK.Rusty.Linux
 {
     partial class LinuxAPI
     {

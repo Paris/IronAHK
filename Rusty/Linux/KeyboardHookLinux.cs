@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 
-namespace IronAHK.Rusty
+namespace IronAHK.Rusty.Linux
 {
         internal class KeyboardHookLinux : Core.KeyboardHook
         {
