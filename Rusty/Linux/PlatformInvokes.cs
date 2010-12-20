@@ -63,7 +63,10 @@ namespace IronAHK.Rusty.Linux
             public extern static uint XKeysymToKeycode(IntPtr Display, uint Keysym);
 			
 			[DllImport("libX11")]
-			public extern static int XGetTextProperty(IntPtr Display, int Window, ref XTextProperty Return, Atom Property);			
+			public extern static int XGetTextProperty(IntPtr Display, int Window, ref XTextProperty Return, Atom Property);
+			
+			[DllImport("libX11")]
+			public extern static void XSetTextProperty(IntPtr Display, int Window, ref XTextProperty Prop, Atom property);
         }
     }
 }

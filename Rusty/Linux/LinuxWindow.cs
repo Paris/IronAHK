@@ -69,10 +69,14 @@ namespace IronAHK.Rusty.Linux
 
         public override string Title {
             get {
-                throw new NotImplementedException();
+				LinuxAPI.XTextProperty Prop = new LinuxAPI.XTextProperty();
+				LinuxAPI.X11.XGetTextProperty(xwindow.XDisplay.Handle, xwindow.ID, ref Prop, LinuxAPI.Atom.XA_WM_NAME);
+				return Prop.value;
             }
             set {
-                throw new NotImplementedException();
+				LinuxAPI.XTextProperty Prop = new LinuxAPI.XTextProperty();
+				Prop.value = value;
+				LinuxAPI.X11.XSetTextProperty(xwindow.XDisplay.Handle, xwindow.ID, ref Prop, LinuxAPI.Atom.XA_WM_NAME);
             }
         }
 
