@@ -3,106 +3,34 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
+using System.Windows.Forms;
 
 namespace IronAHK.Rusty.Linux
 {
         internal class KeyboardHookLinux : Core.KeyboardHook
         {
-            // These are the events we subscribe to, in order to allow hotkey/hotstring support
-            protected readonly static LinuxAPI.EventMasks SelectMask = LinuxAPI.EventMasks.KeyPress | LinuxAPI.EventMasks.KeyRelease |
-                LinuxAPI.EventMasks.Exposure | LinuxAPI.EventMasks.FocusChange | LinuxAPI.EventMasks.SubstructureNofity;
-            
-            IntPtr Display;
             StringBuilder Dummy = new StringBuilder(); // Somehow needed to get strings from native X11
-            Thread Listener;
 
             Dictionary<char, CachedKey> Cache;
             Dictionary<LinuxAPI.Keys, System.Windows.Forms.Keys> Mapping;
-            
+			XConnectionSingleton XConn;
+		
             protected override void RegisterHook()
             {
-                if(Display == IntPtr.Zero)
-                {
-                    Display = LinuxAPI.X11.XOpenDisplay(IntPtr.Zero);
-                    
-                    // Kick off a thread listening to X events
-                    Listener = new Thread(Listen);
-                    Listener.Start();
-                }
+	            SetupMapping();
+				XConn = XConnectionSingleton.GetInstance();
+				XConn.OnEvent += HandleXEvent;
+            }
+
+            void HandleXEvent (LinuxAPI.XEvent Event)
+            {
+            	if(Event.type == LinuxAPI.XEventName.KeyPress || Event.type == LinuxAPI.XEventName.KeyRelease)
+                	KeyReceived(TranslateKey(Event), Event.type == LinuxAPI.XEventName.KeyPress);
             }
 
             protected override void DeregisterHook()
             {
-                Listener.Abort();
-                LinuxAPI.X11.XCloseDisplay(Display);
-            }
-            
-            void Listen()
-            {
-                SetupMapping();
-                
-                // Select all the windows already present
-                RecurseTree(Display, LinuxAPI.X11.XDefaultRootWindow(Display));
-                
-                while (true)
-                {
-                    FishEvent();
-                    Thread.Sleep(10); // Be polite
-                }
-            }
-            
-            private void FishEvent()
-            {
-                var Event = new LinuxAPI.XEvent();
-                LinuxAPI.X11.XNextEvent(Display, ref Event);
-
-                if(Event.type == LinuxAPI.XEventName.KeyPress || Event.type == LinuxAPI.XEventName.KeyRelease)
-                    KeyReceived(TranslateKey(Event), Event.type == LinuxAPI.XEventName.KeyPress);
-                else if(Event.type == LinuxAPI.XEventName.CreateNotify)
-                    UpdateTree(Event); // New window created, be sure to snoop it
-            }            
-            
-            // In the X Window system, windows can have sub windows. This function crawls a
-            // specific function, and then recurses on all child windows. It is called to 
-            // select all initial windows, and later when a new window appears.
-            void RecurseTree(IntPtr Display, int RootWindow)
-            {
-                int RootWindowRet, ParentWindow, NChildren;
-                IntPtr ChildrenPtr;
-                int[] Children;
-
-                // Request all children of the given window, along with the parent
-                LinuxAPI.X11.XQueryTree(Display, RootWindow, out RootWindowRet, out ParentWindow, out ChildrenPtr, out NChildren);
-
-                if (NChildren != 0)
-                {
-                    // Fill the array with zeroes to prevent NullReferenceException from glue layer
-                    Children = new int[NChildren];
-                    Marshal.Copy(ChildrenPtr, Children, 0, NChildren);
-
-                    LinuxAPI.X11.XSelectInput(Display, RootWindow, SelectMask);
-
-                    // Subwindows shouldn't be forgotten, especially since everything is a subwindow of RootWindow
-                    for (int i = 0; i < NChildren; i++) 
-                    {
-                        if (Children[i] != 0)
-                        {
-                            LinuxAPI.X11.XSelectInput(Display, Children[i], SelectMask);
-                            RecurseTree(Display, Children[i]);
-                        }
-                    }
-                }
-            }
-
-            void UpdateTree(LinuxAPI.XEvent Event)
-            {
-                // HACK: X sometimes throws a BadWindow Error because windows are quickly deleted
-                // We set a placeholder errorhandler for the duration of the call ...
-                LinuxAPI.XErrorHandler Old = LinuxAPI.X11.XSetErrorHandler(delegate { return 0; });
-                RecurseTree(Display, Event.CreateWindowEvent.window);
-                
-                // ... and restore the old one when we're done
-                LinuxAPI.X11.XSetErrorHandler(Old);
+                // TODO disposal
             }
 
             System.Windows.Forms.Keys TranslateKey(LinuxAPI.XEvent Event)
@@ -144,47 +72,47 @@ namespace IronAHK.Rusty.Linux
              
             #region Hotstrings
             
-            // Simulate a number of backspaces
-            protected override void Backspace (int length)
-            {
-                for(int i = 0; i < length; i++)
-                {
-                    LinuxAPI.X11.XTestFakeKeyEvent(Display, (uint)LinuxAPI.Keys.BackSpace, true, 0);
-                    LinuxAPI.X11.XTestFakeKeyEvent(Display, (uint)LinuxAPI.Keys.BackSpace, false, 0);
-                }                                 
-            }
-            
-            protected internal override void Send(string Sequence)
-            {
-                foreach(var C in Sequence)
-                {
-                    CachedKey Key = LookupKeycode(C);
-                    
-                    // If it is an upper case character, hold the shift key...
-                    if(char.IsUpper(C) || Key.Shift)
-                        LinuxAPI.X11.XTestFakeKeyEvent(Display, (uint)LinuxAPI.Keys.LeftShift, true, 0);
-                    
-                    // Make sure the key is up before we press it again.
-                    // If X thinks this key is still down, nothing will happen if we press it.
-                    // Likewise, if X thinks that the key is up, this will do no harm.
-                    LinuxAPI.X11.XTestFakeKeyEvent(Display, Key.Sym, false, 0); 
-                    
-                    // Fake a key event. Note that some programs filter this kind of event.
-                    LinuxAPI.X11.XTestFakeKeyEvent(Display, Key.Sym, true, 0);
-                    LinuxAPI.X11.XTestFakeKeyEvent(Display, Key.Sym, false, 0);
-                    
-                    // ...and release it later on
-                    if(char.IsUpper(C) || Key.Shift)
-                        LinuxAPI.X11.XTestFakeKeyEvent(Display, (uint)LinuxAPI.Keys.LeftShift, false, 0);
-                }
-            }
-
-            protected internal override void Send(System.Windows.Forms.Keys key)
-            {
-                var vk = (uint)key;
-                LinuxAPI.X11.XTestFakeKeyEvent(Display, vk, true, 0);
-                LinuxAPI.X11.XTestFakeKeyEvent(Display, vk, false, 0);
-            }
+			// Simulate a number of backspaces
+		    protected override void Backspace (int length)
+		    {
+		        for(int i = 0; i < length; i++)
+		        {
+		            LinuxAPI.X11.XTestFakeKeyEvent(XConn.Handle, (uint)LinuxAPI.Keys.BackSpace, true, 0);
+		            LinuxAPI.X11.XTestFakeKeyEvent(XConn.Handle, (uint)LinuxAPI.Keys.BackSpace, false, 0);
+		        }                                 
+		    }
+		    
+		    protected internal override void Send(string Sequence)
+		    {
+		        foreach(var C in Sequence)
+		        {
+		            CachedKey Key = LookupKeycode(C);
+		            
+		            // If it is an upper case character, hold the shift key...
+		            if(char.IsUpper(C) || Key.Shift)
+		                LinuxAPI.X11.XTestFakeKeyEvent(XConn.Handle, (uint)LinuxAPI.Keys.LeftShift, true, 0);
+		            
+		            // Make sure the key is up before we press it again.
+		            // If X thinks this key is still down, nothing will happen if we press it.
+		            // Likewise, if X thinks that the key is up, this will do no harm.
+		            LinuxAPI.X11.XTestFakeKeyEvent(XConn.Handle, Key.Sym, false, 0); 
+		            
+		            // Fake a key event. Note that some programs filter this kind of event.
+		            LinuxAPI.X11.XTestFakeKeyEvent(XConn.Handle, Key.Sym, true, 0);
+		            LinuxAPI.X11.XTestFakeKeyEvent(XConn.Handle, Key.Sym, false, 0);
+		            
+		            // ...and release it later on
+		            if(char.IsUpper(C) || Key.Shift)
+		                LinuxAPI.X11.XTestFakeKeyEvent(XConn.Handle, (uint)LinuxAPI.Keys.LeftShift, false, 0);
+		        }
+		    }
+		
+		    protected internal override void Send(System.Windows.Forms.Keys key)
+		    {
+		        var vk = (uint)key;
+		        LinuxAPI.X11.XTestFakeKeyEvent(XConn.Handle, vk, true, 0);
+		        LinuxAPI.X11.XTestFakeKeyEvent(XConn.Handle, vk, false, 0);
+		    }		
             
             CachedKey LookupKeycode(char Code)
             {
@@ -195,7 +123,7 @@ namespace IronAHK.Rusty.Linux
                 // First look up the KeySym (XK_* in X11/keysymdef.h)
                 uint KeySym = LinuxAPI.X11.XStringToKeysym(Code.ToString());
                 // Then look up the appropriate KeyCode
-                uint KeyCode = LinuxAPI.X11.XKeysymToKeycode(Display, KeySym);
+                uint KeyCode = LinuxAPI.X11.XKeysymToKeycode(XConn.Handle, KeySym);
                 
                 // Cache for later use
                 var Ret = new CachedKey(KeyCode, false);
