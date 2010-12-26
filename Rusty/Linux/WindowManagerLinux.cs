@@ -7,14 +7,15 @@ using IronAHK.Rusty.Linux.Proxies;
 
 namespace IronAHK.Rusty.Linux
 {
+
     public class WindowManagerLinux : WindowManager
     {
+        // ToDo: There may be more than only one xDisplay
         XDisplay display = null;
 
         public WindowManagerLinux() {
             display = XDisplay.GetDefault();
         }
-
 
         public override SystemWindow LastFound {
             get {

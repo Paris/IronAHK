@@ -7,8 +7,10 @@ namespace IronAHK.Rusty.Linux
 {
 	internal delegate void XEventHandler(LinuxAPI.XEvent Event);
 	
-	// Singleton class to keep track of all active windows and their 
-	// events to help the hotkey and window management code
+    /// <summary>
+    /// Singleton class to keep track of all active windows and their 
+    /// events to help the hotkey and window management code
+    /// </summary>
 	public class XConnectionSingleton : IDisposable
 	{
 		#region Singleton boilerplate
@@ -113,9 +115,13 @@ namespace IronAHK.Rusty.Linux
 			}
         }            
         
-        // In the X Window system, windows can have sub windows. This function crawls a
-        // specific function, and then recurses on all child windows. It is called to 
-        // select all initial windows. It make some time (~0.5s)
+        /// <summary>
+        /// In the X Window system, windows can have sub windows. This function crawls a
+        /// specific function, and then recurses on all child windows. It is called to 
+        /// select all initial windows. It make some time (~0.5s)
+        /// </summary>
+        /// <param name="Display"></param>
+        /// <param name="RootWindow"></param>
         void RecurseTree(IntPtr Display, int RootWindow)
         {
             int RootWindowRet, ParentWindow, NChildren;
