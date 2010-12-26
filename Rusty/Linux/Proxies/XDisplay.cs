@@ -5,9 +5,12 @@ using System.Runtime.InteropServices;
 
 namespace IronAHK.Rusty.Linux.Proxies
 {
+    /// <summary>
+    /// Proxy around a X11 xDisplay
+    /// </summary>
     internal class XDisplay : IDisposable
     {
-        public IntPtr handle = IntPtr.Zero;
+        private IntPtr handle = IntPtr.Zero;
 
         public XDisplay(IntPtr prt) {
             Handle = prt;
@@ -24,9 +27,19 @@ namespace IronAHK.Rusty.Linux.Proxies
             }
         }
 
+        /// <summary>
+        /// Returns all Windows of this XDisplay
+        /// </summary>
+        /// <returns></returns>
         public IEnumerable<XWindow> XQueryTree() {
             return XQueryTree(this.Root);
         }
+
+        /// <summary>
+        /// Return all child xWindows from given xWindow
+        /// </summary>
+        /// <param name="windowToObtain"></param>
+        /// <returns></returns>
         public IEnumerable<XWindow> XQueryTree(XWindow windowToObtain) {
             int root_return, parent_return;
             IntPtr children_return;
