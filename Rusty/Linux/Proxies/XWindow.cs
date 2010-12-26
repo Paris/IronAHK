@@ -10,19 +10,25 @@ namespace IronAHK.Rusty.Linux.Proxies
     internal class XWindow
     {
         private LinuxAPI.XWindowAttributes attributes;
-        public XDisplay display = null;
-        public int id;
+        private XDisplay display = null;
+        private int id;
 
         public XWindow(XDisplay udisplay, int uwindow) {
             display = udisplay;
             id = uwindow;
         }
 
+        /// <summary>
+        /// ID of the window
+        /// </summary>
         public int ID {
             get { return id; }
             set { id = value; }
         }
 
+        /// <summary>
+        /// Backreference to the XDisplay from this Window
+        /// </summary>
         public XDisplay XDisplay {
             get {
                 return display;
