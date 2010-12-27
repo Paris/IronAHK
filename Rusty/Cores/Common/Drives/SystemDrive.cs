@@ -5,7 +5,10 @@ using System.IO;
 
 namespace IronAHK.Rusty.Cores.Common.Drives
 {
-    internal enum StatusCD
+    /// <summary>
+    /// Status of the CD
+    /// </summary>
+    public enum StatusCD
     {
         NotReady,
         Open,
@@ -15,7 +18,10 @@ namespace IronAHK.Rusty.Cores.Common.Drives
         Stopped
     }
 
-    internal abstract class SystemDrive
+    /// <summary>
+    /// Encapsulates raw Drive Methods over InterOP
+    /// </summary>
+    public abstract class SystemDrive
     {
         protected DriveInfo drive;
 
@@ -31,8 +37,14 @@ namespace IronAHK.Rusty.Cores.Common.Drives
             }
         }
 
+        /// <summary>
+        /// Ejects the CD Drive
+        /// </summary>
         public abstract void Eject();
 
+        /// <summary>
+        /// Retracts the CD Drive
+        /// </summary>
         public abstract void Retract();
 
         public abstract StatusCD Status { get; }

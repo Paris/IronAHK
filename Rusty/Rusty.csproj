@@ -69,10 +69,12 @@
   -->
   <ItemGroup>
     <Compile Include="Cores\Common\Conversions.cs" />
+    <Compile Include="Cores\Common\Drives\SystemDriveFactory.cs" />
     <Compile Include="Cores\Common\Mapper\DriveTypeMapper.cs" />
     <Compile Include="Cores\Common\Mapper\MapperBase.cs" />
     <Compile Include="Cores\Common\Mapper\MappingService.cs" />
     <Compile Include="Cores\Common\MouseController.cs" />
+    <Compile Include="Cores\Common\Drives\SystemDrive.cs" />
     <Compile Include="Cores\SystemWindow\SearchCriteria.cs" />
     <Compile Include="Cores\SystemWindow\SystemWindow.cs" />
     <Compile Include="Cores\SystemWindow\SysWindowManager.cs" />
@@ -133,6 +135,7 @@
     <Compile Include="Extras\ImageSearcher\ImageFinder.cs" />
     <Compile Include="Extras\SimpleJson\SimpleJSON.cs" />
     <Compile Include="Cores\Common\KeyboardHook.cs" />
+    <Compile Include="Linux\Drives\SystemDriveLinux.cs" />
     <Compile Include="Linux\Linux.cs" />
     <Compile Include="Linux\LinuxWindow.cs" />
     <Compile Include="Linux\PlatformInvokes.cs" />
@@ -143,6 +146,8 @@
     <Compile Include="Extras\SimpleJson\Encode.cs" />
     <Compile Include="Linux\WindowManagerLinux.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Windows\Class1.cs" />
+    <Compile Include="Windows\Drives\SystemDriveWindows.cs" />
     <Compile Include="Windows\WindowManagerWindows.cs" />
     <Compile Include="Windows\KeyboardHookWindows.cs" />
     <Compile Include="Windows\PInvoke.cs" />
