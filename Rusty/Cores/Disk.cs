@@ -1,6 +1,8 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Collections.Generic;
+using IronAHK.Rusty.Cores.Common.Mapper;
 
 namespace IronAHK.Rusty
 {
@@ -28,6 +30,41 @@ namespace IronAHK.Rusty
         public static void DriveGet(out string result, string command, string value = null)
         {
             result = null;
+            var cmd = command.ToLowerInvariant();
+
+            #region cmd List
+
+            if(cmd == Keyword_List){
+
+                string matchingDevices = "";
+                DriveType? type = null;
+
+                if(!string.IsNullOrEmpty(value))
+                    type = MappingService.Instance.DriveType.LookUpCLRType(value);
+                var drives = DriveInfo.GetDrives();
+                
+                for(int i=0; i < drives.Length; i++) {
+
+                        if(type.HasValue) {
+                            if(i == 0) continue; // prefromace hack: skip A:\\
+
+                            try {
+                                if(drives[i].DriveType == type.Value)
+                                    matchingDevices += drives[i].Name.Substring(0, 1);
+                            } catch {
+                                // ignore
+                            }
+                        } else {
+                            matchingDevices += drives[i].Name.Substring(0, 1);
+                        }
+                }
+                result = matchingDevices;
+            }
+
+            #endregion
+
+
+
         }
 
         /// <summary>
