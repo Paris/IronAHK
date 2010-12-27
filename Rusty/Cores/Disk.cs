@@ -63,7 +63,110 @@ namespace IronAHK.Rusty
 
             #endregion
 
+            #region cmd Capacity
 
+            if(cmd == Keyword_Capacity) {
+                if(!string.IsNullOrEmpty(value)){
+                    try {
+                        var drv = new DriveInfo(value);
+                        result = drv.TotalSize.ToString();
+                    } catch(ArgumentException) {
+                        // value was not a valid label!
+                        ErrorLevel = 1;
+                        return;
+                    }
+                }
+            }
+
+            #endregion
+
+            #region cmd Filesystem
+
+            if(cmd == Keyword_FileSystem) {
+                if(!string.IsNullOrEmpty(value)) {
+                    try {
+                        var drv = new DriveInfo(value);
+                        result = drv.DriveFormat;
+                    } catch(ArgumentException) {
+                        // value was not a valid label!
+                        ErrorLevel = 1;
+                        return;
+                    }
+                }
+            }
+
+            #endregion
+
+            #region cmd Type
+
+            if(cmd == Keyword_Type) {
+                if(!string.IsNullOrEmpty(value)) {
+                    try {
+                        var drv = new DriveInfo(value);
+                        result = MappingService.Instance.DriveType.LookUpIAType(drv.DriveType);
+                    } catch {
+                        // value was not a valid label!
+                        ErrorLevel = 1;
+                        return;
+                    }
+                }
+            }
+
+            #endregion
+
+            #region cmd Label 
+
+            if(cmd == Keyword_Label) {
+                if(!string.IsNullOrEmpty(value)) {
+                    try {
+                        var drv = new DriveInfo(value);
+                        result = drv.VolumeLabel;
+                    } catch(ArgumentException) {
+                        // value was not a valid label!
+                        ErrorLevel = 1;
+                        return;
+                    }
+                }
+            }
+
+
+            #endregion
+
+            #region cmd Serial TODO!!
+
+            if(cmd == Keyword_Serial) {
+
+            }
+
+            #endregion
+
+            #region cmd Status
+
+            if(cmd == Keyword_Status) {
+                if(!string.IsNullOrEmpty(value)) {
+                    try {
+                        var drv = new DriveInfo(value);
+                        var dummy = drv.DriveFormat; // provocate DriveNotFoundException on invalid paths
+                        result = drv.IsReady ? "Ready" : "NotReady";
+                    } catch(DriveNotFoundException) {
+                        result = "Invalid";
+                    } catch(ArgumentException) {
+                        result = "Invalid";
+                    }catch{
+                        result = "Unknown";
+                    }
+                }
+            }
+
+            #endregion
+
+            #region cmd StatusCD TODO!!
+
+            if(cmd == Keyword_StatusCD) {
+
+            }
+
+            #endregion
 
         }
 
