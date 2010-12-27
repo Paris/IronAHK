@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -69,6 +69,9 @@
   -->
   <ItemGroup>
     <Compile Include="Cores\Common\Conversions.cs" />
+    <Compile Include="Cores\Common\Mapper\DriveTypeMapper.cs" />
+    <Compile Include="Cores\Common\Mapper\MapperBase.cs" />
+    <Compile Include="Cores\Common\Mapper\MappingService.cs" />
     <Compile Include="Cores\Common\MouseController.cs" />
     <Compile Include="Cores\SystemWindow\SearchCriteria.cs" />
     <Compile Include="Cores\SystemWindow\SystemWindow.cs" />
@@ -187,7 +190,6 @@
     <VisualStudio />
   </ProjectExtensions>
   <ItemGroup>
-    <None Include="ClassDiagram1.cd" />
     <None Include="Rusty.snk" />
   </ItemGroup>
   <ItemGroup />
