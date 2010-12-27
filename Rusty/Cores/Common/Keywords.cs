@@ -391,7 +391,13 @@ namespace IronAHK.Rusty
         public const string Keyword_IfWinExist = "ifwinexist";
         public const string Keyword_IfWinNotExit = "ifwinnotexist";
 
-
+        // Keywords for Drive Info
+        public const string Keyword_CDROM = "CDROM";
+        public const string Keyword_REMOVABLE = "REMOVABLE";
+        public const string Keyword_FIXED = "FIXED";
+        public const string Keyword_NETWORK = "NETWORK";
+        public const string Keyword_RAMDISK = "RAMDISK";
+        public const string Keyword_UNKNOWN = "UNKNOWN";
 
         //Keywords for Splash/Progress Options
 
