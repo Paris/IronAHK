@@ -23,11 +23,39 @@ namespace IronAHK.Rusty
 
             #region cmd Eject
 
-            if(cmd == Keyword_Eject) {
+            if(cmd == Keyword_Eject && string.IsNullOrEmpty(value)) {
                 if(!string.IsNullOrEmpty(drive)) {
                     var lowDriv = SystemDriveFactory.CreateSystemDrive(new DriveInfo(drive));
                     lowDriv.Eject();
                 }
+            }
+
+            #endregion
+
+            #region cmd Retract / Close
+
+            if(cmd == Keyword_Eject && !string.IsNullOrEmpty(value) && value == "1") {
+                if(!string.IsNullOrEmpty(drive)) {
+                    var lowDriv = SystemDriveFactory.CreateSystemDrive(new DriveInfo(drive));
+                    lowDriv.Retract();
+                }
+            }
+
+            #endregion
+
+            #region cmd Label
+
+            if(cmd == Keyword_Label) {
+                if(!string.IsNullOrEmpty(drive)) {
+                    try {
+                        var drv = new DriveInfo(drive);
+                        drv.VolumeLabel = string.IsNullOrEmpty(value) ? "" : value;
+                    } catch(Exception) {
+                        ErrorLevel = 1;
+                        return;
+                    }
+                }
+
             }
 
             #endregion
