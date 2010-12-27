@@ -248,6 +248,29 @@ namespace IronAHK.Rusty
 
         #endregion
 
+        #region File / Device
+
+        [DllImport(kernel32, SetLastError = true)]
+        public static extern IntPtr CreateFile(string fileName,
+        uint desiredAccess,
+        uint shareMode,
+        IntPtr attributes,
+        uint creationDisposition,
+        uint flagsAndAttributes,
+        IntPtr templateFile);
+
+        [DllImport(kernel32, SetLastError = true)]
+        public static extern bool DeviceIoControl(IntPtr driveHandle,
+        uint IoControlCode,
+        IntPtr lpInBuffer,
+        uint inBufferSize,
+        IntPtr lpOutBuffer,
+        uint outBufferSize,
+        out uint lpBytesReturned,
+        IntPtr lpOverlapped);
+
+        #endregion
+
         #endregion
 
         #region Constants
@@ -258,6 +281,12 @@ namespace IronAHK.Rusty
             GA_ROOT = 2,
             GA_ROOTOWNER = 3
         }
+
+        // File / Device IO
+        public const uint GENERICREAD = 0x80000000;
+        public const uint OPENEXISTING = 3;
+        public const uint IOCTL_STORAGE_EJECT_MEDIA = 2967560;
+        public const int INVALID_HANDLE = -1;
 
         public const uint GW_CHILD = 5;
         public const uint GW_HWNDPREV = 3;

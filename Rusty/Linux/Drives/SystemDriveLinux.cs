@@ -6,7 +6,7 @@ using System.IO;
 
 namespace IronAHK.Rusty.Linux.Drives
 {
-    public class SystemDriveLinux : SystemDrive
+    class SystemDriveLinux : SystemDrive
     {
         public SystemDriveLinux(DriveInfo drv)
             : base(drv) { }

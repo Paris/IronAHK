@@ -3,17 +3,50 @@ using System.Collections.Generic;
 using System.Text;
 using IronAHK.Rusty.Cores.Common.Drives;
 using System.IO;
+using System.Runtime.InteropServices;
 
 namespace IronAHK.Rusty.Windows.Drives
 {
+    /// <summary>
+    /// Implementation for native Windows Drive Operations
+    /// </summary>
     public class SystemDriveWindows : SystemDrive
     {
+        static readonly string IOPathPrefix = @"\\.\";
 
         public SystemDriveWindows(DriveInfo drv)
             : base(drv) { }
 
         public override void Eject() {
-            throw new NotImplementedException();
+            IntPtr fileHandle = IntPtr.Zero;
+            try {
+                // Create an handle to the drive
+                fileHandle = WindowsAPI.CreateFile(this.CreateDeviceIOPath,
+                WindowsAPI.GENERICREAD, 0, IntPtr.Zero,
+                WindowsAPI.OPENEXISTING, 0, IntPtr.Zero);
+
+                if((int)fileHandle != WindowsAPI.INVALID_HANDLE) {
+                    // Eject the disk
+                    uint returnedBytes;
+                    WindowsAPI.DeviceIoControl(fileHandle, WindowsAPI.IOCTL_STORAGE_EJECT_MEDIA,
+                    IntPtr.Zero, 0,
+                    IntPtr.Zero, 0,
+                    out returnedBytes,
+                    IntPtr.Zero);
+                }
+            } catch {
+                throw new Exception(Marshal.GetLastWin32Error().ToString());
+            } finally {
+                // Close Drive Handle
+                WindowsAPI.CloseHandle(fileHandle);
+                fileHandle = IntPtr.Zero;
+            }
+        }
+
+        public string CreateDeviceIOPath {
+            get {
+                return IOPathPrefix + drive.Name.Substring(0, 1) + ":";
+            }
         }
 
         public override void Retract() {
@@ -28,4 +61,7 @@ namespace IronAHK.Rusty.Windows.Drives
             get { throw new NotImplementedException(); }
         }
     }
+
+
+
 }
