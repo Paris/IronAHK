@@ -173,6 +173,17 @@ namespace IronAHK.Rusty
             else
                 OutputVar = null;
 
+            switch (result)
+            {
+                case DialogResult.OK:
+                    ErrorLevel = 0;
+                    break;
+
+                default:
+                    ErrorLevel = 1;
+                    break;
+            }
+
             return result;
         }
 
