@@ -244,6 +244,9 @@ namespace IronAHK.Rusty
 
         const int LoopFrequency = 50;
 
+        [ThreadStatic]
+        static Random randomGenerator;
+
         #endregion
 
         #region Coordmode
