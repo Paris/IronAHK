@@ -205,7 +205,7 @@ namespace IronAHK.Rusty
         /// Otherwise <paramref name="result"/> can be a floating point number.</remarks>
         public static void Random(out double result, double min = int.MinValue, double max = int.MaxValue)
         {
-            var r = new Random();
+            var r = RandomGenerator;
             double x = Math.IEEERemainder(min, 1), y = Math.IEEERemainder(max, 1), z = r.Next((int)min, (int)max);
 
             if (x != 0 || y != 0)

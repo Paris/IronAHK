@@ -48,5 +48,16 @@ namespace IronAHK.Rusty
             if (imageLists == null)
                 imageLists = new Dictionary<long, ImageList>();
         }
+
+        static Random RandomGenerator
+        {
+            get
+            {
+                if (randomGenerator == null)
+                    randomGenerator = new Random();
+
+                return randomGenerator;
+            }
+        }
     }
 }
