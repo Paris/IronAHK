@@ -67,15 +67,15 @@ namespace IronAHK.Scripting
             else if (typeof(IEnumerable).IsAssignableFrom(type))
             {
                 var enumerator = ((IEnumerable)item).GetEnumerator();
-                enumerator.MoveNext();
-                int i = 0;
+                var i = -1;
 
-                while (enumerator.MoveNext())
+                do
                 {
                     if (i == position)
                         return enumerator.Current;
                     i++;
                 }
+                while (enumerator.MoveNext());
 
                 return null;
             }
