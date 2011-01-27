@@ -61,6 +61,8 @@ namespace IronAHK.Scripting
                 libProperties.Add(property.Name.ToLowerInvariant(), property.Name);
             }
 
+            libProperties.Add(ErrorLevel.ToLowerInvariant(), ErrorLevel);
+
             #endregion
         }
     }
