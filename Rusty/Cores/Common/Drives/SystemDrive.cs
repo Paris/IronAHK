@@ -47,6 +47,16 @@ namespace IronAHK.Rusty.Cores.Common.Drives
         /// </summary>
         public abstract void Retract();
 
+        /// <summary>
+        /// Locks the drives Eject ability
+        /// </summary>
+        public abstract void Lock();
+
+        /// <summary>
+        /// Unlocks the drives Eject ability
+        /// </summary>
+        public abstract void UnLock();
+
         public abstract StatusCD Status { get; }
 
         public abstract long Serial { get; }

@@ -79,8 +79,6 @@ namespace IronAHK.Rusty
             }
 
             #endregion
-
-
         }
 
         /// <summary>

@@ -6,7 +6,10 @@ using System.IO;
 
 namespace IronAHK.Rusty.Linux.Drives
 {
-    class SystemDriveLinux : SystemDrive
+    /// <summary>
+    /// Implementation for native Linux Drive Operations
+    /// </summary>
+    public class SystemDriveLinux : SystemDrive
     {
         public SystemDriveLinux(DriveInfo drv)
             : base(drv) { }
@@ -25,6 +28,14 @@ namespace IronAHK.Rusty.Linux.Drives
 
         public override long Serial {
             get { throw new NotImplementedException(); }
+        }
+
+        public override void Lock() {
+            throw new NotImplementedException();
+        }
+
+        public override void UnLock() {
+            throw new NotImplementedException();
         }
     }
 }
