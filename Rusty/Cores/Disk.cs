@@ -59,6 +59,28 @@ namespace IronAHK.Rusty
             }
 
             #endregion
+
+            #region cmd Lock
+
+            if(cmd == Keyword_Lock) {
+                if(!string.IsNullOrEmpty(drive)) {
+
+                }
+            }
+
+            #endregion
+
+            #region cmd UnLock
+
+            if(cmd == Keyword_Unlock) {
+                if(!string.IsNullOrEmpty(drive)) {
+
+                }
+            }
+
+            #endregion
+
+
         }
 
         /// <summary>
