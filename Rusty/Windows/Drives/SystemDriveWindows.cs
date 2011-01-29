@@ -60,6 +60,14 @@ namespace IronAHK.Rusty.Windows.Drives
         public override long Serial {
             get { throw new NotImplementedException(); }
         }
+
+        public override void Lock() {
+            throw new NotImplementedException();
+        }
+
+        public override void UnLock() {
+            throw new NotImplementedException();
+        }
     }
 
 
