@@ -114,6 +114,8 @@ namespace IronAHK.Scripting
         internal const char Address = '&';
         internal const char Dereference = '*';
 
+        internal const string ErrorLevel = "ErrorLevel";
+
         #region Assignments
 
         //readonly string AssignEqual = ":" + Equal;
