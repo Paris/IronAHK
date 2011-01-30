@@ -100,6 +100,8 @@ namespace IronAHK.Scripting
                 return Encoding.Unicode.GetString((byte[])input);
             else if (input is decimal)
                 return ((decimal)input).ToString();
+            else if (input is Delegate)
+                return ((Delegate)input).Method.Name;
             else if (IsNumeric(input))
             {
                 var t = input.GetType();
