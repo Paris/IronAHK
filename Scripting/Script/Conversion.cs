@@ -166,7 +166,7 @@ namespace IronAHK.Scripting
                     }
 
                     var subtype = dictionary[key].GetType();
-                    bool obj = subtype.IsArray || typeof(IDictionary).IsAssignableFrom(subtype);
+                    bool obj = subtype.IsArray || typeof(IDictionary).IsAssignableFrom(subtype) || dictionary[key] is Delegate;
 
                     if (!obj)
                         buffer.Append(Parser.StringBound);
