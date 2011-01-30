@@ -158,7 +158,11 @@ namespace IronAHK.Rusty
         /// <param name="Default">A string that will appear in the InputBox's edit field when the dialog first appears. The user can change it by backspacing or other means.</param>
         public static DialogResult InputBox(out string OutputVar, string Title, string Prompt, string Hide, string Width, string Height, string X, string Y, string Font, string Timeout, string Default)
         {
-            var input = new InputDialog { Title = Title, Prompt = Prompt };
+            var input = new InputDialog 
+                { 
+                    Title = Title, 
+                    Prompt = Prompt 
+                };
 
             if (dialogOwner != null)
                 input.Owner = dialogOwner;
@@ -178,6 +182,7 @@ namespace IronAHK.Rusty
                 input.Location = new Point(input.Location.Y, n);
 
             input.Hide = Hide.ToLowerInvariant().Contains(Keyword_Hide);
+
 
             var result = input.ShowDialog();
 

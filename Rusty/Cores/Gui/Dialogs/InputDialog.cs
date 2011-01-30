@@ -2,49 +2,34 @@ using System;
 using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
+using IronAHK.Rusty.Cores.Gui;
 
 namespace IronAHK.Rusty
 {
     class InputDialog : Form
     {
+        #region Fields
+
         private Button btnCancel;
         private Button btnOK;
-        private Label label1;
+        private Label prompt;
         private TextBox txtMessage;
 
-        private bool _Hide;
+        private bool _hide = false;
 
-        public string Title { get; set; }
+        #endregion
 
-        public string Prompt { get; set; }
+        #region ctor
 
-        public string Default { get; set; }
-
-        public new bool Hide
-        {
-            get { return _Hide; }
-            set
-            {
-                _Hide = value;
-                txtMessage.UseSystemPasswordChar = value;
-            }
-        }
-
-        public new int Width { get; set; }
-        public new int Height { get; set; }
-        public int Timeout { get; set; }
-
-        public string Message { get; set; }
-
-        public InputDialog()
-        {
+        public InputDialog() {
             InitializeComponent();
             StartPosition = FormStartPosition.CenterParent;
         }
 
-        private void InitializeComponent()
-        {
-            label1 = new Label();
+        #region InitializeComponent
+
+        private void InitializeComponent() {
+            prompt = new Label();
             btnOK = new Button();
             btnCancel = new Button();
             txtMessage = new TextBox();
@@ -52,18 +37,16 @@ namespace IronAHK.Rusty
             // 
             // label1
             // 
-            label1.Location = new Point(20, 20);
-            label1.Name = "label1";
-            label1.Size = new Size(240, 48);
-            label1.TabIndex = 1;
-            label1.Anchor = AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Top;
+            prompt.Location = new Point(20, 20);
+            prompt.Size = new Size(240, 48);
+            prompt.TabIndex = 1;
+            prompt.Anchor = AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Top;
 
             // 
             // btnOK
             // 
             btnOK.DialogResult = DialogResult.OK;
             btnOK.Location = new Point(16, 104);
-            btnOK.Name = "btnOK";
             btnOK.Size = new Size(96, 24);
             btnOK.TabIndex = 2;
             btnOK.Text = "OK";
@@ -74,7 +57,6 @@ namespace IronAHK.Rusty
             // 
             btnCancel.DialogResult = DialogResult.Cancel;
             btnCancel.Location = new Point(152, 104);
-            btnCancel.Name = "btnCancel";
             btnCancel.Size = new Size(96, 24);
             btnCancel.TabIndex = 3;
             btnCancel.Text = "Cancel";
@@ -83,7 +65,6 @@ namespace IronAHK.Rusty
             // txtMessage
             // 
             txtMessage.Location = new Point(16, 72);
-            txtMessage.Name = "txtMessage";
             txtMessage.Size = new Size(232, 20);
             txtMessage.TabIndex = 0;
             txtMessage.Anchor = AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Bottom;
@@ -96,16 +77,57 @@ namespace IronAHK.Rusty
             ControlBox = false;
             Controls.Add(btnCancel);
             Controls.Add(btnOK);
-            Controls.Add(label1);
+            Controls.Add(prompt);
             Controls.Add(txtMessage);
             FormBorderStyle = FormBorderStyle.FixedDialog;
             MaximizeBox = false;
             MinimizeBox = false;
-            Name = "InputBoxDialog";
             Text = "Inputbox";
             ResumeLayout(false);
-
         }
+
+        #endregion
+
+        #endregion
+
+        #region Properties
+
+        public string Title {
+            get { return this.Text; }
+            set {
+                GUIInvokeHelper.SetText(this, value);
+            }
+        }
+
+        public string Prompt {
+            get { return prompt.Text; } 
+            set {
+                GUIInvokeHelper.SetText(prompt, value);
+            } 
+        }
+
+        public string Default { get; set; }
+
+        public new bool Hide
+        {
+            get { return _hide; }
+            set
+            {
+                _hide = value;
+                txtMessage.UseSystemPasswordChar = value;
+            }
+        }
+
+        public new int Width { get; set; }
+        public new int Height { get; set; }
+        public int Timeout { get; set; }
+
+        public string Message {
+            get { return txtMessage.Text; }
+            set { GUIInvokeHelper.SetText(txtMessage, value); }
+        }
+
+        #endregion
 
         protected void btnOK_Click(object sender, EventArgs e)
         {
