@@ -75,6 +75,7 @@
     <Compile Include="Cores\Common\Mapper\MappingService.cs" />
     <Compile Include="Cores\Common\MouseController.cs" />
     <Compile Include="Cores\Common\Drives\SystemDrive.cs" />
+    <Compile Include="Cores\Gui\GUIInvokeHelper.cs" />
     <Compile Include="Cores\SystemWindow\SearchCriteria.cs" />
     <Compile Include="Cores\SystemWindow\SystemWindow.cs" />
     <Compile Include="Cores\SystemWindow\SysWindowManager.cs" />
@@ -146,7 +147,6 @@
     <Compile Include="Extras\SimpleJson\Encode.cs" />
     <Compile Include="Linux\WindowManagerLinux.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Windows\Class1.cs" />
     <Compile Include="Windows\Drives\SystemDriveWindows.cs" />
     <Compile Include="Windows\WindowManagerWindows.cs" />
     <Compile Include="Windows\KeyboardHookWindows.cs" />
