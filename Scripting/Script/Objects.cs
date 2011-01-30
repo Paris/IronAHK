@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Reflection;
 
 namespace IronAHK.Scripting
 {
@@ -23,8 +24,11 @@ namespace IronAHK.Scripting
                     return IndexAt(item, ForceInt(key));
             }
 
-            if (!(key is string) || !isDictionary)
+            if (!(key is string))
                 return null;
+
+            if (!isDictionary)
+                return IndexProperty(item, (string)key);
 
             var table = (IDictionary)item;
             string lookup = ((string)key);
@@ -37,6 +41,33 @@ namespace IronAHK.Scripting
                     return table[check];
 
             return null;
+        }
+
+        public static object IndexProperty(object item, string name)
+        {
+            var type = item.GetType();
+            PropertyInfo match = null;
+
+            foreach (var property in type.GetProperties())
+            {
+                if (property.Name.Equals(name, StringComparison.OrdinalIgnoreCase))
+                {
+                    match = property;
+                    break;
+                }
+            }
+
+            if (!match.CanRead)
+                return null;
+
+            try
+            {
+                return match.GetValue(item, null);
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         }
 
         public static object IndexAt(object item, int position)
