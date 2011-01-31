@@ -23,6 +23,12 @@ namespace IronAHK.Scripting
                 menu.Icon = new Icon(favicon);
                 menu.Visible = true;
             }
+
+            ApplicationExit += delegate
+            {
+                menu.Visible = false;
+                menu.Dispose();
+            };
         }
     }
 }
