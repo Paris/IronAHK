@@ -364,7 +364,7 @@ namespace IronAHK.Scripting
 
                             #endregion
 
-                            if (x > -1 && (IsVarReference(parts[x])) || part[x] is CodePropertyReferenceExpression)
+                            if (x > -1 && (IsVarReference(parts[x]) || parts[x] is CodePropertyReferenceExpression))
                                 z = x;
 
                             if (y < parts.Count && parts[y] is string && !IsOperator((string)parts[y]))
