@@ -31,6 +31,7 @@ namespace IronAHK.Rusty
         /// <param name="exitCode">An integer that is returned to the caller.</param>
         public static void Exit(int exitCode)
         {
+            ApplicationExit(null, null);
             Environment.ExitCode = exitCode;
             Application.ExitThread();
         }
@@ -41,6 +42,7 @@ namespace IronAHK.Rusty
         /// <param name="exitCode">An integer that is returned to the caller.</param>
         public static void ExitApp(int exitCode)
         {
+            ApplicationExit(null, null);
             Environment.Exit(exitCode);
         }
 
