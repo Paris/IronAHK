@@ -32,7 +32,7 @@ namespace IronAHK.Rusty
         public static void Exit(int exitCode)
         {
             Environment.ExitCode = exitCode;
-            System.Threading.Thread.CurrentThread.Abort();
+            Application.ExitThread();
         }
 
         /// <summary>
