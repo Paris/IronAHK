@@ -66,12 +66,16 @@ namespace IronAHK.Scripting
                     main.Statements.RemoveAt(i);
 
                 prepend.Clear();
-               
+
                 if (persistent)
                 {
                     var run = new CodeExpressionStatement((CodeMethodInvokeExpression)InternalMethods.Run);
                     main.Statements.Add(run);
                 }
+
+                var exit = (CodeMethodInvokeExpression)InternalMethods.Exit;
+                exit.Parameters.Add(new CodePrimitiveExpression(0));
+                main.Statements.Add(new CodeExpressionStatement(exit));
 
                 while (invokes.Count != 0)
                     StdLib();
