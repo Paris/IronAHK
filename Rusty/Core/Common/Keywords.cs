@@ -285,6 +285,11 @@ namespace IronAHK.Rusty
         const string Keyword_Reg_Multi_Sz = "reg_multi_sz";
         const string Keyword_Reg_Dword = "reg_dword";
         const string Keyword_Reg_Binary = "reg_binary";
+        const string Keyword_Cursor = "cursor";
+        const string Keyword_TaskBar = "taskbar";
+        const string Keyword_BackGroundImage = "backgroundimage";
+        const string Keyword_Zoom = "zoom";
+        const string Keyword_Stretch = "stretch";
 
         const string Keyword_None = "none";
         const string Keyword_Selected = "selected";
