@@ -307,7 +307,7 @@ namespace IronAHK.Rusty
         /// </summary>
         /// <param name="n">A decimal number to convert.</param>
         /// <param name="hexSign">With "0x" ?</param>
-        /// <returns>The converted hex number.<paramref name="n"/><paramref name="hexSign"/>.</returns>
+        /// <returns>The converted dec number.<paramref name="n"/><paramref name="hexSign"/>.</returns>
         public static string Hex(int n,bool hexSign=true)
         {
             return (hexSign) ? "0x" + n.ToString("X") : n.ToString("X");
