@@ -107,7 +107,6 @@ namespace IronAHK.Rusty
                                     pos[select] = n;
                             }
                         }
-
                         if (auto || pos[0] == null && pos[1] == null)
                         {
                             guis[id].Size = guis[id].PreferredSize;
@@ -116,7 +115,7 @@ namespace IronAHK.Rusty
                             int d = status == null ? 0 : status.Height;
 
                             if (d > 0)
-                                guis[id].Size = new Size(guis[id].Size.Width, guis[id].Size.Height + d);
+                                guis[id].ClientSize = new Size(guis[id].ClientSize.Width, guis[id].ClientSize.Height + d);
                         }
                         else
                         {
@@ -127,7 +126,7 @@ namespace IronAHK.Rusty
                             if (pos[1] != null)
                                 size.Height = (int)pos[1];
 
-                            guis[id].Size = size;
+                            guis[id].ClientSize = size;
                         }
 
                         var location = new Point();
