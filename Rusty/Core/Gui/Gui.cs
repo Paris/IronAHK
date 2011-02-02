@@ -1230,12 +1230,10 @@ namespace IronAHK.Rusty
             if (opts == null)
                 GuiApplyStyles(control, options);
 
-            control.BackColor = Color.Transparent; //Overwrite the inherited BackColor propertie from gui[id]
-
             if (control is Button)
             {
                 var button = (Button)control;
-
+                control.BackColor = Color.Transparent; //Overwrite the inherited BackColor propertie from gui[id]
                 if ((button.Tag as bool?) != true)
                     button.Click += delegate { SafeInvoke(Keyword_GuiButton + content); };
                 else
