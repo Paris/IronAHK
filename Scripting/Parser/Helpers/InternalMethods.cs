@@ -149,6 +149,11 @@ namespace IronAHK.Scripting
                 get { return new MethodReference(typeof(Script), "Run"); }
             }
 
+            public static MethodReference Exit
+            {
+                get { return new MethodReference(typeof(Core), "Exit", new[] { typeof(int) }); }
+            }
+
             public static MethodReference Concat
             {
                 get { return new MethodReference(typeof(string), "Concat", new[] { typeof(string[]) }); }

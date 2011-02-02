@@ -100,6 +100,8 @@ namespace IronAHK.Scripting
                 return Encoding.Unicode.GetString((byte[])input);
             else if (input is decimal)
                 return ((decimal)input).ToString();
+            else if (input is Delegate)
+                return ((Delegate)input).Method.Name;
             else if (IsNumeric(input))
             {
                 var t = input.GetType();
@@ -164,7 +166,7 @@ namespace IronAHK.Scripting
                     }
 
                     var subtype = dictionary[key].GetType();
-                    bool obj = subtype.IsArray || typeof(IDictionary).IsAssignableFrom(subtype);
+                    bool obj = subtype.IsArray || typeof(IDictionary).IsAssignableFrom(subtype) || dictionary[key] is Delegate;
 
                     if (!obj)
                         buffer.Append(Parser.StringBound);

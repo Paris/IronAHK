@@ -193,7 +193,7 @@ namespace IronAHK.Scripting
 
         CodeExpression VarMixedExpr(object part)
         {
-            return IsVarReference(part) ? VarRefOrPrimitive(part) : IsVarAssignment(part) ? (CodeBinaryOperatorExpression)part : (CodeExpression)part;
+            return IsVarReference(part) ? VarRefOrPrimitive(part) : IsVarAssignment(part) ? (CodeBinaryOperatorExpression)part : part is CodeExpression ? (CodeExpression)part : new CodePrimitiveExpression(part);
         }
 
         #endregion
