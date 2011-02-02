@@ -301,5 +301,36 @@ namespace IronAHK.Rusty
         {
             return Math.Truncate(n);
         }
+
+        /// <summary>
+        /// Convert an decimal integer to an hexadecimal integer.
+        /// </summary>
+        /// <param name="n">A decimal number to convert.</param>
+        /// <param name="hexSign">With "0x" ?</param>
+        /// <returns>The converted hex number.<paramref name="n"/><paramref name="hexSign"/>.</returns>
+        public static string Hex(int n,bool hexSign=true)
+        {
+            return (hexSign) ? "0x" + n.ToString("X") : n.ToString("X");
+        }
+
+        /// <summary>
+        /// Convert an hexadecimal integer to an decimal integer.
+        /// </summary>
+        /// <param name="n">A hexadecimal number to convert.</param>
+        /// <returns>The converted hex number.<paramref name="n"/>.</returns>
+        public static int Dec(string n)
+        {
+            return Int32.Parse((InStr(n, "x", false) > 0) ? SubStr(n, 3, StrLen(n) - 2) : n, System.Globalization.NumberStyles.HexNumber);
+        }
+
+        /// <summary>
+        /// Convert an hexadecimal or decimal integer to an decimal integer. (Use the parser as converter!)
+        /// </summary>
+        /// <param name="n">A hexadecimal/decimal number to convert.</param>
+        /// <returns>The converted hex number.<paramref name="n"/>.</returns>
+        public static int DecEx(int n)
+        {
+            return n;
+        }
     }
 }
