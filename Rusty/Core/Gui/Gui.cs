@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
@@ -107,9 +107,10 @@ namespace IronAHK.Rusty
                                     pos[select] = n;
                             }
                         }
+
                         if (auto || pos[0] == null && pos[1] == null)
                         {
-                            guis[id].Size = guis[id].PreferredSize;
+                            guis[id].Size = guis[id].PreferredSize; // in this case you have to use the normal Size Property because PreferredSize describes also the whole window!
 
                             var status = GuiAssociatedInfo(guis[id]).StatusBar;
                             int d = status == null ? 0 : status.Height;
@@ -298,7 +299,92 @@ namespace IronAHK.Rusty
                                 case Keyword_SysMenu: break;
                                 case Keyword_Theme: Application.EnableVisualStyles(); break;
                                 case Keyword_ToolWindow: break;
-
+                                case Keyword_Cursor:
+                                {
+                                    switch (Param2.ToLowerInvariant())
+                                    {
+                                        case "cross": guis[id].Cursor = Cursors.Cross; break;
+                                        case "hand": guis[id].Cursor = Cursors.Hand; break;
+                                        case "help": guis[id].Cursor = Cursors.Help; break;
+                                        case "beam": guis[id].Cursor = Cursors.IBeam; break;
+                                        case "no": guis[id].Cursor = Cursors.No; break;
+                                        case "wait": guis[id].Cursor = Cursors.WaitCursor; break;
+                                        case "nomove": guis[id].Cursor = Cursors.NoMove2D; break;
+                                        case "size": guis[id].Cursor = Cursors.SizeAll; break;
+                                        case "split":
+                                        {
+                                            if (Param3.ToLowerInvariant() == Keyword_Vertical)
+                                                guis[id].Cursor = Cursors.VSplit;
+                                            else
+                                                guis[id].Cursor = Cursors.HSplit;
+                                            break;
+                                        }
+                                        case "pan":
+                                        {
+                                            switch (Param3.ToLowerInvariant())
+                                            {
+                                                case "east":
+                                                case "e": guis[id].Cursor = Cursors.PanEast; break;
+                                                case "south":
+                                                case "s": guis[id].Cursor = Cursors.PanSouth; break;
+                                                case "west":
+                                                case "w": guis[id].Cursor = Cursors.PanWest; break;
+                                                default:
+                                                case "north":
+                                                case "n": guis[id].Cursor = Cursors.PanNorth; break;
+                                            }
+                                            break;
+                                        }
+                                        case "arrow":
+                                        default: guis[id].Cursor=Cursors.Arrow; break;
+                                    }
+                                    break;
+                                }
+                                case Keyword_Icon:
+                                {
+                                    if (Param2.ToLowerInvariant() == Keyword_Show || Param2 == "")
+                                    {
+                                        guis[id].ShowIcon = true;
+                                    }
+                                    else
+                                    {
+                                        if (Param2.ToLowerInvariant() == Keyword_Hide)
+                                        {
+                                            guis[id].ShowIcon = false;
+                                        }
+                                        else
+                                        {
+                                            if(File.Exists(Param2) && SubStr(Param2.ToLowerInvariant(),StrLen(Param2)-2,3)=="ico")
+                                                guis[id].Icon = new Icon(Param2);
+                                        }
+                                    }
+                                    break;
+                                }
+                                case Keyword_TaskBar:
+                                {
+                                    if (Param2.ToLowerInvariant() == Keyword_Show || Param2 == "")
+                                        guis[id].ShowInTaskbar = true;
+                                    else if (Param2.ToLowerInvariant() == Keyword_Hide)
+                                        guis[id].ShowInTaskbar = false;
+                                    break;
+                                }
+                                case Keyword_BackGroundImage:
+                                {
+                                    if (File.Exists(Param2))
+                                    {
+                                        guis[id].BackgroundImage = new Bitmap(Param2);
+                                        switch (Param3.ToLowerInvariant())
+                                        {
+                                            case Keyword_None: guis[id].BackgroundImageLayout = ImageLayout.None; break;
+                                            case Keyword_Tile: guis[id].BackgroundImageLayout = ImageLayout.Tile; break;
+                                            case Keyword_Center: guis[id].BackgroundImageLayout = ImageLayout.Center; break;
+                                            case Keyword_Zoom: guis[id].BackgroundImageLayout = ImageLayout.Zoom; break;
+                                            case Keyword_Stretch:
+                                            default: guis[id].BackgroundImageLayout=ImageLayout.Stretch; break;
+                                        }
+                                    }
+                                    break;
+                                }
                                 default:
                                     string arg;
                                     string[] parts;
@@ -502,6 +588,25 @@ namespace IronAHK.Rusty
                         parent.Controls.Add(button);
                         control = button;
                         button.Text = content;
+                        GuiApplyStyles(button, options);
+                        int startStringPos = InStr(options, "image", false);
+                        if (startStringPos >= 1)
+                        {
+                            string fileEndingParts = ".jpg|.jpeg|.jpe|.jfif|.gif|.png|.bmp|.dib|.ico|.tiff|.tif";
+                            string[] parts = fileEndingParts.Split('|');
+                            foreach (string word in parts)
+                            {
+                                int subPos = InStr(options, word, false);
+                                if(subPos >= 1)
+                                {
+                                    if (File.Exists(SubStr(options, startStringPos + 5, subPos - startStringPos - 1)))
+                                    {
+                                        Bitmap newButtonImage = new Bitmap(SubStr(options, startStringPos + 5, subPos - startStringPos - 1));
+                                        button.Image=newButtonImage;
+                                    }
+                                }
+                            }
+                        }
                     }
                     break;
                 #endregion
@@ -1120,6 +1225,7 @@ namespace IronAHK.Rusty
                     }
                     break;
                 #endregion
+            
             }
 
             if (opts == null)
