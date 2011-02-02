@@ -200,8 +200,7 @@ namespace IronAHK.Rusty
                     break;
 
                 case Keyword_Color:
-                    guis[id].BackColor = Keyword_Default.Equals(Param2, StringComparison.OrdinalIgnoreCase) ? Color.Transparent : ParseColor(Param2);
-                    guis[id].ForeColor = Keyword_Default.Equals(Param3, StringComparison.OrdinalIgnoreCase) ? Color.Transparent : ParseColor(Param3);
+                    guis[id].BackColor = Keyword_Default.Equals(Param2, StringComparison.OrdinalIgnoreCase) ? Color.Transparent : ParseColor(Param2); // <--Buggy
                     break;
 
                 case Keyword_Margin:
@@ -1230,6 +1229,8 @@ namespace IronAHK.Rusty
 
             if (opts == null)
                 GuiApplyStyles(control, options);
+
+            control.BackColor = Color.Transparent; //Overwrite the inherited BackColor propertie from gui[id]
 
             if (control is Button)
             {
