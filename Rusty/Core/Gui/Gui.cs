@@ -298,6 +298,7 @@ namespace IronAHK.Rusty
                                 case Keyword_SysMenu: break;
                                 case Keyword_Theme: Application.EnableVisualStyles(); break;
                                 case Keyword_ToolWindow: break;
+                                case Keyword_Redraw: guis[id].Refresh(); break;
                                 case Keyword_Cursor:
                                 {
                                     switch (Param2.ToLowerInvariant())
