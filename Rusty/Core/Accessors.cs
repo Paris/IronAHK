@@ -883,7 +883,50 @@ namespace IronAHK.Rusty
         /// </summary>
         public static string A_OSVersion
         {
-            get { return Environment.OSVersion.VersionString; }
+            get 
+            {
+                if (Environment.OSVersion.Platform == PlatformID.Win32Windows)
+                {
+                    switch (Environment.OSVersion.Version.Minor)
+                    {
+                        case 0: return "WIN_95";
+                        case 10: return "WIN_98";
+                        case 90: return "WIN_ME";
+                        default: return Environment.OSVersion.VersionString; ;
+                    }
+                }
+                else if (Environment.OSVersion.Platform == PlatformID.Win32NT)
+                {
+                    switch (Environment.OSVersion.Version.Major)
+                    {
+                        case 4: return "WIN_NT4";
+                        case 5:
+                            {
+                                switch (Environment.OSVersion.Version.Minor)
+                                {
+                                    case 0: return "WIN_2000";
+                                    case 1: return "WIN_XP";
+                                    case 2: return "WIN_2003";
+                                    default: return Environment.OSVersion.VersionString; ;
+                                }
+                            }
+                        case 6:
+                            {
+                                switch (Environment.OSVersion.Version.Minor)
+                                {
+                                    case 0: return "WIN_VISTA";
+                                    case 1: return "WIN_7";
+                                    default: return Environment.OSVersion.VersionString; ;
+                                }
+                            }
+                        default: return Environment.OSVersion.VersionString; ;
+                    }
+                }
+                else
+                {
+                    return Environment.OSVersion.VersionString;
+                }
+            }
         }
 
         /// <summary>
