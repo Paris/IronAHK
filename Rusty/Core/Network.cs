@@ -213,5 +213,30 @@ namespace IronAHK.Rusty
 
             return string.Empty;
         }
+
+        /// <summary>
+        /// Determine is the remote computer is accessible over the network.
+        /// </summary>
+        /// <param name="addressOrIp">The URL or the Ip of the resource.</param>
+        /// <param name="timeOut">The time out to wait.</param>
+        /// <returns>Returns true if server is alive; otherwise false.</returns>
+        public static string CheckNetStatus(string addressOrIp, int timeOut = 500)
+        {
+            Ping sendingPing = new Ping();
+            IPAddress newIpAddress;
+            PingReply newReply;
+            try
+            {
+                if (IPAddress.TryParse(addressOrIp, out newIpAddress))
+                    newReply = sendingPing.Send(newIpAddress, timeOut);
+                else
+                    newReply = sendingPing.Send(addressOrIp, timeOut);
+            }
+            catch{ return string.Empty; }
+            if (newReply.Status == IPStatus.Success)
+                    return newReply.RoundtripTime.ToString();
+            else
+                return string.Empty;
+        }
     }
 }
