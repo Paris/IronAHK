@@ -6,6 +6,7 @@ using System.IO;
 using System.Net;
 using System.Net.Cache;
 using System.Net.Mail;
+using System.Net.NetworkInformation;
 
 namespace IronAHK.Rusty
 {
@@ -219,7 +220,7 @@ namespace IronAHK.Rusty
         /// </summary>
         /// <param name="addressOrIp">The URL or the Ip of the resource.</param>
         /// <param name="timeOut">The time out to wait.</param>
-        /// <returns>Returns true if server is alive; otherwise false.</returns>
+        /// <returns>Returns needed time to answer; otherwise an empty string.</returns>
         public static string CheckNetStatus(string addressOrIp, int timeOut = 500)
         {
             Ping sendingPing = new Ping();
