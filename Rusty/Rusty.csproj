@@ -70,6 +70,9 @@
   <ItemGroup>
     <Compile Include="Cores\Common\Conversions.cs" />
     <Compile Include="Cores\Common\Drives\SystemDriveFactory.cs" />
+    <Compile Include="Cores\Common\Keyboard\HotkeyDefinition.cs" />
+    <Compile Include="Cores\Common\Keyboard\HotstringDefinition.cs" />
+    <Compile Include="Cores\Common\Keyboard\KeyboardHook.cs" />
     <Compile Include="Cores\Common\Mapper\DriveTypeMapper.cs" />
     <Compile Include="Cores\Common\Mapper\MapperBase.cs" />
     <Compile Include="Cores\Common\Mapper\MappingService.cs" />
