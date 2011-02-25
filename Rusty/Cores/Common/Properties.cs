@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Security;
 using System.Windows.Forms;
 using Timer = System.Timers.Timer;
+using IronAHK.Rusty.Cores.Common.Keyboard;
 
 namespace IronAHK.Rusty
 {
@@ -52,6 +53,10 @@ namespace IronAHK.Rusty
         static KeyboardHook keyboardHook;
 
         static bool suspended;
+
+        public static bool Suspended {
+            get { return suspended; }
+        }
 
         [ThreadStatic]
         static int? _KeyDelay;

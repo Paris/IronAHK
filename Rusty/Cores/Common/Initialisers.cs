@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Windows.Forms;
 using IronAHK.Rusty.Windows;
 using IronAHK.Rusty.Linux;
+using IronAHK.Rusty.Cores.Common.Keyboard;
 
 namespace IronAHK.Rusty
 {

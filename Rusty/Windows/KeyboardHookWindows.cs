@@ -4,10 +4,11 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
+using IronAHK.Rusty.Cores.Common.Keyboard;
 
 namespace IronAHK.Rusty.Windows
 {
-    internal class KeyboardHookWindows : Core.KeyboardHook
+    internal class KeyboardHookWindows : KeyboardHook
     {
         // credit to http://blogs.msdn.com/toub/archive/2006/05/03/589423.aspx for saving me time
 

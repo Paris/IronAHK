@@ -4,10 +4,11 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
+using IronAHK.Rusty.Cores.Common.Keyboard;
 
 namespace IronAHK.Rusty.Linux
 {
-        internal class KeyboardHookLinux : Core.KeyboardHook
+        internal class KeyboardHookLinux : KeyboardHook
         {
             StringBuilder Dummy = new StringBuilder(); // Somehow needed to get strings from native X11
 
