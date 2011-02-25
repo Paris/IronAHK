@@ -36,16 +36,11 @@ namespace IronAHK.Rusty.Cores.Common.Keyboard
         #endregion
 
         #region Events
-
+        
         /// <summary>
-        /// Raised when a Hotkey is pressed
+        /// Raised when a Key is pressed
         /// </summary>
-        public event EventHandler<HotkeyEventArgs> HotkeyEvent;
-
-        /// <summary>
-        /// Raised when a Hotstring is pressed
-        /// </summary>
-        public event EventHandler<HotstringEventArgs> HotstringEvent;
+        public event EventHandler<IAKeyEventArgs> KeyPressedEvent;
 
         #endregion
 
@@ -125,43 +120,54 @@ namespace IronAHK.Rusty.Cores.Common.Keyboard
         protected bool KeyReceived(Keys key, string typed, bool down) {
             if(Block)
                 return true;
-
             bool block = false;
 
-            if(Core.Suspended)
-                goto next;
+            var args = new IAKeyEventArgs(key, typed, down);
+            if(KeyPressedEvent != null)
+                KeyPressedEvent(this, args);
 
-            pressed[key] = down;
-
-            var exec = new List<HotkeyDefinition>();
-
-            foreach(var hotkey in hotkeys) {
-                bool match = KeyMatch(hotkey.Keys & ~Keys.Modifiers, key) ||
-                    hotkey.Typed.Length != 0 && hotkey.Typed.Equals(typed, StringComparison.CurrentCultureIgnoreCase);
-                bool up = (hotkey.EnabledOptions & HotkeyDefinition.Options.Up) == HotkeyDefinition.Options.Up;
-
-                if(hotkey.Enabled && match && HasModifiers(hotkey) && up != down) {
-                    exec.Add(hotkey);
-
-                    if((hotkey.EnabledOptions & HotkeyDefinition.Options.PassThrough) != HotkeyDefinition.Options.PassThrough)
-                        block = true;
-                }
+            if(args.Block){
+                block = true;
+            }
+            if(args.Handeled){
+                return block;
             }
 
-            new Thread(delegate()
-            {
-                foreach(var hotkey in exec) {
-                    PriorHotkeyTime = CurrentHotkeyTime;
-                    CurrentHotkeyTime = Environment.TickCount;
-                    PriorHotkey = CurrentHotkey;
-                    CurrentHotkey = hotkey.ToString();
+            #region Trigger Hotkey
 
-                    if(hotkey.Condition())
-                        hotkey.Proc(new object[] { });
+            if(!Core.Suspended) {
+                pressed[key] = down;
+
+                var exec = new List<HotkeyDefinition>();
+
+                foreach(var hotkey in hotkeys) {
+                    bool match = KeyMatch(hotkey.Keys & ~Keys.Modifiers, key) ||
+                        hotkey.Typed.Length != 0 && hotkey.Typed.Equals(typed, StringComparison.CurrentCultureIgnoreCase);
+                    bool up = (hotkey.EnabledOptions & HotkeyDefinition.Options.Up) == HotkeyDefinition.Options.Up;
+
+                    if(hotkey.Enabled && match && HasModifiers(hotkey) && up != down) {
+                        exec.Add(hotkey);
+
+                        if((hotkey.EnabledOptions & HotkeyDefinition.Options.PassThrough) != HotkeyDefinition.Options.PassThrough)
+                            block = true;
+                    }
                 }
-            }).Start();
 
-        next:
+                new Thread(delegate()
+                {
+                    foreach(var hotkey in exec) {
+                        PriorHotkeyTime = CurrentHotkeyTime;
+                        CurrentHotkeyTime = Environment.TickCount;
+                        PriorHotkey = CurrentHotkey;
+                        CurrentHotkey = hotkey.ToString();
+
+                        if(hotkey.Condition())
+                            hotkey.Proc(new object[] { });
+                    }
+                }).Start();
+            }
+
+            #endregion
 
             if(!down)
                 return block;
@@ -206,6 +212,8 @@ namespace IronAHK.Rusty.Cores.Common.Keyboard
                 return block;
 
             #endregion
+
+            #region Hotstring
 
             var expand = new List<HotstringDefinition>();
 
@@ -260,6 +268,8 @@ namespace IronAHK.Rusty.Cores.Common.Keyboard
             }
 
             return block;
+
+            #endregion
         }
 
         bool KeyMatch(Keys expected, Keys received) {
@@ -425,16 +435,41 @@ namespace IronAHK.Rusty.Cores.Common.Keyboard
         #endregion
     }
 
-    internal class HotkeyEventArgs : EventArgs
+    
+    internal class IAKeyEventArgs : EventArgs
     {
         Keys keys;
+        bool _handeld = false;
+        bool _block = false;
 
-        public HotkeyEventArgs(Keys keys) {
+        public IAKeyEventArgs(Keys keys, string typed, bool down) {
             this.keys = keys;
+            Typed = typed;
+            Down = down;
         }
 
         public Keys Keys {
             get { return keys; }
+        }
+
+        public string Typed { get; private set; }
+
+        public bool Down { get; private set; }
+
+        /// <summary>
+        /// Has this Key already processed enought
+        /// </summary>
+        public bool Handeled {
+            get { return _handeld; }
+            set { _handeld = value; }
+        }
+
+        /// <summary>
+        /// Should this Key be blocked from the system
+        /// </summary>
+        public bool Block {
+            get { return _block; }
+            set { _block = value; }
         }
     }
 

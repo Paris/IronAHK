@@ -54,9 +54,13 @@ namespace IronAHK.Rusty
 
         static bool suspended;
 
+        /// <summary>
+        /// Is the Script currently suspended?
+        /// </summary>
         public static bool Suspended {
             get { return suspended; }
         }
+
 
         [ThreadStatic]
         static int? _KeyDelay;

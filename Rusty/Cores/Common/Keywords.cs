@@ -416,5 +416,9 @@ namespace IronAHK.Rusty
         public const string Keyword_ZW = "ZW";
         public const string Keyword_ZX = "ZX";
         public const string Keyword_ZY = "ZY";
+
+        //Keywords for Input Command
+        public const string Keyword_LimitShort = "L";
+
     }
 }

@@ -1,5 +1,7 @@
 using System;
 using IronAHK.Rusty.Cores.Common.Keyboard;
+using System.Text.RegularExpressions;
+using System.Collections.Generic;
 
 namespace IronAHK.Rusty
 {
@@ -286,6 +288,30 @@ namespace IronAHK.Rusty
         public static void Input(out string OutputVar, string Options, string EndKeys, string MatchList)
         {
             OutputVar = null;
+            InitKeyboardHook();
+
+            var optsItems = new Dictionary<string, Regex>();
+            var inputHandler = new IAInputCommand(keyboardHook);
+
+            #region RegEx: Collection Options
+
+            optsItems.Add(Keyword_LimitShort, new Regex(Keyword_LimitShort + @"(\d*)"));
+            var dicOptions = ParseOptionsRegex(ref Options, optsItems, true);
+
+            #endregion
+
+            #region Apply Options
+
+            try {
+                int limit = Int32.Parse(dicOptions[Keyword_LimitShort]);
+                inputHandler.KeyLimit = limit;
+            } catch {
+                inputHandler.KeyLimit = 0;
+            }
+
+            #endregion
+
+            OutputVar = inputHandler.StartCatching();
         }
 
         /// <summary>
