@@ -418,7 +418,13 @@ namespace IronAHK.Rusty
         public const string Keyword_ZY = "ZY";
 
         //Keywords for Input Command
-        public const string Keyword_LimitShort = "L";
+        public const string Keyword_LimitS = "L";
+        public const string Keyword_BackSpaceS = "B";
+        public const string Keyword_IgnoreS = "I";
+        public const string Keyword_ModifiedS = "M";
+        public const string Keyword_TimeOutS = "T";
+        public const string Keyword_VisibleS = "V";
+        public const string Keyword_FindAnyWhereS = "*";
 
     }
 }

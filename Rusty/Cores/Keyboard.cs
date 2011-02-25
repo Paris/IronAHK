@@ -293,9 +293,18 @@ namespace IronAHK.Rusty
             var optsItems = new Dictionary<string, Regex>();
             var inputHandler = new IAInputCommand(keyboardHook);
 
-            #region RegEx: Collection Options
+            #region RegEx: Setup Options
 
-            optsItems.Add(Keyword_LimitShort, new Regex(Keyword_LimitShort + @"(\d*)"));
+            optsItems.Add(Keyword_LimitS, new Regex(Keyword_LimitS + @"(\d*)"));
+            optsItems.Add(Keyword_TimeOutS, new Regex(Keyword_TimeOutS + @"([\d|\.]*)"));
+
+            optsItems.Add(Keyword_BackSpaceS, new Regex("(" + Keyword_BackSpaceS + ")"));
+            optsItems.Add(Keyword_IgnoreS, new Regex("(" + Keyword_IgnoreS + ")"));
+            optsItems.Add(Keyword_ModifiedS, new Regex("(" + Keyword_ModifiedS + ")"));
+            optsItems.Add(Keyword_VisibleS, new Regex("(" + Keyword_VisibleS + ")"));
+            optsItems.Add(Keyword_FindAnyWhereS, new Regex("(\\" + Keyword_FindAnyWhereS + ")"));
+
+
             var dicOptions = ParseOptionsRegex(ref Options, optsItems, true);
 
             #endregion
@@ -303,10 +312,35 @@ namespace IronAHK.Rusty
             #region Apply Options
 
             try {
-                int limit = Int32.Parse(dicOptions[Keyword_LimitShort]);
+                var limit = Int32.Parse(dicOptions[Keyword_LimitS]);
                 inputHandler.KeyLimit = limit;
             } catch {
                 inputHandler.KeyLimit = 0;
+            }
+
+            try {
+                var timeout = float.Parse(dicOptions[Keyword_TimeOutS]);
+                inputHandler.TimeOut = timeout;
+            } catch {
+                inputHandler.TimeOut = 0;
+            }
+
+            if(!String.IsNullOrEmpty(dicOptions[Keyword_BackSpaceS])){
+                inputHandler.IgnoreBackSpace = true;
+            }
+
+            if(!String.IsNullOrEmpty(dicOptions[Keyword_ModifiedS])) {
+                inputHandler.RecognizeModifiedKeystrockes = true;
+            }
+
+            if(!String.IsNullOrEmpty(dicOptions[Keyword_IgnoreS])) {
+                inputHandler.IgnoreIAGeneratedInput = true;
+            }
+            if(!String.IsNullOrEmpty(dicOptions[Keyword_VisibleS])) {
+                inputHandler.Visible = true;
+            }
+            if(!String.IsNullOrEmpty(dicOptions[Keyword_FindAnyWhereS])) {
+                inputHandler.FindAnyWhere = true;
             }
 
             #endregion
