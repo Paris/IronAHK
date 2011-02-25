@@ -7,7 +7,7 @@ using System.Windows.Forms;
 
 namespace IronAHK.Rusty.Windows
 {
-    internal class KeyboardHookWindwos : Core.KeyboardHook
+    internal class KeyboardHookWindows : Core.KeyboardHook
     {
         // credit to http://blogs.msdn.com/toub/archive/2006/05/03/589423.aspx for saving me time
 
