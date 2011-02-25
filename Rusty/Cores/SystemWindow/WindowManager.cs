@@ -7,6 +7,10 @@ using System.Collections.Generic;
 
 namespace IronAHK.Rusty.Cores.SystemWindow
 {
+    /// <summary>
+    /// Platform Independent Windowmanager.
+    /// This Class is abstract.
+    /// </summary>
     public abstract class WindowManager
     {
         private Dictionary<string, Stack<SystemWindow>> windowGroups = new Dictionary<string,Stack<SystemWindow>>();

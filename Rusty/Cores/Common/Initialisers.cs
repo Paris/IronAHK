@@ -27,7 +27,7 @@ namespace IronAHK.Rusty
                 return;
 
             if (Environment.OSVersion.Platform == PlatformID.Win32NT)
-                keyboardHook = new KeyboardHookWindwos();
+                keyboardHook = new KeyboardHookWindows();
             else
                 keyboardHook = new KeyboardHookLinux();
         }
