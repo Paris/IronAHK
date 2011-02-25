@@ -72,6 +72,7 @@
     <Compile Include="Cores\Common\Drives\SystemDriveFactory.cs" />
     <Compile Include="Cores\Common\Keyboard\HotkeyDefinition.cs" />
     <Compile Include="Cores\Common\Keyboard\HotstringDefinition.cs" />
+    <Compile Include="Cores\Common\Keyboard\InputCommand.cs" />
     <Compile Include="Cores\Common\Keyboard\KeyboardHook.cs" />
     <Compile Include="Cores\Common\Mapper\DriveTypeMapper.cs" />
     <Compile Include="Cores\Common\Mapper\MapperBase.cs" />
@@ -138,7 +139,6 @@
     <Compile Include="Extras\ImageSearcher\ImageFinder.CoordProvider.cs" />
     <Compile Include="Extras\ImageSearcher\ImageFinder.cs" />
     <Compile Include="Extras\SimpleJson\SimpleJSON.cs" />
-    <Compile Include="Cores\Common\KeyboardHook.cs" />
     <Compile Include="Linux\Drives\SystemDriveLinux.cs" />
     <Compile Include="Linux\Linux.cs" />
     <Compile Include="Linux\LinuxWindow.cs" />
