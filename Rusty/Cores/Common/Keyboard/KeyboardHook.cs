@@ -349,73 +349,11 @@ namespace IronAHK.Rusty.Cores.Common.Keyboard
         public void SendMixed(string sequence) {
             // TODO: modifiers in mixed mode send e.g. ^{a down}
 
-            var buf = new[] { new StringBuilder(sequence.Length), new StringBuilder(16) };
-            var scan = false;
+            var keys = KeyParser.ParseKeyStream(sequence);
 
-            for(var i = 0; i < sequence.Length; i++) {
-                var sym = sequence[i];
-
-                switch(sym) {
-                    case Core.Keyword_KeyNameOpen:
-                        if(scan)
-                            goto default;
-                        scan = true;
-                        break;
-
-                    case Core.Keyword_KeyNameClose: {
-                            if(!scan)
-                                goto default;
-
-                            var n = i + 1;
-
-                            if(buf[1].Length == 0 && n < sequence.Length && sequence[n] == sym)
-                                goto default;
-
-                            scan = false;
-
-                            if(buf[1].Length == 1) {
-                                buf[0].Append(buf[1][0]);
-                                buf[1].Length = 0;
-                            }
-
-                            if(buf[1].Length == 0)
-                                continue;
-
-                            switch(buf[1].ToString().ToLowerInvariant()) {
-                                case Core.Keyword_Raw:
-                                    buf[0].Append(sequence, i, sequence.Length - i);
-                                    i = sequence.Length;
-                                    break;
-                            }
-
-                            SendKey(buf[1].ToString());
-                            buf[1].Length = 0;
-                        }
-                        break;
-
-                    default:
-                        buf[scan ? 1 : 0].Append(sym);
-                        break;
-                }
-            }
-
-            if(scan)
-                buf[1].Append(Core.Keyword_KeyNameOpen);
-
-            if(buf[1].Length == 1)
-                buf[0].Append(buf[1][0]);
-            else if(buf[1].Length > 1)
-                SendKey(buf[1].ToString());
-
-            if(buf[0].Length != 0)
-                Send(buf[0].ToString());
-        }
-
-        void SendKey(string name) {
-            var key = HotkeyDefinition.ParseKey(name);
-
-            if(key != Keys.None)
-                Send(key);
+            foreach(var key in keys)
+                if(key != Keys.None)
+                    Send(key);
         }
 
         #endregion
