@@ -296,10 +296,92 @@ namespace IronAHK.Rusty
                                 case Keyword_OwnDialogs: dialogOwner = guis[id]; break;
                                 case Keyword_Owner: break;
                                 case Keyword_Resize: break;
-                                case Keyword_SysMenu: break;
+                                case Keyword_SysMenu: guis[id].ControlBox = on; break;
                                 case Keyword_Theme: Application.EnableVisualStyles(); break;
                                 case Keyword_ToolWindow: break;
-
+                                case Keyword_Redraw: guis[id].Refresh(); break;
+                                case Keyword_Cursor:
+                                    {
+                                        switch (Param2.ToLowerInvariant())
+                                        {
+                                            case "cross": guis[id].Cursor = Cursors.Cross; break;
+                                            case "hand": guis[id].Cursor = Cursors.Hand; break;
+                                            case "help": guis[id].Cursor = Cursors.Help; break;
+                                            case "beam": guis[id].Cursor = Cursors.IBeam; break;
+                                            case "no": guis[id].Cursor = Cursors.No; break;
+                                            case "wait": guis[id].Cursor = Cursors.WaitCursor; break;
+                                            case "nomove": guis[id].Cursor = Cursors.NoMove2D; break;
+                                            case "size": guis[id].Cursor = Cursors.SizeAll; break;
+                                            case "split":
+                                                {
+                                                    if (Param3.ToLowerInvariant() == Keyword_Vertical)
+                                                        guis[id].Cursor = Cursors.VSplit;
+                                                    else
+                                                        guis[id].Cursor = Cursors.HSplit;
+                                                    break;
+                                                }
+                                            case "pan":
+                                                {
+                                                    switch (Param3.ToLowerInvariant())
+                                                    {
+                                                        case "east":
+                                                        case "e": guis[id].Cursor = Cursors.PanEast; break;
+                                                        case "south":
+                                                        case "s": guis[id].Cursor = Cursors.PanSouth; break;
+                                                        case "west":
+                                                        case "w": guis[id].Cursor = Cursors.PanWest; break;
+                                                        default:
+                                                        case "north":
+                                                        case "n": guis[id].Cursor = Cursors.PanNorth; break;
+                                                    }
+                                                    break;
+                                                }
+                                            case "arrow":
+                                            default: guis[id].Cursor = Cursors.Arrow; break;
+                                        }
+                                        break;
+                                    }
+                                case Keyword_Icon:
+                                    {
+                                        if (Param2 != string.Empty)
+                                        {
+                                            if (File.Exists(Param2))
+                                                if (Path.GetExtension(Param2.ToLowerInvariant())==".ico")
+                                                    guis[id].Icon = new Icon(Param2);
+                                        }
+                                        guis[id].ShowIcon = on;
+                                        break;
+                                    }
+                                case Keyword_TaskBar:
+                                    {
+                                        guis[id].ShowInTaskbar = on;
+                                        break;
+                                    }
+                                case Keyword_BackGroundImage:
+                                    {
+                                        if (on)
+                                        {
+                                            if (File.Exists(Param2))
+                                            {
+                                                guis[id].BackgroundImage = new Bitmap(Param2);
+                                                switch (Param3.ToLowerInvariant())
+                                                {
+                                                    case Keyword_None: guis[id].BackgroundImageLayout = ImageLayout.None; break;
+                                                    case Keyword_Tile: guis[id].BackgroundImageLayout = ImageLayout.Tile; break;
+                                                    case Keyword_Center: guis[id].BackgroundImageLayout = ImageLayout.Center; break;
+                                                    case Keyword_Zoom: guis[id].BackgroundImageLayout = ImageLayout.Zoom; break;
+                                                    case Keyword_Stretch:
+                                                    default: guis[id].BackgroundImageLayout = ImageLayout.Stretch; break;
+                                                }
+                                            }
+                                            
+                                        }
+                                        else
+                                        {
+                                            guis[id].BackgroundImage = null;
+                                        }
+                                        break;
+                                    }
                                 default:
                                     string arg;
                                     string[] parts;
