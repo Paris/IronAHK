@@ -285,7 +285,7 @@ namespace IronAHK.Rusty
         /// <para>Two consecutive commas results in a single literal comma. For example, the following would produce a single literal comma at the end of string: "string1,,,string2". Similarly, the following list contains only a single item with a literal comma inside it: "single,,item".</para>
         /// <para>Because the items in MatchList are not treated as individual parameters, the list can be contained entirely within a variable. In fact, all or part of it must be contained in a variable if its length exceeds 16383 since that is the maximum length of any script line. For example, MatchList might consist of %List1%,%List2%,%List3% -- where each of the variables contains a large sub-list of match phrases.</para>
         /// </param>
-        public static void Input(out string OutputVar, string Options, string EndKeys, string MatchList)
+        public static void Input(out string OutputVar, string Options, string EndKeys, string matchList)
         {
             OutputVar = null;
             InitKeyboardHook();
@@ -342,6 +342,11 @@ namespace IronAHK.Rusty
             if(!String.IsNullOrEmpty(dicOptions[Keyword_FindAnyWhereS])) {
                 inputHandler.FindAnyWhere = true;
             }
+
+            // Parse MatchList
+            foreach(var matchStr in matchList.Split(','))
+                inputHandler.EndMatches.Add(matchStr);
+
 
             #endregion
 
