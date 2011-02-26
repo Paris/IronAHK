@@ -343,6 +343,11 @@ namespace IronAHK.Rusty
                 inputHandler.FindAnyWhere = true;
             }
 
+            // Parse EndKeys
+            var endkeys = KeyParser.ParseKeyStream(EndKeys);
+            foreach(var key in endkeys)
+                inputHandler.Endkeys.Add(key);
+
             // Parse MatchList
             foreach(var matchStr in matchList.Split(','))
                 inputHandler.EndMatches.Add(matchStr);
