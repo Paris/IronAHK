@@ -116,7 +116,7 @@ namespace IronAHK.Rusty
                             int d = status == null ? 0 : status.Height;
 
                             if (d > 0)
-                                guis[id].Size = new Size(guis[id].Size.Width, guis[id].Size.Height + d);
+                                guis[id].ClientSize = new Size(guis[id].ClientSize.Width, guis[id].ClientSize.Height + d);
                         }
                         else
                         {
