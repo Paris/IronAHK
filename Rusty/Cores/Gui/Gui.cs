@@ -1211,7 +1211,7 @@ namespace IronAHK.Rusty
             if (control is Button)
             {
                 var button = (Button)control;
-
+                control.BackColor = Color.Transparent;
                 if ((button.Tag as bool?) != true)
                     button.Click += delegate { SafeInvoke(Keyword_GuiButton + content); };
                 else
