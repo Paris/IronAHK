@@ -291,7 +291,12 @@ namespace IronAHK.Rusty
             InitKeyboardHook();
 
             var optsItems = new Dictionary<string, Regex>();
-            var inputHandler = new IAInputCommand(keyboardHook);
+            var inputHandler = IAInputCommand.Instance;
+
+            if(inputHandler.IsBusy) { // is there another Thread using this command already?
+                inputHandler.AbortCatching(); // force to stop it
+            }
+            inputHandler.Reset();
 
             #region RegEx: Setup Options
 
@@ -355,7 +360,9 @@ namespace IronAHK.Rusty
 
             #endregion
 
-            OutputVar = inputHandler.StartCatching();
+            var abortReason = inputHandler.StartCatching();
+            OutputVar = abortReason.CatchedText;
+            ErrorLevel = (int)abortReason.Reason;
         }
 
         /// <summary>

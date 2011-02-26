@@ -14,8 +14,7 @@ namespace IronAHK.Rusty.Cores.Common.Keyboard
         /// <param name="stream"></param>
         /// <returns></returns>
         internal static IEnumerable<Keys> ParseKeyStream(string sequence) {
-            List<Keys> keys = new List<Keys>();
-
+            var keys = new List<Keys>();
             var buf = new[] { new StringBuilder(sequence.Length), new StringBuilder(16) };
             var scan = false;
 
