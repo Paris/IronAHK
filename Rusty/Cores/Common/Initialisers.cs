@@ -31,6 +31,8 @@ namespace IronAHK.Rusty
                 keyboardHook = new KeyboardHookWindows();
             else
                 keyboardHook = new KeyboardHookLinux();
+
+            IAInputCommand.Instance.Hook = keyboardHook;
         }
 
         static void InitGui()

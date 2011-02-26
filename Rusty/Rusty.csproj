@@ -150,6 +150,7 @@
     <Compile Include="Extras\SimpleJson\Decode.cs" />
     <Compile Include="Extras\SimpleJson\Encode.cs" />
     <Compile Include="Linux\WindowManagerLinux.cs" />
+    <Compile Include="Patterns\Singleton.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Windows\Drives\SystemDriveWindows.cs" />
     <Compile Include="Windows\WindowManagerWindows.cs" />

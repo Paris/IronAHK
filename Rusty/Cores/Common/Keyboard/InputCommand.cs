@@ -2,26 +2,32 @@
 using System.Threading;
 using System.Collections.Generic;
 using System.Windows.Forms;
+using IronAHK.Rusty.Patterns;
 
 namespace IronAHK.Rusty.Cores.Common.Keyboard
 {
-    // ToDO: Handle IgnoreIAGeneratedInput
+    // ToDo: Test Multithreaded Access to this Singleton
+    // ToDo: Handle IgnoreIAGeneratedInput
+    // ToDo: Handle TimeOut
 
     /// <summary>
-    /// Input Command Handler
+    /// Input Command Handler (Singleton)
     /// </summary>
-    public class IAInputCommand
+    internal class IAInputCommand : Singleton<IAInputCommand>
     {
         #region Fields
 
-        readonly KeyboardHook _keyboardHook;
+        KeyboardHook _keyboardHook;
         bool _visible = false;
         int _keyLimit = 0;
         bool _ignoreBackSpace = false;
         bool _recognizeModifiedKeystrockes = false;
         string catchedText = "";
-        bool catchDone = false;
-        object catchDoneLock = new object();
+        Keys endKeyReason = Keys.None;
+        AbortReason abortReason = AbortReason.Fail;
+
+        bool isCatching = false;
+        object catchingLock = new object();
         float _timeout = 0;
         bool _ignoreIAGeneratedInput = false;
         
@@ -33,12 +39,18 @@ namespace IronAHK.Rusty.Cores.Common.Keyboard
 
         #endregion
 
-        #region Constructor
+        #region Singleton Config Properties
 
-        internal IAInputCommand(KeyboardHook keyboardHook) {
-            if(keyboardHook == null)
-                throw new ArgumentNullException("keyboardHook");
-            _keyboardHook = keyboardHook;
+        // as long as this Class depends on other, non Singleton Objects
+        // it must be configured else where
+
+        public KeyboardHook Hook {
+            set {
+                if(value == null)
+                    throw new ArgumentException("Hook");
+                _keyboardHook = value; 
+            }
+            private get { return _keyboardHook; }
         }
 
         #endregion
@@ -49,25 +61,57 @@ namespace IronAHK.Rusty.Cores.Common.Keyboard
         /// Start Logging Text. Blocks calling Thread until user input meets an abort condition.
         /// </summary>
         /// <returns>Returns the catched Userinput</returns>
-        public string StartCatching() {
-            _keyboardHook.KeyPressedEvent += OnKeyPressedEvent;
-            catchDone = false;
-            while(true)
-            {
-                lock(catchDoneLock) {
-                    if(catchDone)
+        public AbortInformation StartCatching() {
+
+            lock(catchingLock) {
+                if(isCatching) {
+                    throw new NotImplementedException("Pending Input interruption not implemented yet!");
+                }
+            }
+            
+            Hook.KeyPressedEvent += OnKeyPressedEvent;
+            isCatching = true;
+            while(true) {
+                lock(catchingLock) {
+                    if(!isCatching)
                         break;
                 }
                 Thread.Sleep(2);
             }
-            _keyboardHook.KeyPressedEvent -= OnKeyPressedEvent; // we no longer need to get notified about keys...
-            return catchedText;
+            Hook.KeyPressedEvent -= OnKeyPressedEvent; // we no longer need to get notified about keys...
+            var ret = new AbortInformation(abortReason, endKeyReason, catchedText);
+            return ret;
+        }
+
+        public void Reset() {
+            _visible = false;
+            _keyLimit = 0;
+            _ignoreBackSpace = false;
+            _recognizeModifiedKeystrockes = false;
+            catchedText = "";
+            endKeyReason = Keys.None;
+            abortReason = AbortReason.Fail;
+
+            isCatching = false;
+            catchingLock = new object();
+            _timeout = 0;
+            _ignoreIAGeneratedInput = false;
+            _endkeys.Clear();
+
+            _endMatchings.Clear();
+            _caseSensitive = false;
+            _findAnywhere = false;
         }
 
         #endregion
 
         #region Properties
 
+        #region Behaviour Properties
+
+        /// <summary>
+        /// A list of Keys which terminates the key catching
+        /// </summary>
         public List<Keys> Endkeys {
             get { return _endkeys; }
         }
@@ -154,6 +198,15 @@ namespace IronAHK.Rusty.Cores.Common.Keyboard
             set { _ignoreIAGeneratedInput = value;}
         }
 
+        #endregion
+
+        public bool IsBusy {
+            get {
+                lock(catchingLock) {
+                    return isCatching;
+                }
+            }
+        }
 
         #endregion
 
@@ -163,15 +216,18 @@ namespace IronAHK.Rusty.Cores.Common.Keyboard
             if(e.Block || e.Handeled ||!e.Down)
                 return;
 
+            lock(catchingLock) {
+                if(!isCatching)
+                    return;
+            }
+
             // Tell how to proceed whit this key
             if(!Visible)
                 e.Block = true;
 
             // Check for Post Abort Conditions
             if(PostAbortCondition(e)) {
-                lock(catchDoneLock) {
-                    catchDone = true;
-                }
+                CatchingDone();
                 return;
             }
 
@@ -186,9 +242,18 @@ namespace IronAHK.Rusty.Cores.Common.Keyboard
 
             // Check for Past Abort Conditions
             if(PastAbortCondition(e)) {
-                lock(catchDoneLock) {
-                    catchDone = true;
-                }
+                CatchingDone();
+            }
+        }
+
+        public void AbortCatching() {
+            abortReason = AbortReason.NewInput;
+            CatchingDone();
+        }
+
+        void CatchingDone() {
+            lock(catchingLock) {
+                isCatching = false;
             }
         }
 
@@ -198,10 +263,11 @@ namespace IronAHK.Rusty.Cores.Common.Keyboard
         #region Abort Conditions
 
         bool PostAbortCondition(IAKeyEventArgs e) {
-
-            if(Endkeys.Contains(e.Keys))
+            if(Endkeys.Contains(e.Keys)) {
+                endKeyReason = e.Keys;
+                abortReason = AbortReason.EndKey;
                 return true;
-
+            }
             return false;
         }
 
@@ -214,28 +280,65 @@ namespace IronAHK.Rusty.Cores.Common.Keyboard
             // Past Condition: Key Limit
             if(KeyLimit != 0) {
                 if(catchedText.Length >= KeyLimit){
+                    abortReason = AbortReason.Max;
                     return true;
                 }
             }
 
+            bool abort = false;
             // Past Condition Matchlist
             foreach(var match in _endMatchings) {
                 if(CaseSensitive) {
                     if(!FindAnyWhere && match == catchedText)
-                        return true;
+                        abort = true;
                     if(FindAnyWhere && catchedText.Contains(match))
-                        return true;
+                        abort = true;
                 } else {
                     if(!FindAnyWhere && match.ToLowerInvariant() == catchedText.ToLowerInvariant())
-                        return true;
+                        abort = true;
                     if(FindAnyWhere && catchedText.ToLowerInvariant().Contains(match.ToLowerInvariant()))
-                        return true;
+                        abort = true;
                 }
+                if(abort)
+                    break;
             }
-            return false;
+            if(abort)
+                abortReason = AbortReason.Match;
+
+            return abort;
         }
 
 
         #endregion
     }
+
+    internal class AbortInformation
+    {
+        public AbortReason Reason;
+        public Keys EndKey;
+        public string CatchedText;
+
+        public AbortInformation() {
+            Reason = AbortReason.Fail;
+            EndKey = Keys.None;
+            CatchedText = "";
+        }
+        public AbortInformation(AbortReason reason, Keys endkey, string catchedText) {
+            Reason = reason;
+            EndKey = endkey;
+            CatchedText = catchedText;
+        }
+    }
+
+    internal enum AbortReason : int
+    {
+        Success = 0,
+        Fail = 1,
+        NewInput = 2,
+        Max = 3,
+        Timeout = 4,
+        Match = 5,
+        EndKey = 6,
+    }
+
 }
