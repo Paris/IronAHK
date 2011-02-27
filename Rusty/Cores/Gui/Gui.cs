@@ -477,11 +477,11 @@ namespace IronAHK.Rusty
 
                                 case Keyword_Lowercase: edit.CharacterCasing = on ? CharacterCasing.Lower : CharacterCasing.Normal; break;
                                 case Keyword_Multi: edit.Multiline = on; break;
-                                case Keyword_Number: break;
+                                case Keyword_Number: edit.KeyPress += new System.Windows.Forms.KeyPressEventHandler(Edit_Number); break;
                                 case Keyword_Password: edit.PasswordChar = '●'; break;
                                 case Keyword_Readonly: edit.ReadOnly = on; break;
                                 case Keyword_Uppercase: edit.CharacterCasing = on ? CharacterCasing.Upper : CharacterCasing.Normal; break;
-                                case Keyword_WantCtrlA: break;
+                                case Keyword_WantCtrlA: break; //I dont see that the normal ctrl+A works! perhaps new implementation?
                                 case Keyword_WantReturn: edit.AcceptsReturn = on; break;
                                 case Keyword_WantTab: edit.AcceptsTab = on; break;
                                 case Keyword_Wrap: edit.WordWrap = on; break;
@@ -1862,6 +1862,19 @@ namespace IronAHK.Rusty
                 case Keyword_Hwnd:
                     result = ctrl.Handle.ToInt64().ToString();
                     break;
+            }
+        }
+
+
+        /*
+         * Delegates
+        */
+
+        private static void Edit_Number(object sender, KeyPressEventArgs e)
+        {
+            if (!(char.IsDigit(e.KeyChar) || char.IsNumber(e.KeyChar) || e.KeyChar == '.' || e.KeyChar == ',' || (int)e.KeyChar == 8 || (int)e.KeyChar == 58 || (int)e.KeyChar == 59))
+            {
+                e.Handled = true;
             }
         }
     }
