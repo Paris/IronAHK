@@ -477,7 +477,14 @@ namespace IronAHK.Rusty
 
                                 case Keyword_Lowercase: edit.CharacterCasing = on ? CharacterCasing.Lower : CharacterCasing.Normal; break;
                                 case Keyword_Multi: edit.Multiline = on; break;
-                                case Keyword_Number: edit.KeyPress += new System.Windows.Forms.KeyPressEventHandler(Edit_Number); break;
+                                case Keyword_Number:
+                                    {
+                                        if (on)
+                                            edit.KeyPress += new System.Windows.Forms.KeyPressEventHandler(Edit_Number);
+                                        else
+                                            edit.KeyPress -= new System.Windows.Forms.KeyPressEventHandler(Edit_Number);
+                                        break;
+                                    }
                                 case Keyword_Password: edit.PasswordChar = '●'; break;
                                 case Keyword_Readonly: edit.ReadOnly = on; break;
                                 case Keyword_Uppercase: edit.CharacterCasing = on ? CharacterCasing.Upper : CharacterCasing.Normal; break;
