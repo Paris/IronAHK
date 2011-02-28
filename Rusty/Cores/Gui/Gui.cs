@@ -968,9 +968,9 @@ namespace IronAHK.Rusty
 
                             switch (mode)
                             {
-                                case "4": break;
-                                case "8": break;
-                                case "16": break;
+                                case "4": cal.ShowWeekNumbers = on; break;
+                                case "8": cal.ShowTodayCircle = on; break;
+                                case "16": cal.ShowToday = on; break;
                                 case Keyword_Multi: cal.MaxSelectionCount = int.MaxValue; break;
 
                                 default:
