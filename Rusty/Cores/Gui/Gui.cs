@@ -909,7 +909,11 @@ namespace IronAHK.Rusty
                         parent.Controls.Add(date);
                         control = date;
                         opts = GuiApplyStyles(date, options);
-                        date.Value = ToDateTime(content);
+                        if (content == string.Empty)
+                            date.Value = DateTime.Now;
+                        else
+                            date.Value = ToDateTime(content);
+                        date.Format = DateTimePickerFormat.Short;
 
                         foreach (var opt in ParseOptions(opts))
                         {
@@ -918,11 +922,11 @@ namespace IronAHK.Rusty
 
                             switch (mode)
                             {
-                                case "1": break;
-                                case "2": break;
-                                case Keyword_Right: break;
-                                case Keyword_LongDate: break;
-                                case Keyword_Time: break;
+                                case "1": date.ShowUpDown = on; break;
+                                case "2": date.ShowCheckBox = on; break;
+                                case Keyword_Right: date.DropDownAlign = LeftRightAlignment.Right; break; //***Bug*** - case dont match!
+                                case Keyword_LongDate: date.Format = DateTimePickerFormat.Long; date.Value = DateTime.Now; break;
+                                case Keyword_Time: date.Format = DateTimePickerFormat.Time; date.Value = DateTime.Now; break;
 
                                 default:
                                     if (mode.StartsWith(Keyword_Range))
