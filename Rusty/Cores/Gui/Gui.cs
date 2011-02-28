@@ -116,7 +116,7 @@ namespace IronAHK.Rusty
                             int d = status == null ? 0 : status.Height;
 
                             if (d > 0)
-                                guis[id].Size = new Size(guis[id].Size.Width, guis[id].Size.Height + d);
+                                guis[id].ClientSize = new Size(guis[id].ClientSize.Width, guis[id].ClientSize.Height + d);
                         }
                         else
                         {
@@ -201,7 +201,6 @@ namespace IronAHK.Rusty
 
                 case Keyword_Color:
                     guis[id].BackColor = Keyword_Default.Equals(Param2, StringComparison.OrdinalIgnoreCase) ? Color.Transparent : ParseColor(Param2);
-                    guis[id].ForeColor = Keyword_Default.Equals(Param3, StringComparison.OrdinalIgnoreCase) ? Color.Transparent : ParseColor(Param3);
                     break;
 
                 case Keyword_Margin:
@@ -296,10 +295,92 @@ namespace IronAHK.Rusty
                                 case Keyword_OwnDialogs: dialogOwner = guis[id]; break;
                                 case Keyword_Owner: break;
                                 case Keyword_Resize: break;
-                                case Keyword_SysMenu: break;
+                                case Keyword_SysMenu: guis[id].ControlBox = on; break;
                                 case Keyword_Theme: Application.EnableVisualStyles(); break;
                                 case Keyword_ToolWindow: break;
-
+                                case Keyword_Redraw: guis[id].Refresh(); break;
+                                case Keyword_Cursor:
+                                    {
+                                        switch (Param2.ToLowerInvariant())
+                                        {
+                                            case "cross": guis[id].Cursor = Cursors.Cross; break;
+                                            case "hand": guis[id].Cursor = Cursors.Hand; break;
+                                            case "help": guis[id].Cursor = Cursors.Help; break;
+                                            case "beam": guis[id].Cursor = Cursors.IBeam; break;
+                                            case "no": guis[id].Cursor = Cursors.No; break;
+                                            case "wait": guis[id].Cursor = Cursors.WaitCursor; break;
+                                            case "nomove": guis[id].Cursor = Cursors.NoMove2D; break;
+                                            case "size": guis[id].Cursor = Cursors.SizeAll; break;
+                                            case "split":
+                                                {
+                                                    if (Param3.ToLowerInvariant() == Keyword_Vertical)
+                                                        guis[id].Cursor = Cursors.VSplit;
+                                                    else
+                                                        guis[id].Cursor = Cursors.HSplit;
+                                                    break;
+                                                }
+                                            case "pan":
+                                                {
+                                                    switch (Param3.ToLowerInvariant())
+                                                    {
+                                                        case "east":
+                                                        case "e": guis[id].Cursor = Cursors.PanEast; break;
+                                                        case "south":
+                                                        case "s": guis[id].Cursor = Cursors.PanSouth; break;
+                                                        case "west":
+                                                        case "w": guis[id].Cursor = Cursors.PanWest; break;
+                                                        default:
+                                                        case "north":
+                                                        case "n": guis[id].Cursor = Cursors.PanNorth; break;
+                                                    }
+                                                    break;
+                                                }
+                                            case "arrow":
+                                            default: guis[id].Cursor = Cursors.Arrow; break;
+                                        }
+                                        break;
+                                    }
+                                case Keyword_Icon:
+                                    {
+                                        if (Param2 != string.Empty)
+                                        {
+                                            if (File.Exists(Param2))
+                                                if (Path.GetExtension(Param2.ToLowerInvariant())==".ico")
+                                                    guis[id].Icon = new Icon(Param2);
+                                        }
+                                        guis[id].ShowIcon = on;
+                                        break;
+                                    }
+                                case Keyword_TaskBar:
+                                    {
+                                        guis[id].ShowInTaskbar = on;
+                                        break;
+                                    }
+                                case Keyword_BackGroundImage:
+                                    {
+                                        if (on)
+                                        {
+                                            if (File.Exists(Param2))
+                                            {
+                                                guis[id].BackgroundImage = new Bitmap(Param2);
+                                                switch (Param3.ToLowerInvariant())
+                                                {
+                                                    case Keyword_None: guis[id].BackgroundImageLayout = ImageLayout.None; break;
+                                                    case Keyword_Tile: guis[id].BackgroundImageLayout = ImageLayout.Tile; break;
+                                                    case Keyword_Center: guis[id].BackgroundImageLayout = ImageLayout.Center; break;
+                                                    case Keyword_Zoom: guis[id].BackgroundImageLayout = ImageLayout.Zoom; break;
+                                                    case Keyword_Stretch:
+                                                    default: guis[id].BackgroundImageLayout = ImageLayout.Stretch; break;
+                                                }
+                                            }
+                                            
+                                        }
+                                        else
+                                        {
+                                            guis[id].BackgroundImage = null;
+                                        }
+                                        break;
+                                    }
                                 default:
                                     string arg;
                                     string[] parts;
@@ -396,11 +477,18 @@ namespace IronAHK.Rusty
 
                                 case Keyword_Lowercase: edit.CharacterCasing = on ? CharacterCasing.Lower : CharacterCasing.Normal; break;
                                 case Keyword_Multi: edit.Multiline = on; break;
-                                case Keyword_Number: break;
+                                case Keyword_Number:
+                                    {
+                                        if (on)
+                                            edit.KeyPress += new System.Windows.Forms.KeyPressEventHandler(Edit_Number);
+                                        else
+                                            edit.KeyPress -= new System.Windows.Forms.KeyPressEventHandler(Edit_Number);
+                                        break;
+                                    }
                                 case Keyword_Password: edit.PasswordChar = '●'; break;
                                 case Keyword_Readonly: edit.ReadOnly = on; break;
                                 case Keyword_Uppercase: edit.CharacterCasing = on ? CharacterCasing.Upper : CharacterCasing.Normal; break;
-                                case Keyword_WantCtrlA: break;
+                                case Keyword_WantCtrlA: break; //I dont see that the normal ctrl+A works! perhaps new implementation?
                                 case Keyword_WantReturn: edit.AcceptsReturn = on; break;
                                 case Keyword_WantTab: edit.AcceptsTab = on; break;
                                 case Keyword_Wrap: edit.WordWrap = on; break;
@@ -880,9 +968,9 @@ namespace IronAHK.Rusty
 
                             switch (mode)
                             {
-                                case "4": break;
-                                case "8": break;
-                                case "16": break;
+                                case "4": cal.ShowWeekNumbers = on; break;
+                                case "8": cal.ShowTodayCircle = on; break;
+                                case "16": cal.ShowToday = on; break;
                                 case Keyword_Multi: cal.MaxSelectionCount = int.MaxValue; break;
 
                                 default:
@@ -1129,7 +1217,7 @@ namespace IronAHK.Rusty
             if (control is Button)
             {
                 var button = (Button)control;
-
+                control.BackColor = Color.Transparent;
                 if ((button.Tag as bool?) != true)
                     button.Click += delegate { SafeInvoke(Keyword_GuiButton + content); };
                 else
@@ -1781,6 +1869,19 @@ namespace IronAHK.Rusty
                 case Keyword_Hwnd:
                     result = ctrl.Handle.ToInt64().ToString();
                     break;
+            }
+        }
+
+
+        /*
+         * Delegates
+        */
+
+        private static void Edit_Number(object sender, KeyPressEventArgs e)
+        {
+            if (!(char.IsDigit(e.KeyChar) || char.IsNumber(e.KeyChar) || e.KeyChar == '.' || e.KeyChar == ',' || (int)e.KeyChar == 8 || (int)e.KeyChar == 58 || (int)e.KeyChar == 59))
+            {
+                e.Handled = true;
             }
         }
     }
