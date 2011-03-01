@@ -480,9 +480,9 @@ namespace IronAHK.Rusty
                                 case Keyword_Number:
                                     {
                                         if (on)
-                                            edit.KeyPress += new System.Windows.Forms.KeyPressEventHandler(Edit_Number);
+                                            edit.KeyPress += OnEditKeyPress;
                                         else
-                                            edit.KeyPress -= new System.Windows.Forms.KeyPressEventHandler(Edit_Number);
+                                            edit.KeyPress -= OnEditKeyPress;
                                         break;
                                     }
                                 case Keyword_Password: edit.PasswordChar = '●'; break;
@@ -1873,16 +1873,17 @@ namespace IronAHK.Rusty
         }
 
 
-        /*
-         * Delegates
-        */
+        #region  Eventhandler
+        
 
-        private static void Edit_Number(object sender, KeyPressEventArgs e)
+        private static void OnEditKeyPress(object sender, KeyPressEventArgs e)
         {
             if (!(char.IsDigit(e.KeyChar) || char.IsNumber(e.KeyChar) || e.KeyChar == '.' || e.KeyChar == ',' || (int)e.KeyChar == 8 || (int)e.KeyChar == 58 || (int)e.KeyChar == 59))
             {
                 e.Handled = true;
             }
         }
+
+        #endregion
     }
 }
