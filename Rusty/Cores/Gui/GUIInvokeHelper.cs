@@ -7,11 +7,7 @@ namespace IronAHK.Rusty.Cores.Gui
 {
     static class GUIInvokeHelper
     {
-        /*
-        private Label label1;
-        private TextBox txtMessage;
-         * */
-        delegate void SetTextCallback(Control control, string text);
+        public delegate void Action();
 
         /// <summary>
         /// Threadsave Text Property setter
@@ -19,13 +15,15 @@ namespace IronAHK.Rusty.Cores.Gui
         /// <param name="control"></param>
         /// <param name="text"></param>
         public static void SetText(Control control, string text){
-
             if(control.InvokeRequired) {
-                SetTextCallback d = new SetTextCallback(SetText);
-                control.Invoke(d, new object[] { control, text });
+                Invoke(control, () => SetText(control, text));
             } else {
                 control.Text = text;
             }
+        }
+
+        public static void Invoke(Control c, Action action) {
+            c.Invoke(action);
         }
     }
 }
