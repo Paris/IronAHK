@@ -127,7 +127,7 @@ namespace IronAHK.Rusty
                             if (pos[1] != null)
                                 size.Height = (int)pos[1];
 
-                            guis[id].Size = size;
+                            guis[id].ClientSize = size;
                         }
 
                         var location = new Point();
