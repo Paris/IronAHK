@@ -294,7 +294,7 @@ namespace IronAHK.Rusty.Cores.Common.Keyboard
                     if(FindAnyWhere && catchedText.Contains(match))
                         abort = true;
                 } else {
-                    if(!FindAnyWhere && match.ToLowerInvariant() == catchedText.ToLowerInvariant())
+                    if(!FindAnyWhere && match.Equals(catchedText, StringComparison.OrdinalIgnoreCase))
                         abort = true;
                     if(FindAnyWhere && catchedText.ToLowerInvariant().Contains(match.ToLowerInvariant()))
                         abort = true;
