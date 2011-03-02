@@ -325,9 +325,9 @@ namespace IronAHK.Rusty
 
             try {
                 var timeout = float.Parse(dicOptions[Keyword_TimeOutS]);
-                inputHandler.TimeOut = timeout;
+                inputHandler.TimeOutVal = (int)(timeout * 1000);
             } catch {
-                inputHandler.TimeOut = 0;
+                inputHandler.TimeOutVal = 0;
             }
 
             if(!String.IsNullOrEmpty(dicOptions[Keyword_BackSpaceS])){

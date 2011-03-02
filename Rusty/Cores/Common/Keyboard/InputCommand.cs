@@ -6,9 +6,9 @@ using IronAHK.Rusty.Patterns;
 
 namespace IronAHK.Rusty.Cores.Common.Keyboard
 {
-    // ToDo: Test Multithreaded Access to this Singleton
     // ToDo: Handle IgnoreIAGeneratedInput
-    // ToDo: Handle TimeOut
+    // ToDo: Test TimeOut
+    // ToDo: Test Multithreaded Access to this Singleton
 
     /// <summary>
     /// Input Command Handler (Singleton)
@@ -28,7 +28,7 @@ namespace IronAHK.Rusty.Cores.Common.Keyboard
 
         bool isCatching = false;
         object catchingLock = new object();
-        float _timeout = 0;
+        int? _timeout = null;
         bool _ignoreIAGeneratedInput = false;
         
         List<Keys> _endkeys = new List<Keys>();
@@ -37,7 +37,9 @@ namespace IronAHK.Rusty.Cores.Common.Keyboard
         bool _caseSensitive = false;
         bool _findAnywhere = false;
 
-        #endregion
+        System.Threading.Timer _timeoutTimer;
+
+        #endregion       
 
         #region Singleton Config Properties
 
@@ -67,10 +69,21 @@ namespace IronAHK.Rusty.Cores.Common.Keyboard
                 if(isCatching) {
                     throw new NotImplementedException("Pending Input interruption not implemented yet!");
                 }
+
+                Hook.KeyPressedEvent += OnKeyPressedEvent;
+                isCatching = true;
+
+                if(TimeOutVal.HasValue) {
+                    if(_timeoutTimer != null)
+                        _timeoutTimer.Dispose();
+
+                    _timeoutTimer = new System.Threading.Timer(new System.Threading.TimerCallback(OnTimoutTick));
+                    _timeoutTimer.Change(this.TimeOutVal.Value, Timeout.Infinite);
+                }
             }
-            
-            Hook.KeyPressedEvent += OnKeyPressedEvent;
-            isCatching = true;
+
+
+
             while(true) {
                 lock(catchingLock) {
                     if(!isCatching)
@@ -101,6 +114,9 @@ namespace IronAHK.Rusty.Cores.Common.Keyboard
             _endMatchings.Clear();
             _caseSensitive = false;
             _findAnywhere = false;
+
+            if(_timeoutTimer != null)
+                _timeoutTimer.Dispose();
         }
 
         #endregion
@@ -156,14 +172,17 @@ namespace IronAHK.Rusty.Cores.Common.Keyboard
         }
         
         /// <summary>
-        /// The number of seconds to wait before terminating the Input and setting ErrorLevel to the word Timeout.
+        /// The number of milliseconds to wait before terminating the Input and setting ErrorLevel to the word Timeout.
         /// If the Input times out, OutputVar will be set to whatever text the user had time to enter. 
         /// 
         /// Null means that there is no TimeOut. (default)
         /// </summary>
-        public float TimeOut {
+        public int? TimeOutVal {
             get { return _timeout; }
-            set { _timeout = value; }
+            set { 
+                _timeout = value; 
+
+            }
         }
 
         /// <summary>
@@ -255,6 +274,12 @@ namespace IronAHK.Rusty.Cores.Common.Keyboard
             lock(catchingLock) {
                 isCatching = false;
             }
+        }
+
+        void OnTimoutTick(object state) {
+            var timouttimer = (System.Threading.Timer)state;
+            timouttimer.Dispose();
+            CatchingDone();
         }
 
 
