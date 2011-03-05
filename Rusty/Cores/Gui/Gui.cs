@@ -1718,6 +1718,7 @@ namespace IronAHK.Rusty
                             int argAsInt;
                             if (int.TryParse(arg, out argAsInt))
                                 SafeSetProperty(ctrl,"Value",argAsInt);
+                            
                         }
                         else
                         {
@@ -1731,13 +1732,14 @@ namespace IronAHK.Rusty
                             }
                             else
                             {
-                                if (ctrl is ComboBox || ctrl is ListBox)
+                                if (ctrl is ComboBox)
                                 {
+                                    ComboBox ctrlAsControl = (ComboBox)ctrl;
+                                    if (SubStr(arg, 1, 1) == "|")
+                                        ctrlAsControl.Items.Clear();
                                     string[] argAsStringArray = arg.Split('|');
                                     foreach (string s in argAsStringArray)
-                                    {
-                                        //TODO: ctrl.Items.Add(arg[]);
-                                    }
+                                        ctrlAsControl.Items.Add(s);
                                 }
                                 else
                                 {
@@ -1756,12 +1758,25 @@ namespace IronAHK.Rusty
                                     {
                                         if (ctrl is WebBrowser)
                                         {
-                                            //TODO: ctrl.Navigate(arg);
+                                            WebBrowser web = (WebBrowser)ctrl;
+                                            web.Navigate(arg);
                                         }
                                         else
                                         {
-                                            arg = NormaliseEol(arg);
-                                            SafeSetProperty(ctrl, "Text", arg);
+                                            if (ctrl is ListBox)
+                                            {
+                                                ListBox ctrlAsControl = (ListBox)ctrl;
+                                                if (SubStr(arg, 1, 1) == "|")
+                                                    ctrlAsControl.Items.Clear();
+                                                string[] argAsStringArray = arg.Split('|');
+                                                foreach (string s in argAsStringArray)
+                                                    ctrlAsControl.Items.Add(s);
+                                            }
+                                            else
+                                            {
+                                                arg = NormaliseEol(arg);
+                                                SafeSetProperty(ctrl, "Text", arg);
+                                            }
                                         }
                                     }
                                 }
