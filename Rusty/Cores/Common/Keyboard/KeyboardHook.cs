@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Windows.Forms;
 using System.Threading;
+using System.Diagnostics;
 
 namespace IronAHK.Rusty.Cores.Common.Keyboard
 {
@@ -83,6 +84,19 @@ namespace IronAHK.Rusty.Cores.Common.Keyboard
 
         public void Remove(HotstringDefinition hotstring) {
             hotstrings.Remove(hotstring);
+        }
+
+        #endregion
+
+        #region Key Status
+
+        public bool IsPressed(Keys key) {
+            if(pressed.ContainsKey(key))
+                return pressed[key];
+            else {
+                Debug.Fail("Thre should'nt be any key not in this table...");
+                return false;
+            }
         }
 
         #endregion
