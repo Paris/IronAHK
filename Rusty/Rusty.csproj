@@ -75,6 +75,7 @@
     <Compile Include="Cores\Common\Keyboard\InputCommand.cs" />
     <Compile Include="Cores\Common\Keyboard\KeyboardHook.cs" />
     <Compile Include="Cores\Common\Keyboard\KeyParser.cs" />
+    <Compile Include="Cores\Common\Keyboard\KeyWaitCommand.cs" />
     <Compile Include="Cores\Common\Mapper\DriveTypeMapper.cs" />
     <Compile Include="Cores\Common\Mapper\MapperBase.cs" />
     <Compile Include="Cores\Common\Mapper\MappingService.cs" />
