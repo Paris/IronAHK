@@ -43,9 +43,12 @@ namespace IronAHK.Rusty.Cores.Common.Keyboard
 
         #region Singleton Config Properties
 
-        // as long as this Class depends on other, non Singleton Objects
+        // as long as this Class depends on other non Singleton Objects,
         // it must be configured else where
 
+        /// <summary>
+        /// Set the KeyboardHook to use to catch userinput
+        /// </summary>
         public KeyboardHook Hook {
             set {
                 if(value == null)
@@ -179,10 +182,7 @@ namespace IronAHK.Rusty.Cores.Common.Keyboard
         /// </summary>
         public int? TimeOutVal {
             get { return _timeout; }
-            set { 
-                _timeout = value; 
-
-            }
+            set { _timeout = value; }
         }
 
         /// <summary>
@@ -219,6 +219,9 @@ namespace IronAHK.Rusty.Cores.Common.Keyboard
 
         #endregion
 
+        /// <summary>
+        /// Is User Input catching running?
+        /// </summary>
         public bool IsBusy {
             get {
                 lock(catchingLock) {
@@ -277,8 +280,8 @@ namespace IronAHK.Rusty.Cores.Common.Keyboard
         }
 
         void OnTimoutTick(object state) {
-            var timouttimer = (System.Threading.Timer)state;
-            timouttimer.Dispose();
+            var timeoutTimer = (System.Threading.Timer)state;
+            timeoutTimer.Dispose();
             CatchingDone();
         }
 
@@ -287,6 +290,11 @@ namespace IronAHK.Rusty.Cores.Common.Keyboard
 
         #region Abort Conditions
 
+        /// <summary>
+        /// Checks if we are done with logging.
+        /// </summary>
+        /// <param name="e"></param>
+        /// <returns></returns>
         bool PostAbortCondition(IAKeyEventArgs e) {
             if(Endkeys.Contains(e.Keys)) {
                 endKeyReason = e.Keys;
@@ -355,6 +363,9 @@ namespace IronAHK.Rusty.Cores.Common.Keyboard
         }
     }
 
+    /// <summary>
+    /// Reason why Catching of Userinput was stopped
+    /// </summary>
     internal enum AbortReason : int
     {
         Success = 0,
