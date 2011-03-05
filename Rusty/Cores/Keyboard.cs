@@ -244,7 +244,11 @@ namespace IronAHK.Rusty
         /// </param>
         public static void KeyWait(string KeyName, string Options)
         {
+            InitKeyboardHook();
 
+            var keyWaitCommand = new KeyWaitCommand(keyboardHook);
+            var key = KeyParser.ParseKey(KeyName);
+            keyWaitCommand.Wait(key);
         }
 
         /// <summary>
