@@ -1706,10 +1706,68 @@ namespace IronAHK.Rusty
             switch (cmd)
             {
                 case Keyword_Text:
-                case "":
                     if (ctrl is TextBox)
                         arg = NormaliseEol(arg);
                     ctrl.Text = arg;
+                    break;
+
+                case "":
+                    {
+                        if (ctrl is ProgressBar || ctrl is TrackBar || ctrl is NumericUpDown)
+                        {
+                            int argAsInt;
+                            if (int.TryParse(arg, out argAsInt))
+                                SafeSetProperty(ctrl,"Value",argAsInt);
+                        }
+                        else
+                        {
+                            if (ctrl is DateTimePicker)
+                            {
+                                DateTime argAsDateTime = ToDateTime(arg);
+                                if (!(string.IsNullOrEmpty(arg)))
+                                    SafeSetProperty(ctrl, "Value", argAsDateTime);
+                                else
+                                    SafeSetProperty(ctrl, "Value", DateTime.Now);
+                            }
+                            else
+                            {
+                                if (ctrl is ComboBox || ctrl is ListBox)
+                                {
+                                    string[] argAsStringArray = arg.Split('|');
+                                    foreach (string s in argAsStringArray)
+                                    {
+                                        //TODO: ctrl.Items.Add(arg[]);
+                                    }
+                                }
+                                else
+                                {
+                                    if (ctrl is PictureBox)
+                                    {
+                                        if (File.Exists(arg))
+                                        {
+                                            try
+                                                {
+                                                    SafeSetProperty(ctrl, "ImageLocation", arg);
+                                                }
+                                            catch(Exception){ }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        if (ctrl is WebBrowser)
+                                        {
+                                            //TODO: ctrl.Navigate(arg);
+                                        }
+                                        else
+                                        {
+                                            arg = NormaliseEol(arg);
+                                            SafeSetProperty(ctrl, "Text", arg);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
                     break;
 
                 case Keyword_Move:
