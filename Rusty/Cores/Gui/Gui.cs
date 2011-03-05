@@ -1739,7 +1739,8 @@ namespace IronAHK.Rusty
                                         ctrlAsControl.Items.Clear();
                                     string[] argAsStringArray = arg.Split('|');
                                     foreach (string s in argAsStringArray)
-                                        ctrlAsControl.Items.Add(s);
+                                        if (!(string.IsNullOrEmpty(s)))
+                                            ctrlAsControl.Items.Add(s);
                                 }
                                 else
                                 {
@@ -1770,7 +1771,8 @@ namespace IronAHK.Rusty
                                                     ctrlAsControl.Items.Clear();
                                                 string[] argAsStringArray = arg.Split('|');
                                                 foreach (string s in argAsStringArray)
-                                                    ctrlAsControl.Items.Add(s);
+                                                    if (!(string.IsNullOrEmpty(s)))
+                                                        ctrlAsControl.Items.Add(s);
                                             }
                                             else
                                             {
