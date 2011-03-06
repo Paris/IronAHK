@@ -431,5 +431,8 @@ namespace IronAHK.Rusty
         public const string Keyword_VisibleS = "V";
         public const string Keyword_FindAnyWhereS = "*";
 
+        public const string Keyword_DownS = "D";
+
+
     }
 }
