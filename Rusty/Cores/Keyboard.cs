@@ -222,7 +222,9 @@ namespace IronAHK.Rusty
         /// <param name="Mode"></param>
         public static string GetKeyState(string KeyName, string Mode)
         {
-            return null;
+            InitKeyboardHook();
+            var key = KeyParser.ParseKey(KeyName);
+            return keyboardHook.IsPressed(key) ? "1" : "0";
         }
 
         /// <summary>
@@ -248,6 +250,31 @@ namespace IronAHK.Rusty
 
             var keyWaitCommand = new KeyWaitCommand(keyboardHook);
             var key = KeyParser.ParseKey(KeyName);
+
+            #region Parse Options
+
+            var optsItems = new Dictionary<string, Regex>();
+            optsItems.Add(Keyword_TimeOutS, new Regex(Keyword_TimeOutS + @"([\d|\.]*)"));
+            optsItems.Add(Keyword_DownS, new Regex("(" + Keyword_DownS + ")"));
+
+            var dicOptions = ParseOptionsRegex(ref Options, optsItems, true);
+
+            if(!String.IsNullOrEmpty(dicOptions[Keyword_DownS])) {
+                keyWaitCommand.TriggerOnKeyDown = true;
+            }
+
+            if(!String.IsNullOrEmpty(dicOptions[Keyword_TimeOutS])) {
+                try {
+                    var timeout = float.Parse(dicOptions[Keyword_TimeOutS]);
+                    keyWaitCommand.TimeOutVal = (int)(timeout * 1000);
+                } catch {
+                    keyWaitCommand.TimeOutVal = null;
+                }
+            }
+
+
+            #endregion
+
             keyWaitCommand.Wait(key);
         }
 
@@ -320,18 +347,22 @@ namespace IronAHK.Rusty
 
             #region Apply Options
 
-            try {
-                var limit = Int32.Parse(dicOptions[Keyword_LimitS]);
-                inputHandler.KeyLimit = limit;
-            } catch {
-                inputHandler.KeyLimit = 0;
+            if(!String.IsNullOrEmpty(dicOptions[Keyword_LimitS])) {
+                try {
+                    var limit = Int32.Parse(dicOptions[Keyword_LimitS]);
+                    inputHandler.KeyLimit = limit;
+                } catch {
+                    inputHandler.KeyLimit = 0;
+                }
             }
 
-            try {
-                var timeout = float.Parse(dicOptions[Keyword_TimeOutS]);
-                inputHandler.TimeOutVal = (int)(timeout * 1000);
-            } catch {
-                inputHandler.TimeOutVal = null;
+            if(!String.IsNullOrEmpty(dicOptions[Keyword_TimeOutS])) {
+                try {
+                    var timeout = float.Parse(dicOptions[Keyword_TimeOutS]);
+                    inputHandler.TimeOutVal = (int)(timeout * 1000);
+                } catch {
+                    inputHandler.TimeOutVal = null;
+                }
             }
 
             if(!String.IsNullOrEmpty(dicOptions[Keyword_BackSpaceS])){

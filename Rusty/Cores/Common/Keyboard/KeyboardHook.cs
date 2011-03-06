@@ -39,9 +39,9 @@ namespace IronAHK.Rusty.Cores.Common.Keyboard
         #region Events
         
         /// <summary>
-        /// Raised when a Key is pressed
+        /// Raised when a Key is pressed/released
         /// </summary>
-        public event EventHandler<IAKeyEventArgs> KeyPressedEvent;
+        public event EventHandler<IAKeyEventArgs> IAKeyEvent;
 
         #endregion
 
@@ -137,8 +137,8 @@ namespace IronAHK.Rusty.Cores.Common.Keyboard
             bool block = false;
 
             var args = new IAKeyEventArgs(key, typed, down);
-            if(KeyPressedEvent != null)
-                KeyPressedEvent(this, args);
+            if(IAKeyEvent != null)
+                IAKeyEvent(this, args);
 
             if(args.Block){
                 block = true;

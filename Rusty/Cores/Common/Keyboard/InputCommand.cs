@@ -73,7 +73,7 @@ namespace IronAHK.Rusty.Cores.Common.Keyboard
                     throw new NotImplementedException("Pending Input interruption not implemented yet!");
                 }
 
-                Hook.KeyPressedEvent += OnKeyPressedEvent;
+                Hook.IAKeyEvent += OnKeyPressedEvent;
                 isCatching = true;
 
                 if(TimeOutVal.HasValue) {
@@ -92,9 +92,10 @@ namespace IronAHK.Rusty.Cores.Common.Keyboard
                     if(!isCatching)
                         break;
                 }
+                Application.DoEvents(); // This is necessary if the StartCatching Method gets called on the Main GUI Thread
                 Thread.Sleep(2);
             }
-            Hook.KeyPressedEvent -= OnKeyPressedEvent; // we no longer need to get notified about keys...
+            Hook.IAKeyEvent -= OnKeyPressedEvent; // we no longer need to get notified about keys...
             var ret = new AbortInformation(abortReason, endKeyReason, catchedText);
             return ret;
         }
