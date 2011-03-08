@@ -1917,9 +1917,58 @@ namespace IronAHK.Rusty
             switch (command)
             {
                 case Keyword_Text:
-                case "":
                     result = ctrl.Text;
                     break;
+                case "":
+                    {
+                        if (ctrl is ProgressBar)
+                        {
+                            result = ((ProgressBar)ctrl).Value.ToString();
+                            break;
+                        }
+                        if (ctrl is ComboBox)
+                        {
+                            result = ((ComboBox)ctrl).SelectedText;
+                            break;
+                        }
+                        if (ctrl is TrackBar)
+                        {
+                            result = ((TrackBar)ctrl).Value.ToString();
+                            break;
+                        }
+                        if (ctrl is ListBox)
+                        {
+                            result = ((ListBox)ctrl).SelectedItems.ToString();
+                            break;
+                        }
+                        if (ctrl is DateTimePicker)
+                        {
+                            result = ((DateTimePicker)ctrl).Value.ToString();
+                            break;
+                        }
+                        if (ctrl is MonthCalendar)
+                        {
+                            //TODO: MonthCalender Get!
+                            break;
+                        }
+                        if (ctrl is WebBrowser)
+                        {
+                            result = ((WebBrowser)ctrl).Url.ToString();
+                            break;
+                        }
+                        if (ctrl is PictureBox)
+                        {
+                            result = ((PictureBox)ctrl).ImageLocation;
+                            break;
+                        }
+                        if (ctrl is NumericUpDown)
+                        {
+                            result = ((NumericUpDown)ctrl).Value.ToString();
+                            break;
+                        }
+                        result = ctrl.Text;
+                        break;
+                    }
 
                 case Keyword_Pos:
                     {
