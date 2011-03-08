@@ -1711,7 +1711,7 @@ namespace IronAHK.Rusty
                     ctrl.Text = arg;
                     break;
 
-                case "":
+               case "":
                     {
                         if (ctrl is ProgressBar || ctrl is TrackBar || ctrl is NumericUpDown)
                         {
@@ -1734,13 +1734,11 @@ namespace IronAHK.Rusty
                             {
                                 if (ctrl is ComboBox)
                                 {
-                                    ComboBox ctrlAsControl = (ComboBox)ctrl;
                                     if (SubStr(arg, 1, 1) == "|")
-                                        ctrlAsControl.Items.Clear();
+                                        ((ComboBox)ctrl).Items.Clear(); arg = SubStr(arg, 2, StrLen(arg) - 1);
                                     string[] argAsStringArray = arg.Split('|');
                                     foreach (string s in argAsStringArray)
-                                        if (!(string.IsNullOrEmpty(s)))
-                                            ctrlAsControl.Items.Add(s);
+                                            ((ComboBox)ctrl).Items.Add(s);
                                 }
                                 else
                                 {
@@ -1759,20 +1757,17 @@ namespace IronAHK.Rusty
                                     {
                                         if (ctrl is WebBrowser)
                                         {
-                                            WebBrowser web = (WebBrowser)ctrl;
-                                            web.Navigate(arg);
+                                            ((WebBrowser)ctrl).Navigate(arg);
                                         }
                                         else
                                         {
                                             if (ctrl is ListBox)
                                             {
-                                                ListBox ctrlAsControl = (ListBox)ctrl;
                                                 if (SubStr(arg, 1, 1) == "|")
-                                                    ctrlAsControl.Items.Clear();
+                                                    ((ListBox)ctrl).Items.Clear(); arg = SubStr(arg, 2, StrLen(arg) - 1);
                                                 string[] argAsStringArray = arg.Split('|');
                                                 foreach (string s in argAsStringArray)
-                                                    if (!(string.IsNullOrEmpty(s)))
-                                                        ctrlAsControl.Items.Add(s);
+                                                        ((ListBox)ctrl).Items.Add(s);
                                             }
                                             else
                                             {
