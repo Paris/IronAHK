@@ -138,7 +138,7 @@
     <Compile Include="Cores\SystemWindow\WindowFactory.cs" />
     <Compile Include="Cores\Window.cs" />
     <Compile Include="Extras\CRC32.cs" />
-    <Compile Include="Extras\ImageSearcher\ImageFinder.CoordProvider.cs" />
+    <Compile Include="Extras\ImageSearcher\CoordProvider.cs" />
     <Compile Include="Extras\ImageSearcher\ImageFinder.cs" />
     <Compile Include="Extras\SimpleJson\SimpleJSON.cs" />
     <Compile Include="Linux\Drives\SystemDriveLinux.cs" />
