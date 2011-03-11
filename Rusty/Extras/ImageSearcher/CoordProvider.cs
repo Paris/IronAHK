@@ -11,7 +11,7 @@ namespace IronAHK.Rusty
     /// </summary>
     sealed class CoordProvider
     {
-        #region Private Data
+        #region Fields
 
         private Size mMaxMovement;
         private Point mCurrent;
@@ -23,8 +23,8 @@ namespace IronAHK.Rusty
 
         #region Constructor
 
-        /// <summary>Create new CoordProvider with given Settings.
-        /// 
+        /// <summary>
+        /// Create new CoordProvider with given Settings.
         /// </summary>
         /// <param name="uSourceSize">Size of Searchable Image Area</param>
         /// <param name="uNeedleSize">Size of Needle Image</param>
@@ -38,8 +38,8 @@ namespace IronAHK.Rusty
 
         #region Public Methods
 
-        /// <summary>Returns the next Workitem (thread save)
-        /// 
+        /// <summary>
+        /// Returns the next Workitem (thread save)
         /// </summary>
         /// <returns>Next Coord (Point) or Null if the work is done.</returns>
         public Point? Next() {

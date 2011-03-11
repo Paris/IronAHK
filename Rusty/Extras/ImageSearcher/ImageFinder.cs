@@ -4,26 +4,34 @@ using System.Threading;
 
 namespace IronAHK.Rusty
 {
-    class ImageFinder
+    /// <summary>
+    /// Class which provides common search Methods to find a Color or a subimage in given Image.
+    /// </summary>
+    public class ImageFinder
     {
-        #region Private Data
+        #region Fields
 
         private ImageData sourceImage, findImage;
         private PixelMask findPixel;
-        //private Size[] regions;
         private CoordProvider Provider;
         private Point? match;
+        private object matchLocker = new object();
         private ManualResetEvent[] resets;
-        private int threads = Environment.ProcessorCount;
-        private object Locker = new object();
+        private int threads = Environment.ProcessorCount;   
 
         #endregion
 
         #region Constructor
+
+        /// <summary>
+        /// Creates a new Image Finder Instance
+        /// </summary>
+        /// <param name="source">Source Image where to search in</param>
         public ImageFinder(Bitmap source)
         {
             sourceImage = new ImageData(source);
         }
+
         #endregion
 
         #region Propertys
@@ -31,6 +39,8 @@ namespace IronAHK.Rusty
         public byte Variation { get; set; }
 
         #endregion
+
+        #region Public Methods
 
         public Point? Find(Bitmap findBitmap)
         {
@@ -79,6 +89,10 @@ namespace IronAHK.Rusty
             return match;
         }
 
+        #endregion
+
+        #region Private Methods
+
         void PixelWorker(object state)
         {
             Point? Location;
@@ -92,7 +106,7 @@ namespace IronAHK.Rusty
 
                 pix = sourceImage.Pixel[Location.Value.X, Location.Value.Y];
                 if(findPixel.Equals(pix)) {
-                    lock(Locker) {
+                    lock(matchLocker) {
                         if(!match.HasValue)
                             match = Location.Value;
                     }
@@ -113,7 +127,7 @@ namespace IronAHK.Rusty
 
             while((Location = Provider.Next()) != null && !match.HasValue) {
                 if(CompareAt(Location.Value)) {
-                    lock(Locker) {
+                    lock(matchLocker) {
                         if(!match.HasValue)
                             match = Location.Value;
                     }
@@ -138,7 +152,9 @@ namespace IronAHK.Rusty
             return true;
         }
 
-        #region Helpers
+        #endregion
+
+        #region Nested Helper Classes
 
         class ImageData
         {
