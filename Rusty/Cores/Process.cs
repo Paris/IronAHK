@@ -109,21 +109,25 @@ namespace IronAHK.Rusty
         /// <param name="wait"><c>true</c> to wait for the process to close before continuing, <c>false</c> otherwise.</param>
         public static void Run(string target, string workingDir, string showMode, out int pid, bool wait = false)
         {
-            var prc = new Process { StartInfo = new ProcessStartInfo { UseShellExecute = true, FileName = target } };
-
-            if (!string.IsNullOrEmpty(workingDir))
-                prc.StartInfo.WorkingDirectory = workingDir;
+            var prc = new Process { 
+                StartInfo = new ProcessStartInfo 
+                { 
+                    UseShellExecute = true,
+                    FileName = target,
+                    WorkingDirectory = string.IsNullOrEmpty(workingDir) ? null : workingDir,
+                    UserName = string.IsNullOrEmpty(runUser) ? null : runUser,
+                    Domain = string.IsNullOrEmpty(runDomain) ? null : runDomain,
+                    Password = (runPassword == null || runPassword.Length == 0) ? null : runPassword,
+ 
+                } 
+            };
 
             var error = false;
 
-            if (!string.IsNullOrEmpty(runUser))
-                prc.StartInfo.UserName = runUser;
+            if(prc.StartInfo.UserName != null || prc.StartInfo.UserName != null) {
+                prc.StartInfo.UseShellExecute = false;
+            }
 
-            if (!string.IsNullOrEmpty(runDomain))
-                prc.StartInfo.Domain = runDomain;
-
-            if (runPassword != null && runPassword.Length != 0)
-                prc.StartInfo.Password = runPassword;
 
             switch (showMode.ToLowerInvariant())
             {
@@ -142,7 +146,7 @@ namespace IronAHK.Rusty
                 if (wait)
                     prc.WaitForExit();
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 if (error)
                     ErrorLevel = 2;
