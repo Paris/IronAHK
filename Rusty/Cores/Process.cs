@@ -122,13 +122,11 @@ namespace IronAHK.Rusty
                 } 
             };
 
-            var error = false;
-
-            if(prc.StartInfo.UserName != null || prc.StartInfo.UserName != null) {
+            if(prc.StartInfo.UserName != null || prc.StartInfo.Domain != null) {
                 prc.StartInfo.UseShellExecute = false;
             }
 
-
+            var error = false;
             switch (showMode.ToLowerInvariant())
             {
                 case Keyword_Max: prc.StartInfo.WindowStyle = ProcessWindowStyle.Maximized; break;
@@ -138,7 +136,6 @@ namespace IronAHK.Rusty
             }
 
             ErrorLevel = 0;
-
             try
             {
                 prc.Start();
