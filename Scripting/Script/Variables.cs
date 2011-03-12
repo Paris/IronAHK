@@ -110,9 +110,9 @@ namespace IronAHK.Scripting
                         return null;
                     name = name.Substring(z);
                 }
-
-                if (!name.Substring(0, A_.Length).Equals(A_, StringComparison.OrdinalIgnoreCase))
-                    return null;
+                // UNDONE: This check fails on ErrorLevel
+                //if(!name.Substring(0, A_.Length).Equals(A_, StringComparison.OrdinalIgnoreCase))
+                //    return null;
 
                 PropertyInfo prop = null;
 
@@ -122,7 +122,6 @@ namespace IronAHK.Scripting
 
                 return prop;
             }
-
             #endregion
         }
     }
