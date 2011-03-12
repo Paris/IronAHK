@@ -136,12 +136,15 @@ namespace IronAHK.Rusty
             }
 
             ErrorLevel = 0;
+            pid = 0;
             try
             {
                 prc.Start();
 
                 if (wait)
                     prc.WaitForExit();
+
+                pid = prc.Id;
             }
             catch (Exception e)
             {
@@ -150,8 +153,6 @@ namespace IronAHK.Rusty
                 else if (wait)
                     ErrorLevel = prc.ExitCode;
             }
-
-            pid = prc.Id;
         }
 
         /// <summary>
