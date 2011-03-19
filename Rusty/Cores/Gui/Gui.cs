@@ -127,7 +127,7 @@ namespace IronAHK.Rusty
                             if (pos[1] != null)
                                 size.Height = (int)pos[1];
 
-                            guis[id].Size = size;
+                            guis[id].ClientSize = size;
                         }
 
                         var location = new Point();
@@ -909,7 +909,11 @@ namespace IronAHK.Rusty
                         parent.Controls.Add(date);
                         control = date;
                         opts = GuiApplyStyles(date, options);
-                        date.Value = ToDateTime(content);
+                        if (content == string.Empty)
+                            date.Value = DateTime.Now;
+                        else
+                            date.Value = ToDateTime(content);
+                        date.Format = DateTimePickerFormat.Short;
 
                         foreach (var opt in ParseOptions(opts))
                         {
@@ -918,11 +922,11 @@ namespace IronAHK.Rusty
 
                             switch (mode)
                             {
-                                case "1": break;
-                                case "2": break;
-                                case Keyword_Right: break;
-                                case Keyword_LongDate: break;
-                                case Keyword_Time: break;
+                                case "1": date.ShowUpDown = on; break;
+                                case "2": date.ShowCheckBox = on; break;
+                                case Keyword_Right: date.DropDownAlign = LeftRightAlignment.Right; break; //***Bug*** - case dont match!
+                                case Keyword_LongDate: date.Format = DateTimePickerFormat.Long; date.Value = DateTime.Now; break;
+                                case Keyword_Time: date.Format = DateTimePickerFormat.Time; date.Value = DateTime.Now; break;
 
                                 default:
                                     if (mode.StartsWith(Keyword_Range))
@@ -1702,10 +1706,80 @@ namespace IronAHK.Rusty
             switch (cmd)
             {
                 case Keyword_Text:
-                case "":
                     if (ctrl is TextBox)
                         arg = NormaliseEol(arg);
                     ctrl.Text = arg;
+                    break;
+
+               case "":
+                    {
+                        if (ctrl is ProgressBar || ctrl is TrackBar || ctrl is NumericUpDown)
+                        {
+                            int argAsInt;
+                            if (int.TryParse(arg, out argAsInt))
+                                SafeSetProperty(ctrl,"Value",argAsInt);
+                            
+                        }
+                        else
+                        {
+                            if (ctrl is DateTimePicker)
+                            {
+                                DateTime argAsDateTime = ToDateTime(arg);
+                                if (!(string.IsNullOrEmpty(arg)))
+                                    SafeSetProperty(ctrl, "Value", argAsDateTime);
+                                else
+                                    SafeSetProperty(ctrl, "Value", DateTime.Now);
+                            }
+                            else
+                            {
+                                if (ctrl is ComboBox)
+                                {
+                                    if (SubStr(arg, 1, 1) == "|")
+                                        ((ComboBox)ctrl).Items.Clear(); arg = SubStr(arg, 2, StrLen(arg) - 1);
+                                    string[] argAsStringArray = arg.Split('|');
+                                    foreach (string s in argAsStringArray)
+                                            ((ComboBox)ctrl).Items.Add(s);
+                                }
+                                else
+                                {
+                                    if (ctrl is PictureBox)
+                                    {
+                                        if (File.Exists(arg))
+                                        {
+                                            try
+                                                {
+                                                    SafeSetProperty(ctrl, "ImageLocation", arg);
+                                                }
+                                            catch(Exception){ }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        if (ctrl is WebBrowser)
+                                        {
+                                            ((WebBrowser)ctrl).Navigate(arg);
+                                        }
+                                        else
+                                        {
+                                            if (ctrl is ListBox)
+                                            {
+                                                if (SubStr(arg, 1, 1) == "|")
+                                                    ((ListBox)ctrl).Items.Clear(); arg = SubStr(arg, 2, StrLen(arg) - 1);
+                                                string[] argAsStringArray = arg.Split('|');
+                                                foreach (string s in argAsStringArray)
+                                                        ((ListBox)ctrl).Items.Add(s);
+                                            }
+                                            else
+                                            {
+                                                arg = NormaliseEol(arg);
+                                                SafeSetProperty(ctrl, "Text", arg);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
                     break;
 
                 case Keyword_Move:
@@ -1843,9 +1917,58 @@ namespace IronAHK.Rusty
             switch (command)
             {
                 case Keyword_Text:
-                case "":
                     result = ctrl.Text;
                     break;
+                case "":
+                    {
+                        if (ctrl is ProgressBar)
+                        {
+                            result = ((ProgressBar)ctrl).Value.ToString();
+                            break;
+                        }
+                        if (ctrl is ComboBox)
+                        {
+                            result = ((ComboBox)ctrl).SelectedText;
+                            break;
+                        }
+                        if (ctrl is TrackBar)
+                        {
+                            result = ((TrackBar)ctrl).Value.ToString();
+                            break;
+                        }
+                        if (ctrl is ListBox)
+                        {
+                            result = ((ListBox)ctrl).SelectedItems.ToString();
+                            break;
+                        }
+                        if (ctrl is DateTimePicker)
+                        {
+                            result = ((DateTimePicker)ctrl).Value.ToString();
+                            break;
+                        }
+                        if (ctrl is MonthCalendar)
+                        {
+                            //TODO: MonthCalender Get!
+                            break;
+                        }
+                        if (ctrl is WebBrowser)
+                        {
+                            result = ((WebBrowser)ctrl).Url.ToString();
+                            break;
+                        }
+                        if (ctrl is PictureBox)
+                        {
+                            result = ((PictureBox)ctrl).ImageLocation;
+                            break;
+                        }
+                        if (ctrl is NumericUpDown)
+                        {
+                            result = ((NumericUpDown)ctrl).Value.ToString();
+                            break;
+                        }
+                        result = ctrl.Text;
+                        break;
+                    }
 
                 case Keyword_Pos:
                     {
