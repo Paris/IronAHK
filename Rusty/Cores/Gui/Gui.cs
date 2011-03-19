@@ -1717,7 +1717,7 @@ namespace IronAHK.Rusty
                         {
                             int argAsInt;
                             if (int.TryParse(arg, out argAsInt))
-                                SafeSetProperty(ctrl,"Value",argAsInt);
+                                SafeSetProperty(ctrl, "Value", argAsInt);
                             
                         }
                         else
@@ -1921,52 +1921,27 @@ namespace IronAHK.Rusty
                     break;
                 case "":
                     {
-                        if (ctrl is ProgressBar)
-                        {
+                        if(ctrl is ProgressBar) {
                             result = ((ProgressBar)ctrl).Value.ToString();
-                            break;
-                        }
-                        if (ctrl is ComboBox)
-                        {
+                        } else if(ctrl is ComboBox) {
                             result = ((ComboBox)ctrl).SelectedText;
-                            break;
-                        }
-                        if (ctrl is TrackBar)
-                        {
+                        } else if(ctrl is TrackBar) {
                             result = ((TrackBar)ctrl).Value.ToString();
-                            break;
-                        }
-                        if (ctrl is ListBox)
-                        {
+                        } else if(ctrl is ListBox) {
                             result = ((ListBox)ctrl).SelectedItems.ToString();
-                            break;
-                        }
-                        if (ctrl is DateTimePicker)
-                        {
+                        } else if(ctrl is DateTimePicker) {
                             result = ((DateTimePicker)ctrl).Value.ToString();
-                            break;
-                        }
-                        if (ctrl is MonthCalendar)
-                        {
+                        } else if(ctrl is MonthCalendar) {
                             //TODO: MonthCalender Get!
-                            break;
-                        }
-                        if (ctrl is WebBrowser)
-                        {
+                        } else if(ctrl is WebBrowser) {
                             result = ((WebBrowser)ctrl).Url.ToString();
-                            break;
-                        }
-                        if (ctrl is PictureBox)
-                        {
+                        } else if(ctrl is PictureBox) {
                             result = ((PictureBox)ctrl).ImageLocation;
-                            break;
-                        }
-                        if (ctrl is NumericUpDown)
-                        {
+                        } else if(ctrl is NumericUpDown) {
                             result = ((NumericUpDown)ctrl).Value.ToString();
-                            break;
+                        } else {
+                            result = ctrl.Text;
                         }
-                        result = ctrl.Text;
                         break;
                     }
 
