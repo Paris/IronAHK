@@ -1605,7 +1605,11 @@ namespace IronAHK.Rusty
                             case 'p':
                             case 'P':
                                 {
-                                    var last = GuiAssociatedInfo(control).LastControl;
+                                    Control last = null;
+                                    try {
+                                        last = GuiAssociatedInfo(control).LastControl;
+                                    } catch(InvalidOperationException) { }
+
                                     if (last == null)
                                         return;
                                     var s = last.Location;
@@ -1615,10 +1619,14 @@ namespace IronAHK.Rusty
 
                             case '+':
                                 {
-                                    var s = GuiAssociatedInfo(control).LastControl;
-                                    if (s == null)
+                                    Control last = null;
+                                    try {
+                                        last = GuiAssociatedInfo(control).LastControl;
+                                    } catch(InvalidOperationException) { }
+
+                                    if(last == null)
                                         return;
-                                    p = alt ? s.Location.Y + s.Size.Height : s.Location.X + s.Size.Width;
+                                    p = alt ? last.Location.Y + last.Size.Height : last.Location.X + last.Size.Width;
                                 }
                                 break;
 
@@ -1659,7 +1667,11 @@ namespace IronAHK.Rusty
 
                         if (offset)
                         {
-                            var last = GuiAssociatedInfo(control).LastControl;
+                            Control last = null;
+                            try {
+                                last = GuiAssociatedInfo(control).LastControl;
+                            } catch(InvalidOperationException) { }
+
                             if (last == null)
                                 return;
                             var s = last.Size;
