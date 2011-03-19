@@ -202,10 +202,10 @@ namespace IronAHK.Rusty
                 case Keyword_Color:
                     Color c;
                     if(Keyword_Default.Equals(Param2, StringComparison.OrdinalIgnoreCase))
-                        c =  Color.LightGray; //TODO: Use correcty Control color, BUT NOT Transparent.
+                        c = Color.LightGray; //TODO: Use correctly Control color, BUT NOT Transparent.
                     else
                         c = ParseColor(Param2);
-                    if(c.A != 0x00)
+                    if(c.A == 0xFF)
                         guis[id].BackColor = c;
                     break;
 
