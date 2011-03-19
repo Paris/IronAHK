@@ -200,7 +200,13 @@ namespace IronAHK.Rusty
                     break;
 
                 case Keyword_Color:
-                    guis[id].BackColor = Keyword_Default.Equals(Param2, StringComparison.OrdinalIgnoreCase) ? Color.Transparent : ParseColor(Param2);
+                    Color c;
+                    if(Keyword_Default.Equals(Param2, StringComparison.OrdinalIgnoreCase))
+                        c =  Color.LightGray; //TODO: Use correcty Control color, BUT NOT Transparent.
+                    else
+                        c = ParseColor(Param2);
+                    if(c.A != 0x00)
+                        guis[id].BackColor = c;
                     break;
 
                 case Keyword_Margin:
