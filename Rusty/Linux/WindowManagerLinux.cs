@@ -11,10 +11,10 @@ namespace IronAHK.Rusty.Linux
     public class WindowManagerLinux : WindowManager
     {
         // ToDo: There may be more than only one xDisplay
-        XDisplay display = null;
+        XDisplay _display = null;
 
         public WindowManagerLinux() {
-            display = XDisplay.GetDefault();
+            _display = XDisplay.Default;
         }
 
         public override SystemWindow LastFound {
@@ -39,7 +39,9 @@ namespace IronAHK.Rusty.Linux
         }
 
         public override SystemWindow ActiveWindow {
-            get { throw new NotImplementedException(); }
+            get {
+                return new LinuxWindow(_display.XGetInputFocus());
+            }
         }
 
         public override SystemWindow FindWindow(SearchCriteria criteria) {

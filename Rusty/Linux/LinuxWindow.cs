@@ -9,14 +9,22 @@ namespace IronAHK.Rusty.Linux
 {
     public class LinuxWindow : SystemWindow
     {
-        private XWindow xwindow = null;
+        #region Fields
 
-        public LinuxWindow(IntPtr handle) : base(handle) { }
+        XWindow _xwindow = null;
+
+        #endregion
+
+        #region Constructors
+
+        LinuxWindow(IntPtr handle) : base(handle) { }
 
         internal LinuxWindow(XWindow uxwindow)
             : this(new IntPtr(uxwindow.ID)) {
-            xwindow = uxwindow;
+            _xwindow = uxwindow;
         }
+
+        #endregion
 
         public override IntPtr PID {
             get { throw new NotImplementedException(); }
@@ -49,7 +57,7 @@ namespace IronAHK.Rusty.Linux
 
         public override Point Location {
             get {
-                var attr = xwindow.Attributes;
+                var attr = _xwindow.Attributes;
                 return new Point(attr.x, attr.y);
             }
             set {
@@ -59,7 +67,7 @@ namespace IronAHK.Rusty.Linux
 
         public override Size Size {
             get {
-                var attr = xwindow.Attributes;
+                var attr = _xwindow.Attributes;
                 return new Size(attr.width, attr.height);
             }
             set {
@@ -70,13 +78,13 @@ namespace IronAHK.Rusty.Linux
         public override string Title {
             get {
 				LinuxAPI.XTextProperty Prop = new LinuxAPI.XTextProperty();
-				LinuxAPI.X11.XGetTextProperty(xwindow.XDisplay.Handle, xwindow.ID, ref Prop, LinuxAPI.Atom.XA_WM_NAME);
+				LinuxAPI.X11.XGetTextProperty(_xwindow.XDisplay.Handle, _xwindow.ID, ref Prop, LinuxAPI.Atom.XA_WM_NAME);
 				return Prop.value;
             }
             set {
 				LinuxAPI.XTextProperty Prop = new LinuxAPI.XTextProperty();
 				Prop.value = value;
-				LinuxAPI.X11.XSetTextProperty(xwindow.XDisplay.Handle, xwindow.ID, ref Prop, LinuxAPI.Atom.XA_WM_NAME);
+				LinuxAPI.X11.XSetTextProperty(_xwindow.XDisplay.Handle, _xwindow.ID, ref Prop, LinuxAPI.Atom.XA_WM_NAME);
             }
         }
 
