@@ -111,6 +111,21 @@ namespace IronAHK.Rusty
         }
 
         [ThreadStatic]
+        static long lastFoundForm = 0;
+
+        static long LastFoundForm
+        {
+            get
+            {
+                return lastFoundForm;
+            }
+            set
+            {
+                lastFoundForm = value;
+            }
+        }
+
+        [ThreadStatic]
         static TreeView defaultTreeView;
 
         static TreeView DefaultTreeView
