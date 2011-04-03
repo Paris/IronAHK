@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using IronAHK.Rusty.Cores.SystemWindow;
 
 namespace IronAHK.Rusty
 {
@@ -52,13 +53,16 @@ namespace IronAHK.Rusty
                 ParamLine = RE_Coord.Replace(ParamLine, string.Empty); //remove coord
                 if (coords.Mouse == CoordModeType.Relative)
                 {
-                    WindowsAPI.RECT rect;
-                    WindowsAPI.GetWindowRect(WindowsAPI.GetForegroundWindow(), out rect);
-                    MousePos.X += rect.Left;
-                    MousePos.Y += rect.Top;
+                    var foreGroundWindow = SysWindowManager.Instance.ActiveWindow;
+                    if(foreGroundWindow != null) {
+                        var location = foreGroundWindow.Location;
+                        MousePos.X += location.X;
+                        MousePos.Y += location.Y;
+                    }
                 }
                 Cursor.Position = MousePos;
             }
+
             //click count
             if (RE_Num.IsMatch(ParamLine))
             {
@@ -67,6 +71,7 @@ namespace IronAHK.Rusty
                 if (ClickCount <= 0)
                     return;
             }
+
             if (Environment.OSVersion.Platform == PlatformID.Win32NT)
             {
                 var aInput = new WindowsAPI.INPUT[2];
