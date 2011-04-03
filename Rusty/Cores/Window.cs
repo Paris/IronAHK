@@ -511,6 +511,11 @@ namespace IronAHK.Rusty
         /// <returns></returns>
         public static long WinExist(string title = null, string text = null, string excludeTitle = null, string excludeText = null)
         {
+            if (title == string.Empty)
+            {
+                if (LastFoundForm != 0)
+                    return LastFoundForm;
+            }
             var win = windowManager.FindWindow(title, text, excludeTitle, excludeText);
             return win.Handle.ToInt64();
         }
