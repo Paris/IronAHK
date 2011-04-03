@@ -10,20 +10,20 @@ namespace IronAHK.Rusty.Linux.Proxies
     /// </summary>
     internal class XDisplay : IDisposable
     {
-        private IntPtr handle = IntPtr.Zero;
+        static IntPtr _defaultDisp = IntPtr.Zero;
+        readonly IntPtr _handle = IntPtr.Zero;
 
         public XDisplay(IntPtr prt) {
-            Handle = prt;
+            _handle = prt;
         }
 
         public IntPtr Handle {
-            get { return handle; }
-            set { handle = value; }
+            get { return _handle; }
         }
 
         public XWindow Root {
             get {
-                return new XWindow(this, LinuxAPI.X11.XDefaultRootWindow(this.handle));
+                return new XWindow(this, LinuxAPI.X11.XDefaultRootWindow(this._handle));
             }
         }
 
@@ -45,7 +45,7 @@ namespace IronAHK.Rusty.Linux.Proxies
             IntPtr children_return;
             int nchildren_return;
 
-            LinuxAPI.X11.XQueryTree(Handle, windowToObtain.ID, out root_return, out parent_return, out children_return, out nchildren_return);
+            LinuxAPI.X11.XQueryTree(_handle, windowToObtain.ID, out root_return, out parent_return, out children_return, out nchildren_return);
             var childs = new int[nchildren_return];
             Marshal.Copy(children_return, childs, 0, nchildren_return);
 
@@ -57,12 +57,31 @@ namespace IronAHK.Rusty.Linux.Proxies
             return wins;
         }
 
-        public static XDisplay GetDefault() {
-            return new XDisplay(LinuxAPI.X11.XOpenDisplay(IntPtr.Zero));
+
+        /// <summary>
+        /// Returns the window which currently has input focus
+        /// </summary>
+        /// <returns></returns>
+        public XWindow XGetInputFocus() {
+            int hwndWnd;
+            int focusState;
+            LinuxAPI.X11.XGetInputFocus(_handle, out hwndWnd, out focusState);
+
+            return new XWindow(this, hwndWnd);
+        }
+
+
+        public static XDisplay Default {
+            get {
+                if(_defaultDisp == IntPtr.Zero)
+                    _defaultDisp = LinuxAPI.X11.XOpenDisplay(IntPtr.Zero);
+                return new XDisplay(_defaultDisp);
+            }
         }
 
         public void Dispose() {
-            LinuxAPI.X11.XCloseDisplay(handle);
+            if(_handle != IntPtr.Zero && _handle != _defaultDisp)
+                LinuxAPI.X11.XCloseDisplay(_handle);
         }
     }
 }

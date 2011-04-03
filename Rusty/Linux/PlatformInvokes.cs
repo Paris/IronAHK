@@ -42,7 +42,8 @@ namespace IronAHK.Rusty.Linux
             [DllImport("libX11")]
             internal extern static int XGetWindowAttributes(IntPtr display, int window, ref XWindowAttributes attributes);
 
-
+            [DllImport("libX11")]
+            internal extern static int XGetInputFocus(IntPtr display, out int window, out int focusState);
 
             [DllImport("libX11")]
             public static extern void XNextEvent(IntPtr Display, ref XEvent Event);
