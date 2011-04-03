@@ -288,8 +288,8 @@ namespace IronAHK.Rusty
                                 case Keyword_Border: break;
                                 case Keyword_Caption: break;
                                 case Keyword_Disabled: guis[id].Enabled = !on; break;
-                                case Keyword_LastFound: break;
-                                case Keyword_LastFoundExist: break;
+                                case Keyword_LastFound: lastFoundForm = guis[id].Handle.ToInt64(); break;
+                                case Keyword_LastFoundExist: lastFoundForm = guis[id].Handle.ToInt64(); break;
                                 case Keyword_MaximizeBox: guis[id].MaximizeBox = on; break;
                                 case Keyword_MinimizeBox: guis[id].MinimizeBox = on; break;
                                 case Keyword_OwnDialogs: dialogOwner = guis[id]; break;
