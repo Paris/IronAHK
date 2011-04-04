@@ -13,7 +13,7 @@ namespace IronAHK.Rusty.Linux.X11.Events
         internal bool send_event;
         internal IntPtr display;
         internal int window;
-        internal Atom atom;
+        internal XAtom atom;
         internal IntPtr time;
         internal int state;
     }
