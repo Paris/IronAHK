@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using IronAHK.Rusty.Linux.X11.Types;
+using IronAHK.Rusty.Linux.X11;
 
 namespace IronAHK.Rusty.Linux.Proxies
 {
@@ -9,7 +11,7 @@ namespace IronAHK.Rusty.Linux.Proxies
     /// </summary>
     internal class XWindow
     {
-        LinuxAPI.XWindowAttributes _attributes;
+        XWindowAttributes _attributes;
         XDisplay _display = null;
         int _id;
 
@@ -35,9 +37,9 @@ namespace IronAHK.Rusty.Linux.Proxies
             }
         }
 
-        public LinuxAPI.XWindowAttributes Attributes {
+        public XWindowAttributes Attributes {
             get {
-                if(LinuxAPI.X11.XGetWindowAttributes(this._display.Handle, this.ID, ref _attributes) == 0) {
+                if(Xlib.XGetWindowAttributes(this._display.Handle, this.ID, ref _attributes) == 0) {
                     throw new XWindowException();
                 }
                 return _attributes;

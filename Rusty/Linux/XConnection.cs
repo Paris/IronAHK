@@ -1,11 +1,13 @@
 using System;
-using System.Threading;
-using System.Runtime.InteropServices;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
+using System.Threading;
+using IronAHK.Rusty.Linux.X11;
+using IronAHK.Rusty.Linux.X11.Events;
 
 namespace IronAHK.Rusty.Linux
 {
-	internal delegate void XEventHandler(LinuxAPI.XEvent Event);
+	internal delegate void XEventHandler(XEvent Event);
 	
     /// <summary>
     /// Singleton class to keep track of all active windows and their 
@@ -26,12 +28,12 @@ namespace IronAHK.Rusty.Linux
 		#endregion
 		
 		// These are the events we subscribe to, in order to allow hotkey/hotstring support
-        readonly static LinuxAPI.EventMasks SelectMask = LinuxAPI.EventMasks.KeyPress |
-			LinuxAPI.EventMasks.FocusChange | LinuxAPI.EventMasks.SubstructureNofity  | 
-			LinuxAPI.EventMasks.KeyRelease | LinuxAPI.EventMasks.Exposure;
+        readonly static EventMasks SelectMask = EventMasks.KeyPress |
+			EventMasks.FocusChange | EventMasks.SubstructureNofity  | 
+			EventMasks.KeyRelease | EventMasks.Exposure;
 		IntPtr Display;
 		Thread Listener;
-		LinuxAPI.XErrorHandler OldHandler;
+		XErrorHandler OldHandler;
 		List<int> Windows;
 		
 		internal event XEventHandler OnEvent;
@@ -45,9 +47,9 @@ namespace IronAHK.Rusty.Linux
 			set 
 			{
 				if(value && !mSurpressErrors) 
-					OldHandler = LinuxAPI.X11.XSetErrorHandler(delegate { Success = false; return 0; });
+					OldHandler = Xlib.XSetErrorHandler(delegate { Success = false; return 0; });
 				else if(!value && mSurpressErrors)
-					LinuxAPI.X11.XSetErrorHandler(OldHandler);
+					Xlib.XSetErrorHandler(OldHandler);
 				mSurpressErrors = value;
 			}
 			get { return mSurpressErrors; }
@@ -69,16 +71,16 @@ namespace IronAHK.Rusty.Linux
 		public void Dispose()
 		{
 			Listener.Abort();
-            LinuxAPI.X11.XCloseDisplay(Display);
+            Xlib.XCloseDisplay(Display);
 		}
 		
 		void Listen()
         {
-            Display = LinuxAPI.X11.XOpenDisplay(IntPtr.Zero);
+            Display = Xlib.XOpenDisplay(IntPtr.Zero);
             
             // Select all the windows already present
 			SurpressErrors = true;
-            RecurseTree(Display, LinuxAPI.X11.XDefaultRootWindow(Display));
+            RecurseTree(Display, Xlib.XDefaultRootWindow(Display));
 			SurpressErrors = false;
             
             while (true)
@@ -90,13 +92,13 @@ namespace IronAHK.Rusty.Linux
         
         private void FishEvent()
         {
-            var Event = new LinuxAPI.XEvent();
-            LinuxAPI.X11.XNextEvent(Display, ref Event);
+            var Event = new XEvent();
+            Xlib.XNextEvent(Display, ref Event);
 			
 			if(OnEvent != null)
 				OnEvent(Event);
 			
-			if (Event.type == LinuxAPI.XEventName.CreateNotify)
+			if (Event.type == XEventName.CreateNotify)
 			{
 				int Window = Event.CreateWindowEvent.window;
 				Success = true;
@@ -109,7 +111,7 @@ namespace IronAHK.Rusty.Linux
 				
 				SurpressErrors = false;
 			}
-			else if(Event.type == LinuxAPI.XEventName.DestroyNotify)
+			else if(Event.type == XEventName.DestroyNotify)
 			{
 				Windows.Remove(Event.DestroyWindowEvent.window);
 			}
@@ -132,7 +134,7 @@ namespace IronAHK.Rusty.Linux
 				Windows.Add(RootWindow);
 			
 			// Request all children of the given window, along with the parent
-            LinuxAPI.X11.XQueryTree(Display, RootWindow, out RootWindowRet, out ParentWindow, out ChildrenPtr, out NChildren);
+            Xlib.XQueryTree(Display, RootWindow, out RootWindowRet, out ParentWindow, out ChildrenPtr, out NChildren);
 
             if (NChildren != 0)
             {
@@ -140,14 +142,14 @@ namespace IronAHK.Rusty.Linux
                 Children = new int[NChildren];
                 Marshal.Copy(ChildrenPtr, Children, 0, NChildren);
 
-                LinuxAPI.X11.XSelectInput(Display, RootWindow, SelectMask);
+                Xlib.XSelectInput(Display, RootWindow, SelectMask);
 
                 // Subwindows shouldn't be forgotten, especially since everything is a subwindow of RootWindow
                 for (int i = 0; i < NChildren; i++) 
                 {
                     if (Children[i] != 0)
                     {
-                        LinuxAPI.X11.XSelectInput(Display, Children[i], SelectMask);
+                        Xlib.XSelectInput(Display, Children[i], SelectMask);
                         RecurseTree(Display, Children[i]);
                     }
                 }
