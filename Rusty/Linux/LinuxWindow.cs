@@ -79,14 +79,14 @@ namespace IronAHK.Rusty.Linux
 
         public override string Title {
             get {
-				XTextProperty Prop = new XTextProperty();
-				Xlib.XGetTextProperty(_xwindow.XDisplay.Handle, _xwindow.ID, ref Prop, Atom.XA_WM_NAME);
-				return Prop.value;
+				var prop = new XTextProperty();
+				Xlib.XGetTextProperty(_xwindow.XDisplay.Handle, _xwindow.ID, ref prop, XAtom.XA_WM_NAME);
+				return prop.GetText();
             }
             set {
 				var prop = new XTextProperty();
-                prop.value = value;
-                Xlib.XSetTextProperty(_xwindow.XDisplay.Handle, _xwindow.ID, ref prop, Atom.XA_WM_NAME);
+                prop.SetText(value);
+                Xlib.XSetTextProperty(_xwindow.XDisplay.Handle, _xwindow.ID, ref prop, XAtom.XA_WM_NAME);
             }
         }
 

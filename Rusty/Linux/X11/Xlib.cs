@@ -10,6 +10,10 @@ namespace IronAHK.Rusty.Linux.X11
 
         internal class Xlib
         {
+
+            [DllImport("X11")]
+            extern public static int XFree(IntPtr ptr);
+
             [DllImport("libX11")]
             public static extern IntPtr XOpenDisplay(IntPtr From);
 
@@ -59,6 +63,15 @@ namespace IronAHK.Rusty.Linux.X11
             [DllImport("libX11")]
             public static extern uint XStringToKeysym(string Convert);
 
+            [DllImport("X11")]
+            extern public static int XStringListToTextProperty
+                    (ref IntPtr argv, int argc, ref XTextProperty textprop);
+
+            [DllImport("X11")]
+            extern public static int XStringListToTextProperty
+                    (IntPtr[] argv, int argc, ref XTextProperty textprop);
+
+
             [DllImport("libXtst.so.6")]
             public extern static void XTestFakeKeyEvent(IntPtr Display, uint KeyCode, bool isPress, ulong delay);
 
@@ -66,9 +79,9 @@ namespace IronAHK.Rusty.Linux.X11
             public extern static uint XKeysymToKeycode(IntPtr Display, uint Keysym);
 			
 			[DllImport("libX11")]
-			public extern static int XGetTextProperty(IntPtr Display, int Window, ref XTextProperty Return, Atom Property);
+			public extern static int XGetTextProperty(IntPtr Display, int Window, ref XTextProperty Return, XAtom Property);
 			
 			[DllImport("libX11")]
-			public extern static void XSetTextProperty(IntPtr Display, int Window, ref XTextProperty Prop, Atom property);
+			public extern static void XSetTextProperty(IntPtr Display, int Window, ref XTextProperty Prop, XAtom property);
         }
 }
