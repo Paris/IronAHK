@@ -1,12 +1,14 @@
 using System;
 using System.Runtime.InteropServices;
 using System.Text;
+using IronAHK.Rusty.Linux.X11.Events;
+using IronAHK.Rusty.Linux.X11.Types;
 
-namespace IronAHK.Rusty.Linux
+namespace IronAHK.Rusty.Linux.X11
 {
-    partial class LinuxAPI
-    {
-        internal class X11
+        internal delegate int XErrorHandler(IntPtr DisplayHandle, ref XErrorEvent error_event);
+
+        internal class Xlib
         {
             [DllImport("libX11")]
             public static extern IntPtr XOpenDisplay(IntPtr From);
@@ -69,5 +71,4 @@ namespace IronAHK.Rusty.Linux
 			[DllImport("libX11")]
 			public extern static void XSetTextProperty(IntPtr Display, int Window, ref XTextProperty Prop, Atom property);
         }
-    }
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Runtime.InteropServices;
+using IronAHK.Rusty.Linux.X11;
 
 namespace IronAHK.Rusty.Linux.Proxies
 {
@@ -23,7 +24,7 @@ namespace IronAHK.Rusty.Linux.Proxies
 
         public XWindow Root {
             get {
-                return new XWindow(this, LinuxAPI.X11.XDefaultRootWindow(this._handle));
+                return new XWindow(this, Xlib.XDefaultRootWindow(this._handle));
             }
         }
 
@@ -45,7 +46,7 @@ namespace IronAHK.Rusty.Linux.Proxies
             IntPtr children_return;
             int nchildren_return;
 
-            LinuxAPI.X11.XQueryTree(_handle, windowToObtain.ID, out root_return, out parent_return, out children_return, out nchildren_return);
+            Xlib.XQueryTree(_handle, windowToObtain.ID, out root_return, out parent_return, out children_return, out nchildren_return);
             var childs = new int[nchildren_return];
             Marshal.Copy(children_return, childs, 0, nchildren_return);
 
@@ -65,7 +66,7 @@ namespace IronAHK.Rusty.Linux.Proxies
         public XWindow XGetInputFocus() {
             int hwndWnd;
             int focusState;
-            LinuxAPI.X11.XGetInputFocus(_handle, out hwndWnd, out focusState);
+            Xlib.XGetInputFocus(_handle, out hwndWnd, out focusState);
 
             return new XWindow(this, hwndWnd);
         }
@@ -74,14 +75,14 @@ namespace IronAHK.Rusty.Linux.Proxies
         public static XDisplay Default {
             get {
                 if(_defaultDisp == IntPtr.Zero)
-                    _defaultDisp = LinuxAPI.X11.XOpenDisplay(IntPtr.Zero);
+                    _defaultDisp = Xlib.XOpenDisplay(IntPtr.Zero);
                 return new XDisplay(_defaultDisp);
             }
         }
 
         public void Dispose() {
             if(_handle != IntPtr.Zero && _handle != _defaultDisp)
-                LinuxAPI.X11.XCloseDisplay(_handle);
+                Xlib.XCloseDisplay(_handle);
         }
     }
 }

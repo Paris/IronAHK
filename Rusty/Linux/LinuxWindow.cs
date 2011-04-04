@@ -4,6 +4,8 @@ using System.Text;
 using IronAHK.Rusty.Cores.SystemWindow;
 using IronAHK.Rusty.Linux.Proxies;
 using System.Drawing;
+using IronAHK.Rusty.Linux.X11;
+using IronAHK.Rusty.Linux.X11.Types;
 
 namespace IronAHK.Rusty.Linux
 {
@@ -77,14 +79,14 @@ namespace IronAHK.Rusty.Linux
 
         public override string Title {
             get {
-				LinuxAPI.XTextProperty Prop = new LinuxAPI.XTextProperty();
-				LinuxAPI.X11.XGetTextProperty(_xwindow.XDisplay.Handle, _xwindow.ID, ref Prop, LinuxAPI.Atom.XA_WM_NAME);
+				XTextProperty Prop = new XTextProperty();
+				Xlib.XGetTextProperty(_xwindow.XDisplay.Handle, _xwindow.ID, ref Prop, Atom.XA_WM_NAME);
 				return Prop.value;
             }
             set {
-				LinuxAPI.XTextProperty Prop = new LinuxAPI.XTextProperty();
-				Prop.value = value;
-				LinuxAPI.X11.XSetTextProperty(_xwindow.XDisplay.Handle, _xwindow.ID, ref Prop, LinuxAPI.Atom.XA_WM_NAME);
+				var prop = new XTextProperty();
+                prop.value = value;
+                Xlib.XSetTextProperty(_xwindow.XDisplay.Handle, _xwindow.ID, ref prop, Atom.XA_WM_NAME);
             }
         }
 
