@@ -552,7 +552,31 @@ namespace IronAHK.Rusty
         /// </param>
         public static void FileMove(string source, string destination, int flag = 0)
         {
-            // TODO: FileMove
+            try
+            {
+                if (source == destination)
+                {
+                    ErrorLevel = 1;
+                    return;
+                }
+                if (File.Exists(destination))
+                {
+                    if (flag == 0)
+                    {
+                        ErrorLevel = 1;
+                        return;
+                    }
+                    else
+                    {
+                        File.Delete(destination);
+                    }
+                }
+                if (File.Exists(source))
+                {
+                        File.Move(source, destination);
+                }
+            }
+            catch (Exception) { ErrorLevel = 2; }
         }
 
         /// <summary>
