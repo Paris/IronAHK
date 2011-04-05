@@ -333,6 +333,22 @@ namespace IronAHK.Scripting
                             int d = ops == Script.Operator.Increment ? 1 : -1;
                             CodeMethodInvokeExpression shadow = null;
 
+                            // UNDONE: use generic approach to ++/-- for all types of operands? 
+                            if (x > -1 && parts[x] is CodeMethodInvokeExpression)
+                            {
+                                var sub = new List<object>(5);
+                                sub.Add(parts[x]);
+                                sub.Add(CodeBinaryOperatorType.Assign);
+                                sub.Add(parts[x]);
+                                sub.Add(Script.Operator.Add);
+                                sub.Add(d);
+
+                                parts.RemoveAt(i);
+                                parts[x] = ParseExpression(sub);
+                                i = x;
+                                continue;
+                            }
+
                             #region Compounding increment/decrement operators
 
                             if (LaxExpressions)
