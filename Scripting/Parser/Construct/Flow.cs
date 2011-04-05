@@ -353,14 +353,7 @@ namespace IronAHK.Scripting
 
             while (i < code.Length && IsSpace(code[i])) i++;
 
-            if (i == code.Length)
-            {
-                buf.Append(Not);
-                buf.Append(Equal);
-                buf.Append(StringBound);
-                buf.Append(StringBound);
-            }
-            else
+            if (i != code.Length) // if test argument is not a lone identifier then it is an expression
             {
                 var op = new[] { Equal, Not, Greater, Less };
                 
