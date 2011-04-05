@@ -57,15 +57,20 @@ namespace IronAHK.Scripting
                 var sub = new List<object>();
                 int next = Set(parts, i);
 
-                if (next > 0)
+                if (next == 0) // no enclosing set (...){...}[...] so scan until next bounary
                 {
-                    next++;
-                    for (; i < next; i++)
-                        sub.Add(parts[i]);
-                    i--;
+                    for (next = i; next < parts.Count; next++)
+                    {
+                        if (parts[next] is string && ((string)parts[next])[0] == Multicast)
+                            break;
+                    }
                 }
                 else
+                    next++; // set function returns n-1 index
+
+                for (; i < next; i++)
                     sub.Add(parts[i]);
+                i--;
 
                 value = ParseExpression(sub);
 
