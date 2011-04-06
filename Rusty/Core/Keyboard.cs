@@ -1,7 +1,7 @@
 using System;
-using IronAHK.Rusty.Cores.Common.Keyboard;
 using System.Text.RegularExpressions;
 using System.Collections.Generic;
+using IronAHK.Rusty.Common;
 
 namespace IronAHK.Rusty
 {
@@ -93,9 +93,9 @@ namespace IronAHK.Rusty
 
             #region Modify
 
-            HotkeyDefinition key;
+            Keyboard.HotkeyDefinition key;
 
-            try { key = HotkeyDefinition.Parse(KeyName); }
+            try { key = Keyboard.HotkeyDefinition.Parse(KeyName); }
             catch (ArgumentException)
             {
                 ErrorLevel = 2;
@@ -188,8 +188,8 @@ namespace IronAHK.Rusty
                 throw new ArgumentException();
             }
 
-            var options = HotstringDefinition.ParseOptions(Options);
-            var key = new HotstringDefinition(Sequence, proc) { Name = Sequence, Enabled = true, EnabledOptions = options };
+            var options = Keyboard.HotstringDefinition.ParseOptions(Options);
+            var key = new Keyboard.HotstringDefinition(Sequence, proc) { Name = Sequence, Enabled = true, EnabledOptions = options };
             hotstrings.Add(Sequence, key);
             keyboardHook.Add(key);
         }
@@ -223,7 +223,7 @@ namespace IronAHK.Rusty
         public static string GetKeyState(string KeyName, string Mode)
         {
             InitKeyboardHook();
-            var key = KeyParser.ParseKey(KeyName);
+            var key = Keyboard.KeyParser.ParseKey(KeyName);
             return keyboardHook.IsPressed(key) ? "1" : "0";
         }
 
@@ -248,8 +248,8 @@ namespace IronAHK.Rusty
         {
             InitKeyboardHook();
 
-            var keyWaitCommand = new KeyWaitCommand(keyboardHook);
-            var key = KeyParser.ParseKey(KeyName);
+            var keyWaitCommand = new Keyboard.KeyWaitCommand(keyboardHook);
+            var key = Keyboard.KeyParser.ParseKey(KeyName);
 
             #region Parse Options
 
@@ -322,7 +322,7 @@ namespace IronAHK.Rusty
             InitKeyboardHook();
 
             var optsItems = new Dictionary<string, Regex>();
-            var inputHandler = IAInputCommand.Instance;
+            var inputHandler = Keyboard.IAInputCommand.Instance;
 
             if(inputHandler.IsBusy) { // is there another Thread using this command already?
                 inputHandler.AbortCatching(); // force to stop it
@@ -384,7 +384,7 @@ namespace IronAHK.Rusty
             }
 
             // Parse EndKeys
-            var endkeys = KeyParser.ParseKeyStream(EndKeys);
+            var endkeys = Keyboard.KeyParser.ParseKeyStream(EndKeys);
             foreach(var key in endkeys)
                 inputHandler.Endkeys.Add(key);
 

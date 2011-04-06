@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
+using IronAHK.Rusty.Common;
 using IronAHK.Rusty.Windows;
 using IronAHK.Rusty.Linux;
-using IronAHK.Rusty.Cores.Common.Keyboard;
 
 namespace IronAHK.Rusty
 {
@@ -19,20 +19,20 @@ namespace IronAHK.Rusty
         static void InitKeyboardHook()
         {
             if (hotkeys == null)
-                hotkeys = new Dictionary<string, HotkeyDefinition>();
+                hotkeys = new Dictionary<string, Keyboard.HotkeyDefinition>();
 
             if (hotstrings == null)
-                hotstrings = new Dictionary<string, HotstringDefinition>();
+                hotstrings = new Dictionary<string, Keyboard.HotstringDefinition>();
 
             if (keyboardHook != null)
                 return;
 
             if (Environment.OSVersion.Platform == PlatformID.Win32NT)
-                keyboardHook = new KeyboardHookWindows();
+                keyboardHook = new Windows.KeyboardHook();
             else
-                keyboardHook = new KeyboardHookLinux();
+                keyboardHook = new Linux.KeyboardHook();
 
-            IAInputCommand.Instance.Hook = keyboardHook;
+            Keyboard.IAInputCommand.Instance.Hook = keyboardHook;
         }
 
         static void InitGui()
