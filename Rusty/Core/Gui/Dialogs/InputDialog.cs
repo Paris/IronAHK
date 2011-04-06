@@ -2,7 +2,7 @@ using System;
 using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
-using IronAHK.Rusty.Cores.Gui;
+using IronAHK.Rusty.Common;
 
 namespace IronAHK.Rusty
 {
@@ -95,14 +95,14 @@ namespace IronAHK.Rusty
         public string Title {
             get { return this.Text; }
             set {
-                GUIInvokeHelper.SetText(this, value);
+                GuiInvoker.SetText(this, value);
             }
         }
 
         public string Prompt {
             get { return prompt.Text; } 
             set {
-                GUIInvokeHelper.SetText(prompt, value);
+                GuiInvoker.SetText(prompt, value);
             } 
         }
 
@@ -124,7 +124,7 @@ namespace IronAHK.Rusty
 
         public string Message {
             get { return txtMessage.Text; }
-            set { GUIInvokeHelper.SetText(txtMessage, value); }
+            set { GuiInvoker.SetText(txtMessage, value); }
         }
 
         #endregion
