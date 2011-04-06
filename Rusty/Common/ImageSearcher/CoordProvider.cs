@@ -4,7 +4,7 @@ using System.Text;
 using System.Drawing;
 using System.Threading;
 
-namespace IronAHK.Rusty
+namespace IronAHK.Rusty.Common
 {
     /// <summary>
     /// Create a global Instance of CoordProvider and use it multithreaded

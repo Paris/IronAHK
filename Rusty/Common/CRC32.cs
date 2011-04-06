@@ -1,6 +1,6 @@
 ﻿using System.Security.Cryptography;
 
-namespace IronAHK.Rusty
+namespace IronAHK.Rusty.Common
 {
     /// <summary>
     /// Adapted from http://tomkaminski.com/crc32-hashalgorithm-c-net

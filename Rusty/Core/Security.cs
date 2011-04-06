@@ -74,7 +74,7 @@ namespace IronAHK.Rusty
         public static long CRC32(object value)
         {
             var raw = ToByteArray(value);
-            var alg = new CRC32();
+            var alg = new Common.CRC32();
             alg.ComputeHash(raw);
             return alg.Value;
         }
