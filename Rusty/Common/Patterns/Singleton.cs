@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace IronAHK.Rusty.Patterns
+namespace IronAHK.Rusty.Common
 {
     /// <summary>
     /// generic for singletons
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public class Singleton<T> where T : new()
+    class Singleton<T> where T : new()
     {
         // ctor
         protected Singleton() {
