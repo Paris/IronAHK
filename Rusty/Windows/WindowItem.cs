@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using IronAHK.Rusty.Cores.SystemWindow;
 using System.Drawing;
 using System.Windows.Forms;
+using IronAHK.Rusty.Common;
 
 namespace IronAHK.Rusty.Windows
 {
@@ -11,11 +11,11 @@ namespace IronAHK.Rusty.Windows
     /// <summary>
     /// represents a window under windows operating system
     /// </summary>
-    public class WindowWindows : SystemWindow
+    class WindowItem : Common.Window.WindowItemBase
     {
         #region Constructor
 
-        public WindowWindows(IntPtr handle) : base(handle) { }
+        public WindowItem(IntPtr handle) : base(handle) { }
 
         #endregion
 
@@ -28,27 +28,29 @@ namespace IronAHK.Rusty.Windows
             }
         }
 
-        public override SystemWindow ParentWindow {
+        public override Window.WindowItemBase ParentWindow
+        {
             get {
-                return new WindowWindows(WindowsAPI.GetAncestor(this.Handle, WindowsAPI.gaFlags.GA_PARENT));
+                return new WindowItem(WindowsAPI.GetAncestor(this.Handle, WindowsAPI.gaFlags.GA_PARENT));
             }
         }
 
         /// <summary>
         /// returns the previous Window
         /// </summary>
-        public override SystemWindow PreviousWindow {
+        public override Window.WindowItemBase PreviousWindow
+        {
             get {
                 if(!IsSpecified)
                     return null;
 
-                return new WindowWindows(WindowsAPI.GetWindow(this.Handle, WindowsAPI.GW_HWNDPREV));
+                return new WindowItem(WindowsAPI.GetWindow(this.Handle, WindowsAPI.GW_HWNDPREV));
             }
         }
 
         public override bool Active {
             get {
-                return IsSpecified && SysWindowManager.Instance.ActiveWindow == this;
+                return IsSpecified && Window.WindowItemProvider.Instance.ActiveWindow == this;
             }
             set {
                 if(IsSpecified)
@@ -229,13 +231,14 @@ namespace IronAHK.Rusty.Windows
             }
         }
 
-        public override IEnumerable<SystemWindow> ChildWindows {
+        public override IEnumerable<Window.WindowItemBase> ChildWindows
+        {
             get {
-                var childs = new List<SystemWindow>();
+                var childs = new List<Window.WindowItemBase>();
                 if(this.IsSpecified) {
                     WindowsAPI.EnumChildWindows(this.Handle, delegate(IntPtr hwnd, int lParam)
                     {
-                        childs.Add(new WindowWindows(hwnd));
+                        childs.Add(new WindowItem(hwnd));
                         return true;
                     }, 0);
                 }
@@ -384,10 +387,11 @@ namespace IronAHK.Rusty.Windows
         /// </summary>
         /// <param name="location"></param>
         /// <returns></returns>
-        public override SystemWindow RealChildWindowFromPoint(Point location) {
-            SystemWindow child = null;
+        public override Window.WindowItemBase RealChildWindowFromPoint(Point location)
+        {
+            Window.WindowItemBase child = null;
             if(this.IsSpecified)
-                child = new WindowWindows(WindowsAPI.RealChildWindowFromPoint(this.Handle, location));
+                child = new WindowItem(WindowsAPI.RealChildWindowFromPoint(this.Handle, location));
             return child;  
         }
 

@@ -1,15 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using IronAHK.Rusty.Cores.SystemWindow;
 using IronAHK.Rusty.Linux.Proxies;
 using System.Drawing;
 using IronAHK.Rusty.Linux.X11;
 using IronAHK.Rusty.Linux.X11.Types;
+using IronAHK.Rusty.Common;
 
 namespace IronAHK.Rusty.Linux
 {
-    public class LinuxWindow : SystemWindow
+    class WindowItem : Common.Window.WindowItemBase
     {
         #region Fields
 
@@ -19,9 +19,9 @@ namespace IronAHK.Rusty.Linux
 
         #region Constructors
 
-        LinuxWindow(IntPtr handle) : base(handle) { }
+        WindowItem(IntPtr handle) : base(handle) { }
 
-        internal LinuxWindow(XWindow uxwindow)
+        internal WindowItem(XWindow uxwindow)
             : this(new IntPtr(uxwindow.ID)) {
             _xwindow = uxwindow;
         }
@@ -32,11 +32,13 @@ namespace IronAHK.Rusty.Linux
             get { throw new NotImplementedException(); }
         }
 
-        public override SystemWindow ParentWindow {
+        public override Window.WindowItemBase ParentWindow
+        {
             get { throw new NotImplementedException(); }
         }
 
-        public override SystemWindow PreviousWindow {
+        public override Window.WindowItemBase PreviousWindow
+        {
             get { throw new NotImplementedException(); }
         }
 
@@ -134,7 +136,8 @@ namespace IronAHK.Rusty.Linux
             }
         }
 
-        public override IEnumerable<SystemWindow> ChildWindows {
+        public override IEnumerable<Window.WindowItemBase> ChildWindows
+        {
             get { throw new NotImplementedException(); }
         }
 
@@ -179,7 +182,8 @@ namespace IronAHK.Rusty.Linux
             throw new NotImplementedException();
         }
 
-        public override SystemWindow RealChildWindowFromPoint(System.Drawing.Point location) {
+        public override Window.WindowItemBase RealChildWindowFromPoint(System.Drawing.Point location)
+        {
             throw new NotImplementedException();
         }
 

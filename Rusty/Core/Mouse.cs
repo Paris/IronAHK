@@ -3,7 +3,7 @@ using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
-using IronAHK.Rusty.Cores.SystemWindow;
+using IronAHK.Rusty.Common;
 
 namespace IronAHK.Rusty
 {
@@ -53,7 +53,7 @@ namespace IronAHK.Rusty
                 ParamLine = RE_Coord.Replace(ParamLine, string.Empty); //remove coord
                 if (coords.Mouse == CoordModeType.Relative)
                 {
-                    var foreGroundWindow = SysWindowManager.Instance.ActiveWindow;
+                    var foreGroundWindow = Window.WindowItemProvider.Instance.ActiveWindow;
                     if(foreGroundWindow != null) {
 						var name = foreGroundWindow.Title;
                         var location = foreGroundWindow.Location;

@@ -1,23 +1,24 @@
 using System;
 using System.Windows.Forms;
-using IronAHK.Rusty.Cores.SystemWindow;
 using System.Collections.Generic;
 using System.Drawing;
 using IronAHK.Rusty.Linux.Proxies;
+using IronAHK.Rusty.Common;
 
 namespace IronAHK.Rusty.Linux
 {
 
-    public class WindowManagerLinux : WindowManager
+    class WindowManager : Common.Window.WindowManagerBase
     {
         // ToDo: There may be more than only one xDisplay
         XDisplay _display = null;
 
-        public WindowManagerLinux() {
+        public WindowManager() {
             _display = XDisplay.Default;
         }
 
-        public override SystemWindow LastFound {
+        public override Window.WindowItemBase LastFound
+        {
             get {
                 throw new NotImplementedException();
             }
@@ -34,29 +35,35 @@ namespace IronAHK.Rusty.Linux
             throw new NotImplementedException();
         }
 
-        public override IEnumerable<SystemWindow> AllWindows {
+        public override IEnumerable<Window.WindowItemBase> AllWindows
+        {
             get { throw new NotImplementedException(); }
         }
 
-        public override SystemWindow ActiveWindow {
+        public override Window.WindowItemBase ActiveWindow
+        {
             get {
-                return new LinuxWindow(_display.XGetInputFocus());
+                return new WindowItem(_display.XGetInputFocus());
             }
         }
 
-        public override SystemWindow FindWindow(SearchCriteria criteria) {
+        public override Window.WindowItemBase FindWindow(Window.SearchCriteria criteria)
+        {
             throw new NotImplementedException();
         }
 
-        public override SystemWindow CreateWindow(IntPtr id) {
+        public override Window.WindowItemBase CreateWindow(IntPtr id)
+        {
             throw new NotImplementedException();
         }
 
-        public override SystemWindow GetForeGroundWindow() {
+        public override Window.WindowItemBase GetForeGroundWindow()
+        {
             throw new NotImplementedException();
         }
 
-        public override SystemWindow WindowFromPoint(Point location) {
+        public override Window.WindowItemBase WindowFromPoint(Point location)
+        {
             throw new NotImplementedException();
         }
     }
