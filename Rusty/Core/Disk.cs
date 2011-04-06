@@ -2,7 +2,7 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Collections.Generic;
-using IronAHK.Rusty.Cores.Common.Mapper;
+using IronAHK.Rusty.Common;
 
 namespace IronAHK.Rusty
 {
@@ -99,7 +99,7 @@ namespace IronAHK.Rusty
                 DriveType? type = null;
 
                 if(!string.IsNullOrEmpty(value))
-                    type = MappingService.Instance.DriveType.LookUpCLRType(value);
+                    type = Mapper.MappingService.Instance.DriveType.LookUpCLRType(value);
                 var drives = DriveInfo.GetDrives();
                 
                 for(int i=0; i < drives.Length; i++) {
@@ -162,7 +162,7 @@ namespace IronAHK.Rusty
                 if(!string.IsNullOrEmpty(value)) {
                     try {
                         var drv = new DriveInfo(value);
-                        result = MappingService.Instance.DriveType.LookUpIAType(drv.DriveType);
+                        result = Mapper.MappingService.Instance.DriveType.LookUpIAType(drv.DriveType);
                     } catch {
                         // value was not a valid label!
                         ErrorLevel = 1;
