@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
-using IronAHK.Rusty.Cores.SystemWindow;
 using System.Drawing;
+using IronAHK.Rusty.Common;
 
 namespace IronAHK.Rusty
 {
@@ -14,15 +14,17 @@ namespace IronAHK.Rusty
         /// <summary>
         /// easy access to the window groups
         /// </summary>
-        private static Dictionary<string, Stack<SystemWindow>> windowGroups {
-            get { return SysWindowManager.Instance.Groups; }
+        private static Dictionary<string, Stack<Window.WindowItemBase>> windowGroups
+        {
+            get { return Window.WindowItemProvider.Instance.Groups; }
         }
 
         /// <summary>
         /// easy access to the windowmanager
         /// </summary>
-        private static WindowManager windowManager {
-            get { return SysWindowManager.Instance; }
+        private static Window.WindowManagerBase windowManager
+        {
+            get { return Window.WindowItemProvider.Instance; }
         }
 
 
@@ -79,7 +81,7 @@ namespace IronAHK.Rusty
         {
             Point _click;
             Point? click = null;
-            var criteria = SearchCriteria.FromString(title, text, excludeTitle, excludeText);
+            var criteria = Window.SearchCriteria.FromString(title, text, excludeTitle, excludeText);
             var target = windowManager.FindWindow(criteria);
 
             int clickCount = 1;
@@ -263,7 +265,7 @@ namespace IronAHK.Rusty
             if(name == null || !windowGroups.ContainsKey(name) || windowGroups[name].Count == 0)
                 return;
 
-            SystemWindow next = null;
+            Window.WindowItemBase next = null;
 
             if (mode.Equals(Keyword_R, StringComparison.OrdinalIgnoreCase))
                 next = windowGroups[name].Peek();
@@ -293,7 +295,7 @@ namespace IronAHK.Rusty
             name = name.ToLowerInvariant();
 
             if (!windowGroups.ContainsKey(name))
-                windowGroups.Add(name, new Stack<SystemWindow>());
+                windowGroups.Add(name, new Stack<Window.WindowItemBase>());
 
             windowGroups[name].Push(win);
         }
@@ -455,7 +457,7 @@ namespace IronAHK.Rusty
         /// <param name="excludeText"></param>
         public static void WinActivateBottom(string title = null, string text = null, string excludeTitle = null, string excludeText = null)
         {
-            var criteria = SearchCriteria.FromString(title, text, excludeTitle, excludeText);
+            var criteria = Window.SearchCriteria.FromString(title, text, excludeTitle, excludeText);
 
             for(var window = windowManager.FindWindow(criteria); window.IsSpecified; window = window.PreviousWindow)
             {
@@ -478,7 +480,7 @@ namespace IronAHK.Rusty
         public static long WinActive(string title = null, string text = null, string excludeTitle = null, string excludeText = null)
         {
             long id = 0;
-            var criteria = SearchCriteria.FromString(title, text, excludeTitle, excludeText);
+            var criteria = Window.SearchCriteria.FromString(title, text, excludeTitle, excludeText);
             var window = windowManager.ActiveWindow;
 
             if(window.Equals(criteria)) {

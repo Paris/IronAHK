@@ -82,9 +82,9 @@
     <Compile Include="Common\Drive.cs" />
     <Compile Include="Core\Gui\GUIInvokeHelper.cs" />
     <Compile Include="Common\Window\SearchCriteria.cs" />
-    <Compile Include="Common\Window\SystemWindow.cs" />
-    <Compile Include="Common\Window\SysWindowManager.cs" />
-    <Compile Include="Common\Window\WindowManager.cs" />
+    <Compile Include="Common\Window\WindowItemBase.cs" />
+    <Compile Include="Common\Window\WindowItemProvider.cs" />
+    <Compile Include="Common\Window\WindowManagerBase.cs" />
     <Compile Include="Core\Helpers\Disk.cs" />
     <Compile Include="Core\Helpers\Gui.cs" />
     <Compile Include="Core\Helpers\Crypt.cs" />
@@ -134,14 +134,14 @@
     <Compile Include="Core\Sound.cs" />
     <Compile Include="Core\Accessors.cs" />
     <Compile Include="Core\String.cs" />
-    <Compile Include="Common\Window\WindowFactory.cs" />
+    <Compile Include="Common\Window\WindowProvider.cs" />
     <Compile Include="Core\Window.cs" />
     <Compile Include="Common\CRC32.cs" />
     <Compile Include="Common\ImageSearcher\CoordProvider.cs" />
     <Compile Include="Common\ImageSearcher\ImageFinder.cs" />
     <Compile Include="Common\SimpleJson\SimpleJSON.cs" />
     <Compile Include="Linux\Drive.cs" />
-    <Compile Include="Linux\LinuxWindow.cs" />
+    <Compile Include="Linux\WindowItem.cs" />
     <Compile Include="Linux\X11\XAtom.cs" />
     <Compile Include="Linux\X11\ChangeWindowFlags.cs" />
     <Compile Include="Linux\X11\CursorFontShape.cs" />
@@ -188,7 +188,7 @@
     <Compile Include="Linux\Structs.cs" />
     <Compile Include="Common\SimpleJson\Decode.cs" />
     <Compile Include="Common\SimpleJson\Encode.cs" />
-    <Compile Include="Linux\WindowManagerLinux.cs" />
+    <Compile Include="Linux\WindowManager.cs" />
     <Compile Include="Linux\X11\Events\EventMasks.cs" />
     <Compile Include="Linux\X11\Events\XAnyEvent.cs" />
     <Compile Include="Linux\X11\Events\XButtonEvent.cs" />
@@ -201,12 +201,12 @@
     <Compile Include="Common\Patterns\Singleton.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Windows\Drive.cs" />
-    <Compile Include="Windows\WindowManagerWindows.cs" />
+    <Compile Include="Windows\WindowManager.cs" />
     <Compile Include="Windows\KeyboardHook.cs" />
     <Compile Include="Windows\PInvoke.cs" />
     <Compile Include="Windows\Input.cs" />
     <Compile Include="Linux\KeyboardHook.cs" />
-    <Compile Include="Windows\WindowWindows.cs" />
+    <Compile Include="Windows\WindowItem.cs" />
     <Compile Include="Linux\XConnection.cs" />
   </ItemGroup>
   <ItemGroup>
