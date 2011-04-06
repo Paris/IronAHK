@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Security;
 using System.Windows.Forms;
 using Timer = System.Timers.Timer;
-using IronAHK.Rusty.Cores.Common.Keyboard;
+using IronAHK.Rusty.Common;
 
 namespace IronAHK.Rusty
 {
@@ -44,13 +44,13 @@ namespace IronAHK.Rusty
 
         static Dictionary<string, object> variables;
 
-        static Dictionary<string, HotkeyDefinition> hotkeys;
+        static Dictionary<string, Keyboard.HotkeyDefinition> hotkeys;
 
-        static Dictionary<string, HotstringDefinition> hotstrings;
+        static Dictionary<string, Keyboard.HotstringDefinition> hotstrings;
 
         static GenericFunction keyCondition;
 
-        static KeyboardHook keyboardHook;
+        static Keyboard.KeyboardHook keyboardHook;
 
         static bool suspended;
 
