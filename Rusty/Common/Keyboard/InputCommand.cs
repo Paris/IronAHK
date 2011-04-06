@@ -2,7 +2,6 @@
 using System.Threading;
 using System.Collections.Generic;
 using System.Windows.Forms;
-using IronAHK.Rusty.Patterns;
 
 namespace IronAHK.Rusty.Common
 {
