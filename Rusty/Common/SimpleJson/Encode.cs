@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace IronAHK.Rusty
+namespace IronAHK.Rusty.Common
 {
     partial class SimpleJson
     {

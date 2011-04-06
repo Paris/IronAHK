@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using IronAHK.Rusty.Common;
 
 namespace IronAHK.Rusty
 {

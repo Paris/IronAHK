@@ -1,5 +1,5 @@
 ﻿
-namespace IronAHK.Rusty
+namespace IronAHK.Rusty.Common
 {
     /// <summary>
     /// Serialize JSON strings.
