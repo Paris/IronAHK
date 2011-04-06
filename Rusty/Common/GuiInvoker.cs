@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Text;
 using System.Windows.Forms;
 
-namespace IronAHK.Rusty.Cores.Gui
+namespace IronAHK.Rusty.Common
 {
-    static class GUIInvokeHelper
+    static class GuiInvoker
     {
+        // TODO: GuiInvoker class is probably unnecessary
+
         public delegate void Action();
 
         /// <summary>

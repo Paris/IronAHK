@@ -80,7 +80,7 @@
     <Compile Include="Common\Mapper\MappingService.cs" />
     <Compile Include="Core\Helpers\MouseController.cs" />
     <Compile Include="Common\Drive.cs" />
-    <Compile Include="Core\Gui\GUIInvokeHelper.cs" />
+    <Compile Include="Common\GuiInvoker.cs" />
     <Compile Include="Common\Window\SearchCriteria.cs" />
     <Compile Include="Common\Window\WindowItemBase.cs" />
     <Compile Include="Common\Window\WindowItemProvider.cs" />
