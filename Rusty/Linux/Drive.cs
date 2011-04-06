@@ -1,17 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using IronAHK.Rusty.Cores.Common.Drives;
 using System.IO;
 
-namespace IronAHK.Rusty.Linux.Drives
+namespace IronAHK.Rusty.Linux
 {
     /// <summary>
     /// Implementation for native Linux Drive Operations
     /// </summary>
-    public class SystemDriveLinux : SystemDrive
+    class Drive : Common.Drive
     {
-        public SystemDriveLinux(DriveInfo drv)
+        public Drive(DriveInfo drv)
             : base(drv) { }
 
         public override void Eject() {

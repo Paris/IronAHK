@@ -1,20 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using IronAHK.Rusty.Cores.Common.Drives;
 using System.IO;
 using System.Runtime.InteropServices;
 
-namespace IronAHK.Rusty.Windows.Drives
+namespace IronAHK.Rusty.Windows
 {
     /// <summary>
     /// Implementation for native Windows Drive Operations
     /// </summary>
-    public class SystemDriveWindows : SystemDrive
+    class Drive : Common.Drive
     {
         static readonly string IOPathPrefix = @"\\.\";
 
-        public SystemDriveWindows(DriveInfo drv)
+        public Drive(DriveInfo drv)
             : base(drv) { }
 
         public override void Eject() {

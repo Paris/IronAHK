@@ -3,7 +3,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Collections.Generic;
 using IronAHK.Rusty.Cores.Common.Mapper;
-using IronAHK.Rusty.Cores.Common.Drives;
 
 namespace IronAHK.Rusty
 {
@@ -25,7 +24,7 @@ namespace IronAHK.Rusty
 
             if(cmd == Keyword_Eject && string.IsNullOrEmpty(value)) {
                 if(!string.IsNullOrEmpty(drive)) {
-                    var lowDriv = SystemDriveFactory.CreateSystemDrive(new DriveInfo(drive));
+                    var lowDriv = Common.Drive.DriveProvider.CreateDrive(new DriveInfo(drive));
                     lowDriv.Eject();
                 }
             }
@@ -36,7 +35,7 @@ namespace IronAHK.Rusty
 
             if(cmd == Keyword_Eject && !string.IsNullOrEmpty(value) && value == "1") {
                 if(!string.IsNullOrEmpty(drive)) {
-                    var lowDriv = SystemDriveFactory.CreateSystemDrive(new DriveInfo(drive));
+                    var lowDriv = Common.Drive.DriveProvider.CreateDrive(new DriveInfo(drive));
                     lowDriv.Retract();
                 }
             }
