@@ -2,26 +2,31 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace IronAHK.Rusty.Cores.Common.Mapper
+namespace IronAHK.Rusty.Common
 {
-    public sealed class MappingService
+    partial class Mapper
     {
-        static readonly MappingService instance = new MappingService(); 
+        public sealed class MappingService
+        {
+            static readonly MappingService instance = new MappingService();
 
-        // Explicit static constructor to tell C# compiler
-        // not to mark type as beforefieldinit
-        static MappingService() { }
+            // Explicit static constructor to tell C# compiler
+            // not to mark type as beforefieldinit
+            static MappingService() { }
 
-        MappingService() {
-            // add here all mapping providers here
-            DriveType = new DriveTypeMapper();
-        }
+            MappingService()
+            {
+                // add here all mapping providers here
+                DriveType = new DriveTypeMapper();
+            }
 
 
-        internal readonly DriveTypeMapper DriveType;
+            internal readonly DriveTypeMapper DriveType;
 
-        public static MappingService Instance {
-            get { return instance; }
+            public static MappingService Instance
+            {
+                get { return instance; }
+            }
         }
     }
 }
