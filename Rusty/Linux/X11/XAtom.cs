@@ -4,7 +4,7 @@ using System.Text;
 
 namespace IronAHK.Rusty.Linux.X11
 {
-    internal enum XAtom
+    internal enum XAtom : uint
     {
         AnyPropertyType = 0,
         XA_PRIMARY = 1,
