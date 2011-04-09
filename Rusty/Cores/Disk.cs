@@ -326,8 +326,7 @@ namespace IronAHK.Rusty
                 }
                 else
                     Directory.CreateDirectory(destination);
-
-                // TODO: directory copy
+                    Microsoft.VisualBasic.FileIO.FileSystem.CopyDirectory(source, destination);
             }
             catch (IOException)
             {
