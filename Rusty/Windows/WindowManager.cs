@@ -53,7 +53,7 @@ namespace IronAHK.Rusty.Windows
                 }
             }
 
-            if(found.IsSpecified)
+            if(found != null && found.IsSpecified)
                 LastFound = found;
 
             return found;
