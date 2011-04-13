@@ -155,18 +155,20 @@ namespace IronAHK.Rusty
 
                         guis[id].Text = Param3;
 
+                        if (hide)
+                            guis[id].Hide();
+                        else
+                            guis[id].Show();
+
+                        guis[id].ResumeLayout(true);
+
                         if (min)
                             guis[id].WindowState = FormWindowState.Minimized;
                         else if (max)
                             guis[id].WindowState = FormWindowState.Maximized;
                         else if (restore)
                             guis[id].WindowState = FormWindowState.Normal;
-                        else if (hide)
-                            guis[id].Hide();
-                        else
-                            guis[id].Show();
-
-                        guis[id].ResumeLayout(true);
+                        
                     }
                     break;
 
