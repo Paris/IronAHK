@@ -107,6 +107,8 @@ namespace IronAHK.Scripting
 
                                 if (!Path.IsPathRooted(path) && Directory.Exists(includePath))
                                     path = Path.Combine(includePath, path);
+                                else if(!Path.IsPathRooted(path))
+                                    path = Path.Combine(Path.GetDirectoryName(name), path);
 
                                 path = Path.GetFullPath(path);
 
