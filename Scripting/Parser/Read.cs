@@ -57,15 +57,15 @@ namespace IronAHK.Scripting
 
                 #region Directives
 
-                if (code.Length > 1 && code[0] == Directive)
+                if(codeTrim.Length > 1 && codeTrim[0] == Directive)
                 {
-                    if (code.Length < 2)
+                    if(codeTrim.Length < 2)
                         throw new ParseException(ExUnknownDirv, line);
                     
                     var delim = new char[Spaces.Length + 1];
                     delim[0] = Multicast;
                     Spaces.CopyTo(delim, 1);
-                    string[] sub = code.Split(delim, 2);
+                    string[] sub = codeTrim.Split(delim, 2);
                     var parts = new[] { sub[0], sub.Length > 1 ? sub[1] : string.Empty };
 
                     parts[1] = StripComment(parts[1]).Trim(Spaces);
