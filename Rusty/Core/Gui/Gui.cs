@@ -139,7 +139,7 @@ namespace IronAHK.Rusty
 
                         var screen = Screen.PrimaryScreen.Bounds;
 
-                        if (location.IsEmpty)
+                        if (location == null)
                             center = true;
 
                         if (center)
@@ -155,18 +155,20 @@ namespace IronAHK.Rusty
 
                         guis[id].Text = Param3;
 
+                        if (hide)
+                            guis[id].Hide();
+                        else
+                            guis[id].Show();
+
+                        guis[id].ResumeLayout(true);
+
                         if (min)
                             guis[id].WindowState = FormWindowState.Minimized;
                         else if (max)
                             guis[id].WindowState = FormWindowState.Maximized;
                         else if (restore)
                             guis[id].WindowState = FormWindowState.Normal;
-                        else if (hide)
-                            guis[id].Hide();
-                        else
-                            guis[id].Show();
-
-                        guis[id].ResumeLayout(true);
+                        
                     }
                     break;
 
@@ -294,8 +296,8 @@ namespace IronAHK.Rusty
                                 case Keyword_Border: break;
                                 case Keyword_Caption: break;
                                 case Keyword_Disabled: guis[id].Enabled = !on; break;
-                                case Keyword_LastFound: break;
-                                case Keyword_LastFoundExist: break;
+                                case Keyword_LastFound: lastFoundForm = guis[id].Handle.ToInt64(); break;
+                                case Keyword_LastFoundExist: lastFoundForm = guis[id].Handle.ToInt64(); break;
                                 case Keyword_MaximizeBox: guis[id].MaximizeBox = on; break;
                                 case Keyword_MinimizeBox: guis[id].MinimizeBox = on; break;
                                 case Keyword_OwnDialogs: dialogOwner = guis[id]; break;
