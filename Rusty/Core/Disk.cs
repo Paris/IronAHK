@@ -325,8 +325,10 @@ namespace IronAHK.Rusty
                 }
                 else
                     Directory.CreateDirectory(destination);
-
-                // TODO: directory copy
+                    if (flag == 1)
+                        Microsoft.VisualBasic.FileIO.FileSystem.CopyDirectory(source, destination, (bool)true);
+                    else
+                        Microsoft.VisualBasic.FileIO.FileSystem.CopyDirectory(source, destination, (bool)false);
             }
             catch (IOException)
             {
@@ -551,7 +553,31 @@ namespace IronAHK.Rusty
         /// </param>
         public static void FileMove(string source, string destination, int flag = 0)
         {
-            // TODO: FileMove
+            try
+            {
+                if (source == destination)
+                {
+                    ErrorLevel = 1;
+                    return;
+                }
+                if (File.Exists(destination))
+                {
+                    if (flag == 0)
+                    {
+                        ErrorLevel = 1;
+                        return;
+                    }
+                    else
+                    {
+                        File.Delete(destination);
+                    }
+                }
+                if (File.Exists(source))
+                {
+                        File.Move(source, destination);
+                }
+            }
+            catch (Exception) { ErrorLevel = 2; }
         }
 
         /// <summary>
