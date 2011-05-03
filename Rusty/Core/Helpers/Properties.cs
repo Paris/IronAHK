@@ -20,6 +20,9 @@ namespace IronAHK.Rusty
 
         delegate void SimpleDelegate();
 
+        /// <summary>
+        /// 
+        /// </summary>
         public static event EventHandler ApplicationExit;
 
         #endregion

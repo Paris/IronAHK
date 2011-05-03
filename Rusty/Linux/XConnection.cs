@@ -13,7 +13,7 @@ namespace IronAHK.Rusty.Linux
     /// Singleton class to keep track of all active windows and their 
     /// events to help the hotkey and window management code
     /// </summary>
-	public class XConnectionSingleton : IDisposable
+	class XConnectionSingleton : IDisposable
 	{
 		#region Singleton boilerplate
 		static XConnectionSingleton Instance;

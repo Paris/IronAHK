@@ -281,13 +281,13 @@ namespace IronAHK.Rusty
         /// <summary>
         /// Waits for the user to type a string (not supported on Windows 9x: it does nothing).
         /// </summary>
-        /// <param name="OutputVar">
+        /// <param name="result">
         /// <para>The name of the variable in which to store the text entered by the user (by default, artificial input is also captured).</para>
         /// <para>If this and the other parameters are omitted, any Input in progress in another thread is terminated and its ErrorLevel is set to the word NewInput. By contrast, the ErrorLevel of the current command will be set to 0 if it terminated a prior Input, or 1 if there was no prior Input to terminate.</para>
         /// <para>OutputVar does not store keystrokes per se. Instead, it stores characters produced by keystrokes according to the active window's keyboard layout/language. Consequently, keystrokes that do not produce characters (such as PageUp and Escape) are not stored (though they can be recognized via the EndKeys parameter below).</para>
         /// <para>Whitespace characters such as TAB (`t) are stored literally. ENTER is stored as linefeed (`n).</para>
         /// </param>
-        /// <param name="Options">
+        /// <param name="options">
         /// <para>A string of zero or more of the following letters (in any order, with optional spaces in between):</para>
         /// <para>B: Backspace is ignored. Normally, pressing backspace during an Input will remove the most recently pressed character from the end of the string. Note: If the input text is visible (such as in an editor) and the arrow keys or other means are used to navigate within it, backspace will still remove the last character rather than the one behind the caret (insertion point).</para>
         /// <para>C: Case sensitive. Normally, MatchList is not case sensitive (in versions prior to 1.0.43.03, only the letters A-Z are recognized as having varying case, not letters like ü/Ü).</para>
@@ -303,7 +303,7 @@ namespace IronAHK.Rusty
         /// <para>V: Visible. Normally, the user's input is blocked (hidden from the system). Use this option to have the user's keystrokes sent to the active window.</para>
         /// <para>*: Wildcard (find anywhere). Normally, what the user types must exactly match one of the MatchList phrases for a match to occur. Use this option to find a match more often by searching the entire length of the input text.</para>
         /// </param>
-        /// <param name="EndKeys">
+        /// <param name="endKeys">
         /// <para>A list of zero or more keys, any one of which terminates the Input when pressed (the EndKey itself is not written to OutputVar). When an Input is terminated this way, ErrorLevel is set to the word EndKey followed by a colon and the name of the EndKey. Examples: <code>EndKey:.
         /// EndKey:Escape</code></para>
         /// <para>The EndKey list uses a format similar to the Send command. For example, specifying {Enter}.{Esc} would cause either ENTER, period (.), or ESCAPE to terminate the Input. To use the braces themselves as end keys, specify {{} and/or {}}.</para>
@@ -311,14 +311,14 @@ namespace IronAHK.Rusty
         /// <para>Although modified keys such as Control-C (^c) are not supported, certain keys that require the shift key to be held down -- namely punctuation marks such as ?!:@&amp;{} -- are supported in v1.0.14+.</para>
         /// <para>An explicit virtual key code such as {vkFF} may also be specified. This is useful in the rare case where a key has no name and produces no visible character when pressed. Its virtual key code can be determined by following the steps at the bottom fo the key list page.</para>
         /// </param>
-        /// <param name="MatchList">
+        /// <param name="matchList">
         /// <para>A comma-separated list of key phrases, any of which will cause the Input to be terminated (in which case ErrorLevel will be set to the word Match). The entirety of what the user types must exactly match one of the phrases for a match to occur (unless the * option is present). In addition, any spaces or tabs around the delimiting commas are significant, meaning that they are part of the match string. For example, if MatchList is "ABC , XYZ ", the user must type a space after ABC or before XYZ to cause a match.</para>
         /// <para>Two consecutive commas results in a single literal comma. For example, the following would produce a single literal comma at the end of string: "string1,,,string2". Similarly, the following list contains only a single item with a literal comma inside it: "single,,item".</para>
         /// <para>Because the items in MatchList are not treated as individual parameters, the list can be contained entirely within a variable. In fact, all or part of it must be contained in a variable if its length exceeds 16383 since that is the maximum length of any script line. For example, MatchList might consist of %List1%,%List2%,%List3% -- where each of the variables contains a large sub-list of match phrases.</para>
         /// </param>
-        public static void Input(out string OutputVar, string Options, string EndKeys, string matchList)
+        public static void Input(out string result, string options, string endKeys, string matchList)
         {
-            OutputVar = null;
+            result = null;
             InitKeyboardHook();
 
             var optsItems = new Dictionary<string, Regex>();
@@ -341,7 +341,7 @@ namespace IronAHK.Rusty
             optsItems.Add(Keyword_FindAnyWhereS, new Regex("(\\" + Keyword_FindAnyWhereS + ")"));
 
 
-            var dicOptions = ParseOptionsRegex(ref Options, optsItems, true);
+            var dicOptions = ParseOptionsRegex(ref options, optsItems, true);
 
             #endregion
 
@@ -384,7 +384,7 @@ namespace IronAHK.Rusty
             }
 
             // Parse EndKeys
-            var endkeys = Keyboard.KeyParser.ParseKeyStream(EndKeys);
+            var endkeys = Keyboard.KeyParser.ParseKeyStream(endKeys);
             foreach(var key in endkeys)
                 inputHandler.Endkeys.Add(key);
 
@@ -396,7 +396,7 @@ namespace IronAHK.Rusty
             #endregion
 
             var abortReason = inputHandler.StartCatching();
-            OutputVar = abortReason.CatchedText;
+            result = abortReason.CatchedText;
             ErrorLevel = (int)abortReason.Reason;
         }
 

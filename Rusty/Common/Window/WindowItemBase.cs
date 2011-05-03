@@ -121,6 +121,7 @@ namespace IronAHK.Rusty.Common
             /// Sends MouseEvent to the current Window/Child/Control
             /// </summary>
             /// <param name="mouseevent">MouseEvent to send (for now we take also on abstract layer the windows enum, this might be mapped for other OS.)</param>
+            /// <param name="location"></param>
             public abstract void SendMouseEvent(WindowsAPI.MOUSEEVENTF mouseevent, Point? location = null);
 
             /// <summary>
@@ -278,6 +279,11 @@ namespace IronAHK.Rusty.Common
                 }
                 else
                     return base.Equals(obj);
+            }
+
+            public override int GetHashCode()
+            {
+                return base.GetHashCode();
             }
 
             public override string ToString()

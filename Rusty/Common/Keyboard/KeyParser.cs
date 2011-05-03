@@ -10,11 +10,6 @@ namespace IronAHK.Rusty.Common
     {
         internal class KeyParser
         {
-            /// <summary>
-            /// Parses a stream of keys to a Keys-enumeration
-            /// </summary>
-            /// <param name="stream"></param>
-            /// <returns></returns>
             internal static IEnumerable<Keys> ParseKeyStream(string sequence)
             {
                 var keys = new List<Keys>();

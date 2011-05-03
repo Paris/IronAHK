@@ -7,7 +7,7 @@ namespace IronAHK.Rusty.Common
     /// <summary>
     /// Class which provides common search Methods to find a Color or a subimage in given Image.
     /// </summary>
-    public class ImageFinder
+    class ImageFinder
     {
         #region Fields
 
