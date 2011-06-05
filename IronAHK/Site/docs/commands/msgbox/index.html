@@ -1,0 +1,45 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+   <title>MsgBox - IronAHK Docs</title>
+<link href="../../primary.css" rel="stylesheet" type="text/css" />
+<link href="../../api.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="../../main.js" defer="defer"></script>
+</head>
+<body>
+<h1>MsgBox</h1>
+<div id="page">
+  <p>The MsgBox command is used to put a simple alert dialog on the screen. For more complicated dialogs and windows, see <a href="../GUI/">GUI</a>.</p>
+  <h3 class="command">
+     <acronym title="The command name">MsgBox</acronym> <acronym title="Optional Parameters">text</acronym>
+     <br>
+     <acronym title="The command name">MsgBox</acronym> <acronym title="Optional Parameters">options, title, text</acronym>
+   </h3>
+  <h2 id="params">Parameters</h2>
+
+<table border="1" bordercolor="#C0C0C0">
+  <tr>
+    <td>options</td>
+    <td><p>Indicates the type of message box and the possible button combinations.&nbsp; If blank or omitted, it defaults to 0.</p>
+    <p>This parameter will not be recognized if it contains an expression or a variable reference such as %option%. Instead, use a literal numeric value. </p></td>
+  </tr>
+  <tr>
+    <td>title</td>
+    <td><p>The title of the message box window. If omitted or blank, it defaults to the name of the script (without path).</p> </td>
+  </tr>
+  <tr>
+    <td>text</td>
+    <td><p>If all the parameters are omitted, the MsgBox will display the text &quot;Press OK to continue.&quot; Otherwise, this parameter is the text displayed inside the message box to instruct the user what to do, or to present information.</p></td
+  </tr>
+</table>
+  <h2 id="examples">Examples</h2>
+  <pre class="code">
+   MsgBox, Hello World
+   MsgBox, 16, Critical Error, An unspecified error has occurred</pre>
+   <!--MsgBox, , Timeout MsgBox, This box will disappear after 3 seconds, 3-->
+
+
+</div>
+</body>
+</html>
