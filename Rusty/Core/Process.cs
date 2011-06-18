@@ -146,7 +146,7 @@ namespace IronAHK.Rusty
 
                 pid = prc.Id;
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 if (error)
                     ErrorLevel = 2;
