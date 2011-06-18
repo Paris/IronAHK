@@ -55,7 +55,6 @@ namespace IronAHK.Rusty
                 {
                     var foreGroundWindow = Window.WindowItemProvider.Instance.ActiveWindow;
                     if(foreGroundWindow != null) {
-						var name = foreGroundWindow.Title;
                         var location = foreGroundWindow.Location;
                         MousePos.X += location.X;
                         MousePos.Y += location.Y;
