@@ -299,6 +299,33 @@ namespace IronAHK.Rusty
             }
         }
 
+        private static void CopyDirectory(string source, string destination, bool overwrite)
+        {
+            try
+            {
+                Directory.CreateDirectory(destination);
+            }
+            catch (IOException)
+            {
+                if (!overwrite)
+                    throw;
+            }
+            
+            foreach (string filepath in Directory.GetFiles(source))
+            {
+                string basename = Path.GetFileName(filepath);
+                string destfile = Path.Combine(destination, basename);
+                File.Copy(filepath, destfile, overwrite);
+            }
+            
+            foreach (string dirpath in Directory.GetDirectories(source))
+            {
+                string basename = Path.GetFileName(dirpath);
+                string destdir = Path.Combine(destination, basename);
+                CopyDirectory(dirpath, destdir, overwrite);
+            }
+        }
+        
         /// <summary>
         /// Copies a folder along with all its sub-folders and files.
         /// </summary>
@@ -318,17 +345,7 @@ namespace IronAHK.Rusty
             {
                 destination = Path.GetFullPath(destination);
 
-                if (Directory.Exists(destination))
-                {
-                    if (overwrite)
-                        return;
-                }
-                else
-                    Directory.CreateDirectory(destination);
-                    if (flag == 1)
-                        Microsoft.VisualBasic.FileIO.FileSystem.CopyDirectory(source, destination, (bool)true);
-                    else
-                        Microsoft.VisualBasic.FileIO.FileSystem.CopyDirectory(source, destination, (bool)false);
+                CopyDirectory(source, destination, overwrite);
             }
             catch (IOException)
             {

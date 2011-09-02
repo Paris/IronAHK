@@ -5,7 +5,8 @@ using System.Text;
 
 namespace IronAHK.Rusty
 {
-    partial class WindowsAPI
+    [CLSCompliant(false)]
+    public partial class WindowsAPI
     {
         const string kernel32 = "kernel32.dll", shell32 = "shell32.dll", user32 = "user32.dll", version = "version.dll", winmm = "winmm.dll";
 
