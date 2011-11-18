@@ -409,7 +409,7 @@ namespace IronAHK.Rusty
                                     else if (mode.StartsWith(Keyword_MinSize))
                                     {
                                         arg = mode.Substring(Keyword_MinSize.Length);
-                                        parts = arg.Split(new[] { 'x', 'X', '*' }, 2);
+                                        parts = arg.Split(new[] { "x", "X", "*" }, 2, StringSplitOptions.None);
                                         size = guis[id].MinimumSize;
 
                                         if (parts.Length > 0 && int.TryParse(parts[0], out n))
@@ -422,7 +422,7 @@ namespace IronAHK.Rusty
                                     else if (mode.StartsWith(Keyword_MaxSize))
                                     {
                                         arg = mode.Substring(Keyword_MaxSize.Length);
-                                        parts = arg.Split(new[] { 'x', 'X', '*' }, 2);
+                                        parts = arg.Split(new[] { "x", "X", "*" }, 2, StringSplitOptions.None);
                                         size = guis[id].MaximumSize;
 
                                         if (parts.Length > 0 && int.TryParse(parts[0], out n))
@@ -550,7 +550,7 @@ namespace IronAHK.Rusty
                                 default:
                                     if (mode.StartsWith(Keyword_Range))
                                     {
-                                        string[] range = mode.Substring(Keyword_Range.Length).Split(new[] { '-' }, 2);
+                                        string[] range = mode.Substring(Keyword_Range.Length).Split(new[] { "-" }, 2, StringSplitOptions.None);
                                         decimal n;
 
                                         if (decimal.TryParse(range[0], out n))
@@ -939,7 +939,7 @@ namespace IronAHK.Rusty
                                 default:
                                     if (mode.StartsWith(Keyword_Range))
                                     {
-                                        string[] range = mode.Substring(Keyword_Range.Length).Split(new[] { '-' }, 2);
+                                        string[] range = mode.Substring(Keyword_Range.Length).Split(new[] { "-" }, 2, StringSplitOptions.None);
 
                                         if (range[0].Length != 0)
                                             date.MinDate = ToDateTime(range[0]);
@@ -988,7 +988,7 @@ namespace IronAHK.Rusty
                                 default:
                                     if (mode.StartsWith(Keyword_Range, StringComparison.OrdinalIgnoreCase))
                                     {
-                                        string[] range = mode.Substring(Keyword_Range.Length).Split(new[] { '-' }, 2);
+                                        string[] range = mode.Substring(Keyword_Range.Length).Split(new[] { "-" }, 2, StringSplitOptions.None);
 
                                         if (!string.IsNullOrEmpty(range[0]))
                                             cal.MinDate = ToDateTime(range[0]);
@@ -1044,7 +1044,7 @@ namespace IronAHK.Rusty
                                     else if (mode.StartsWith(Keyword_Range))
                                     {
                                         mode = mode.Substring(Keyword_Range.Length);
-                                        string[] parts = mode.Split(new[] { '-' }, 2);
+                                        string[] parts = mode.Split(new[] { "-" }, 2, StringSplitOptions.None);
 
                                         if (parts[0].Length != 0 && int.TryParse(parts[0], out n))
                                             slider.Minimum = n;
