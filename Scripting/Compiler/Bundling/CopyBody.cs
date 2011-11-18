@@ -185,7 +185,8 @@ namespace IronAHK.Scripting
                 {
                     if(!LabelOrigins.ContainsKey(i))
                         throw new Exception("No label origin found for RVA "+i.ToString("X"));
-                    
+
+                    Code = OpCodes.Br;
                     Gen.Emit(Code, LabelOrigins[i][0]);
                     i++;
                     
