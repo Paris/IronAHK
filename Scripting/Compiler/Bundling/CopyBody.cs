@@ -186,7 +186,23 @@ namespace IronAHK.Scripting
                     if(!LabelOrigins.ContainsKey(i))
                         throw new Exception("No label origin found for RVA "+i.ToString("X"));
 
-                    Code = OpCodes.Br;
+                    // messy fix to convert short branch targets to normal ones, since there's no easy way to calculate offsets via reflection
+                    const string s = ".s";
+                    string name = Code.Name;
+                    if (name.EndsWith(s))
+                    {
+                        name = name.Substring(0, name.Length - s.Length);
+                        foreach (var field in typeof(OpCodes).GetFields(BindingFlags.Public | BindingFlags.Static))
+                        {
+                            var opcode = (OpCode)field.GetValue(null);
+                            if (opcode.Name.Equals(name))
+                            {
+                                Code = opcode;
+                                break;
+                            }
+                        }
+                    }
+
                     Gen.Emit(Code, LabelOrigins[i][0]);
                     i++;
                     
