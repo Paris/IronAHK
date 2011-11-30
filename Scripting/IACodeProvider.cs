@@ -129,7 +129,7 @@ namespace IronAHK.Scripting
 
         #region Helpers
 
-        [Conditional("DEBUG")]
+        [Conditional("TRACE")]
         void PrintCode(CodeCompileUnit[] units, TextWriter writer)
         {
             var gen = new Generator();

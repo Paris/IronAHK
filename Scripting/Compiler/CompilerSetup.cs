@@ -109,7 +109,7 @@ namespace IronAHK.Scripting
             }
         }
 
-        [Conditional("DEBUG")]
+        [Conditional("TRACE")]
         void Debug(string message)
         {
             Console.WriteLine(message);
