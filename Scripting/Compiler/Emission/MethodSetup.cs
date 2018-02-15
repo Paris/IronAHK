@@ -98,7 +98,7 @@ namespace IronAHK.Scripting
             Method.SetCustomAttribute(Attribute);
         }
 
-        [Conditional("DEBUG")]
+        [Conditional("TRACE")]
         void Debug(string Message)
         {
             Console.Write(new string(' ', Depth));

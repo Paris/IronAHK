@@ -23,7 +23,7 @@ namespace IronAHK
             internal static extern bool AllocConsole();
         }
 
-        [Conditional("DEBUG")]
+        [Conditional("WTF")]
         static void Start(ref string[] args)
         {
             if (Environment.OSVersion.Platform == PlatformID.Win32NT)
